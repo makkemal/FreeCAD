@@ -34,8 +34,8 @@ from PySide import QtGui
 from PySide import QtCore
 
 
-from _FemPrescribedDisplacement import MakePrescribedDisplacement,TaskPanelPrescribedDisplacement
-from _ViewProviderFemPrescribedDisplacement import viewProviderPrescribedDisplacement
+from _FemPrescribedDisplacement import _FemPrescribedDisplacement,TaskPanelPrescribedDisplacement
+from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
 class commandPrescribedDisplacement:
     def GetResources(self):
@@ -77,7 +77,7 @@ class commandPrescribedDisplacement:
             mainObj = selection[0].ObjectName
 
 
-            MakePrescribedDisplacement()
+            _FemPrescribedDisplacement()
             FreeCADGui.doCommand(
                 "App.activeDocument()." + FemGui.getActiveAnalysis().Name + ".Member = App.activeDocument()." + FemGui.getActiveAnalysis().Name + ".Member + [App.ActiveDocument.ActiveObject]")
 
