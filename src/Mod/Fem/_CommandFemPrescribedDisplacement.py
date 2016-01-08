@@ -34,7 +34,8 @@ from PySide import QtGui
 from PySide import QtCore
 
 
-from _FemPrescribedDisplacement import _FemPrescribedDisplacement,TaskPanelPrescribedDisplacement
+from _FemPrescribedDisplacement import _FemPrescribedDisplacement
+from _TaskPanelFemPrescribedDisplacement import _TaskPanelFemPrescribedDisplacement
 from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
 class _CommandFemPrescribedDisplacement:
