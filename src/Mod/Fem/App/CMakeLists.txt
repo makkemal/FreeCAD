@@ -72,6 +72,7 @@ SOURCE_GROUP("Module" FILES ${Mod_SRCS})
 SET(FemScripts_SRCS
     _CommandFemBeamSection.py
     _CommandFemFromShape.py
+    _CommandFemPrescribedDisplacement.py
     _CommandFemShellThickness.py
     _CommandFemSolverCalculix.py
     _CommandMechanicalMaterial.py
@@ -82,9 +83,9 @@ SET(FemScripts_SRCS
     _CommandSolverJobControl.py
     _FemAnalysis.py
     _FemBeamSection.py
+    _FemPrescribedDisplacement.py
     _FemShellThickness.py
     _FemSolverCalculix.py
-    _FemPrescribedDisplacement.py
     _MechanicalMaterial.py
     _TaskPanelFemBeamSection.py
     _TaskPanelFemShellThickness.py
@@ -93,10 +94,10 @@ SET(FemScripts_SRCS
     _TaskPanelResultControl.py
     _ViewProviderFemAnalysis.py
     _ViewProviderFemBeamSection.py
+    _ViewProviderFemPrescribedDisplacement.py
     _ViewProviderFemShellThickness.py
     _ViewProviderFemSolverCalculix.py
     _ViewProviderMechanicalMaterial.py
-    _ViewProviderFemPrescribedDisplacement.py
     ccxDatReader.py
     ccxFrdReader.py
     ccxInpWriter.py
@@ -106,7 +107,7 @@ SET(FemScripts_SRCS
     FemAnalysis.py
     FemCommands.py
     FemBeamSection.py
-    FemPrescribedDisplacement.py
+    # FemPrescribedDisplacement.py
     FemShellThickness.py
     FemSolverCalculix.py
     FemTools.py
