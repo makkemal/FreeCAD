@@ -37,7 +37,7 @@ from PySide import QtCore
 from _FemPrescribedDisplacement import _FemPrescribedDisplacement,TaskPanelPrescribedDisplacement
 from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
-class commandPrescribedDisplacement:
+class _CommandFemPrescribedDisplacement:
     def GetResources(self):
         return {'Pixmap': 'fem-constraint-displacement',
                 'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement", "Create FEM prescribed displacement constraint ..."),
@@ -102,7 +102,7 @@ class commandPrescribedDisplacement:
             return False
 
 
-class commandPrescribedDisplacementEdit:
+class _CommandFemPrescribedDisplacementEdit:
     def GetResources(self):
         return {'Pixmap': 'fem-constraint-displacement',
                 'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement_Edit", "Edits a FEM prescribed displacement constraint ..."),
@@ -124,5 +124,5 @@ class commandPrescribedDisplacementEdit:
             return False
 
 if FreeCAD.GuiUp:
-    FreeCADGui.addCommand('Fem_PrescribedDisplacement', commandPrescribedDisplacement())
-    FreeCADGui.addCommand('PrescribedDispEdit', commandPrescribedDisplacementEdit())
+    FreeCADGui.addCommand('Fem_PrescribedDisplacement', _CommandFemPrescribedDisplacement())
+    FreeCADGui.addCommand('PrescribedDispEdit', _CommandFemPrescribedDisplacementEdit())
