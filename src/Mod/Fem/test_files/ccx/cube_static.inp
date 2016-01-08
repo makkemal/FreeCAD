@@ -465,6 +465,10 @@ Eall
 69,
 
 ***********************************************************
+** Node sets for prescribed displacement
+
+
+***********************************************************
 ** Node sets for loads
 ** written by write_node_sets_constraints_force function
 ** no point load on vertices --> no set for node loads
@@ -499,6 +503,10 @@ Eall
 FemConstraintFixed,1
 FemConstraintFixed,2
 FemConstraintFixed,3
+
+
+***********************************************************
+** Prescribed displacements applied
 
 
 ***********************************************************
