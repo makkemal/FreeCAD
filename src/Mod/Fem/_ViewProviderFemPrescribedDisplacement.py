@@ -53,8 +53,8 @@ class _ViewProviderFemPrescribedDisplacement:
     def setEdit(self, vobj, mode):
         import FreeCAD
         import FreeCADGui
-        from _FemPrescribedDisplacement import TaskPanelPrescribedDisplacement
-        taskd = TaskPanelPrescribedDisplacement(self.Object)
+        from _TaskPanelFemPrescribedDisplacement import _TaskPanelFemPrescribedDisplacement
+        taskd = _TaskPanelFemPrescribedDisplacement(self.Object)
         taskd.obj = vobj.Object
         FreeCADGui.Control.showDialog(taskd)
         return True

@@ -70,6 +70,7 @@ INSTALL(
         _FemPrescribedDisplacement.py
         _ViewProviderFemPrescribedDisplacement.py
         _CommandFemPrescribedDisplacement.py
+        _TaskPanelFemPrescribedDisplacement.py
         TaskPanelFemPrescribedDisplacement.ui
 
     DESTINATION
