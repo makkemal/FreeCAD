@@ -24,7 +24,7 @@ __title__ = "Command Prescribed Displacement"
 __author__ = "Alfred Bogaers and Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
-class viewProviderPrescribedDisplacement:
+class _ViewProviderFemPrescribedDisplacement:
     def __init__(self, vobj):
         vobj.Proxy = self
 
