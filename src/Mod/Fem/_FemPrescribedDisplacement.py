@@ -24,7 +24,7 @@ __title__ = "Command Prescribed Displacement"
 __author__ = "Alfred Bogaers and Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
-class MakePrescribedDisplacement:
+class _FemPrescribedDisplacement:
 
     # def __init__(self, obj,objectComponent):
     def __init__(self):
@@ -34,7 +34,7 @@ class MakePrescribedDisplacement:
            import FemGui
         from PySide import QtGui
         from PySide import QtCore
-        from _ViewProviderFemPrescribedDisplacement import viewProviderPrescribedDisplacement
+        from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
         selection = FreeCADGui.Selection.getSelectionEx()
 
@@ -87,7 +87,7 @@ class MakePrescribedDisplacement:
             partNameList.append(str(subComponents[i]))
         obj.Object = objectComponent.Object
 
-        viewProviderPrescribedDisplacement(obj.ViewObject)
+        _ViewProviderFemPrescribedDisplacement(obj.ViewObject)
 
 
     def execute(self, fp):
@@ -126,7 +126,7 @@ class TaskPanelPrescribedDisplacement:
            import FemGui
         from PySide import QtGui
         from PySide import QtCore
-        from _ViewProviderFemPrescribedDisplacement import viewProviderPrescribedDisplacement
+        from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
         self.obj = obj
         # self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath()+ "Mod/Fem/Resources/TaskFemConstraintDisplacement.ui")
@@ -475,7 +475,7 @@ class TaskPanelPrescribedDisplacement:
     def deleteFeature(self):
         import FreeCAD
         import FreeCADGui
-        #from _ViewProviderFemPrescribedDisplacement import viewProviderPrescribedDisplacement
+        #from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
 
         currentItem = self.form.listWidget.currentItem()
         row = self.form.listWidget.row(currentItem)
