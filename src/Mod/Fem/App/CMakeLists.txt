@@ -88,6 +88,7 @@ SET(FemScripts_SRCS
     _FemSolverCalculix.py
     _MechanicalMaterial.py
     _TaskPanelFemBeamSection.py
+    _TaskPanelFemPrescribedDisplacement.py
     _TaskPanelFemShellThickness.py
     _TaskPanelFemSolverCalculix.py
     _TaskPanelMechanicalMaterial.py
