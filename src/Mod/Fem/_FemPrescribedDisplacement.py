@@ -38,7 +38,7 @@ class _FemPrescribedDisplacement:
 
         selection = FreeCADGui.Selection.getSelectionEx()
 
-        obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "PrescribedDisplacement")
+        obj = FreeCAD.ActiveDocument.addObject("Part::FeaturePython", "FemConstraintDisplacement")
 
         obj.addProperty("App::PropertyLink", "Object", "DisplacementSettings")
         obj.addProperty("App::PropertyStringList", "partNameList", "DisplacementSettings")
