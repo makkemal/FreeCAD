@@ -61,7 +61,7 @@ class _CommandFemPrescribedDisplacement:
         #check selection
         if len(selection) != 1 or (len(selection[0].SubElementNames)== 0):
             FreeCADGui.Selection.clearSelection()
-            FreeCAD.Console.PrintMessage("No selection \n")
+            #FreeCAD.Console.PrintMessage("No selection \n")
             feature=FreeCAD.ActiveDocument.findObjects("Part::Feature")[-1]
             strcommand="FreeCAD.ActiveDocument."+feature.Name
             FreeCADGui.activeDocument().getObject("feature.Name")
