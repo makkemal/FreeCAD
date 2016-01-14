@@ -56,6 +56,14 @@ class _CommandFemPrescribedDisplacement:
         #FreeCAD.Console.PrintMessage(str(selection) + " ")
         #FreeCAD.Console.PrintMessage(str(selection[0].SubElementNames) + " ")
         #FreeCAD.Console.PrintMessage(str(len(selection)) + " \n")
+        
+        #get list of anylysis memebers
+        members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
+
+        for member in members:
+            if "FemConstraintDisplacement" in  member.Name:  #If memeber is a displacement constraint 
+                #Set active status for all members
+                member.ViewObject.Visibility=True
 
 
         #check selection
