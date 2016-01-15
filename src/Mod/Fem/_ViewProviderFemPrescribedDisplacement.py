@@ -21,7 +21,7 @@
 #***************************************************************************
 
 __title__ = "Command Prescribed Displacement"
-__author__ = "Alfred Bogaers and Michael Hindley"
+__author__ = "Alfred Bogaers and Michael Hindley and Oswald van Ginkel"
 __url__ = "http://www.freecadweb.org"
 
 class _ViewProviderFemPrescribedDisplacement:
