@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Based on Force constraint by Jan Rheinl채nder                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -118,7 +118,16 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
 
-        for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
+        //OvG: Test less arrows based on count.
+        #define MAXARROWS 3000
+        int incrementer = 1;
+        if(points.end()>3000)
+        {    
+            incrementer = points.end()%500;
+        }
+        //End Ovg:Test less arrows based on count
+        
+        for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); /*OvG: less arrows p++*/ p+=incrementer) {
             SbVec3f base(p->x, p->y, p->z);
             SbVec3f dir(n->x, n->y, n->z);
             double rev;
