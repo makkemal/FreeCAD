@@ -60,9 +60,9 @@ ConstraintPrescribedDisplacement::ConstraintPrescribedDisplacement()
     Points.setValues(std::vector<Base::Vector3d>());
     Normals.setValues(std::vector<Base::Vector3d>());
     
-    xDisplacement = 0.0; //0.0
-    yDisplacement = 0.0; //0.0
-    zDisplacement= 0.0; //0.0
+    xDisplacement = 0.0; 
+    yDisplacement = 0.0; 
+    zDisplacement= 0.0; 
     xRotation= 0.0;
     yRotation= 0.0;
     zRotation= 0.0;
@@ -86,19 +86,19 @@ App::DocumentObjectExecReturn *ConstraintPrescribedDisplacement::execute(void)
     return Constraint::execute();
 }
 
-void ConstraintPrescribedDisplacement::onChanged(const App::Property* prop)
-{
-    // Note: If we call this at the end, then the symbols are not oriented correctly initially
-    // because the NormalDirection has not been calculated yet
-    Constraint::onChanged(prop);
-
-    if (prop == &References) {
-        std::vector<Base::Vector3d> points;
-        std::vector<Base::Vector3d> normals;
-        if (getPoints(points, normals)) {
-            Points.setValues(points);
-            Normals.setValues(normals);
-            Points.touch(); // This triggers ViewProvider::updateData()
-        }
-    }
-}
+//void ConstraintPrescribedDisplacement::onChanged(const App::Property* prop)
+//{
+//    // Note: If we call this at the end, then the symbols are not oriented correctly initially
+//    // because the NormalDirection has not been calculated yet
+//    Constraint::onChanged(prop);
+//
+//    if (prop == &References) {
+//        std::vector<Base::Vector3d> points;
+//        std::vector<Base::Vector3d> normals;
+//        if (getPoints(points, normals)) {
+//            Points.setValues(points);
+//            Normals.setValues(normals);
+//            Points.touch(); // This triggers ViewProvider::updateData()
+//        }
+//    }
+//}
