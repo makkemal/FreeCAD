@@ -20,11 +20,12 @@
 #*                                                                         *
 #***************************************************************************
 
-__title__ = "Command Prescribed Displacement"
-__author__ = "Alfred Bogaers and Michael Hindley"
+__title__ = "_TaskPanelFemPrescribed Displacement" #OvG: Renamed from Command Prescribed Displacement
+__author__ = "Alfred Bogaers, Michael Hindley, Oswald van Ginkel"
 __url__ = "http://www.freecadweb.org"
 
 class _TaskPanelFemPrescribedDisplacement:
+    '''The TaskPanel for editing displacement properties of PrescribedDisplacement objects'''
     def __init__(self, obj):
         import FreeCAD
         from PySide import QtGui
@@ -417,7 +418,7 @@ class _TaskPanelFemPrescribedDisplacement:
         import FreeCADGui
         FreeCADGui.ActiveDocument.resetEdit()
 
-    # cancel changes and reset values to initialvales saved
+    # cancel changes and reset values to initial values saved
     def reject(self):
         import FreeCAD
         import FreeCADGui

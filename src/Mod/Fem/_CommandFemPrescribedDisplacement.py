@@ -25,6 +25,7 @@ __author__ = "Alfred Bogaers and Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
+from FemCommands import FemCommands
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -33,7 +34,6 @@ if FreeCAD.GuiUp:
 from PySide import QtGui
 from PySide import QtCore
 
-
 from _FemPrescribedDisplacement import _FemPrescribedDisplacement
 from _TaskPanelFemPrescribedDisplacement import _TaskPanelFemPrescribedDisplacement
 from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDisplacement
@@ -41,12 +41,14 @@ from _ViewProviderFemPrescribedDisplacement import _ViewProviderFemPrescribedDis
 class _CommandFemPrescribedDisplacement:
     def GetResources(self):
         return {'Pixmap': 'fem-constraint-displacement',
-                'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement", "Create FEM prescribed displacement constraint ..."),
+                'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement", "Create FEM prescribed displacement constraint"),
                 'Accel': "C, D",
                 'ToolTip': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement", "Create FEM prescribed displacement constraint")}
 
     def Activated(self):
-
+        FreeCAD.ActiveDocument.openTransaction("Create FEM prescribed displacement constraint")
+        #FreeCADGui.addModule("FemGui")
+        #sel = FreeCADGui.Selection.getSelection()
 
         feature=FreeCAD.ActiveDocument.findObjects("Part::Feature")[-1]
 
@@ -57,11 +59,11 @@ class _CommandFemPrescribedDisplacement:
         #FreeCAD.Console.PrintMessage(str(selection[0].SubElementNames) + " ")
         #FreeCAD.Console.PrintMessage(str(len(selection)) + " \n")
         
-        #get list of anylysis memebers
+        #get list of analysis memebers
         members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
 
         for member in members:
-            if "FemConstraintDisplacement" in  member.Name:  #If memeber is a displacement constraint 
+            if "FemConstraintDisplacement" in  member.Name:  #If member is a displacement constraint 
                 #Set active status for all members
                 member.ViewObject.Visibility=True
 
@@ -114,7 +116,7 @@ class _CommandFemPrescribedDisplacement:
 class _CommandFemPrescribedDisplacementEdit:
     def GetResources(self):
         return {'Pixmap': 'fem-constraint-displacement',
-                'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement_Edit", "Edits a FEM prescribed displacement constraint ..."),
+                'MenuText': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement_Edit", "Edits a FEM prescribed displacement constraint"),
                 'Accel': "C, D",
                 'ToolTip': QtCore.QT_TRANSLATE_NOOP("Fem_Prescribed_Displacement_Edit", "Edits a FEM prescribed displacement constraint")}
 
@@ -133,5 +135,5 @@ class _CommandFemPrescribedDisplacementEdit:
             return False
 
 if FreeCAD.GuiUp:
-    FreeCADGui.addCommand('Fem_PrescribedDisplacement', _CommandFemPrescribedDisplacement())
-    FreeCADGui.addCommand('PrescribedDispEdit', _CommandFemPrescribedDisplacementEdit())
+    FreeCADGui.addCommand('Fem_PrescribedDisp', _CommandFemPrescribedDisplacement())
+    FreeCADGui.addCommand('Fem_PrescribedDispEdit', _CommandFemPrescribedDisplacementEdit())
