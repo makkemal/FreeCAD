@@ -24,10 +24,6 @@
 #ifndef FEM_CONSTRAINTFIXED_H
 #define FEM_CONSTRAINTFIXED_H
 
-#include <App/DocumentObject.h>
-#include <App/PropertyLinks.h>
-#include <App/PropertyGeo.h>
-
 #include "FemConstraint.h"
 
 namespace Fem
@@ -41,17 +37,17 @@ public:
     /// Constructor
     ConstraintPrescribedDisplacement(void);
 
-    // Read-only (calculated values). These trigger changes in the ViewProvider
-    App::PropertyVectorList Points;
-    App::PropertyVectorList Normals;
+    //// Read-only (calculated values). These trigger changes in the ViewProvider
+    //App::PropertyVectorList Points;
+    //App::PropertyVectorList Normals;
 
     //Displacement settings
-    App::PropertyFloat  xDisplacement; //0.0
-    App::PropertyFloat yDisplacement; //0.0
-    App::PropertyFloat zDisplacement; //0.0
-    App::PropertyFloat xRotation;
-    App::PropertyFloat yRotation;
-    App::PropertyFloat zRotation;
+    App::PropertyFloat xDisplacement; 
+    App::PropertyFloat yDisplacement; 
+    App::PropertyFloat zDisplacement; 
+    App::PropertyFloat xRotation; 
+    App::PropertyFloat yRotation; 
+    App::PropertyFloat zRotation; 
     App::PropertyBool xFree;
     App::PropertyBool yFree;
     App::PropertyBool zFree;
@@ -74,8 +70,8 @@ public:
         return "FemGui::ViewProviderFemConstraintPrescribedDisplacement";
     }
 
-protected:
-    virtual void onChanged(const App::Property* prop);
+//protected:
+//    virtual void onChanged(const App::Property* prop);
 };
 
 } //namespace Fem
