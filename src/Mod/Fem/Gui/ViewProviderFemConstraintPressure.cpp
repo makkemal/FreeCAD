@@ -113,19 +113,21 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
         }
         std::vector<Base::Vector3d>::const_iterator n = normals.begin();
 
-        SoMultipleCopy* cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
-        cp->matrix.setNum(points.size());
-        SbMatrix* matrices = cp->matrix.startEditing();
-        int idx = 0;
-
         //OvG: Test less arrows based on count.
         #define MAXARROWS 3000
         int incrementer = 1;
-        if(points.end()>3000)
+        if(points.size()>3000)
         {    
-            incrementer = points.end()%500;
+            incrementer = points.size()/500;
         }
         //End Ovg:Test less arrows based on count
+        
+        SoMultipleCopy* cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
+        cp->matrix.setNum(points.size()/incrementer /*OvG: less arrows*/);
+        SbMatrix* matrices = cp->matrix.startEditing();
+        int idx = 0;
+
+        
         
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); /*OvG: less arrows p++*/ p+=incrementer) {
             SbVec3f base(p->x, p->y, p->z);
@@ -142,7 +144,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             m.setTransform(base, rot, SbVec3f(1,1,1));
             matrices[idx] = m;
             idx++;
-            n++;
+            /*OvG: less arrows n++*/ n+=incrementer;
         }
         cp->matrix.finishEditing();
     }
