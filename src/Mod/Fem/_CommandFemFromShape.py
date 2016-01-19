@@ -20,7 +20,7 @@
 #*                                                                         *
 #***************************************************************************
 
-__title__ = "Commend Fem From Shape"
+__title__ = "Command Fem From Shape"
 __author__ = "Juergen Riegel"
 __url__ = "http://www.freecadweb.org"
 
