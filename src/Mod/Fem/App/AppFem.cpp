@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2008 Jürgen Riegel (juergen.riegel@web.de)              *
+ *   Copyright (c) 2008 J端rgen Riegel (juergen.riegel@web.de)              *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -50,6 +50,7 @@
 #include "FemConstraintPressure.h"
 #include "FemConstraintGear.h"
 #include "FemConstraintPulley.h"
+//#include "FemConstraintPrescibedDisplacement.h" //OvG: Add Prescribed Displacement
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
@@ -140,6 +141,7 @@ void AppFemExport initFem()
     Fem::ConstraintPressure         ::init();
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
+    //Fem::ConstraintPrescibedDispalcement   ::init(); //OvG: Add Prescibed Displacement
 
     Fem::FemResultObject            ::init();
     Fem::FemResultObjectPython      ::init();
