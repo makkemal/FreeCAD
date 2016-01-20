@@ -175,14 +175,17 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         #  Individual constraints are "Fem::ConstraintPressure" type
         self.pressure_constraints = []
         ## @var beam_sections
-        # set of beam sections from the analyis. Updated with update_objects
+        # set of beam sections from the analysis. Updated with update_objects
         # Individual beam sections are Proxy.Type "FemBeamSection"
         self.beam_sections = []
         ## @var shell_thicknesses
-        # set of shell thicknesses from the analyis. Updated with update_objects
+        # set of shell thicknesses from the analysis. Updated with update_objects
         # Individual shell thicknesses are Proxy.Type "FemShellThickness"
         self.shell_thicknesses = []
-        self.PrescribedDisplacements = []
+        ## @var prescibed_displacements
+        # set of prescibed displacements for the analysis. Updated with update_objects
+        # Individual shell thicknesses are Proxy.Type "FemConstraintPrescibedDisplacement"
+        self.prescibed_displacements = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -214,7 +217,11 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             elif m.isDerivedFrom('Part::FeaturePython'):
                 content = m.Content
                 if "DisplacementSettings" in m.Content:
-                   self.PrescribedDisplacements.append(m)
+                   self.prescribed_displacements.append(m) #OvG: Stick to naming convention
+            elif m.isDerivedFrom("Fem::ConstraintPrescribedDisplacement"): #OvG: Replacement reference to C++ implementation of Prescribed Displacement
+                prescirbed_displacement_constraint_dict = {}
+                fprescirbed_displacement_constraint_dict['Object'] = m
+                self.prescribed_displacements.append(prescirbed_displacement_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -247,8 +254,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 if has_no_references is True:
                     message += "More than one Material has empty References list (Only one empty References list is allowed!).\n"
                 has_no_references = True
-        if not self.fixed_constraints:
-            message += "No fixed-constraint nodes defined in the Analysis\n"
+        if not (self.fixed_constraints or self.prescribed_displacements): #OvG: Allow prescribed displacements to serve same role as simpler fixed constraints 
+            message += "No fixed-constraint or prescribed-displacement nodes defined in the Analysis\n"
         if self.analysis_type == "static":
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
@@ -276,7 +283,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
-                                       self.PrescribedDisplacements,
+                                       self.prescribed_displacements, #OvG: Stick to naming convention
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)
