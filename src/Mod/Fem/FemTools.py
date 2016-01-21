@@ -182,10 +182,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of shell thicknesses from the analysis. Updated with update_objects
         # Individual shell thicknesses are Proxy.Type "FemShellThickness"
         self.shell_thicknesses = []
-        ## @var prescibed_displacements
-        # set of prescibed displacements for the analysis. Updated with update_objects
+        ## @var prescribed_displacements
+        # set of prescribed displacements for the analysis. Updated with update_objects
         # Individual shell thicknesses are Proxy.Type "FemConstraintPrescibedDisplacement"
-        self.prescibed_displacements = []
+        self.prescribed_displacements = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -219,9 +219,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 if "DisplacementSettings" in m.Content:
                    self.prescribed_displacements.append(m) #OvG: Stick to naming convention
             elif m.isDerivedFrom("Fem::ConstraintPrescribedDisplacement"): #OvG: Replacement reference to C++ implementation of Prescribed Displacement
-                prescirbed_displacement_constraint_dict = {}
-                fprescirbed_displacement_constraint_dict['Object'] = m
-                self.prescribed_displacements.append(prescirbed_displacement_constraint_dict)
+                prescribed_displacement_constraint_dict = {}
+                prescribed_displacement_constraint_dict['Object'] = m
+                self.prescribed_displacements.append(prescribed_displacement_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
