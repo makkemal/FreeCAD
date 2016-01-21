@@ -135,5 +135,5 @@ class _CommandFemPrescribedDisplacementEdit:
             return False
 
 if FreeCAD.GuiUp:
-    FreeCADGui.addCommand('Fem_PrescribedDisp', _CommandFemPrescribedDisplacement())
+    FreeCADGui.addCommand('Fem_PrescribedDisplacement', _CommandFemPrescribedDisplacement())
     FreeCADGui.addCommand('Fem_PrescribedDispEdit', _CommandFemPrescribedDisplacementEdit())
