@@ -47,28 +47,28 @@ class _FemPrescribedDisplacement:
         
 
         # Define variables used
-        obj.addProperty("App::PropertyFloat", "xDisplacement", "DisplacementSettings",
-                        "x Displacement").xDisplacement = 0.0
-        obj.addProperty("App::PropertyFloat", "yDisplacement", "DisplacementSettings",
-                        "y Displacement").yDisplacement = 0.0
-        obj.addProperty("App::PropertyFloat", "zDisplacement", "DisplacementSettings",
-                        "z Displacement").zDisplacement = 0.0
-        obj.addProperty("App::PropertyFloat", "xRotation", "DisplacementSettings", "x Rotation").xRotation = 0.0
-        obj.addProperty("App::PropertyFloat", "yRotation", "DisplacementSettings", "y Rotation").yRotation = 0.0
-        obj.addProperty("App::PropertyFloat", "zRotation", "DisplacementSettings", "z Rotation").zRotation = 0.0
-        obj.addProperty("App::PropertyBool", "xFree", "DisplacementSettings", "x Free").xFree = True
-        obj.addProperty("App::PropertyBool", "yFree", "DisplacementSettings", "y Free").yFree = True
-        obj.addProperty("App::PropertyBool", "zFree", "DisplacementSettings", "z Free").zFree = True
-        obj.addProperty("App::PropertyBool", "xFix", "DisplacementSettings", "x Fix").xFix = False
-        obj.addProperty("App::PropertyBool", "yFix", "DisplacementSettings", "y Fix").yFix = False
-        obj.addProperty("App::PropertyBool", "zFix", "DisplacementSettings", "z Fix").zFix = False
-        obj.addProperty("App::PropertyBool", "rotxFree", "DisplacementSettings", "rot x Free").rotxFree = True
-        obj.addProperty("App::PropertyBool", "rotyFree", "DisplacementSettings", "rot y Free").rotyFree = True
-        obj.addProperty("App::PropertyBool", "rotzFree", "DisplacementSettings", "rot z Free").rotzFree = True
-        obj.addProperty("App::PropertyBool", "rotxFix", "DisplacementSettings", "rot x Fix").rotxFix = False
-        obj.addProperty("App::PropertyBool", "rotyFix", "DisplacementSettings", "rot y Fix").rotyFix = False
-        obj.addProperty("App::PropertyBool", "rotzFix", "DisplacementSettings", "rot z Fix").rotzFix = False
-        obj.addProperty("App::PropertyBool", "element", "DisplacementSettings", "element").element = False
+#        obj.addProperty("App::PropertyFloat", "xDisplacement", "DisplacementSettings",
+#                        "x Displacement").xDisplacement = 0.0
+#        obj.addProperty("App::PropertyFloat", "yDisplacement", "DisplacementSettings",
+#                        "y Displacement").yDisplacement = 0.0
+#        obj.addProperty("App::PropertyFloat", "zDisplacement", "DisplacementSettings",
+#                        "z Displacement").zDisplacement = 0.0
+#        obj.addProperty("App::PropertyFloat", "xRotation", "DisplacementSettings", "x Rotation").xRotation = 0.0
+#        obj.addProperty("App::PropertyFloat", "yRotation", "DisplacementSettings", "y Rotation").yRotation = 0.0
+#        obj.addProperty("App::PropertyFloat", "zRotation", "DisplacementSettings", "z Rotation").zRotation = 0.0
+#        obj.addProperty("App::PropertyBool", "xFree", "DisplacementSettings", "x Free").xFree = True
+#        obj.addProperty("App::PropertyBool", "yFree", "DisplacementSettings", "y Free").yFree = True
+#        obj.addProperty("App::PropertyBool", "zFree", "DisplacementSettings", "z Free").zFree = True
+#        obj.addProperty("App::PropertyBool", "xFix", "DisplacementSettings", "x Fix").xFix = False
+#        obj.addProperty("App::PropertyBool", "yFix", "DisplacementSettings", "y Fix").yFix = False
+#        obj.addProperty("App::PropertyBool", "zFix", "DisplacementSettings", "z Fix").zFix = False
+#        obj.addProperty("App::PropertyBool", "rotxFree", "DisplacementSettings", "rot x Free").rotxFree = True
+#        obj.addProperty("App::PropertyBool", "rotyFree", "DisplacementSettings", "rot y Free").rotyFree = True
+#        obj.addProperty("App::PropertyBool", "rotzFree", "DisplacementSettings", "rot z Free").rotzFree = True
+#        obj.addProperty("App::PropertyBool", "rotxFix", "DisplacementSettings", "rot x Fix").rotxFix = False
+#        obj.addProperty("App::PropertyBool", "rotyFix", "DisplacementSettings", "rot y Fix").rotyFix = False
+#        obj.addProperty("App::PropertyBool", "rotzFix", "DisplacementSettings", "rot z Fix").rotzFix = False
+#        obj.addProperty("App::PropertyBool", "element", "DisplacementSettings", "element").element = False
 
         # Define part settings
         # obj.addProperty("App::PropertyStringList","subPartLink","DisplacementSettings")
