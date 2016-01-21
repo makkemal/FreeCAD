@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -52,6 +52,12 @@ public:
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemConstraint";
     }
+    
+    //OvG: Allow automatic determination of scaling of constraint drawings, e.g. arrow length and size
+    int getDrawScaleFactor() const;
+    void setDrawScaleFactor(double lparam) const;
+    void setDrawScaleFactor(double lvparam, double luparam) const;
+    void defaultDrawScaleFactor() const;
 
 protected:
     virtual void onChanged(const App::Property* prop);
@@ -64,7 +70,10 @@ protected:
     Base::Vector3d getBasePoint(const Base::Vector3d& base, const Base::Vector3d& axis,
                                 const App::PropertyLinkSub &location, const double& dist);
     const Base::Vector3d getDirection(const App::PropertyLinkSub &direction);
-
+    
+private:
+    //OvG: Scaling factor for drawing
+    mutable int scaleFactor;
 };
 
 } //namespace Fem
