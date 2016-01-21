@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTFIXED_H
-#define FEM_CONSTRAINTFIXED_H
+#ifndef FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
+#define FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
 
 #include "FemConstraint.h"
 
@@ -37,11 +37,7 @@ public:
     /// Constructor
     ConstraintPrescribedDisplacement(void);
 
-    //// Read-only (calculated values). These trigger changes in the ViewProvider
-    //App::PropertyVectorList Points;
-    //App::PropertyVectorList Normals;
-
-    //Displacement settings
+    //Displacement parameters
     App::PropertyFloat xDisplacement; 
     App::PropertyFloat yDisplacement; 
     App::PropertyFloat zDisplacement; 
@@ -66,15 +62,11 @@ public:
     virtual App::DocumentObjectExecReturn *execute(void);
 
     /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const {
-        return "FemGui::ViewProviderFemConstraintPrescribedDisplacement";
-    }
+    const char* getViewProviderName(void) const;
 
-//protected:
-//    virtual void onChanged(const App::Property* prop);
 };
 
 } //namespace Fem
 
 
-#endif // FEM_CONSTRAINTFIXED_H
+#endif // FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
