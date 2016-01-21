@@ -24,28 +24,16 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-#include <gp_Pnt.hxx>
-#include <gp_Pln.hxx>
-#include <gp_Lin.hxx>
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
-#include <GCPnts_AbscissaPoint.hxx>
-#include <Adaptor3d_IsoCurve.hxx>
-#include <Adaptor3d_HSurface.hxx>
-#include <BRepAdaptor_HSurface.hxx>
-#include <GProp_GProps.hxx>
-#include <BRepGProp.hxx>
-#include <TopoDS_Vertex.hxx>
-#include <TopoDS.hxx>
-#include <BRepClass_FaceClassifier.hxx>
-#include <BRep_Tool.hxx>
 #include <Precision.hxx>
+#include <TopoDS.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Pln.hxx>
+#include <gp_Pnt.hxx>
 #endif
 
-#include "FemConstraintFixed.h"
-
-#include <Mod/Part/App/PartFeature.h>
-#include <Base/Console.h>
+#include "FemConstraintPrescribedDisplacement.h"
 
 using namespace Fem;
 
@@ -53,32 +41,25 @@ PROPERTY_SOURCE(Fem::ConstraintPrescribedDisplacement, Fem::Constraint);
 
 ConstraintPrescribedDisplacement::ConstraintPrescribedDisplacement()
 {
-    ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintPrescribedDisplacement",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
-                      "Points where symbols are drawn");
-    ADD_PROPERTY_TYPE(Normals,(Base::Vector3d()),"ConstraintPrescribedDisplacement",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
-                                                                             "Normals where symbols are drawn");
-    Points.setValues(std::vector<Base::Vector3d>());
-    Normals.setValues(std::vector<Base::Vector3d>());
-    
-    xDisplacement = 0.0; 
-    yDisplacement = 0.0; 
-    zDisplacement= 0.0; 
-    xRotation= 0.0;
-    yRotation= 0.0;
-    zRotation= 0.0;
-    xFree = true;
-    yFree = true;
-    zFree = true;
-    xFix = false;
-    yFix = false;
-    zFix = false;
-    rotxFree = true;
-    rotyFree = true;
-    rotzFree = true;
-    rotxFix = false;
-    rotyFix = false;
-    rotzFix = false;
-    element = false;
+    ADD_PROPERTY(xDisplacement,(0.0)); 
+    ADD_PROPERTY(yDisplacement,(0.0)); 
+    ADD_PROPERTY(zDisplacement,(0.0)); 
+    ADD_PROPERTY(xRotation,(0.0)); 
+    ADD_PROPERTY(yRotation,(0.0)); 
+    ADD_PROPERTY(zRotation,(0.0)); 
+    ADD_PROPERTY(xFree,(1)); 
+    ADD_PROPERTY(yFree,(1)); 
+    ADD_PROPERTY(zFree,(1)); 
+    ADD_PROPERTY(xFix,(0)); 
+    ADD_PROPERTY(yFix,(0)); 
+    ADD_PROPERTY(zFix,(0)); 
+    ADD_PROPERTY(rotxFree,(1)); 
+    ADD_PROPERTY(rotyFree,(1)); 
+    ADD_PROPERTY(rotzFree,(1)); 
+    ADD_PROPERTY(rotxFix,(0));
+    ADD_PROPERTY(rotyFix,(0));
+    ADD_PROPERTY(rotzFix,(0));
+    ADD_PROPERTY(element,(0));
 }
 
 App::DocumentObjectExecReturn *ConstraintPrescribedDisplacement::execute(void)
@@ -86,19 +67,7 @@ App::DocumentObjectExecReturn *ConstraintPrescribedDisplacement::execute(void)
     return Constraint::execute();
 }
 
-//void ConstraintPrescribedDisplacement::onChanged(const App::Property* prop)
-//{
-//    // Note: If we call this at the end, then the symbols are not oriented correctly initially
-//    // because the NormalDirection has not been calculated yet
-//    Constraint::onChanged(prop);
-//
-//    if (prop == &References) {
-//        std::vector<Base::Vector3d> points;
-//        std::vector<Base::Vector3d> normals;
-//        if (getPoints(points, normals)) {
-//            Points.setValues(points);
-//            Normals.setValues(normals);
-//            Points.touch(); // This triggers ViewProvider::updateData()
-//        }
-//    }
-//}
+const char* ConstraintPrescribedDisplacement::getViewProviderName(void) const
+{
+	return "FemGui::ViewProviderFemConstraintPrescribedDisplacement";
+}
