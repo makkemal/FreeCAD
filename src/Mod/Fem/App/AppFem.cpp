@@ -50,7 +50,7 @@
 #include "FemConstraintPressure.h"
 #include "FemConstraintGear.h"
 #include "FemConstraintPulley.h"
-//#include "FemConstraintPrescibedDisplacement.h" //OvG: Add Prescribed Displacement
+#include "FemConstraintPrescribedDisplacement.h" //OvG: Add Prescribed Displacement //ROlw Added
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
@@ -141,7 +141,8 @@ void AppFemExport initFem()
     Fem::ConstraintPressure         ::init();
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
-    //Fem::ConstraintPrescibedDispalcement   ::init(); //OvG: Add Prescibed Displacement
+    //Fem::ConstraintPrescribedDisplacement           ::init(); //OvG: Add Prescibed Displacement ROlw Added & Fixed spelling
+    Fem::ConstraintPrescribedDisplacement ::init();
 
     Fem::FemResultObject            ::init();
     Fem::FemResultObjectPython      ::init();
