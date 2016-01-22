@@ -44,6 +44,9 @@ public:
     App::PropertyLinkSubList References;
     // Read-only (calculated values). These trigger changes in the ViewProvider
     App::PropertyVector NormalDirection;
+    
+    //OvG: Scale
+    App::PropertyInteger Scale;
 
     /// recalculate the object
     virtual App::DocumentObjectExecReturn *execute(void);
@@ -54,10 +57,9 @@ public:
     }
     
     //OvG: Allow automatic determination of scaling of constraint drawings, e.g. arrow length and size
-    int getDrawScaleFactor() const;
-    void setDrawScaleFactor(double lparam) const;
-    void setDrawScaleFactor(double lvparam, double luparam) const;
-    void defaultDrawScaleFactor() const;
+    int calcDrawScaleFactor(double lparam) const;
+    int calcDrawScaleFactor(double lvparam, double luparam) const;
+    int calcDrawScaleFactor() const;
 
 protected:
     virtual void onChanged(const App::Property* prop);
@@ -65,15 +67,12 @@ protected:
 
 protected:
     /// Calculate the points where symbols should be drawn
-    const bool getPoints(std::vector<Base::Vector3d>& points, std::vector<Base::Vector3d>& normals) const;
+    const bool getPoints(std::vector<Base::Vector3d>& points, std::vector<Base::Vector3d>& normals, int * scale) const;
     const bool getCylinder(double& radius, double& height, Base::Vector3d& base, Base::Vector3d& axis) const;
     Base::Vector3d getBasePoint(const Base::Vector3d& base, const Base::Vector3d& axis,
                                 const App::PropertyLinkSub &location, const double& dist);
     const Base::Vector3d getDirection(const App::PropertyLinkSub &direction);
     
-private:
-    //OvG: Scaling factor for drawing
-    mutable int scaleFactor;
 };
 
 } //namespace Fem

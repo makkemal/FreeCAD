@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -70,8 +70,12 @@ void ConstraintForce::onChanged(const App::Property* prop)
     if (prop == &References) {
         std::vector<Base::Vector3d> points;
         std::vector<Base::Vector3d> normals;
-        if (getPoints(points, normals)) {
+        int scale = 1; //OvG: Enforce use of scale
+        if (getPoints(points, normals, &scale)) {
             Points.setValues(points); // We don't use the normals because all arrows should have the same direction
+            Points.touch();
+            Scale.setValue(scale); //OvG Scale
+            Scale.touch();
         }
     } else if (prop == &Direction) {
         Base::Vector3d direction = getDirection(Direction);
