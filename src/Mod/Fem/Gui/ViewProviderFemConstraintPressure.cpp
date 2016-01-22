@@ -89,9 +89,9 @@ bool ViewProviderFemConstraintPressure::setEdit(int ModNum)
     }
 }
 
-#define ARROWLENGTH (6*100)
+#define ARROWLENGTH (6)
 //5
-#define ARROWHEADRADIUS (2*100) 
+#define ARROWHEADRADIUS (2) 
 //3
 
 void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
@@ -99,19 +99,16 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintPressure* pcConstraint = static_cast<Fem::ConstraintPressure*>(this->getObject());
 
-    //OvG: always need access to cp
+    //OvG: always need access to cp for scaling
     SoMultipleCopy* cp = new SoMultipleCopy();
-    bool doAddChild = false;
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
-        /*SoMultipleCopy* */ cp = new SoMultipleCopy();
+        /*SoMultipleCopy**/  cp = new SoMultipleCopy();
         cp->matrix.setNum(0);
-        //OvG: First determine the number of points to establish arrow scaling
-        doAddChild = true;
-        //cp->addChild((SoNode*)createArrow(ARROWLENGTH, ARROWHEADRADIUS));
-        //pShapeSep->addChild(cp);
+        cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->Scale.getValue() , ARROWHEADRADIUS * pcConstraint->Scale.getValue()));
+        pShapeSep->addChild(cp);
     }
-
+    
     if (strcmp(prop->getName(),"Points") == 0) {
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
         const std::vector<Base::Vector3d>& normals = pcConstraint->Normals.getValues();
@@ -119,36 +116,18 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             return;
         }
         std::vector<Base::Vector3d>::const_iterator n = normals.begin();
-
-        //OvG: First determine the number of points to establish correct arrow scaling
-        if(true == doAddChild)
-        {
-            cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->getDrawScaleFactor(), ARROWHEADRADIUS * pcConstraint->getDrawScaleFactor()));
-            pShapeSep->addChild(cp);
-        }
         
-        //OvG: Test less arrows based on count.
-        #define MAXARROWS 3000
-        /*int incrementer = 1;
-        if(points.size()>3000)
-        {    
-            incrementer = points.size()/500;
-        }*/
-        //End Ovg:Test less arrows based on count
-        
-        SoMultipleCopy* cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
-        cp->matrix.setNum(points.size()); ///incrementer OvG: less arrows
+        /*SoMultipleCopy* */ cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0)); //OvG: Use top cp
+        cp->matrix.setNum(points.size());
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
 
-        
-        
-        for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); /*OvG: less arrows p+=incrementer*/ p++) {
+        for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
             SbVec3f dir(n->x, n->y, n->z);
             double rev;
             if (pcConstraint->Reversed.getValue()) {
-                base = base + dir * ARROWLENGTH * pcConstraint->getDrawScaleFactor(); //OvG: Adapt arrow size on according to precalculated scaleFactor
+                base = base + dir * ARROWLENGTH * pcConstraint->Scale.getValue(); //OvG: Scaling
                 rev = 1;
             } else {
                 rev = -1;
@@ -158,7 +137,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             m.setTransform(base, rot, SbVec3f(1,1,1));
             matrices[idx] = m;
             idx++;
-            /*OvG: less arrows n+=incrementer*/ n++;
+            n++;
         }
         cp->matrix.finishEditing();
     }

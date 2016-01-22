@@ -72,7 +72,7 @@ Constraint::Constraint()
 {
     ADD_PROPERTY_TYPE(References,(0,0),"Constraint",(App::PropertyType)(App::Prop_None),"Elements where the constraint is applied");
     ADD_PROPERTY_TYPE(NormalDirection,(Base::Vector3d(0,0,1)),"Constraint",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),"Normal direction pointing outside of solid");
-    defaultDrawScaleFactor(); //OvG: Initialise default scaling (1);
+    ADD_PROPERTY_TYPE(Scale,(1),"Base",App::PropertyType(App::Prop_Output),"Scale used for drawing constraints");
 }
 
 Constraint::~Constraint()
@@ -86,34 +86,25 @@ App::DocumentObjectExecReturn *Constraint::execute(void)
 }
 
 //OvG: Provide the ability to determine how big to draw constraint arrows etc.
-int Constraint::getDrawScaleFactor() const
+int Constraint::calcDrawScaleFactor(double lparam) const
 {
-    return this->scaleFactor;
+    return ((int)round(log(lparam)*log(lparam)*log(lparam)/10)>1)?((int)round(log(lparam)*log(lparam)*log(lparam)/10)):1;
 }
 
-void Constraint::setDrawScaleFactor(double lparam) const
+int Constraint::calcDrawScaleFactor(double lvparam, double luparam) const
 {
-    this->scaleFactor =  (int)round(log10(lparam)*log10(lparam)*log10(lparam));
-    if(this->scaleFactor<=1)
-    {
-         this->scaleFactor = 1;
-    }
+    return calcDrawScaleFactor((lvparam+luparam)/2.0);
 }
 
-void Constraint::setDrawScaleFactor(double lvparam, double luparam) const
+int Constraint::calcDrawScaleFactor() const
 {
-    setDrawScaleFactor((lvparam+luparam)/2.0);
-}
-
-void Constraint::defaultDrawScaleFactor() const
-{
-    this->scaleFactor = 1;
+    return 1;
 }
 
 void Constraint::onChanged(const App::Property* prop)
 {
-    //Base::Console().Error("Constraint::onChanged() %s\n", prop->getName());
-    if (prop == &References) {
+    //Base::Console().Error("Constraint::onChanged() %s\n", prop->getName()); //OvG: Uncommented
+    if (prop == &References || prop == &Scale) {
         // If References are changed, recalculate the normal direction. If no useful reference is found,
         // use z axis or previous value. If several faces are selected, only the first one is used
         std::vector<App::DocumentObject*> Objects = References.getValues();
@@ -155,14 +146,15 @@ void Constraint::onDocumentRestored()
 {
     // This seems to be the only way to make the ViewProvider display the constraint
     References.touch();
+    Scale.touch();
     App::DocumentObject::onDocumentRestored();
 }
 
-const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vector<Base::Vector3d> &normals) const
+const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vector<Base::Vector3d> &normals, int * scale) const
 {
     std::vector<App::DocumentObject*> Objects = References.getValues();
     std::vector<std::string> SubElements = References.getSubValues();
-
+    Base::Console().Error("Scale at start of get points %d\n", *scale); //OvG: Uncommented
     // Extract geometry from References
     TopoDS_Shape sh;
 
@@ -179,7 +171,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             gp_Pnt p = BRep_Tool::Pnt(vertex);
             points.push_back(Base::Vector3d(p.X(), p.Y(), p.Z()));
             normals.push_back(NormalDirection.getValue());
-            this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+            *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
         } else if (sh.ShapeType() == TopAbs_EDGE) {
             BRepAdaptor_Curve curve(TopoDS::Edge(sh));
             double fp = curve.FirstParameter();
@@ -191,18 +183,19 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             int steps;
             if (l >= 100) //OvG: Increase 10 units distance proportionately to l for larger objects.
             {
-                steps = (int)round(l / (10*log10(l)*log10(l)*log10(l)));
-                this->setDrawScaleFactor(l); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(l); //OvG: setup draw scale for constraint
+                steps = (int)round(l / (10*( *scale)));
+                steps = steps<3?3:steps;
             }
             else if (l >= 20)
             {
                 steps = (int)round(l / 10);
-                this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             else
             {
                 steps = 1;
-                 this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             double step = (lp - fp) / steps;
             for (int i = 0; i < steps + 1; i++) {
@@ -237,34 +230,36 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             int stepsv;
             if (lv >= 100) //OvG: Increase 10 units distance proportionately to lv for larger objects.
             {
-                stepsv = (int)round(lv / (10*log10(lv)*log10(lv)*log10(lv)));
-                this->setDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
+                stepsv = (int)round(lv / (10*( *scale)));
+                stepsv = stepsv<3?3:stepsv;
             }
             else if (lv >= 20.0)
             {
                 stepsv = (int)round(lv / 10);
-                this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             else
             {
                 stepsv = 2; // Minimum of three arrows to ensure (as much as possible) that at least one is displayed
-                this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             int stepsu;
             if (lu >= 100) //OvG: Increase 10 units distance proportionately to lu for larger objects.
             {
-                stepsu = (int)round(lu / (10*log10(lu)*log10(lu)*log10(lu)));
-                this->setDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
+                stepsu = (int)round(lu / (10*( *scale)));
+                stepsu = stepsu<3?3:stepsu;
             }
             else if (lu >= 20.0)
             {
                 stepsu = (int)round(lu / 10);
-                this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             else
             {
                 stepsu = 2;
-                this->defaultDrawScaleFactor(); //OvG: setup draw scale for constraint
+                *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
             double stepv = (vlp - vfp) / stepsv;
             double stepu = (ulp - ufp) / stepsu;
@@ -285,7 +280,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             }
         }
     }
-
+    Base::Console().Error("Scale at end of get points %d\n", *scale); //OvG: Uncommented
     return true;
 }
 
