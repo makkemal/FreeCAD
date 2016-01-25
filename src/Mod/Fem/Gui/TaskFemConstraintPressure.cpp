@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Based on Force constraint by Jan Rheinl채nder                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -251,8 +251,18 @@ bool TaskDlgFemConstraintPressure::accept()
     const TaskFemConstraintPressure* parameterPressure = static_cast<const TaskFemConstraintPressure*>(parameter);
 
     try {
-        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Pressure = %f",
+        
+         if (parameterPressure->getPressure()<=0)
+        {
+          QMessageBox::warning(parameter, tr("Input error"), tr("Please specify a pressure greater than 0"));  
+            return false;
+        }
+        else
+        {
+            Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Pressure = %f",
             name.c_str(), parameterPressure->getPressure());
+            
+        }
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Reversed = %s",
             name.c_str(), parameterPressure->getReverse() ? "True" : "False");
     }

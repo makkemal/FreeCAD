@@ -268,7 +268,45 @@ def calculate_von_mises(i):
     vm_stress = sqrt(0.5 * (s11s22 + s22s33 + s33s11 + s12s23s31))
     return vm_stress
 
+#extra calculations
+def calculate_principal_stress_1(i):
+    sigma = numpy.array([[i[0],i[3],i[4]],
+                         [i[3],i[1],i[5]],
+                         [i[4],i[5],i[2]]])
 
+    # compute principal stresses
+    eigvals = list(numpy.linalg.eigvalsh(sigma))
+    eigvals.sort()
+    eigvals.reverse()
+    return eigvals[0]
+    
+def calculate_principal_stress_3(i):
+    sigma = numpy.array([[i[0],i[3],i[4]],
+                         [i[3],i[1],i[5]],
+                         [i[4],i[5],i[2]]])
+
+    # compute principal stresses
+    eigvals = list(numpy.linalg.eigvalsh(sigma))
+    eigvals.sort()
+    eigvals.reverse()
+    return eigvals[2]
+    
+    
+def calculate_shear_stress(i):
+    sigma = numpy.array([[i[0],i[3],i[4]],
+                         [i[3],i[1],i[5]],
+                         [i[4],i[5],i[2]]])
+
+
+    # compute principal stresses
+    eigvals = list(numpy.linalg.eigvalsh(sigma))
+    eigvals.sort()
+    eigvals.reverse()
+    # compute max shear stress
+    maxshear = (max(eigvals)-min(eigvals))/2.0
+
+    return maxshear
+    
 def importFrd(filename, analysis=None):
     m = readResult(filename)
     mesh_object = None

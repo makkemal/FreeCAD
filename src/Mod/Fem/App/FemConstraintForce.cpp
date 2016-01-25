@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -34,7 +34,7 @@
 #endif
 
 #include "FemConstraintForce.h"
-
+# include <QMessageBox>//here
 #include <Mod/Part/App/PartFeature.h>
 #include <Base/Console.h>
 
@@ -53,6 +53,7 @@ ConstraintForce::ConstraintForce()
     ADD_PROPERTY_TYPE(DirectionVector,(Base::Vector3d(0,0,1)),"ConstraintForce",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                       "Direction of arrows");
     naturalDirectionVector = Base::Vector3d(0,0,0); // by default use the null vector to indication an invalid value
+ 
     Points.setValues(std::vector<Base::Vector3d>());
 }
 
@@ -76,6 +77,7 @@ void ConstraintForce::onChanged(const App::Property* prop)
             Scale.setValue(scale); //OvG Scale
             Points.touch();
         }
+        
     } else if (prop == &Direction) {
         Base::Vector3d direction = getDirection(Direction);
         if (direction.Length() < Precision::Confusion())
@@ -106,4 +108,5 @@ void ConstraintForce::onChanged(const App::Property* prop)
             naturalDirectionVector = direction;
         }
     }
+  
 }
