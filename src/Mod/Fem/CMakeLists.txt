@@ -28,6 +28,8 @@ INSTALL(
 
         _CommandMechanicalShowResult.py
         _TaskPanelResultControl.py
+	_CommandResultColourbar.py
+
         TaskPanelShowDisplacement.ui
 
         _FemAnalysis.py
