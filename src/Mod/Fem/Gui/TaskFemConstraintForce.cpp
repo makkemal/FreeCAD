@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender@users.sourceforge.net>        *
+ *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender@users.sourceforge.net>        *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -77,14 +77,17 @@ TaskFemConstraintForce::TaskFemConstraintForce(ViewProviderFemConstraintForce *C
                     this, SLOT(onReferenceDeleted()));
     ui->listReferences->addAction(action);
     ui->listReferences->setContextMenuPolicy(Qt::ActionsContextMenu);
-
-    connect(ui->spinForce, SIGNAL(valueChanged(double)),
-            this, SLOT(onForceChanged(double)));
-    connect(ui->buttonReference, SIGNAL(pressed()),
+    
+     
+    
+  
+        connect(ui->spinForce, SIGNAL(valueChanged(double)), this, SLOT(onForceChanged(double)));
+                
+        connect(ui->buttonReference, SIGNAL(pressed()),
             this, SLOT(onButtonReference()));
-    connect(ui->buttonDirection, SIGNAL(pressed()),
+        connect(ui->buttonDirection, SIGNAL(pressed()),
             this, SLOT(onButtonDirection()));
-    connect(ui->checkReverse, SIGNAL(toggled(bool)),
+        connect(ui->checkReverse, SIGNAL(toggled(bool)),
             this, SLOT(onCheckReverse(bool)));
 
     this->groupLayout()->addWidget(proxy);
@@ -98,7 +101,9 @@ TaskFemConstraintForce::TaskFemConstraintForce(ViewProviderFemConstraintForce *C
 
     // Get the feature data
     Fem::ConstraintForce* pcConstraint = static_cast<Fem::ConstraintForce*>(ConstraintView->getObject());
-    double f = pcConstraint->Force.getValue();
+        double f = pcConstraint->Force.getValue();
+    
+        
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     std::vector<std::string> dirStrings = pcConstraint->Direction.getSubValues();
@@ -106,11 +111,12 @@ TaskFemConstraintForce::TaskFemConstraintForce(ViewProviderFemConstraintForce *C
     if (!dirStrings.empty())
         dir = makeRefText(pcConstraint->Direction.getValue(), dirStrings.front());
     bool reversed = pcConstraint->Reversed.getValue();
-
+    
     // Fill data into dialog elements
     ui->spinForce->setMinimum(0);
     ui->spinForce->setMaximum(FLOAT_MAX);
-    ui->spinForce->setValue(f);
+   
+        ui->spinForce->setValue(f);
     ui->listReferences->clear();
     for (std::size_t i = 0; i < Objects.size(); i++)
         ui->listReferences->addItem(makeRefText(Objects[i], SubElements[i]));
@@ -124,7 +130,7 @@ TaskFemConstraintForce::TaskFemConstraintForce(ViewProviderFemConstraintForce *C
     ui->buttonReference->blockSignals(false);
     ui->buttonDirection->blockSignals(false);
     ui->checkReverse->blockSignals(false);
-
+   
     updateUI();
 }
 
@@ -220,6 +226,7 @@ void TaskFemConstraintForce::onSelectionChanged(const Gui::SelectionChanges& msg
                     return;
                 }
             }
+ 
             else {
                 QMessageBox::warning(this, tr("Selection error"), tr("Only faces and edges can be picked"));
                 return;
@@ -239,7 +246,8 @@ void TaskFemConstraintForce::onSelectionChanged(const Gui::SelectionChanges& msg
 void TaskFemConstraintForce::onForceChanged(double f)
 {
     Fem::ConstraintForce* pcConstraint = static_cast<Fem::ConstraintForce*>(ConstraintView->getObject());
-    pcConstraint->Force.setValue(f);
+    pcConstraint->Force.setValue(f); 
+
 }
 
 void TaskFemConstraintForce::onReferenceDeleted() {
@@ -256,6 +264,7 @@ void TaskFemConstraintForce::onButtonDirection(const bool pressed) {
         selectionMode = selnone;
     }
     ui->buttonDirection->setChecked(pressed);
+    
     Gui::Selection().clearSelection();
 }
 
@@ -267,7 +276,7 @@ void TaskFemConstraintForce::onCheckReverse(const bool pressed)
 
 double TaskFemConstraintForce::getForce(void) const
 {
-    return ui->spinForce->value();
+        return ui->spinForce->value();
 }
 
 const std::string TaskFemConstraintForce::getReferences() const
@@ -349,11 +358,21 @@ bool TaskDlgFemConstraintForce::accept()
 {
     std::string name = ConstraintView->getObject()->getNameInDocument();
     const TaskFemConstraintForce* parameterForce = static_cast<const TaskFemConstraintForce*>(parameter);
-
+ 
+       
     try {
         //Gui::Command::openCommand("FEM force constraint changed");
-        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Force = %f",name.c_str(), parameterForce->getForce());
-
+                   
+        if (parameterForce->getForce()<=0)
+        {
+          QMessageBox::warning(parameter, tr("Input error"), tr("Please specify a force greater than 0"));  
+            return false;
+        }
+        else
+        {
+            Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Force = %f",name.c_str(), parameterForce->getForce());
+            
+        }
         std::string dirname = parameterForce->getDirectionName().data();
         std::string dirobj = parameterForce->getDirectionObject().data();
 
@@ -372,8 +391,8 @@ bool TaskDlgFemConstraintForce::accept()
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));
         return false;
     }
-
-    return TaskDlgFemConstraint::accept();
+    
+        return TaskDlgFemConstraint::accept();
 }
 
 bool TaskDlgFemConstraintForce::reject()

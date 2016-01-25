@@ -62,6 +62,29 @@
             </property>
            </widget>
           </item>
+          
+          <item row="0" column="2">
+           <widget class="QRadioButton" name="rb_P1">
+            <property name="text">
+             <string>P1</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QRadioButton" name="rb_P3">
+            <property name="text">
+             <string>P2</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2">
+           <widget class="QRadioButton" name="rb_max_shear">
+            <property name="text">
+             <string>Max shear</string>
+            </property>
+           </widget>
+          </item>
+          
           <item row="0" column="1">
            <widget class="QRadioButton" name="rb_abs_displacement">
             <property name="text">

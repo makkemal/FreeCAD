@@ -48,6 +48,11 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_z_displacement, QtCore.SIGNAL("toggled(bool)"), self.z_displacement_selected)
         QtCore.QObject.connect(self.form.rb_abs_displacement, QtCore.SIGNAL("toggled(bool)"), self.abs_displacement_selected)
         QtCore.QObject.connect(self.form.rb_vm_stress, QtCore.SIGNAL("toggled(bool)"), self.vm_stress_selected)
+        #extra functions
+        QtCore.QObject.connect(self.form.rb_max_shear, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected) #max shear stress signal
+        QtCore.QObject.connect(self.form.rb_P1, QtCore.SIGNAL("toggled(bool)"), self.P1_selected)
+        QtCore.QObject.connect(self.form.rb_P1, QtCore.SIGNAL("toggled(bool)"), self.P3_selected)
+
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
         QtCore.QObject.connect(self.form.hsb_displacement_factor, QtCore.SIGNAL("valueChanged(int)"), self.hsb_disp_factor_changed)
@@ -78,7 +83,19 @@ class _TaskPanelResultControl:
             elif rt == "Sabs":
                 self.form.rb_vm_stress.setChecked(True)
                 self.vm_stress_selected(True)
-
+                
+        #iextra functions
+            elif rt == "mShear": 
+                self.form.rb_max_shear.setChecked(True)
+                self.rb_max_shear(True)
+            elif rt== "Prin1":
+                self.form.rb_P1.setChecked(True)
+                self.rb_max_shear(True)
+            elif rt== "Prin3":
+                self.form.rb_P3.setChecked(True)
+                self.form.rb_P3.setChecked(True)
+                self.rb_max_shear(True)
+            
             sd = FreeCAD.FEM_dialog["show_disp"]
             self.form.cb_show_displacement.setChecked(sd)
             self.show_displacement(sd)
@@ -140,6 +157,23 @@ class _TaskPanelResultControl:
         (minm, avg, maxm) = self.get_result_stats("Sabs")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
+        
+#extra functions
+    def max_shear_selected(self, state):
+        FreeCAD.FEM_dialog["results_type"] = "mShear"
+        
+#        QApplication.setOverrideCursor(Qt.WaitCursor)
+#        if self.suitable_results:
+#            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.StressValues)
+#        (minm, avg, maxm) = self.get_result_stats("mShear")
+#        self.set_result_stats("MPa", minm, avg, maxm)
+#        QtGui.qApp.restoreOverrideCursor()
+
+    def P1_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin1"
+    def P3_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin3"
+
 
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
