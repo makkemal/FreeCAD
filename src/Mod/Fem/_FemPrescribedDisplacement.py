@@ -45,6 +45,7 @@ class _FemPrescribedDisplacement:
 #        obj.addProperty("App::PropertyLink", "Object", "DisplacementSettings")
 #        obj.addProperty("App::PropertyStringList", "partNameList", "DisplacementSettings")
         
+        
 
         # Define variables used
 #        obj.addProperty("App::PropertyFloat", "xDisplacement", "DisplacementSettings",

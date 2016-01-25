@@ -56,7 +56,7 @@ class _TaskPanelResultControl:
 
         self.update()
         self.restore_result_dialog()
-
+        
     def restore_result_dialog(self):
         try:
             rt = FreeCAD.FEM_dialog["results_type"]
@@ -89,6 +89,7 @@ class _TaskPanelResultControl:
             self.form.hsb_displacement_factor.setValue(df)
             self.form.sb_displacement_factor_max.setValue(dfm)
             self.form.sb_displacement_factor.setValue(df)
+            
         except:
             FreeCAD.FEM_dialog = {"results_type": "None", "show_disp": False,
                                   "disp_factor": 0, "disp_factor_max": 100}
@@ -119,6 +120,11 @@ class _TaskPanelResultControl:
     def abs_displacement_selected(self, state):
         FreeCAD.FEM_dialog["results_type"] = "Uabs"
         self.select_displacement_type("Uabs")
+        try:
+            mw.removeDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # remove color bar if exists 
+        finally:
+            self.plotlegend(self.result_object.DisplacementLength)
+        
 
     def x_displacement_selected(self, state):
         FreeCAD.FEM_dialog["results_type"] = "U1"
@@ -140,7 +146,7 @@ class _TaskPanelResultControl:
         (minm, avg, maxm) = self.get_result_stats("Sabs")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
-
+        
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if disp_type == "Uabs":
@@ -220,6 +226,15 @@ class _TaskPanelResultControl:
 
     def reject(self):
         FreeCADGui.Control.closeDialog()
+        
+ 
+    def plotlegend(self, value):   
+        from  _CommandResultColourbar import ColorMap
+        FreeCAD.Console.PrintMessage("Plotlegend called \n")
+        mw = FreeCADGui.getMainWindow()  # access the main window 
+        ColorMapWidget = QtGui.QDockWidget() # create a new dockwidget
+        ColorMapWidget.setWidget(ColorMap(value)) # load the Ui script
+        mw.addDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # add the widget to the main window
 
 
 #It's code duplication that should be removes wher we migrate to FemTools.py
