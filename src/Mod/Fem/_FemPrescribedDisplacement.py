@@ -42,6 +42,7 @@ class _FemPrescribedDisplacement:
         #obj = FreeCAD.ActiveDocument.addObject("Fem::FemSolverObjectPython", "FemConstraintDisplacement") 
         obj = FreeCAD.ActiveDocument.addObject("Fem::ConstraintPrescribedDisplacement", "FemConstraintDisplacement")
         
+        
 #        obj.addProperty("App::PropertyLink", "Object", "DisplacementSettings")
 #        obj.addProperty("App::PropertyStringList", "partNameList", "DisplacementSettings")
         

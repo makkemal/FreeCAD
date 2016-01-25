@@ -59,7 +59,7 @@ class _CommandFemPrescribedDisplacement:
         #FreeCAD.Console.PrintMessage(str(selection[0].SubElementNames) + " ")
         #FreeCAD.Console.PrintMessage(str(len(selection)) + " \n")
         
-        #get list of analysis memebers
+        #get list of analysis members
         members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
 
         for member in members:
