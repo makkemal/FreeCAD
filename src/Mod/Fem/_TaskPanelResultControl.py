@@ -181,6 +181,23 @@ class _TaskPanelResultControl:
         FreeCAD.FEM_dialog["results_type"] = "Prin3"
 
         
+#extra functions
+    def max_shear_selected(self, state):
+        FreeCAD.FEM_dialog["results_type"] = "mShear"
+        
+#        QApplication.setOverrideCursor(Qt.WaitCursor)
+#        if self.suitable_results:
+#            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.StressValues)
+#        (minm, avg, maxm) = self.get_result_stats("mShear")
+#        self.set_result_stats("MPa", minm, avg, maxm)
+#        QtGui.qApp.restoreOverrideCursor()
+
+    def P1_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin1"
+    def P3_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin3"
+
+        
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if disp_type == "Uabs":
