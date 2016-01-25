@@ -73,9 +73,8 @@ void ConstraintForce::onChanged(const App::Property* prop)
         int scale = 1; //OvG: Enforce use of scale
         if (getPoints(points, normals, &scale)) {
             Points.setValues(points); // We don't use the normals because all arrows should have the same direction
-            Points.touch();
             Scale.setValue(scale); //OvG Scale
-            Scale.touch();
+            Points.touch();
         }
     } else if (prop == &Direction) {
         Base::Vector3d direction = getDirection(Direction);
