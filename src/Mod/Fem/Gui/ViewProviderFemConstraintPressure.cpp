@@ -91,23 +91,26 @@ bool ViewProviderFemConstraintPressure::setEdit(int ModNum)
 
 #define ARROWLENGTH (6)
 //5
-#define ARROWHEADRADIUS (2) 
+#define ARROWHEADRADIUS (ARROWLENGTH/3) 
 //3
+//#define USE_MULTIPLE_COPY //OvG: MULTICOPY fails to updated scaled arrows on initial drawing - so disable
 
 void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
 {
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintPressure* pcConstraint = static_cast<Fem::ConstraintPressure*>(this->getObject());
 
+#ifdef USE_MULTIPLE_COPY
     //OvG: always need access to cp for scaling
     SoMultipleCopy* cp = new SoMultipleCopy();
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
-        /*SoMultipleCopy**/  cp = new SoMultipleCopy();
+        cp = new SoMultipleCopy();
         cp->matrix.setNum(0);
-        cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->Scale.getValue() , ARROWHEADRADIUS * pcConstraint->Scale.getValue()));
+        cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->Scale.getValue() , ARROWHEADRADIUS * pcConstraint->Scale.getValue())); //OvG: Scaling
         pShapeSep->addChild(cp);
     }
+#endif
     
     if (strcmp(prop->getName(),"Points") == 0) {
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
@@ -116,11 +119,16 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             return;
         }
         std::vector<Base::Vector3d>::const_iterator n = normals.begin();
-        
-        /*SoMultipleCopy* */ cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0)); //OvG: Use top cp
+ 
+ #ifdef USE_MULTIPLE_COPY      
+        cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0)); //OvG: Use top cp
         cp->matrix.setNum(points.size());
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
+#else
+        // Redraw all arrows
+        pShapeSep->removeAllChildren();
+#endif
 
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
@@ -133,13 +141,22 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
                 rev = -1;
             }
             SbRotation rot(SbVec3f(0, rev, 0), dir);
+#ifdef USE_MULTIPLE_COPY
             SbMatrix m;
             m.setTransform(base, rot, SbVec3f(1,1,1));
             matrices[idx] = m;
             idx++;
+#else
+            SoSeparator* sep = new SoSeparator();
+            createPlacement(sep, base, rot);
+            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue());
+            pShapeSep->addChild(sep);
+#endif
             n++;
         }
+#ifdef USE_MULTIPLE_COPY
         cp->matrix.finishEditing();
+#endif
     }
 
     ViewProviderFemConstraint::updateData(prop);
