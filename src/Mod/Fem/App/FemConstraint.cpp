@@ -82,6 +82,7 @@ Constraint::~Constraint()
 App::DocumentObjectExecReturn *Constraint::execute(void)
 {
     References.touch();
+    Scale.touch();
     return StdReturn;
 }
 
@@ -103,8 +104,7 @@ int Constraint::calcDrawScaleFactor() const
 
 void Constraint::onChanged(const App::Property* prop)
 {
-    //Base::Console().Error("Constraint::onChanged() %s\n", prop->getName()); //OvG: Uncommented
-    if (prop == &References || prop == &Scale) {
+    if (prop == &References) {
         // If References are changed, recalculate the normal direction. If no useful reference is found,
         // use z axis or previous value. If several faces are selected, only the first one is used
         std::vector<App::DocumentObject*> Objects = References.getValues();
@@ -130,7 +130,7 @@ void Constraint::onChanged(const App::Property* prop)
                     props.Bounds(u1,u2,v1,v2);
                     props.Normal((u1+u2)/2.0,(v1+v2)/2.0,center,normal);
                     normal.Normalize();
-                    NormalDirection.setValue(normal.X(), normal.Y(), normal.Z());
+                    NormalDirection.setValue(normal.X(), normal.Y(), normal.Z());                   
                     // One face is enough...
                     App::DocumentObject::onChanged(prop);
                     return;
@@ -146,7 +146,6 @@ void Constraint::onDocumentRestored()
 {
     // This seems to be the only way to make the ViewProvider display the constraint
     References.touch();
-    Scale.touch();
     App::DocumentObject::onDocumentRestored();
 }
 
@@ -154,7 +153,6 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
 {
     std::vector<App::DocumentObject*> Objects = References.getValues();
     std::vector<std::string> SubElements = References.getSubValues();
-    Base::Console().Error("Scale at start of get points %d\n", *scale); //OvG: Uncommented
     // Extract geometry from References
     TopoDS_Shape sh;
 
@@ -280,7 +278,6 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             }
         }
     }
-    Base::Console().Error("Scale at end of get points %d\n", *scale); //OvG: Uncommented
     return true;
 }
 

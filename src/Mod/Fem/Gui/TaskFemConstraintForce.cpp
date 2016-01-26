@@ -358,7 +358,7 @@ bool TaskDlgFemConstraintForce::accept()
 {
     std::string name = ConstraintView->getObject()->getNameInDocument();
     const TaskFemConstraintForce* parameterForce = static_cast<const TaskFemConstraintForce*>(parameter);
- 
+	//bool success = TaskDlgFemConstraint::accept(); //OvG: call base first.
        
     try {
         //Gui::Command::openCommand("FEM force constraint changed");
@@ -371,10 +371,10 @@ bool TaskDlgFemConstraintForce::accept()
         else
         {
             Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Force = %f",name.c_str(), parameterForce->getForce());
-            
         }
         std::string dirname = parameterForce->getDirectionName().data();
         std::string dirobj = parameterForce->getDirectionObject().data();
+        std::string scale = "1";
 
         if (!dirname.empty()) {
             QString buf = QString::fromUtf8("(App.ActiveDocument.%1,[\"%2\"])");
@@ -386,13 +386,17 @@ bool TaskDlgFemConstraintForce::accept()
         }
 
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Reversed = %s", name.c_str(), parameterForce->getReverse() ? "True" : "False");
+        
+        scale = parameterForce->getScale();  //OvG: determine modified scale
+        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Scale = %s",
+			name.c_str(), scale.c_str()); //OvG: implement modified scale
     }
     catch (const Base::Exception& e) {
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));
         return false;
     }
     
-        return TaskDlgFemConstraint::accept();
+    return TaskDlgFemConstraint::accept();
 }
 
 bool TaskDlgFemConstraintForce::reject()
