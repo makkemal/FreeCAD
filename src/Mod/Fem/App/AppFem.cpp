@@ -139,7 +139,6 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPressure         ::init();
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
-    //Fem::ConstraintPrescribedDisplacement           ::init(); //OvG: Add Prescibed Displacement ROlw Added & Fixed spelling
     Fem::ConstraintPrescribedDisplacement ::init();
 
     Fem::FemResultObject            ::init();

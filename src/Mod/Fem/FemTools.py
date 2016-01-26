@@ -214,10 +214,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 PressureObjectDict = {}
                 PressureObjectDict['Object'] = m
                 self.pressure_constraints.append(PressureObjectDict)
-            elif m.isDerivedFrom('Part::FeaturePython'):
-                content = m.Content
-                if "DisplacementSettings" in m.Content:
-                   self.prescribed_displacements.append(m) #OvG: Stick to naming convention
+#            elif m.isDerivedFrom('Part::FeaturePython'):
+#                content = m.Content
+#                if "DisplacementSettings" in m.Content:
+#                   self.prescribed_displacements.append(m) #OvG: Stick to naming convention
             elif m.isDerivedFrom("Fem::ConstraintPrescribedDisplacement"): #OvG: Replacement reference to C++ implementation of Prescribed Displacement
                 prescribed_displacement_constraint_dict = {}
                 prescribed_displacement_constraint_dict['Object'] = m

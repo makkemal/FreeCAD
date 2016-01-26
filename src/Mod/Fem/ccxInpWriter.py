@@ -37,7 +37,7 @@ class inp_writer:
     def __init__(self, analysis_obj, mesh_obj, mat_obj,
                  fixed_obj,
                  force_obj, pressure_obj,
-                 prescribedDispObj,
+                 prescribed_displacement_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -48,7 +48,7 @@ class inp_writer:
         self.fixed_objects = fixed_obj
         self.force_objects = force_obj
         self.pressure_objects = pressure_obj
-        self.prescribed_displacement = prescribedDispObj
+        self.prescribed_displacement_objects = prescribed_displacement_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
