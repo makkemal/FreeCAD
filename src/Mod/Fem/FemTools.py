@@ -184,7 +184,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         self.shell_thicknesses = []
         ## @var prescribed_displacements
         # set of prescribed displacements for the analysis. Updated with update_objects
-        # Individual shell thicknesses are Proxy.Type "FemConstraintPrescibedDisplacement"
+        # Individual displacements are Proxy.Type "FemConstraintPrescibedDisplacement"
         self.prescribed_displacements = []
 
         for m in self.analysis.Member:

@@ -516,7 +516,6 @@ void CmdFemConstraintPrescribedDisplacement::activated(int iMsg)
 
     openCommand("Make FEM constraint prescribed displacement on face");
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintPrescribedDisplacement\",\"%s\")",FeatName.c_str());
-    //doCommand(Doc,"App.activeDocument().%s.Pressure = 0.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
     updateActive();

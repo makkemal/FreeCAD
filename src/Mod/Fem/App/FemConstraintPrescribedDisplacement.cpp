@@ -59,7 +59,6 @@ ConstraintPrescribedDisplacement::ConstraintPrescribedDisplacement()
     ADD_PROPERTY(rotxFix,(0));
     ADD_PROPERTY(rotyFix,(0));
     ADD_PROPERTY(rotzFix,(0));
-    ADD_PROPERTY(element,(0));
 }
 
 App::DocumentObjectExecReturn *ConstraintPrescribedDisplacement::execute(void)

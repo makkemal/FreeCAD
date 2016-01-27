@@ -42,14 +42,46 @@ class TaskFemConstraintPrescribedDisplacement : public TaskFemConstraint
 public:
     TaskFemConstraintPrescribedDisplacement(ViewProviderFemConstraintPrescribedDisplacement *ConstraintView,QWidget *parent = 0);
     virtual ~TaskFemConstraintPrescribedDisplacement();
-    //double getPressure(void) const;
     virtual const std::string getReferences() const;
-    //bool getReverse(void) const;
+    double get_spinxDisplacement()const;
+    double get_spinyDisplacement()const;
+    double get_spinzDisplacement()const;
+    double get_rotxv()const;
+    double get_rotyv()const;
+    double get_rotzv()const;
+    bool get_dispxfix()const;
+    bool get_dispxfree()const;
+    bool get_dispyfix()const;
+    bool get_dispyfree()const;
+    bool get_dispzfix()const;
+    bool get_dispzfree()const;
+    bool get_rotxfix()const;
+    bool get_rotxfree()const;
+    bool get_rotyfix()const;
+    bool get_rotyfree()const;
+    bool get_rotzfix()const;
+    bool get_rotzfree()const;
 
 private Q_SLOTS:
     void onReferenceDeleted(void);
-    //void onPressureChanged(const Base::Quantity & f);
-    //void onCheckReverse(bool);
+    void x_changed(double);
+    void y_changed(double); 
+    void z_changed(double);
+    void x_rot(double);
+    void y_rot(double);
+    void z_rot(double);
+    void fixx(int);
+    void freex(int);
+    void fixy(int);
+    void freey(int);
+    void fixz(int);
+    void freez(int);
+    void rotfixx(int);
+    void rotfreex(int);
+    void rotfixy(int);
+    void rotfreey(int);
+    void rotfixz(int);
+    void rotfreez(int);
 
 protected:
     virtual void changeEvent(QEvent *e);
@@ -58,6 +90,8 @@ private:
     virtual void onSelectionChanged(const Gui::SelectionChanges& msg);
     void updateUI();
     Ui_TaskFemConstraintPrescribedDisplacement* ui;
+
+    
 };
 
 class TaskDlgFemConstraintPrescribedDisplacement : public TaskDlgFemConstraint

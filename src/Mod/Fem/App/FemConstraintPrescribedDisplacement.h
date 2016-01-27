@@ -56,7 +56,7 @@ public:
     App::PropertyBool rotxFix;
     App::PropertyBool rotyFix;
     App::PropertyBool rotzFix;
-    App::PropertyBool element;
+    //App::PropertyBool element;
 
     /// recalculate the object
     virtual App::DocumentObjectExecReturn *execute(void);
