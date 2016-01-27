@@ -118,7 +118,7 @@ SET(FemScripts_SRCS
     TestFem.py
 
     TaskPanelFemBeamSection.ui
-    TaskPanelFemPrescribedDisplacement.ui
+    #TaskPanelFemPrescribedDisplacement.ui
     TaskPanelFemShellThickness.ui
     TaskPanelFemSolverCalculix.ui
     TaskPanelMechanicalMaterial.ui

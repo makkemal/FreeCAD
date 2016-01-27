@@ -69,11 +69,11 @@ INSTALL(
         _CommandFemSolverCalculix.py
 
         # FemPrescribedDisplacement.py
-        _FemPrescribedDisplacement.py
-        _ViewProviderFemPrescribedDisplacement.py
-        _CommandFemPrescribedDisplacement.py
-        _TaskPanelFemPrescribedDisplacement.py
-        TaskPanelFemPrescribedDisplacement.ui
+        ##_FemPrescribedDisplacement.py #OvG
+        ##_ViewProviderFemPrescribedDisplacement.py
+        ##_CommandFemPrescribedDisplacement.py
+        ##_TaskPanelFemPrescribedDisplacement.py
+        ##TaskPanelFemPrescribedDisplacement.ui
 
     DESTINATION
         Mod/Fem

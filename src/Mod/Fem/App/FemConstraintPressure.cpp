@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinl채nder                          *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -86,14 +86,5 @@ void ConstraintPressure::onChanged(const App::Property* prop)
         }
     } else if (prop == &Reversed) {
         Points.touch();
-    } else if (prop == &Normals) {
-		std::vector<Base::Vector3d> points;
-        std::vector<Base::Vector3d> normals;
-        int scale = Scale.getValue();
-        if (getPoints(points, normals,&scale)) {
-            Scale.setValue(scale);
-            Scale.touch();
-        }
-	}
-	
+    }	
 }
