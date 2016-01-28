@@ -434,17 +434,17 @@ def importFrd(filename, analysis=None):
                     shearstress.append(shear)
                 if eigenmode_number > 0:
                     results.StressValues = map((lambda x: x * scale), mstress)
-#                    results.PrinMax = map((lambda x: x * scale), prinstress1)
-#                    results.PrinMed = map((lambda x: x * scale), prinstress2)
-#                    results.PrinMin = map((lambda x: x * scale), prinstress3)
-#                    results.Maxshear = map((lambda x: x * scale), shearstress)
+                    results.PrinMax = map((lambda x: x * scale), prinstress1)
+                    results.PrinMed = map((lambda x: x * scale), prinstress2)
+                    results.PrinMin = map((lambda x: x * scale), prinstress3)
+                    results.Maxshear = map((lambda x: x * scale), shearstress)
                     results.Eigenmode = eigenmode_number
                 else:
                     results.StressValues = mstress
                     results.PrinMax = prinstress1
-#                    results.PrinMed = prinstress2
-#                    results.PrinMin = prinstress3
-#                    results.MaxShear = shearstress
+                    results.PrinMed = prinstress2
+                    results.PrinMin = prinstress3
+                    results.MaxShear = shearstress
 
             if (results.NodeNumbers != 0 and results.NodeNumbers != stress.keys()):
                 print ("Inconsistent FEM results: element number for Stress doesn't equal element number for Displacement {} != {}"
