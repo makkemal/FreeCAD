@@ -1130,7 +1130,29 @@ void Sheet::setComputedUnit(CellAddress address, const Base::Unit &unit)
 
 void Sheet::setAlias(CellAddress address, const std::string &alias)
 {
-    cells.setAlias(address, alias);
+    const Cell * cell = cells.getValueFromAlias(alias);
+
+    if (cell != 0)
+        throw Base::Exception("Alias already defined.");
+    else
+        cells.setAlias(address, alias);
+}
+
+/**
+ * @brief Get cell given an alias string
+ * @param alias Alias for cell
+ *
+ * @returns Name of cell, or empty string if not defined
+ */
+
+std::string Sheet::getAddressFromAlias(const std::string &alias) const
+{
+    const Cell * cell = cells.getValueFromAlias(alias);
+
+    if (cell)
+        return cell->getAddress().toString();
+    else
+        return std::string();
 }
 
 /**
