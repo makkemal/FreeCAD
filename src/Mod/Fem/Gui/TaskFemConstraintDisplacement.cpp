@@ -39,22 +39,22 @@
 # include <sstream>
 #endif
 
-#include "Mod/Fem/App/FemConstraintPrescribedDisplacement.h"
-#include "TaskFemConstraintPrescribedDisplacement.h"
-#include "ui_TaskFemConstraintPrescribedDisplacement.h"
+#include "Mod/Fem/App/FemConstraintDisplacement.h"
+#include "TaskFemConstraintDisplacement.h"
+#include "ui_TaskFemConstraintDisplacement.h"
 #include <App/Application.h>
 #include <Gui/Command.h>
 
 using namespace FemGui;
 using namespace Gui;
 
-/* TRANSLATOR FemGui::TaskFemConstraintPrescribedDisplacement */
+/* TRANSLATOR FemGui::TaskFemConstraintDisplacement */
 
-TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement(ViewProviderFemConstraintPrescribedDisplacement *ConstraintView,QWidget *parent)
-  : TaskFemConstraint(ConstraintView, parent, "fem-constraint-prescribed-displacement")
+TaskFemConstraintDisplacement::TaskFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView,QWidget *parent)
+  : TaskFemConstraint(ConstraintView, parent, "fem-constraint-displacement")
 {
     proxy = new QWidget(this);
-    ui = new Ui_TaskFemConstraintPrescribedDisplacement();
+    ui = new Ui_TaskFemConstraintDisplacement();
     ui->setupUi(proxy);
     QMetaObject::connectSlotsByName(this);
 
@@ -67,26 +67,25 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     
     // Connect decimal value inputs
     connect(ui->spinxDisplacement, SIGNAL(valueChanged(double)),  this, SLOT(x_changed(double)));
-    connect(ui->spinyDisplacement, SIGNAL("valueChanged(double)"),  this, SLOT(y_changed(double)));
-    connect(ui->spinzDisplacement, SIGNAL("valueChanged(double)"),  this, SLOT(z_changed(double)));
-    connect(ui->rotxv, SIGNAL("valueChanged(double)"),  this, SLOT(x_rot(double)));
-    connect(ui->rotyv, SIGNAL("valueChanged(double)"),  this, SLOT(y_rot(double)));
-    connect(ui->rotzv, SIGNAL("valueChanged(double)"),  this, SLOT(z_rot(double)));
+    connect(ui->spinyDisplacement, SIGNAL(valueChanged(double)),  this, SLOT(y_changed(double)));
+    connect(ui->spinzDisplacement, SIGNAL(valueChanged(double)),  this, SLOT(z_changed(double)));
+    connect(ui->rotxv, SIGNAL(valueChanged(double)),  this, SLOT(x_rot(double)));
+    connect(ui->rotyv, SIGNAL(valueChanged(double)),  this, SLOT(y_rot(double)));
+    connect(ui->rotzv, SIGNAL(valueChanged(double)),  this, SLOT(z_rot(double)));
     // Connect check box values displacements
-    connect(ui->localcoord, SIGNAL("stateChanged(int)"),  this, SLOT(localcoord(int)));
-    connect(ui->dispxfix, SIGNAL("stateChanged(int)"),  this, SLOT(fixx(int)));
-    connect(ui->dispxfree, SIGNAL("stateChanged(int)"),  this, SLOT(freex(int)));
-    connect(ui->dispyfix, SIGNAL("stateChanged(int)"),  this, SLOT(fixy(int)));
-    connect(ui->dispyfree, SIGNAL("stateChanged(int)"),  this, SLOT(freey(int)));
-    connect(ui->dispzfix, SIGNAL("stateChanged(int)"),  this, SLOT(fixz(int)));
-    connect(ui->dispzfree, SIGNAL("stateChanged(int)"),  this, SLOT(freez(int)));
+    connect(ui->dispxfix, SIGNAL(stateChanged(int)),  this, SLOT(fixx(int)));
+    connect(ui->dispxfree, SIGNAL(stateChanged(int)),  this, SLOT(freex(int)));
+    connect(ui->dispyfix, SIGNAL(stateChanged(int)),  this, SLOT(fixy(int)));
+    connect(ui->dispyfree, SIGNAL(stateChanged(int)),  this, SLOT(freey(int)));
+    connect(ui->dispzfix, SIGNAL(stateChanged(int)),  this, SLOT(fixz(int)));
+    connect(ui->dispzfree, SIGNAL(stateChanged(int)),  this, SLOT(freez(int)));
     // Connect to check box values for rotations
-    connect(ui->rotxfix, SIGNAL("stateChanged(int)"),  this, SLOT(rotfixx(int)));
-    connect(ui->rotxfree, SIGNAL("stateChanged(int)"),  this, SLOT(rotfreex(int)));
-    connect(ui->rotyfix, SIGNAL("stateChanged(int)"),  this, SLOT(rotfixy(int)));
-    connect(ui->rotyfree, SIGNAL("stateChanged(int)"),  this, SLOT(rotfreey(int)));
-    connect(ui->rotzfix, SIGNAL("stateChanged(int)"),  this, SLOT(rotfixz(int)));
-    connect(ui->rotzfree, SIGNAL("stateChanged(int)"),  this, SLOT(rotfreez(int)));
+    connect(ui->rotxfix, SIGNAL(stateChanged(int)),  this, SLOT(rotfixx(int)));
+    connect(ui->rotxfree, SIGNAL(stateChanged(int)),  this, SLOT(rotfreex(int)));
+    connect(ui->rotyfix, SIGNAL(stateChanged(int)),  this, SLOT(rotfixy(int)));
+    connect(ui->rotyfree, SIGNAL(stateChanged(int)),  this, SLOT(rotfreey(int)));
+    connect(ui->rotzfix, SIGNAL(stateChanged(int)),  this, SLOT(rotfixz(int)));
+    connect(ui->rotzfree, SIGNAL(stateChanged(int)),  this, SLOT(rotfreez(int)));
     
     // Temporarily prevent unnecessary feature recomputes
     ui->spinxDisplacement->blockSignals(true);
@@ -95,7 +94,6 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     ui->rotxv->blockSignals(true);
     ui->rotyv->blockSignals(true);
     ui->rotzv->blockSignals(true);
-    ui->localcoord->blockSignals(true);
     ui->dispxfix->blockSignals(true);
     ui->dispxfree->blockSignals(true);
     ui->dispyfix->blockSignals(true);
@@ -110,27 +108,27 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     ui->rotzfree->blockSignals(true);
 
     // Get the feature data
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
+    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     double fStates[6];
-    bool bStates[13];
+    bool bStates[12];
     fStates[0]=pcConstraint->xDisplacement.getValue();
     fStates[1]=pcConstraint->yDisplacement.getValue();
     fStates[2]=pcConstraint->zDisplacement.getValue();
     fStates[3]=pcConstraint->xRotation.getValue();
     fStates[4]=pcConstraint->yRotation.getValue();
     fStates[5]=pcConstraint->zRotation.getValue();
-    bStates[1]=pcConstraint->xFix.getValue();
-    bStates[2]=pcConstraint->xFree.getValue();
-    bStates[3]=pcConstraint->yFix.getValue();
-    bStates[4]=pcConstraint->yFree.getValue();
-    bStates[5]=pcConstraint->zFix.getValue();
-    bStates[6]=pcConstraint->zFree.getValue();
-    bStates[7]=pcConstraint->rotxFix.getValue();
-    bStates[8]=pcConstraint->rotxFree.getValue();
-    bStates[9]=pcConstraint->rotyFix.getValue();
-    bStates[10]=pcConstraint->rotyFree.getValue();
-    bStates[11]=pcConstraint->rotzFix.getValue();
-    bStates[12]=pcConstraint->rotzFree.getValue();
+    bStates[0]=pcConstraint->xFix.getValue();
+    bStates[1]=pcConstraint->xFree.getValue();
+    bStates[2]=pcConstraint->yFix.getValue();
+    bStates[3]=pcConstraint->yFree.getValue();
+    bStates[4]=pcConstraint->zFix.getValue();
+    bStates[5]=pcConstraint->zFree.getValue();
+    bStates[6]=pcConstraint->rotxFix.getValue();
+    bStates[7]=pcConstraint->rotxFree.getValue();
+    bStates[8]=pcConstraint->rotyFix.getValue();
+    bStates[9]=pcConstraint->rotyFree.getValue();
+    bStates[10]=pcConstraint->rotzFix.getValue();
+    bStates[11]=pcConstraint->rotzFree.getValue();
     
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
@@ -142,18 +140,18 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     ui->rotxv->setValue(fStates[3]);
     ui->rotyv->setValue(fStates[4]);
     ui->rotzv->setValue(fStates[5]);
-    ui->dispxfix->setChecked(bStates[1]);
-    ui->dispxfree->setChecked(bStates[2]);
-    ui->dispyfix->setChecked(bStates[3]);
-    ui->dispyfree->setChecked(bStates[4]);
-    ui->dispzfix->setChecked(bStates[5]);
-    ui->dispzfree->setChecked(bStates[6]);
-    ui->rotxfix->setChecked(bStates[7]);
-    ui->rotxfree->setChecked(bStates[8]);
-    ui->rotyfix->setChecked(bStates[9]);
-    ui->rotyfree->setChecked(bStates[10]);
-    ui->rotzfix->setChecked(bStates[11]);
-    ui->rotzfree->setChecked(bStates[12]);
+    ui->dispxfix->setChecked(bStates[0]);
+    ui->dispxfree->setChecked(bStates[1]);
+    ui->dispyfix->setChecked(bStates[2]);
+    ui->dispyfree->setChecked(bStates[3]);
+    ui->dispzfix->setChecked(bStates[4]);
+    ui->dispzfree->setChecked(bStates[5]);
+    ui->rotxfix->setChecked(bStates[6]);
+    ui->rotxfree->setChecked(bStates[7]);
+    ui->rotyfix->setChecked(bStates[8]);
+    ui->rotyfree->setChecked(bStates[9]);
+    ui->rotzfix->setChecked(bStates[10]);
+    ui->rotzfree->setChecked(bStates[11]);
     
     ui->lw_references->clear();
     for (std::size_t i = 0; i < Objects.size(); i++) {
@@ -170,7 +168,6 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     ui->rotxv->blockSignals(false);
     ui->rotyv->blockSignals(false);
     ui->rotzv->blockSignals(false);
-    ui->localcoord->blockSignals(false);
     ui->dispxfix->blockSignals(false);
     ui->dispxfree->blockSignals(false);
     ui->dispyfix->blockSignals(false);
@@ -187,12 +184,12 @@ TaskFemConstraintPrescribedDisplacement::TaskFemConstraintPrescribedDisplacement
     updateUI();
 }
 
-TaskFemConstraintPrescribedDisplacement::~TaskFemConstraintPrescribedDisplacement()
+TaskFemConstraintDisplacement::~TaskFemConstraintDisplacement()
 {
     delete ui;
 }
 
-void TaskFemConstraintPrescribedDisplacement::updateUI()
+void TaskFemConstraintDisplacement::updateUI()
 {
     if (ui->lw_references->model()->rowCount() == 0) {
         // Go into reference selection mode if no reference has been selected yet
@@ -201,7 +198,7 @@ void TaskFemConstraintPrescribedDisplacement::updateUI()
     }
 }
 
-void TaskFemConstraintPrescribedDisplacement::onSelectionChanged(const Gui::SelectionChanges& msg)
+void TaskFemConstraintDisplacement::onSelectionChanged(const Gui::SelectionChanges& msg)
 {
     if ((msg.Type != Gui::SelectionChanges::AddSelection) ||
         // Don't allow selection in other document
@@ -214,7 +211,7 @@ void TaskFemConstraintPrescribedDisplacement::onSelectionChanged(const Gui::Sele
     }
 
     std::string subName(msg.pSubName);
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
+    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(msg.pObjectName);
 
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
@@ -248,7 +245,7 @@ void TaskFemConstraintPrescribedDisplacement::onSelectionChanged(const Gui::Sele
     updateUI();
 }
 
-void TaskFemConstraintPrescribedDisplacement::x_changed(double val){
+void TaskFemConstraintDisplacement::x_changed(double val){
     if (val!=0)
     {
         ui->dispxfree->setChecked(false);
@@ -258,100 +255,178 @@ void TaskFemConstraintPrescribedDisplacement::x_changed(double val){
     {  ui->dispxfree->setChecked(true);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::y_changed(double val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->yDisplacement.setValue(val);
+void TaskFemConstraintDisplacement::y_changed(double val){
+    if (val!=0)
+    {
+        ui->dispyfree->setChecked(false);
+        ui->dispyfix->setChecked(false); 
+    }
+    else
+    {  ui->dispyfree->setChecked(true);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::z_changed(double val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->zDisplacement.setValue(val);
+void TaskFemConstraintDisplacement::z_changed(double val){
+    if (val!=0)
+    {
+        ui->dispzfree->setChecked(false);
+        ui->dispzfix->setChecked(false); 
+    }
+    else
+    {  ui->dispzfree->setChecked(true);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::x_rot(double val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->xRotation.setValue(val);
+void TaskFemConstraintDisplacement::x_rot(double val){
+    if (val!=0)
+    {
+        ui->rotxfree->setChecked(false);
+        ui->rotxfix->setChecked(false); 
+    }
 }
 
-void TaskFemConstraintPrescribedDisplacement::y_rot(double val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->yRotation.setValue(val);
+void TaskFemConstraintDisplacement::y_rot(double val){
+    if (val!=0)
+    {
+        ui->rotyfree->setChecked(false);
+        ui->rotyfix->setChecked(false); 
+    }
 }
 
-void TaskFemConstraintPrescribedDisplacement::z_rot(double val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->zRotation.setValue(val);
+void TaskFemConstraintDisplacement::z_rot(double val){
+     if (val!=0)
+    {
+        ui->rotzfree->setChecked(false);
+        ui->rotzfix->setChecked(false); 
+    }
 }
 
-void TaskFemConstraintPrescribedDisplacement::fixx(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->xFix.setValue(val);
+void TaskFemConstraintDisplacement::fixx(int val){
+    if (val==2)
+    {
+        ui->dispxfree->setChecked(false);
+        ui->spinxDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispxfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::freex(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->xFree.setValue(val);
+void TaskFemConstraintDisplacement::freex(int val){
+    if (val==2)
+    {
+        ui->dispxfix->setChecked(false);
+        ui->spinxDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispxfree->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::fixy(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->yFix.setValue(val);
+void TaskFemConstraintDisplacement::fixy(int val){
+    if (val==2)
+    {
+        ui->dispyfree->setChecked(false);
+        ui->spinyDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispyfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::freey(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->yFree.setValue(val);
+void TaskFemConstraintDisplacement::freey(int val){
+    if (val==2)
+    {
+        ui->dispyfix->setChecked(false);
+        ui->spinyDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispyfree->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::fixz(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->zFix.setValue(val);
+void TaskFemConstraintDisplacement::fixz(int val){
+    if (val==2)
+    {
+        ui->dispzfree->setChecked(false);
+        ui->spinzDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispzfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::freez(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->zFree.setValue(val);
+void TaskFemConstraintDisplacement::freez(int val){
+   if (val==2)
+    {
+        ui->dispzfix->setChecked(false);
+        ui->spinzDisplacement->setValue(0); 
+    }
+    else
+    {  ui->dispzfree->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfixx(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotxFix.setValue(val);
+void TaskFemConstraintDisplacement::rotfixx(int val){
+    if (val==2)
+    {
+        ui->rotxfree->setChecked(false);
+        ui->rotxv->setValue(0); 
+    }
+    else
+    {  ui->rotxfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfreex(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotxFree.setValue(val);
+void TaskFemConstraintDisplacement::rotfreex(int val){
+    if (val==2)
+    {
+        ui->rotxfix->setChecked(false);
+        ui->rotxv->setValue(0); 
+    }
+    else
+    {  ui->rotxfree->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfixy(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotyFix.setValue(val);
+void TaskFemConstraintDisplacement::rotfixy(int val){
+    if (val==2)
+    {
+        ui->rotyfree->setChecked(false);
+        ui->rotyv->setValue(0); 
+    }
+    else
+    {  ui->rotyfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfreey(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotyFree.setValue(val);
+void TaskFemConstraintDisplacement::rotfreey(int val){
+    if (val==2)
+    {
+        ui->rotyfix->setChecked(false);
+        ui->rotyv->setValue(0); 
+    }
+    else
+    {  ui->rotyfree->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfixz(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotzFix.setValue(val);
+void TaskFemConstraintDisplacement::rotfixz(int val){
+    if (val==2)
+    {
+        ui->rotzfree->setChecked(false);
+        ui->rotzv->setValue(0); 
+    }
+    else
+    {  ui->rotzfix->setChecked(false);}
 }
 
-void TaskFemConstraintPrescribedDisplacement::rotfreez(int val){
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(ConstraintView->getObject());
-    pcConstraint->rotzFree.setValue(val);
+void TaskFemConstraintDisplacement::rotfreez(int val){
+    if (val==2)
+    {
+        ui->rotzfix->setChecked(false);
+        ui->rotzv->setValue(0); 
+    }
+    else
+    {  ui->rotzfree->setChecked(false);}
 }
 
-
-void TaskFemConstraintPrescribedDisplacement::onReferenceDeleted() {
+void TaskFemConstraintDisplacement::onReferenceDeleted() {
     int row = ui->lw_references->currentIndex().row();
     TaskFemConstraint::onReferenceDeleted(row);
     ui->lw_references->model()->removeRow(row);
     ui->lw_references->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
 }
 
-const std::string TaskFemConstraintPrescribedDisplacement::getReferences() const
+const std::string TaskFemConstraintDisplacement::getReferences() const
 {
     int rows = ui->lw_references->model()->rowCount();
     std::vector<std::string> items;
@@ -361,39 +436,27 @@ const std::string TaskFemConstraintPrescribedDisplacement::getReferences() const
     return TaskFemConstraint::getReferences(items);
 }
 
-double TaskFemConstraintPrescribedDisplacement::get_spinxDisplacement() const{return ui->spinxDisplacement->value();}
-double TaskFemConstraintPrescribedDisplacement::get_spinyDisplacement() const{return ui->spinyDisplacement->value();}
-double TaskFemConstraintPrescribedDisplacement::get_spinzDisplacement() const{return ui->spinzDisplacement->value();}
-double TaskFemConstraintPrescribedDisplacement::get_rotxv() const{return ui->rotxv->value();}
-double TaskFemConstraintPrescribedDisplacement::get_rotyv() const{return ui->rotyv->value();}
-double TaskFemConstraintPrescribedDisplacement::get_rotzv() const{return ui->rotzv->value();}
+double TaskFemConstraintDisplacement::get_spinxDisplacement() const{return ui->spinxDisplacement->value();}
+double TaskFemConstraintDisplacement::get_spinyDisplacement() const{return ui->spinyDisplacement->value();}
+double TaskFemConstraintDisplacement::get_spinzDisplacement() const{return ui->spinzDisplacement->value();}
+double TaskFemConstraintDisplacement::get_rotxv() const{return ui->rotxv->value();}
+double TaskFemConstraintDisplacement::get_rotyv() const{return ui->rotyv->value();}
+double TaskFemConstraintDisplacement::get_rotzv() const{return ui->rotzv->value();}
 
-bool TaskFemConstraintPrescribedDisplacement::get_dispxfix() const{return ui->dispxfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_dispxfree() const{return ui->dispxfree->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_dispyfix() const{return ui->dispyfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_dispyfree() const{return ui->dispyfree->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_dispzfix() const{return ui->dispzfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_dispzfree() const{return ui->dispzfree->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotxfix() const{return ui->rotxfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotxfree() const{return ui->rotxfree->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotyfix() const{return ui->rotyfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotyfree() const{return ui->rotyfree->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotzfix() const{return ui->rotzfix->isChecked();}
-bool TaskFemConstraintPrescribedDisplacement::get_rotzfree() const{return ui->rotzfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispxfix() const{return ui->dispxfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispxfree() const{return ui->dispxfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispyfix() const{return ui->dispyfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispyfree() const{return ui->dispyfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispzfix() const{return ui->dispzfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_dispzfree() const{return ui->dispzfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotxfix() const{return ui->rotxfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotxfree() const{return ui->rotxfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotyfix() const{return ui->rotyfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotyfree() const{return ui->rotyfree->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotzfix() const{return ui->rotzfix->isChecked();}
+bool TaskFemConstraintDisplacement::get_rotzfree() const{return ui->rotzfree->isChecked();}
 
-//double TaskFemConstraintPrescribedDisplacement::getPressure(void) const
-//{
-//    Base::Quantity pressure =  ui->if_pressure->getQuantity();
-//    double pressure_in_MPa = pressure.getValueAs(Base::Quantity::MegaPascal);
-//    return pressure_in_MPa;
-//}
-//
-//bool TaskFemConstraintPrescribedDisplacement::getReverse() const
-//{
-//    return ui->cb_reverse_direction->isChecked();
-//}
-
-void TaskFemConstraintPrescribedDisplacement::changeEvent(QEvent *e)
+void TaskFemConstraintDisplacement::changeEvent(QEvent *e)
 {
 //    TaskBox::changeEvent(e);
 //    if (e->type() == QEvent::LanguageChange) {
@@ -407,18 +470,18 @@ void TaskFemConstraintPrescribedDisplacement::changeEvent(QEvent *e)
 // TaskDialog
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TaskDlgFemConstraintPrescribedDisplacement::TaskDlgFemConstraintPrescribedDisplacement(ViewProviderFemConstraintPrescribedDisplacement *ConstraintView)
+TaskDlgFemConstraintDisplacement::TaskDlgFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView)
 {
     this->ConstraintView = ConstraintView;
     assert(ConstraintView);
-    this->parameter = new TaskFemConstraintPrescribedDisplacement(ConstraintView);;
+    this->parameter = new TaskFemConstraintDisplacement(ConstraintView);;
 
     Content.push_back(parameter);
 }
 
 //==== calls from the TaskView ===============================================================
 
-void TaskDlgFemConstraintPrescribedDisplacement::open()
+void TaskDlgFemConstraintDisplacement::open()
 {
     // a transaction is already open at creation time of the panel
     if (!Gui::Command::hasPendingCommand()) {
@@ -427,10 +490,10 @@ void TaskDlgFemConstraintPrescribedDisplacement::open()
     }
 }
 
-bool TaskDlgFemConstraintPrescribedDisplacement::accept()
+bool TaskDlgFemConstraintDisplacement::accept()
 {
     std::string name = ConstraintView->getObject()->getNameInDocument();
-    const TaskFemConstraintPrescribedDisplacement* parameterDisplacement = static_cast<const TaskFemConstraintPrescribedDisplacement*>(parameter);
+    const TaskFemConstraintDisplacement* parameterDisplacement = static_cast<const TaskFemConstraintDisplacement*>(parameter);
 
     try {
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.xDisplacement = %f",
@@ -474,11 +537,14 @@ bool TaskDlgFemConstraintPrescribedDisplacement::accept()
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));
         return false;
     }
+    
+    PythonThread * thr=new PythonThread;
+    thr->start();
 
     return TaskDlgFemConstraint::accept();
 }
 
-bool TaskDlgFemConstraintPrescribedDisplacement::reject()
+bool TaskDlgFemConstraintDisplacement::reject()
 {
     Gui::Command::abortCommand();
     Gui::Command::doCommand(Gui::Command::Gui,"Gui.activeDocument().resetEdit()");
@@ -487,4 +553,34 @@ bool TaskDlgFemConstraintPrescribedDisplacement::reject()
     return true;
 }
 
-#include "moc_TaskFemConstraintPrescribedDisplacement.cpp"
+PythonThread::PythonThread(QObject* parent)
+  : QThread(parent)
+{
+}
+
+PythonThread::~PythonThread()
+{
+}
+
+void PythonThread::run()
+{
+    //QMutexLocker mutex_lock(&mutex);
+    //Base::PyGILStateLocker locker;
+    try {
+        Base::Console().Message("Begin ccxInpWriterFemConstraintDisplacement file");
+        Base::Interpreter().runString(
+        "import ccxInpWriterFemConstraintDisplacement\n"
+        "cIWFCD=ccxInpWriterFemConstraintDisplacement.ccxInpWriterFemConstraintDisplacement()\n"
+        "cIWFCD.writeFile()\n"
+        );
+        Base::Console().Message("End ccxInpWriterFemConstraintDisplacement file");
+        Base::Console().Message("look in FreeCAD.ActiveDocument.TransientDir/FemConstraints/ folder");
+        msleep(10);
+    }
+    catch (const Base::PyException& e) {
+        Base::Console().Message("Error writing ccxInpWriterFemConstraintDisplacement file");
+        Base::Console().Error(e.what());
+    }
+}
+
+#include "moc_TaskFemConstraintDisplacement.cpp"

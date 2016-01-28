@@ -1,7 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -21,26 +20,53 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef GUI_VIEWPROVIDERFEMCONSTRAINTPRESCRIBEDDISPLACEMENT_H
-#define GUI_VIEWPROVIDERFEMCONSTRAINTPRESCRIBEDDISPLACEMENT_H
 
-#include "ViewProviderFemConstraint.h"
+#include "PreCompiled.h"
 
-namespace FemGui {
+#ifndef _PreComp_
+#include <BRepAdaptor_Curve.hxx>
+#include <BRepAdaptor_Surface.hxx>
+#include <Precision.hxx>
+#include <TopoDS.hxx>
+#include <gp_Lin.hxx>
+#include <gp_Pln.hxx>
+#include <gp_Pnt.hxx>
+#endif
 
-class FemGuiExport ViewProviderFemConstraintPrescribedDisplacement : public FemGui::ViewProviderFemConstraint
+#include "FemConstraintDisplacement.h"
+
+using namespace Fem;
+
+PROPERTY_SOURCE(Fem::ConstraintDisplacement, Fem::Constraint);
+
+ConstraintDisplacement::ConstraintDisplacement()
 {
-    PROPERTY_HEADER(FemGui::ViewProviderFemConstraintPrescribedDisplacement);
-
-public:
-    ViewProviderFemConstraintPrescribedDisplacement();
-    virtual ~ViewProviderFemConstraintPrescribedDisplacement();
-    virtual void updateData(const App::Property*);
-
-protected:
-    virtual bool setEdit(int ModNum);
-};
-
+    ADD_PROPERTY(xDisplacement,(0.0)); 
+    ADD_PROPERTY(yDisplacement,(0.0)); 
+    ADD_PROPERTY(zDisplacement,(0.0)); 
+    ADD_PROPERTY(xRotation,(0.0)); 
+    ADD_PROPERTY(yRotation,(0.0)); 
+    ADD_PROPERTY(zRotation,(0.0)); 
+    ADD_PROPERTY(xFree,(1)); 
+    ADD_PROPERTY(yFree,(1)); 
+    ADD_PROPERTY(zFree,(1)); 
+    ADD_PROPERTY(xFix,(0)); 
+    ADD_PROPERTY(yFix,(0)); 
+    ADD_PROPERTY(zFix,(0)); 
+    ADD_PROPERTY(rotxFree,(1)); 
+    ADD_PROPERTY(rotyFree,(1)); 
+    ADD_PROPERTY(rotzFree,(1)); 
+    ADD_PROPERTY(rotxFix,(0));
+    ADD_PROPERTY(rotyFix,(0));
+    ADD_PROPERTY(rotzFix,(0));
 }
 
-#endif // GUI_VIEWPROVIDERFEMCONSTRAINTPRESCRIBEDDISPLACEMENT_H
+App::DocumentObjectExecReturn *ConstraintDisplacement::execute(void)
+{
+    return Constraint::execute();
+}
+
+const char* ConstraintDisplacement::getViewProviderName(void) const
+{
+	return "FemGui::ViewProviderFemConstraintDisplacement";
+}

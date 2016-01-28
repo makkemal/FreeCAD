@@ -286,7 +286,7 @@ class inp_writer:
 
     def write_displacement(self,f):
         f.write('\n***********************************************************\n')
-        f.write('** Prescribed displacement constraint applied\n')
+        f.write('** Displacement constraint applied\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for disp_obj in self.displacement_objects:
             disp_obj_name = disp_obj['Object'].Name

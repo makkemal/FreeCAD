@@ -111,9 +111,10 @@ SET(FemScripts_SRCS
     MechanicalMaterial.py
     SelectionObserverFem.py
     TestFem.py
+    
+    ccxInpWriterFemConstraintDisplacement.py
 
     TaskPanelFemBeamSection.ui
-    TaskPanelFemPrescribedDisplacement.ui
     TaskPanelFemShellThickness.ui
     TaskPanelFemSolverCalculix.ui
     TaskPanelMechanicalMaterial.ui
@@ -187,8 +188,8 @@ SET(FemConstraints_SRCS
     FemConstraintGear.h
     FemConstraintPulley.cpp
     FemConstraintPulley.h
-    FemConstraintPrescribedDisplacement.h
-    FemConstraintPrescribedDisplacement.cpp
+    FemConstraintDisplacement.h
+    FemConstraintDisplacement.cpp
 	)
 SOURCE_GROUP("Constraints" FILES ${FemConstraints_SRCS})
 

@@ -491,31 +491,31 @@ bool CmdFemConstraintPulley::isActive(void)
 }
 //=====================================================================================
 
-DEF_STD_CMD_A(CmdFemConstraintPrescribedDisplacement);
+DEF_STD_CMD_A(CmdFemConstraintDisplacement);
 
-CmdFemConstraintPrescribedDisplacement::CmdFemConstraintPrescribedDisplacement()
-  : Command("Fem_ConstraintPrescribedDisplacement")
+CmdFemConstraintDisplacement::CmdFemConstraintDisplacement()
+  : Command("Fem_ConstraintDisplacement")
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Create FEM prescribed displacement constraint");
-    sToolTipText    = QT_TR_NOOP("Create FEM constraint for a prescribed displacement acting on a face");
-    sWhatsThis      = "Fem_ConstraintPrescribedDisplacement";
+    sMenuText       = QT_TR_NOOP("Create FEM displacement constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for a displacement acting on a face");
+    sWhatsThis      = "Fem_ConstraintDisplacement";
     sStatusTip      = sToolTipText;
-    sPixmap         = "fem-constraint-prescribed-displacement";
+    sPixmap         = "fem-constraint-displacement";
 }
 
-void CmdFemConstraintPrescribedDisplacement::activated(int iMsg)
+void CmdFemConstraintDisplacement::activated(int iMsg)
 {
     Fem::FemAnalysis        *Analysis;
 
     if(getConstraintPrerequisits(&Analysis))
         return;
 
-    std::string FeatName = getUniqueObjectName("FemConstraintPrescribedDisplacement");
+    std::string FeatName = getUniqueObjectName("FemConstraintDisplacement");
 
-    openCommand("Make FEM constraint prescribed displacement on face");
-    doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintPrescribedDisplacement\",\"%s\")",FeatName.c_str());
+    openCommand("Make FEM constraint displacement on face");
+    doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintDisplacement\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
     updateActive();
@@ -523,7 +523,7 @@ void CmdFemConstraintPrescribedDisplacement::activated(int iMsg)
     doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());
 }
 
-bool CmdFemConstraintPrescribedDisplacement::isActive(void)
+bool CmdFemConstraintDisplacement::isActive(void)
 {
     return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
 }
@@ -738,5 +738,5 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintPressure());
     rcCmdMgr.addCommand(new CmdFemConstraintGear());
     rcCmdMgr.addCommand(new CmdFemConstraintPulley());
-    rcCmdMgr.addCommand(new CmdFemConstraintPrescribedDisplacement());
+    rcCmdMgr.addCommand(new CmdFemConstraintDisplacement());
 }

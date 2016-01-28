@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinl채nder                          *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -33,35 +33,35 @@
 # include <Precision.hxx>
 #endif
 
-#include "Mod/Fem/App/FemConstraintPrescribedDisplacement.h"
-#include "TaskFemConstraintPrescribedDisplacement.h"
-#include "ViewProviderFemConstraintPrescribedDisplacement.h"
+#include "Mod/Fem/App/FemConstraintDisplacement.h"
+#include "TaskFemConstraintDisplacement.h"
+#include "ViewProviderFemConstraintDisplacement.h"
 #include <Base/Console.h>
 #include <Gui/Control.h>
 
 using namespace FemGui;
 
-PROPERTY_SOURCE(FemGui::ViewProviderFemConstraintPrescribedDisplacement, FemGui::ViewProviderFemConstraint)
+PROPERTY_SOURCE(FemGui::ViewProviderFemConstraintDisplacement, FemGui::ViewProviderFemConstraint)
 
-ViewProviderFemConstraintPrescribedDisplacement::ViewProviderFemConstraintPrescribedDisplacement()
+ViewProviderFemConstraintDisplacement::ViewProviderFemConstraintDisplacement()
 {
-    sPixmap = "fem-constraint-prescribed-displacement";
+    sPixmap = "fem-constraint-displacement";
     ADD_PROPERTY(FaceColor,(0.0f,0.2f,0.8f));
 }
 
-ViewProviderFemConstraintPrescribedDisplacement::~ViewProviderFemConstraintPrescribedDisplacement()
+ViewProviderFemConstraintDisplacement::~ViewProviderFemConstraintDisplacement()
 {
 }
 
 //FIXME setEdit needs a careful review
-bool ViewProviderFemConstraintPrescribedDisplacement::setEdit(int ModNum)
+bool ViewProviderFemConstraintDisplacement::setEdit(int ModNum)
 {
     if (ModNum == ViewProvider::Default) {
         // When double-clicking on the item for this constraint the
         // object unsets and sets its edit mode without closing
         // the task panel
         Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
-        TaskDlgFemConstraintPrescribedDisplacement *constrDlg = qobject_cast<TaskDlgFemConstraintPrescribedDisplacement *>(dlg);
+        TaskDlgFemConstraintDisplacement *constrDlg = qobject_cast<TaskDlgFemConstraintDisplacement *>(dlg);
         if (constrDlg && constrDlg->getConstraintView() != this)
             constrDlg = 0; // another constraint left open its task panel
         if (dlg && !constrDlg) {
@@ -69,7 +69,7 @@ bool ViewProviderFemConstraintPrescribedDisplacement::setEdit(int ModNum)
                 // Ignore the request to open another dialog
                 return false;
             } else {
-                constraintDialog = new TaskFemConstraintPrescribedDisplacement(this);
+                constraintDialog = new TaskFemConstraintDisplacement(this);
                 return true;
             }
         }
@@ -81,7 +81,7 @@ bool ViewProviderFemConstraintPrescribedDisplacement::setEdit(int ModNum)
         if (constrDlg)
             Gui::Control().showDialog(constrDlg);
         else
-            Gui::Control().showDialog(new TaskDlgFemConstraintPrescribedDisplacement(this));
+            Gui::Control().showDialog(new TaskDlgFemConstraintDisplacement(this));
         return true;
     }
     else {
@@ -89,10 +89,8 @@ bool ViewProviderFemConstraintPrescribedDisplacement::setEdit(int ModNum)
     }
 }
 
-void ViewProviderFemConstraintPrescribedDisplacement::updateData(const App::Property* prop)
+void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop)
 {
     // Gets called whenever a property of the attached object changes
-    Fem::ConstraintPrescribedDisplacement* pcConstraint = static_cast<Fem::ConstraintPrescribedDisplacement*>(this->getObject());
-
     ViewProviderFemConstraint::updateData(prop);
 }

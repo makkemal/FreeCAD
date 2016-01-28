@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef GUI_TASKVIEW_TaskFemConstraintPrescribedDisplacement_H
-#define GUI_TASKVIEW_TaskFemConstraintPrescribedDisplacement_H
+#ifndef GUI_TASKVIEW_TaskFemConstraintDisplacement_H
+#define GUI_TASKVIEW_TaskFemConstraintDisplacement_H
 
 #include <Gui/TaskView/TaskView.h>
 #include <Gui/Selection.h>
@@ -30,18 +30,24 @@
 #include <Base/Quantity.h>
 
 #include "TaskFemConstraint.h"
-#include "ViewProviderFemConstraintPrescribedDisplacement.h"
+#include "ViewProviderFemConstraintDisplacement.h"
 
-class Ui_TaskFemConstraintPrescribedDisplacement;
+#include <QThread>
+#include <QMutex>
+#include <Base/Interpreter.h>
+#include <Base/Console.h>
+#include <App/DocumentObject.h>
+
+class Ui_TaskFemConstraintDisplacement;
 
 namespace FemGui {
-class TaskFemConstraintPrescribedDisplacement : public TaskFemConstraint
+class TaskFemConstraintDisplacement : public TaskFemConstraint
 {
     Q_OBJECT
 
 public:
-    TaskFemConstraintPrescribedDisplacement(ViewProviderFemConstraintPrescribedDisplacement *ConstraintView,QWidget *parent = 0);
-    virtual ~TaskFemConstraintPrescribedDisplacement();
+    TaskFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView,QWidget *parent = 0);
+    virtual ~TaskFemConstraintDisplacement();
     virtual const std::string getReferences() const;
     double get_spinxDisplacement()const;
     double get_spinyDisplacement()const;
@@ -89,22 +95,32 @@ protected:
 private:
     virtual void onSelectionChanged(const Gui::SelectionChanges& msg);
     void updateUI();
-    Ui_TaskFemConstraintPrescribedDisplacement* ui;
+    Ui_TaskFemConstraintDisplacement* ui;
 
     
 };
 
-class TaskDlgFemConstraintPrescribedDisplacement : public TaskDlgFemConstraint
+class TaskDlgFemConstraintDisplacement : public TaskDlgFemConstraint
 {
     Q_OBJECT
 
 public:
-    TaskDlgFemConstraintPrescribedDisplacement(ViewProviderFemConstraintPrescribedDisplacement *ConstraintView);
+    TaskDlgFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView);
     virtual void open();
     virtual bool accept();
     virtual bool reject();
 };
 
+class PythonThread : public QThread
+{
+public:
+    PythonThread(QObject* parent=0);
+    ~PythonThread();
+
+protected:
+    void run();
+};
+
 } //namespace FemGui
 
-#endif // GUI_TASKVIEW_TaskFemConstraintPrescribedDisplacement_H
+#endif // GUI_TASKVIEW_TaskFemConstraintDisplacement_H
