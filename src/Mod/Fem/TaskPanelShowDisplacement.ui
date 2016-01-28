@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>331</width>
-    <height>431</height>
+    <width>446</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -24,6 +24,13 @@
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <layout class="QGridLayout" name="gridLayout">
+          <item row="3" column="0">
+           <widget class="QRadioButton" name="rb_max_shear_stress">
+            <property name="text">
+             <string>Max shear stress</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0">
            <widget class="QRadioButton" name="rb_y_displacement">
             <property name="text">
@@ -45,7 +52,21 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
+          <item row="1" column="1">
+           <widget class="QRadioButton" name="rb_vm_stress">
+            <property name="text">
+             <string>Von Mises stress</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="rb_abs_displacement">
+            <property name="text">
+             <string>Abs displacement</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0">
            <widget class="QRadioButton" name="rb_none">
             <property name="text">
              <string>None</string>
@@ -55,40 +76,24 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
-           <widget class="QRadioButton" name="rb_vm_stress">
+          <item row="2" column="1">
+           <widget class="QRadioButton" name="rb_maxprin">
             <property name="text">
-             <string>Von Mises stress</string>
+             <string>Max Principal stress</string>
             </property>
            </widget>
           </item>
-          
-          <item row="0" column="2">
-           <widget class="QRadioButton" name="rb_P1">
+          <item row="3" column="1">
+           <widget class="QRadioButton" name="rb_midprin">
             <property name="text">
-             <string>P1</string>
+             <string>Middle Pricipal stress</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QRadioButton" name="rb_P3">
+          <item row="4" column="1">
+           <widget class="QRadioButton" name="rb_minprin">
             <property name="text">
-             <string>P2</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2">
-           <widget class="QRadioButton" name="rb_max_shear">
-            <property name="text">
-             <string>Max shear</string>
-            </property>
-           </widget>
-          </item>
-          
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="rb_abs_displacement">
-            <property name="text">
-             <string>Abs displacement</string>
+             <string>Min Principal stress</string>
             </property>
            </widget>
           </item>

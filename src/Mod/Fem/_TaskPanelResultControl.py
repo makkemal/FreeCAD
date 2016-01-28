@@ -192,9 +192,11 @@ class _TaskPanelResultControl:
 #        self.set_result_stats("MPa", minm, avg, maxm)
 #        QtGui.qApp.restoreOverrideCursor()
 
-    def P1_selected(selfself,  state):
+    def maxprin_selected(selfself,  state):
         FreeCAD.FEM_dialog["results_type"] = "Prin1"
-    def P3_selected(selfself,  state):
+    def midprin_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin2"    
+    def minprin_selected(selfself,  state):
         FreeCAD.FEM_dialog["results_type"] = "Prin3"
 
         
@@ -280,7 +282,7 @@ class _TaskPanelResultControl:
         
  
     def plotlegend(self, value):   
-        from  _CommandResultColourbar import ColorMap
+        from  _CommandResultColorbar import ColorMap
         FreeCAD.Console.PrintMessage("Plotlegend called \n")
         mw = FreeCADGui.getMainWindow()  # access the main window 
         ColorMapWidget = QtGui.QDockWidget() # create a new dockwidget
