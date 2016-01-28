@@ -49,9 +49,10 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_abs_displacement, QtCore.SIGNAL("toggled(bool)"), self.abs_displacement_selected)
         QtCore.QObject.connect(self.form.rb_vm_stress, QtCore.SIGNAL("toggled(bool)"), self.vm_stress_selected)
         #extra functions
-        QtCore.QObject.connect(self.form.rb_max_shear, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected) #max shear stress signal
-        QtCore.QObject.connect(self.form.rb_P1, QtCore.SIGNAL("toggled(bool)"), self.P1_selected)
-        QtCore.QObject.connect(self.form.rb_P1, QtCore.SIGNAL("toggled(bool)"), self.P3_selected)
+        QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected) #max shear stress signal
+        QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.maxprin_selected) #MPH max prin
+        QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.minprin_selected) #MPH mid prin
+        QtCore.QObject.connect(self.form.rb_midprin, QtCore.SIGNAL("toggled(bool)"), self.midprin_selected)  #MPH min prin 
 
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
@@ -89,11 +90,13 @@ class _TaskPanelResultControl:
                 self.form.rb_max_shear.setChecked(True)
                 self.rb_max_shear(True)
             elif rt== "Prin1":
-                self.form.rb_P1.setChecked(True)
+                self.form.rb_maxprin.setChecked(True)
                 self.rb_max_shear(True)
+            elif rt== "Prin2":
+                self.form.rb_maxprin.setChecked(True)
+                self.rb_max_shear(True)    
             elif rt== "Prin3":
-                self.form.rb_P3.setChecked(True)
-                self.form.rb_P3.setChecked(True)
+                self.form.rb_minprin.setChecked(True)
                 self.rb_max_shear(True)
             
             sd = FreeCAD.FEM_dialog["show_disp"]
@@ -124,6 +127,10 @@ class _TaskPanelResultControl:
                                "U3": (i.Stats[6], i.Stats[7], i.Stats[8]),
                                "Uabs": (i.Stats[9], i.Stats[10], i.Stats[11]),
                                "Sabs": (i.Stats[12], i.Stats[13], i.Stats[14]),
+                               "Prin1": (i.Stats[15], i.Stats[16], i.Stats[17]), #MPH Pricipal stress 1
+                               "Prin2": (i.Stats[18], i.Stats[19], i.Stats[20]),    #MPH Pricipal stress 2
+                               "Prin3": (i.Stats[21], i.Stats[22], i.Stats[23]),    #MPH Pricipal stress 3
+                               "mShear": (i.Stats[24], i.Stats[25], i.Stats[26]),   #MPH Max shear stress 
                                "None": (0.0, 0.0, 0.0)}
                 return match_table[type_name]
         return (0.0, 0.0, 0.0)
@@ -138,7 +145,7 @@ class _TaskPanelResultControl:
         FreeCAD.FEM_dialog["results_type"] = "Uabs"
         self.select_displacement_type("Uabs")
         try:
-            mw.removeDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # remove color bar if exists 
+            mw.removeDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # MPH remove color bar if exists 
         finally:
             self.plotlegend(self.result_object.DisplacementLength)
         
@@ -164,39 +171,44 @@ class _TaskPanelResultControl:
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
         
-#extra functions
+        
+#extra plot  functions MPH
     def max_shear_selected(self, state):
         FreeCAD.FEM_dialog["results_type"] = "mShear"
-        
-#        QApplication.setOverrideCursor(Qt.WaitCursor)
-#        if self.suitable_results:
-#            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.StressValues)
-#        (minm, avg, maxm) = self.get_result_stats("mShear")
-#        self.set_result_stats("MPa", minm, avg, maxm)
-#        QtGui.qApp.restoreOverrideCursor()
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.MaxShear)
+        (minm, avg, maxm) = self.get_result_stats("mShear")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
 
-    def P1_selected(selfself,  state):
+    def maxprin_selected(selfself,  state):
         FreeCAD.FEM_dialog["results_type"] = "Prin1"
-    def P3_selected(selfself,  state):
-        FreeCAD.FEM_dialog["results_type"] = "Prin3"
-
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrinMax)
+        (minm, avg, maxm) = self.get_result_stats("Prin1")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
         
-#extra functions
-    def max_shear_selected(self, state):
-        FreeCAD.FEM_dialog["results_type"] = "mShear"
+    def midprin_selected(selfself,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Prin2"    
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrinMed)
+        (minm, avg, maxm) = self.get_result_stats("Prin2")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
         
-#        QApplication.setOverrideCursor(Qt.WaitCursor)
-#        if self.suitable_results:
-#            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.StressValues)
-#        (minm, avg, maxm) = self.get_result_stats("mShear")
-#        self.set_result_stats("MPa", minm, avg, maxm)
-#        QtGui.qApp.restoreOverrideCursor()
-
-    def P1_selected(selfself,  state):
-        FreeCAD.FEM_dialog["results_type"] = "Prin1"
-    def P3_selected(selfself,  state):
+    def minprin_selected(selfself,  state):
         FreeCAD.FEM_dialog["results_type"] = "Prin3"
-
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrinMin)
+        (minm, avg, maxm) = self.get_result_stats("Prin3")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+#end exter functions
         
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -278,9 +290,9 @@ class _TaskPanelResultControl:
     def reject(self):
         FreeCADGui.Control.closeDialog()
         
- 
+ #MPH colorbar 
     def plotlegend(self, value):   
-        from  _CommandResultColourbar import ColorMap
+        from  _CommandResultColorbar import ColorMap
         FreeCAD.Console.PrintMessage("Plotlegend called \n")
         mw = FreeCADGui.getMainWindow()  # access the main window 
         ColorMapWidget = QtGui.QDockWidget() # create a new dockwidget

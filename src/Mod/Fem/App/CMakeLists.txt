@@ -80,7 +80,7 @@ SET(FemScripts_SRCS
     _CommandPurgeFemResults.py
     _CommandQuickAnalysis.py
     _CommandSolverJobControl.py
-    _CommandResultColourbar.py
+    _CommandResultColorbar.py
     _FemAnalysis.py
     _FemBeamSection.py
     _FemShellThickness.py
