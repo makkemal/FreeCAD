@@ -55,13 +55,6 @@ ConstraintPressure::ConstraintPressure()
 
 App::DocumentObjectExecReturn *ConstraintPressure::execute(void)
 {
-     std::vector<Base::Vector3d> points;
-     std::vector<Base::Vector3d> normals;
-     int scale = Scale.getValue();
-     if (getPoints(points, normals,&scale)) {
-         Scale.setValue(scale);
-         Scale.touch();
-     }
     return Constraint::execute();
 }
 
@@ -78,7 +71,7 @@ void ConstraintPressure::onChanged(const App::Property* prop)
         std::vector<Base::Vector3d> points;
         std::vector<Base::Vector3d> normals;
         int scale = Scale.getValue();
-        if (getPoints(points, normals,&scale)) {
+        if (getPoints(points, normals, &scale)) {
             Points.setValues(points);
             Normals.setValues(normals);
             Scale.setValue(scale);

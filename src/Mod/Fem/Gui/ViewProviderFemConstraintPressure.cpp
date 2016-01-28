@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinl채nder                          *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -90,9 +90,7 @@ bool ViewProviderFemConstraintPressure::setEdit(int ModNum)
 }
 
 #define ARROWLENGTH (6)
-//5
 #define ARROWHEADRADIUS (ARROWLENGTH/3) 
-//3
 //#define USE_MULTIPLE_COPY //OvG: MULTICOPY fails to updated scaled arrows on initial drawing - so disable
 
 void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
@@ -149,7 +147,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue());
+            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
             n++;

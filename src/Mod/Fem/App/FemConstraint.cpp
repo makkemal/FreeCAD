@@ -72,7 +72,7 @@ Constraint::Constraint()
 {
     ADD_PROPERTY_TYPE(References,(0,0),"Constraint",(App::PropertyType)(App::Prop_None),"Elements where the constraint is applied");
     ADD_PROPERTY_TYPE(NormalDirection,(Base::Vector3d(0,0,1)),"Constraint",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),"Normal direction pointing outside of solid");
-    ADD_PROPERTY_TYPE(Scale,(1),"Base",App::PropertyType(App::Prop_Output),"Scale used for drawing constraints");
+    ADD_PROPERTY_TYPE(Scale,(1),"Base",App::PropertyType(App::Prop_Output),"Scale used for drawing constraints"); //OvG: Add scale parameter inherited by all derived constraints
 }
 
 Constraint::~Constraint()
@@ -169,7 +169,11 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             gp_Pnt p = BRep_Tool::Pnt(vertex);
             points.push_back(Base::Vector3d(p.X(), p.Y(), p.Z()));
             normals.push_back(NormalDirection.getValue());
-            *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
+            //OvG: Scale by whole object mass in case of a vertex
+            GProp_GProps props;
+            BRepGProp::VolumeProperties(toposhape._Shape, props);
+            double lx = props.Mass();
+            *scale = this->calcDrawScaleFactor(sqrt(lx)); //OvG: setup draw scale for constraint
         } else if (sh.ShapeType() == TopAbs_EDGE) {
             BRepAdaptor_Curve curve(TopoDS::Edge(sh));
             double fp = curve.FirstParameter();
