@@ -66,16 +66,18 @@ const char* ConstraintPressure::getViewProviderName(void) const
 void ConstraintPressure::onChanged(const App::Property* prop)
 {
     Constraint::onChanged(prop);
-
+   
     if (prop == &References) {
         std::vector<Base::Vector3d> points;
         std::vector<Base::Vector3d> normals;
-        if (getPoints(points, normals)) {
+        int scale = Scale.getValue();
+        if (getPoints(points, normals, &scale)) {
             Points.setValues(points);
             Normals.setValues(normals);
+            Scale.setValue(scale);
             Points.touch();
         }
     } else if (prop == &Reversed) {
         Points.touch();
-    }
+    }	
 }
