@@ -61,7 +61,7 @@ FemResultObject::FemResultObject()
     PrinMed.setStatus(App::Property::ReadOnly, true);
     PrinMin.setStatus(App::Property::ReadOnly, true);
     MaxShear.setStatus(App::Property::ReadOnly, true);
-    UserDef.setStatus(App::Property::ReadOnly, true);
+    UserDef.setStatus(App::Property::ReadOnly, false);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
 }

@@ -472,7 +472,11 @@ def importFrd(filename, analysis=None):
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
-                             s_min, s_avg, s_max]
+                             s_min, s_avg, s_max, 
+                             max(results.PrinMax), (sum(results.PrinMax)/l), min(results.PrinMax),  #MPH max pricipal stats
+                             max(results.PrinMed), (sum(results.PrinMed)/l), min(results.PrinMed),  #MPH max pricipal stats
+                             max(results.PrinMin), (sum(results.PrinMin)/l), min(results.PrinMin),  #MPH max pricipal stats
+                             max(results.MaxShear), (sum(results.MaxShear)/l), min(results.MaxShear)]  #MPH max pricipal stats
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):
