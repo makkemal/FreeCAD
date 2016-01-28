@@ -72,7 +72,6 @@ SOURCE_GROUP("Module" FILES ${Mod_SRCS})
 SET(FemScripts_SRCS
     _CommandFemBeamSection.py
     _CommandFemFromShape.py
-    _CommandFemPrescribedDisplacement.py
     _CommandFemShellThickness.py
     _CommandFemSolverCalculix.py
     _CommandMechanicalMaterial.py
@@ -84,19 +83,16 @@ SET(FemScripts_SRCS
     _CommandResultColourbar.py
     _FemAnalysis.py
     _FemBeamSection.py
-    _FemPrescribedDisplacement.py
     _FemShellThickness.py
     _FemSolverCalculix.py
     _MechanicalMaterial.py
     _TaskPanelFemBeamSection.py
-    _TaskPanelFemPrescribedDisplacement.py
     _TaskPanelFemShellThickness.py
     _TaskPanelFemSolverCalculix.py
     _TaskPanelMechanicalMaterial.py
     _TaskPanelResultControl.py
     _ViewProviderFemAnalysis.py
     _ViewProviderFemBeamSection.py
-    _ViewProviderFemPrescribedDisplacement.py
     _ViewProviderFemShellThickness.py
     _ViewProviderFemSolverCalculix.py
     _ViewProviderMechanicalMaterial.py
@@ -109,16 +105,16 @@ SET(FemScripts_SRCS
     FemAnalysis.py
     FemCommands.py
     FemBeamSection.py
-    # FemPrescribedDisplacement.py
     FemShellThickness.py
     FemSolverCalculix.py
     FemTools.py
     MechanicalMaterial.py
     SelectionObserverFem.py
     TestFem.py
+    
+    ccxInpWriterFemConstraintDisplacement.py
 
     TaskPanelFemBeamSection.ui
-    #TaskPanelFemPrescribedDisplacement.ui
     TaskPanelFemShellThickness.ui
     TaskPanelFemSolverCalculix.ui
     TaskPanelMechanicalMaterial.ui
@@ -192,8 +188,8 @@ SET(FemConstraints_SRCS
     FemConstraintGear.h
     FemConstraintPulley.cpp
     FemConstraintPulley.h
-    FemConstraintPrescribedDisplacement.h
-    FemConstraintPrescribedDisplacement.cpp
+    FemConstraintDisplacement.h
+    FemConstraintDisplacement.cpp
 	)
 SOURCE_GROUP("Constraints" FILES ${FemConstraints_SRCS})
 

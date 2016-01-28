@@ -50,6 +50,7 @@
 #include "ViewProviderFemConstraintPressure.h"
 #include "ViewProviderFemConstraintGear.h"
 #include "ViewProviderFemConstraintPulley.h"
+#include "ViewProviderFemConstraintDisplacement.h"
 #include "ViewProviderResult.h"
 #include "Workbench.h"
 
@@ -102,6 +103,7 @@ PyMODINIT_FUNC initFemGui()
     FemGui::ViewProviderFemConstraintPressure  ::init();
     FemGui::ViewProviderFemConstraintGear      ::init();
     FemGui::ViewProviderFemConstraintPulley    ::init();
+    FemGui::ViewProviderFemConstraintDisplacement ::init();
     FemGui::ViewProviderResult                 ::init();
     FemGui::ViewProviderResultPython           ::init();
     FemGui::PropertyFemMeshItem                ::init();

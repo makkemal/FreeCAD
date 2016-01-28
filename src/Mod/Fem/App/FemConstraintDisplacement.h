@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -21,21 +21,21 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
-#define FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
+#ifndef FEM_CONSTRAINTDISPLACEMENT_H
+#define FEM_CONSTRAINTDISPLACEMENT_H
 
 #include "FemConstraint.h"
 
 namespace Fem
 {
 
-class AppFemExport ConstraintPrescribedDisplacement : public Fem::Constraint
+class AppFemExport ConstraintDisplacement : public Fem::Constraint
 {
-    PROPERTY_HEADER(Fem::ConstraintPrescribedDisplacement);
+    PROPERTY_HEADER(Fem::ConstraintDisplacement);
 
 public:
     /// Constructor
-    ConstraintPrescribedDisplacement(void);
+    ConstraintDisplacement(void);
 
     //Displacement parameters
     App::PropertyFloat xDisplacement; 
@@ -56,7 +56,7 @@ public:
     App::PropertyBool rotxFix;
     App::PropertyBool rotyFix;
     App::PropertyBool rotzFix;
-    App::PropertyBool element;
+    //App::PropertyBool element;
 
     /// recalculate the object
     virtual App::DocumentObjectExecReturn *execute(void);
@@ -69,4 +69,4 @@ public:
 } //namespace Fem
 
 
-#endif // FEM_CONSTRAINTPRESCRIBEDDISPLACEMENT_H
+#endif // FEM_CONSTRAINTDISPLACEMENT_H

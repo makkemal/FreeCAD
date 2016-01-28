@@ -50,7 +50,7 @@
 #include "FemConstraintPressure.h"
 #include "FemConstraintGear.h"
 #include "FemConstraintPulley.h"
-#include "FemConstraintPrescribedDisplacement.h" //OvG: Add Prescribed Displacement //ROlw Added
+#include "FemConstraintDisplacement.h" 
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
@@ -139,8 +139,7 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPressure         ::init();
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
-    //Fem::ConstraintPrescribedDisplacement           ::init(); //OvG: Add Prescibed Displacement ROlw Added & Fixed spelling
-    Fem::ConstraintPrescribedDisplacement ::init();
+    Fem::ConstraintDisplacement ::init();
 
     Fem::FemResultObject            ::init();
     Fem::FemResultObjectPython      ::init();
