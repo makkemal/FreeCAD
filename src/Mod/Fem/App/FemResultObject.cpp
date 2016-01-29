@@ -42,9 +42,9 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(DisplacementVectors,(), "Fem",Prop_None,"List of displacement vectors");
     ADD_PROPERTY_TYPE(DisplacementLengths,(0), "Fem",Prop_None,"List of displacement lengths");
     ADD_PROPERTY_TYPE(StressValues,(0), "Fem",Prop_None,"List of Von Misses stress values");
-    ADD_PROPERTY_TYPE(PrinMax,(0), "Fem",Prop_None,"List of First Pricipal stress values");
-    ADD_PROPERTY_TYPE(PrinMed,(0), "Fem",Prop_None,"List of Second Pricipal stress values");
-    ADD_PROPERTY_TYPE(PrinMin,(0), "Fem",Prop_None,"List of Third Pricipal stress values");
+    ADD_PROPERTY_TYPE(PrinsMax,(0), "Fem",Prop_None,"List of First Pricipal stress values");
+    ADD_PROPERTY_TYPE(PrinsMed,(0), "Fem",Prop_None,"List of Second Pricipal stress values");
+    ADD_PROPERTY_TYPE(PrinsMin,(0), "Fem",Prop_None,"List of Third Pricipal stress values");
     ADD_PROPERTY_TYPE(MaxShear,(0), "Fem",Prop_None,"List of Maximum Shear stress values");
     ADD_PROPERTY_TYPE(UserDef,(0), "Fem",Prop_None,"User defined formula values");
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
@@ -57,9 +57,9 @@ FemResultObject::FemResultObject()
     DisplacementVectors.setStatus(App::Property::ReadOnly, true);
     DisplacementLengths.setStatus(App::Property::ReadOnly, true);
     StressValues.setStatus(App::Property::ReadOnly, true);
-    PrinMax.setStatus(App::Property::ReadOnly, true);
-    PrinMed.setStatus(App::Property::ReadOnly, true);
-    PrinMin.setStatus(App::Property::ReadOnly, true);
+    PrinsMax.setStatus(App::Property::ReadOnly, true);
+    PrinsMed.setStatus(App::Property::ReadOnly, true);
+    PrinsMin.setStatus(App::Property::ReadOnly, true);
     MaxShear.setStatus(App::Property::ReadOnly, true);
     UserDef.setStatus(App::Property::ReadOnly, false);
     Eigenmode.setStatus(App::Property::ReadOnly, true);

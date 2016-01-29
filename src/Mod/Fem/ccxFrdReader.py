@@ -434,16 +434,16 @@ def importFrd(filename, analysis=None):
                     shearstress.append(shear)
                 if eigenmode_number > 0:
                     results.StressValues = map((lambda x: x * scale), mstress)
-                    results.PrinMax = map((lambda x: x * scale), prinstress1)
-                    results.PrinMed = map((lambda x: x * scale), prinstress2)
-                    results.PrinMin = map((lambda x: x * scale), prinstress3)
+                    results.PrinsMax = map((lambda x: x * scale), prinstress1)
+                    results.PrinsMed = map((lambda x: x * scale), prinstress2)
+                    results.PrinsMin = map((lambda x: x * scale), prinstress3)
                     results.Maxshear = map((lambda x: x * scale), shearstress)
                     results.Eigenmode = eigenmode_number
                 else:
                     results.StressValues = mstress
-                    results.PrinMax = prinstress1
-                    results.PrinMed = prinstress2
-                    results.PrinMin = prinstress3
+                    results.PrinsMax = prinstress1
+                    results.PrinsMed = prinstress2
+                    results.PrinsMin = prinstress3
                     results.MaxShear = shearstress
 
             if (results.NodeNumbers != 0 and results.NodeNumbers != stress.keys()):
@@ -473,10 +473,10 @@ def importFrd(filename, analysis=None):
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
                              s_min, s_avg, s_max, 
-                             max(results.PrinMax), (sum(results.PrinMax)/l), min(results.PrinMax),  #MPH max pricipal stats
-                             max(results.PrinMed), (sum(results.PrinMed)/l), min(results.PrinMed),  #MPH max pricipal stats
-                             max(results.PrinMin), (sum(results.PrinMin)/l), min(results.PrinMin),  #MPH max pricipal stats
-                             max(results.MaxShear), (sum(results.MaxShear)/l), min(results.MaxShear)]  #MPH max pricipal stats
+                             max(results.PrinsMax), (sum(results.PrinsMax)/l), min(results.PrinsMax),  #MPH max pricipal stats
+                             max(results.PrinsMed), (sum(results.PrinsMed)/l), min(results.PrinsMed),  #MPH med pricipal stats
+                             max(results.PrinsMin), (sum(results.PrinsMin)/l), min(results.PrinsMin),  #MPH min pricipal stats
+                             max(results.MaxShear), (sum(results.MaxShear)/l), min(results.MaxShear)]  #MPH shear stress stats
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):
