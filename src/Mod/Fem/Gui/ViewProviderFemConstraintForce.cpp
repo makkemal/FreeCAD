@@ -107,21 +107,22 @@ bool ViewProviderFemConstraintForce::setEdit(int ModNum)
 
 #define ARROWLENGTH 9
 #define ARROWHEADRADIUS (ARROWLENGTH/3)
-//#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to updated scaled arrows on initial drawing - so disable
+//#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled arrows on initial drawing - so disable
 
 void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 {
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintForce* pcConstraint = static_cast<Fem::ConstraintForce*>(this->getObject());
+    float scaledheadradius = ARROWHEADRADIUS * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
+    float scaledhlength = ARROWLENGTH * pcConstraint->Scale.getValue();
 
 #ifdef USE_MULTIPLE_COPY
     //OvG: need access to cp for scaling
     SoMultipleCopy* cp = new SoMultipleCopy();
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
-        cp = new SoMultipleCopy();
         cp->matrix.setNum(0);
-        cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->Scale.getValue() , ARROWHEADRADIUS * pcConstraint->Scale.getValue() )); //OvG: Scaling
+        cp->addChild((SoNode*)createArrow(scaledhlength , scaledheadradius)); //OvG: Scaling
         pShapeSep->addChild(cp);
     }
 #endif
@@ -152,7 +153,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
             if (forceDirection.GetAngle(normal) < M_PI_2) // Move arrow so it doesn't disappear inside the solid
-                base = base + dir * ARROWLENGTH * pcConstraint->Scale.getValue() ; //OvG: Scaling
+                base = base + dir * scaledhlength; //OvG: Scaling
 #ifdef USE_MULTIPLE_COPY
             SbMatrix m;
             m.setTransform(base, rot, SbVec3f(1,1,1));
@@ -161,7 +162,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
+            createArrow(sep, scaledhlength, scaledheadradius); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
         }
