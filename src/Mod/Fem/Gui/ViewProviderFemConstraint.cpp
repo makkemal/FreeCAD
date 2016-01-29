@@ -395,6 +395,26 @@ void ViewProviderFemConstraint::updateFixed(const SoNode* node, const int idx, c
     updateCube(sep, idx+CONE_CHILDREN+PLACEMENT_CHILDREN, width, width, width/4);
 }
 
+void ViewProviderFemConstraint::createDisplacement(SoSeparator* sep, const double height, const double width, const bool gap)
+{
+    createCone(sep, height-width/4, height-width/4);
+    createPlacement(sep, SbVec3f(0, -(height-width/4)/2-width/8 - (gap ? 1.0 : 0.1) * width/8, 0), SbRotation());
+}
+
+SoSeparator* ViewProviderFemConstraint::createDisplacement(const double height, const double width, const bool gap)
+{
+    SoSeparator* sep = new SoSeparator();
+    createFixed(sep, height, width, gap);
+    return sep;
+}
+
+void ViewProviderFemConstraint::updateDisplacement(const SoNode* node, const int idx, const double height, const double width, const bool gap)
+{
+    const SoSeparator* sep = static_cast<const SoSeparator*>(node);
+    updateCone(sep, idx, height-width/4, height-width/4);
+    updatePlacement(sep, idx+CONE_CHILDREN, SbVec3f(0, -(height-width/4)/2-width/8 - (gap ? 1.0 : 0.0) * width/8, 0), SbRotation());
+}
+
 QObject* ViewProviderFemConstraint::findChildByName(const QObject* parent, const QString& name)
 {
     for (QObjectList::const_iterator o = parent->children().begin(); o != parent->children().end(); o++) {

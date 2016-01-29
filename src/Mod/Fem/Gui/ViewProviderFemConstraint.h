@@ -87,6 +87,9 @@ protected:
     static void createFixed(SoSeparator* sep, const double height, const double width, const bool gap = false);
     static SoSeparator* createFixed(const double height, const double width, const bool gap = false);
     static void updateFixed(const SoNode* node, const int idx, const double height, const double width, const bool gap = false);
+    void createDisplacement(SoSeparator* sep, const double height, const double width, const bool gap = false);
+	static SoSeparator* createDisplacement(const double height, const double width, const bool gap = false);
+	void updateDisplacement(const SoNode* node, const int idx, const double height, const double width, const bool gap = false);
 
 private:
     SoFontStyle      * pFont;
