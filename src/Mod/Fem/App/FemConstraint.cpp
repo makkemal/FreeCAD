@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -101,6 +101,7 @@ int Constraint::calcDrawScaleFactor() const
 {
     return 1;
 }
+#define CONSTRAINTSTEPLIMIT 50
 
 void Constraint::onChanged(const App::Property* prop)
 {
@@ -171,8 +172,8 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             normals.push_back(NormalDirection.getValue());
             //OvG: Scale by whole object mass in case of a vertex
             GProp_GProps props;
-            BRepGProp::VolumeProperties(toposhape._Shape, props);
-            double lx = props.Mass();
+			BRepGProp::VolumeProperties(toposhape._Shape, props);
+			double lx = props.Mass();
             *scale = this->calcDrawScaleFactor(sqrt(lx)); //OvG: setup draw scale for constraint
         } else if (sh.ShapeType() == TopAbs_EDGE) {
             BRepAdaptor_Curve curve(TopoDS::Edge(sh));
@@ -199,6 +200,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
                 steps = 1;
                 *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
+            steps = steps>CONSTRAINTSTEPLIMIT?CONSTRAINTSTEPLIMIT:steps; //OvG: Place upper limit on number of steps
             double step = (lp - fp) / steps;
             for (int i = 0; i < steps + 1; i++) {
                 gp_Pnt p = curve.Value(i * step);
@@ -246,6 +248,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
                 stepsv = 2; // Minimum of three arrows to ensure (as much as possible) that at least one is displayed
                 *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
+            stepsv = stepsv>CONSTRAINTSTEPLIMIT?CONSTRAINTSTEPLIMIT:stepsv; //OvG: Place upper limit on number of steps
             int stepsu;
             if (lu >= 100) //OvG: Increase 10 units distance proportionately to lu for larger objects.
             {
@@ -263,6 +266,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
                 stepsu = 2;
                 *scale = this->calcDrawScaleFactor(); //OvG: setup draw scale for constraint
             }
+            stepsu = stepsu>CONSTRAINTSTEPLIMIT?CONSTRAINTSTEPLIMIT:stepsu; //OvG: Place upper limit on number of steps
             double stepv = (vlp - vfp) / stepsv;
             double stepu = (ulp - ufp) / stepsu;
             // Create points and normals

@@ -91,21 +91,22 @@ bool ViewProviderFemConstraintPressure::setEdit(int ModNum)
 
 #define ARROWLENGTH (6)
 #define ARROWHEADRADIUS (ARROWLENGTH/3) 
-//#define USE_MULTIPLE_COPY //OvG: MULTICOPY fails to updated scaled arrows on initial drawing - so disable
+//#define USE_MULTIPLE_COPY //OvG: MULTICOPY fails to update scaled arrows on initial drawing - so disable
 
 void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
 {
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintPressure* pcConstraint = static_cast<Fem::ConstraintPressure*>(this->getObject());
+    float scaledheadradius = ARROWHEADRADIUS * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
+    float scaledhlength = ARROWLENGTH * pcConstraint->Scale.getValue();
 
 #ifdef USE_MULTIPLE_COPY
     //OvG: always need access to cp for scaling
     SoMultipleCopy* cp = new SoMultipleCopy();
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
-        cp = new SoMultipleCopy();
         cp->matrix.setNum(0);
-        cp->addChild((SoNode*)createArrow(ARROWLENGTH * pcConstraint->Scale.getValue() , ARROWHEADRADIUS * pcConstraint->Scale.getValue())); //OvG: Scaling
+        cp->addChild((SoNode*)createArrow(scaledhlength , scaledheadradius)); //OvG: Scaling
         pShapeSep->addChild(cp);
     }
 #endif
@@ -133,7 +134,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             SbVec3f dir(n->x, n->y, n->z);
             double rev;
             if (pcConstraint->Reversed.getValue()) {
-                base = base + dir * ARROWLENGTH * pcConstraint->Scale.getValue(); //OvG: Scaling
+                base = base + dir * scaledhlength; //OvG: Scaling
                 rev = 1;
             } else {
                 rev = -1;
@@ -147,7 +148,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
+            createArrow(sep, scaledhlength , scaledheadradius); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
             n++;
