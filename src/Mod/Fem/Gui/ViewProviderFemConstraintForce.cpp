@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -107,7 +107,7 @@ bool ViewProviderFemConstraintForce::setEdit(int ModNum)
 
 #define ARROWLENGTH 9
 #define ARROWHEADRADIUS (ARROWLENGTH/3)
-#define USE_MULTIPLE_COPY
+//#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to updated scaled arrows on initial drawing - so disable
 
 void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 {
@@ -130,8 +130,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
 
 #ifdef USE_MULTIPLE_COPY
-        
-        /*SoMultipleCopy**/ cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
+		cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
         cp->matrix.setNum(points.size());
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
@@ -162,7 +161,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue());
+            createArrow(sep, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
         }
@@ -200,7 +199,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = static_cast<SoSeparator*>(pShapeSep->getChild(idx));
             updatePlacement(sep, 0, base, rot);
-            updateArrow(sep, 2, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue());
+            updateArrow(sep, 2, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
 #endif
             idx++;
         }

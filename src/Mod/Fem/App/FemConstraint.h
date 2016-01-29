@@ -67,7 +67,7 @@ protected:
 
 protected:
     /// Calculate the points where symbols should be drawn
-    const bool getPoints(std::vector<Base::Vector3d>& points, std::vector<Base::Vector3d>& normals, int * scale) const;
+    const bool getPoints(std::vector<Base::Vector3d>& points, std::vector<Base::Vector3d>& normals, int * scale) const; //OvG: added scale parameter
     const bool getCylinder(double& radius, double& height, Base::Vector3d& base, Base::Vector3d& axis) const;
     Base::Vector3d getBasePoint(const Base::Vector3d& base, const Base::Vector3d& axis,
                                 const App::PropertyLinkSub &location, const double& dist);

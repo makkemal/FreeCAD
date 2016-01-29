@@ -20,7 +20,7 @@
 #*                                                                         *
 #***************************************************************************
 
-__title__ = "_TaskPanelFemPrescribed Displacement" #OvG: Renamed from Command Prescribed Displacement
+__title__ = "_TaskPanelFemPrescribedDisplacement" #OvG: Renamed from Command Prescribed Displacement
 __author__ = "Alfred Bogaers, Michael Hindley, Oswald van Ginkel"
 __url__ = "http://www.freecadweb.org"
 

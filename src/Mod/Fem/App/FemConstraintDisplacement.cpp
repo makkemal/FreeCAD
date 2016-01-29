@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -33,13 +33,13 @@
 #include <gp_Pnt.hxx>
 #endif
 
-#include "FemConstraintPrescribedDisplacement.h"
+#include "FemConstraintDisplacement.h"
 
 using namespace Fem;
 
-PROPERTY_SOURCE(Fem::ConstraintPrescribedDisplacement, Fem::Constraint);
+PROPERTY_SOURCE(Fem::ConstraintDisplacement, Fem::Constraint);
 
-ConstraintPrescribedDisplacement::ConstraintPrescribedDisplacement()
+ConstraintDisplacement::ConstraintDisplacement()
 {
     ADD_PROPERTY(xDisplacement,(0.0)); 
     ADD_PROPERTY(yDisplacement,(0.0)); 
@@ -59,15 +59,14 @@ ConstraintPrescribedDisplacement::ConstraintPrescribedDisplacement()
     ADD_PROPERTY(rotxFix,(0));
     ADD_PROPERTY(rotyFix,(0));
     ADD_PROPERTY(rotzFix,(0));
-    ADD_PROPERTY(element,(0));
 }
 
-App::DocumentObjectExecReturn *ConstraintPrescribedDisplacement::execute(void)
+App::DocumentObjectExecReturn *ConstraintDisplacement::execute(void)
 {
     return Constraint::execute();
 }
 
-const char* ConstraintPrescribedDisplacement::getViewProviderName(void) const
+const char* ConstraintDisplacement::getViewProviderName(void) const
 {
-	return "FemGui::ViewProviderFemConstraintPrescribedDisplacement";
+	return "FemGui::ViewProviderFemConstraintDisplacement";
 }

@@ -10,6 +10,8 @@ INSTALL(
         # changes on the file list here needs to be made in App/CMakeLists.txt as well
         Init.py
         InitGui.py
+        
+        ccxInpWriterFemConstraintDisplacement.py
 
         convert2TetGen.py
 
@@ -67,13 +69,6 @@ INSTALL(
         _FemSolverCalculix.py
         _ViewProviderFemSolverCalculix.py
         _CommandFemSolverCalculix.py
-
-        # FemPrescribedDisplacement.py
-        _FemPrescribedDisplacement.py
-        _ViewProviderFemPrescribedDisplacement.py
-        _CommandFemPrescribedDisplacement.py
-        _TaskPanelFemPrescribedDisplacement.py
-        TaskPanelFemPrescribedDisplacement.ui
 
     DESTINATION
         Mod/Fem

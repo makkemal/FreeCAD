@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -76,9 +76,10 @@ void ConstraintFixed::onChanged(const App::Property* prop)
         std::vector<Base::Vector3d> points;
         std::vector<Base::Vector3d> normals;
         int scale = 1; //OvG: Enforce use of scale
-        if (getPoints(points, normals,&scale)) {
+        if (getPoints(points, normals, &scale)) {
             Points.setValues(points);
             Normals.setValues(normals);
+            
             Points.touch(); // This triggers ViewProvider::updateData()
         }
     }
