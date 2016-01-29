@@ -32,6 +32,7 @@
 #include "TaskFemConstraint.h"
 #include "ViewProviderFemConstraintDisplacement.h"
 
+#include <QObject>
 #include <QThread>
 #include <QMutex>
 #include <Base/Interpreter.h>
@@ -109,16 +110,6 @@ public:
     virtual void open();
     virtual bool accept();
     virtual bool reject();
-};
-
-class PythonThread : public QThread
-{
-public:
-    PythonThread(QObject* parent=0);
-    ~PythonThread();
-
-protected:
-    void run();
 };
 
 } //namespace FemGui
