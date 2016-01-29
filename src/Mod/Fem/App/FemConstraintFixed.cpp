@@ -79,7 +79,7 @@ void ConstraintFixed::onChanged(const App::Property* prop)
         if (getPoints(points, normals, &scale)) {
             Points.setValues(points);
             Normals.setValues(normals);
-            
+            Scale.setValue(scale); //OvG: Scale
             Points.touch(); // This triggers ViewProvider::updateData()
         }
     }

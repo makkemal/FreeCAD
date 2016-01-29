@@ -532,6 +532,9 @@ bool TaskDlgFemConstraintDisplacement::accept()
             name.c_str(), parameterDisplacement->get_rotzfree() ? "True" : "False");
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.rotzFix = %s",
             name.c_str(), parameterDisplacement->get_rotzfix() ? "True" : "False");
+            
+        std::string scale = parameterDisplacement->getScale();  //OvG: determine modified scale
+		Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Scale = %s", name.c_str(), scale.c_str()); //OvG: implement modified scale
     }
     catch (const Base::Exception& e) {
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));

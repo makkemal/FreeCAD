@@ -54,11 +54,11 @@ public:
     /// Von Mises Stress values of analysis
     App::PropertyFloatList StressValues;
     ///First principal Stress values of analysis
-    App::PropertyFloatList PrinMax;
+    App::PropertyFloatList PrinsMax;
     ///Second principal Stress values of analysis
-    App::PropertyFloatList PrinMed;
+    App::PropertyFloatList PrinsMed;
     ///Third principal Stress values of analysis
-    App::PropertyFloatList PrinMin;
+    App::PropertyFloatList PrinsMin;
     ///Shear Stress values of analysis
     App::PropertyFloatList MaxShear;
     ///User defined formula
