@@ -34,7 +34,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="spinForce">
+      <widget class="QDoubleSpinBox" name="spinHeatFlux">
        <property name="minimum">
         <double>-99999.000000000000000</double>
        </property>
