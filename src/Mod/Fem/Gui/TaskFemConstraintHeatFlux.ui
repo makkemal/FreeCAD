@@ -29,7 +29,7 @@
      <item>
       <widget class="QLabel" name="labelForce">
        <property name="text">
-        <string>Heat Flux[W/m^2]</string>
+        <string>Heat Flux[W/m²]</string>
        </property>
       </widget>
      </item>
