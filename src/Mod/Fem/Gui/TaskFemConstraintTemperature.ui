@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TaskFemConstraintForce</class>
- <widget class="QWidget" name="TaskFemConstraintForce">
+ <class>TaskFemConstraintTemperature</class>
+ <widget class="QWidget" name="TaskFemConstraintTemperature">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -25,9 +25,9 @@
     <widget class="QListWidget" name="listReferences"/>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="layoutForce">
+    <layout class="QHBoxLayout" name="layoutTemperature">
      <item>
-      <widget class="QLabel" name="labelForce">
+      <widget class="QLabel" name="labelTemperature">
        <property name="text">
         <string>Temperature [°C]</string>
        </property>
