@@ -540,9 +540,6 @@ bool TaskDlgFemConstraintDisplacement::accept()
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));
         return false;
     }
-    
-    PythonThread * thr=new PythonThread;
-    thr->start();
 
     return TaskDlgFemConstraint::accept();
 }
@@ -554,36 +551,6 @@ bool TaskDlgFemConstraintDisplacement::reject()
     Gui::Command::updateActive();
 
     return true;
-}
-
-PythonThread::PythonThread(QObject* parent)
-  : QThread(parent)
-{
-}
-
-PythonThread::~PythonThread()
-{
-}
-
-void PythonThread::run()
-{
-    //QMutexLocker mutex_lock(&mutex);
-    //Base::PyGILStateLocker locker;
-    try {
-        Base::Console().Message("Begin ccxInpWriterFemConstraintDisplacement file");
-        Base::Interpreter().runString(
-        "import ccxInpWriterFemConstraintDisplacement\n"
-        "cIWFCD=ccxInpWriterFemConstraintDisplacement.ccxInpWriterFemConstraintDisplacement()\n"
-        "cIWFCD.writeFile()\n"
-        );
-        Base::Console().Message("End ccxInpWriterFemConstraintDisplacement file");
-        Base::Console().Message("look in FreeCAD.ActiveDocument.TransientDir/FemConstraints/ folder");
-        msleep(10);
-    }
-    catch (const Base::PyException& e) {
-        Base::Console().Message("Error writing ccxInpWriterFemConstraintDisplacement file");
-        Base::Console().Error(e.what());
-    }
 }
 
 #include "moc_TaskFemConstraintDisplacement.cpp"
