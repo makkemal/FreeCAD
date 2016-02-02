@@ -251,8 +251,6 @@ void TaskFemConstraintDisplacement::x_changed(double val){
         ui->dispxfree->setChecked(false);
         ui->dispxfix->setChecked(false); 
     }
-    else
-    {  ui->dispxfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::y_changed(double val){
@@ -261,8 +259,6 @@ void TaskFemConstraintDisplacement::y_changed(double val){
         ui->dispyfree->setChecked(false);
         ui->dispyfix->setChecked(false); 
     }
-    else
-    {  ui->dispyfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::z_changed(double val){
@@ -271,8 +267,6 @@ void TaskFemConstraintDisplacement::z_changed(double val){
         ui->dispzfree->setChecked(false);
         ui->dispzfix->setChecked(false); 
     }
-    else
-    {  ui->dispzfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::x_rot(double val){
@@ -305,8 +299,10 @@ void TaskFemConstraintDisplacement::fixx(int val){
         ui->dispxfree->setChecked(false);
         ui->spinxDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispxfix->setChecked(false);}
+    else if (ui->spinxDisplacement->value()==0)
+    {
+         ui->dispxfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freex(int val){
@@ -315,8 +311,10 @@ void TaskFemConstraintDisplacement::freex(int val){
         ui->dispxfix->setChecked(false);
         ui->spinxDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispxfree->setChecked(false);}
+    else if (ui->spinxDisplacement->value()==0)
+    {
+         ui->dispxfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::fixy(int val){
@@ -325,8 +323,10 @@ void TaskFemConstraintDisplacement::fixy(int val){
         ui->dispyfree->setChecked(false);
         ui->spinyDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispyfix->setChecked(false);}
+    else if (ui->spinyDisplacement->value()==0)
+    {
+         ui->dispyfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freey(int val){
@@ -335,8 +335,10 @@ void TaskFemConstraintDisplacement::freey(int val){
         ui->dispyfix->setChecked(false);
         ui->spinyDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispyfree->setChecked(false);}
+    else if (ui->spinyDisplacement->value()==0)
+    {
+         ui->dispyfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::fixz(int val){
@@ -345,8 +347,10 @@ void TaskFemConstraintDisplacement::fixz(int val){
         ui->dispzfree->setChecked(false);
         ui->spinzDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispzfix->setChecked(false);}
+    else if (ui->spinzDisplacement->value()==0)
+    {
+         ui->dispzfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freez(int val){
@@ -355,8 +359,10 @@ void TaskFemConstraintDisplacement::freez(int val){
         ui->dispzfix->setChecked(false);
         ui->spinzDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispzfree->setChecked(false);}
+    else if (ui->spinzDisplacement->value()==0)
+    {
+         ui->dispzfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixx(int val){
@@ -365,8 +371,10 @@ void TaskFemConstraintDisplacement::rotfixx(int val){
         ui->rotxfree->setChecked(false);
         ui->rotxv->setValue(0); 
     }
-    else
-    {  ui->rotxfix->setChecked(false);}
+    else if (ui->rotxv->value()==0)
+    {
+         ui->rotxfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreex(int val){
@@ -375,8 +383,10 @@ void TaskFemConstraintDisplacement::rotfreex(int val){
         ui->rotxfix->setChecked(false);
         ui->rotxv->setValue(0); 
     }
-    else
-    {  ui->rotxfree->setChecked(false);}
+    else if (ui->rotxv->value()==0)
+    {
+         ui->rotxfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixy(int val){
@@ -385,8 +395,10 @@ void TaskFemConstraintDisplacement::rotfixy(int val){
         ui->rotyfree->setChecked(false);
         ui->rotyv->setValue(0); 
     }
-    else
-    {  ui->rotyfix->setChecked(false);}
+    else if (ui->rotyv->value()==0)
+    {
+         ui->rotyfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreey(int val){
@@ -395,8 +407,10 @@ void TaskFemConstraintDisplacement::rotfreey(int val){
         ui->rotyfix->setChecked(false);
         ui->rotyv->setValue(0); 
     }
-    else
-    {  ui->rotyfree->setChecked(false);}
+    else if (ui->rotyv->value()==0)
+    {
+         ui->rotyfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixz(int val){
@@ -405,8 +419,10 @@ void TaskFemConstraintDisplacement::rotfixz(int val){
         ui->rotzfree->setChecked(false);
         ui->rotzv->setValue(0); 
     }
-    else
-    {  ui->rotzfix->setChecked(false);}
+    else if (ui->rotzv->value()==0)
+    {
+         ui->rotzfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreez(int val){
@@ -415,8 +431,10 @@ void TaskFemConstraintDisplacement::rotfreez(int val){
         ui->rotzfix->setChecked(false);
         ui->rotzv->setValue(0); 
     }
-    else
-    {  ui->rotzfree->setChecked(false);}
+    else if (ui->rotzv->value()==0)
+    {
+         ui->rotzfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::onReferenceDeleted() {

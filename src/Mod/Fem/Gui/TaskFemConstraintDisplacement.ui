@@ -243,7 +243,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="rotxv"/>
+           <widget class="QDoubleSpinBox" name="rotxv">
+           <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
+            </property>
+            </widget>
           </item>
          </layout>
         </item>
@@ -275,7 +282,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="rotyv"/>
+           <widget class="QDoubleSpinBox" name="rotyv">
+            <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
+            </property>
+            </widget>
           </item>
          </layout>
         </item>
@@ -316,6 +330,12 @@
            <widget class="QDoubleSpinBox" name="rotzv">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
             </property>
            </widget>
           </item>

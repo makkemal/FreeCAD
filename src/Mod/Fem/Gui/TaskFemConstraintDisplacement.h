@@ -48,8 +48,8 @@ class TaskFemConstraintDisplacement : public TaskFemConstraint
 
 public:
     TaskFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView,QWidget *parent = 0);
-    virtual ~TaskFemConstraintDisplacement();
-    virtual const std::string getReferences() const;
+    ~TaskFemConstraintDisplacement();
+    const std::string getReferences() const;
     double get_spinxDisplacement()const;
     double get_spinyDisplacement()const;
     double get_spinzDisplacement()const;
@@ -91,10 +91,10 @@ private Q_SLOTS:
     void rotfreez(int);
 
 protected:
-    virtual void changeEvent(QEvent *e);
+    void changeEvent(QEvent *e);
 
 private:
-    virtual void onSelectionChanged(const Gui::SelectionChanges& msg);
+    void onSelectionChanged(const Gui::SelectionChanges& msg);
     void updateUI();
     Ui_TaskFemConstraintDisplacement* ui;
 
@@ -107,9 +107,9 @@ class TaskDlgFemConstraintDisplacement : public TaskDlgFemConstraint
 
 public:
     TaskDlgFemConstraintDisplacement(ViewProviderFemConstraintDisplacement *ConstraintView);
-    virtual void open();
-    virtual bool accept();
-    virtual bool reject();
+    void open();
+    bool accept();
+    bool reject();
 };
 
 } //namespace FemGui
