@@ -89,8 +89,8 @@ bool ViewProviderFemConstraintDisplacement::setEdit(int ModNum)
     }
 }
 
-#define HEIGHT 4
-#define WIDTH (1.5*HEIGHT)
+#define HEIGHT (2)
+#define WIDTH (1)
 //#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled display on initial drawing - so disable
 
 void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop)
@@ -99,6 +99,9 @@ void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(this->getObject());
     float scaledwidth = WIDTH * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
     float scaledheight = HEIGHT * pcConstraint->Scale.getValue();
+    bool xFree = pcConstraint->xFree.getValue();
+    bool yFree = pcConstraint->yFree.getValue();
+    bool zFree = pcConstraint->zFree.getValue();
 
 #ifdef USE_MULTIPLE_COPY
 	//OvG: always need access to cp for scaling
@@ -120,7 +123,7 @@ void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop
 
 #ifdef USE_MULTIPLE_COPY
         cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
-        cp->matrix.setNum(points.size());
+        cp->matrix.setNum(points.size()*(((xFree==false)?1:0)+((yFree==false)?1:0)+((zFree==false)?1:0))); //Tri-cones
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
 #else
@@ -130,18 +133,57 @@ void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop
 
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
-            SbVec3f dir(n->x, n->y, n->z);
-            SbRotation rot(SbVec3f(0,-1,0), dir);
+            SbVec3f dir(1,1,1); //(n->x, n->y, n->z); //OvG: Make relevant to gloabl axes
+            SbRotation rotx(SbVec3f(0,-1,0), dir); //OvG Tri-cones
+            SbRotation roty(SbVec3f(-1,0,0), dir);
+            SbRotation rotz(SbVec3f(0,0,-1), dir);
 #ifdef USE_MULTIPLE_COPY
-            SbMatrix m;
-            m.setTransform(base, rot, SbVec3f(1,1,1));
-            matrices[idx] = m;
-            idx++;
+            SbMatrix mx;
+            SbMatrix my;
+            SbMatrix mz;
+            if(!xFree)
+            {
+				SbMatrix mx;
+				mx.setTransform(base, rotx, SbVec3f(1,1,1));
+				matrices[idx] = mx;
+				idx++;
+			}
+			if(!yFree)
+            {
+				SbMatrix my;
+				mx.setTransform(base, roty, SbVec3f(1,1,1));
+				matrices[idx] = my;
+				idx++;
+			}
+			if(!zFree)
+            {
+				SbMatrix mz;
+				mx.setTransform(base, rotz, SbVec3f(1,1,1));
+				matrices[idx] = mz;
+				idx++;
+			}
 #else
-            SoSeparator* sep = new SoSeparator();
-            createPlacement(sep, base, rot);
-            createDisplacement(sep, scaledheight, scaledwidth); //OvG: Scaling
-            pShapeSep->addChild(sep);
+			if(!xFree)
+            {
+				SoSeparator* sepx = new SoSeparator();
+				createPlacement(sepx, base, rotx);
+				createDisplacement(sepx, scaledheight, scaledwidth); //OvG: Scaling
+				pShapeSep->addChild(sepx);
+			}
+			if(!yFree)
+            {
+				SoSeparator* sepy = new SoSeparator();
+				createPlacement(sepy, base, roty);
+				createDisplacement(sepy, scaledheight, scaledwidth); //OvG: Scaling
+				pShapeSep->addChild(sepy);
+			}
+			if(!zFree)
+            {
+				SoSeparator* sepz = new SoSeparator();
+				createPlacement(sepz, base, rotz);
+				createDisplacement(sepz, scaledheight, scaledwidth); //OvG: Scaling
+				pShapeSep->addChild(sepz);
+			}
 #endif
             n++;
         }

@@ -404,7 +404,7 @@ void ViewProviderFemConstraint::createDisplacement(SoSeparator* sep, const doubl
 SoSeparator* ViewProviderFemConstraint::createDisplacement(const double height, const double width, const bool gap)
 {
     SoSeparator* sep = new SoSeparator();
-    createFixed(sep, height, width, gap);
+    createDisplacement(sep, height, width, gap);
     return sep;
 }
 
