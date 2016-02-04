@@ -33,11 +33,9 @@
 #include "ViewProviderFemConstraintDisplacement.h"
 
 #include <QObject>
-#include <QThread>
-#include <QMutex>
-#include <Base/Interpreter.h>
 #include <Base/Console.h>
 #include <App/DocumentObject.h>
+#include <QListWidgetItem>
 
 class Ui_TaskFemConstraintDisplacement;
 
@@ -89,15 +87,18 @@ private Q_SLOTS:
     void rotfreey(int);
     void rotfixz(int);
     void rotfreez(int);
+    
+    void addToSelection();
+    void removeFromSelection();
+    void setSelection(QListWidgetItem* item);
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    void onSelectionChanged(const Gui::SelectionChanges& msg);
+    //void onSelectionChanged(const Gui::SelectionChanges& msg);
     void updateUI();
     Ui_TaskFemConstraintDisplacement* ui;
-
     
 };
 
