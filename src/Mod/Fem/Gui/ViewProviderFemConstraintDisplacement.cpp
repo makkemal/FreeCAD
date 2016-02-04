@@ -133,10 +133,12 @@ void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop
 
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
-            SbVec3f dir(1,1,1); //(n->x, n->y, n->z); //OvG: Make relevant to gloabl axes
-            SbRotation rotx(SbVec3f(0,-1,0), dir); //OvG Tri-cones
-            SbRotation roty(SbVec3f(-1,0,0), dir);
-            SbRotation rotz(SbVec3f(0,0,-1), dir);
+            SbVec3f dirx(1,0,0); //(n->x, n->y, n->z); //OvG: Make relevant to global axes
+            SbVec3f diry(0,1,0); //(n->x, n->y, n->z); //OvG: Make relevant to global axes
+            SbVec3f dirz(0,0,1); //(n->x, n->y, n->z); //OvG: Make relevant to global axes
+            SbRotation rotx(SbVec3f(0,1,0), dirx); //OvG Tri-cones
+            SbRotation roty(SbVec3f(0,1,0), diry);
+            SbRotation rotz(SbVec3f(0,1,0), dirz);
 #ifdef USE_MULTIPLE_COPY
             SbMatrix mx;
             SbMatrix my;
@@ -167,21 +169,21 @@ void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop
             {
 				SoSeparator* sepx = new SoSeparator();
 				createPlacement(sepx, base, rotx);
-				createDisplacement(sepx, scaledheight, scaledwidth); //OvG: Scaling
+				createDisplacement(sepx, scaledheight, scaledwidth, true); //OvG: Scaling
 				pShapeSep->addChild(sepx);
 			}
 			if(!yFree)
             {
 				SoSeparator* sepy = new SoSeparator();
 				createPlacement(sepy, base, roty);
-				createDisplacement(sepy, scaledheight, scaledwidth); //OvG: Scaling
+				createDisplacement(sepy, scaledheight, scaledwidth, true); //OvG: Scaling
 				pShapeSep->addChild(sepy);
 			}
 			if(!zFree)
             {
 				SoSeparator* sepz = new SoSeparator();
 				createPlacement(sepz, base, rotz);
-				createDisplacement(sepz, scaledheight, scaledwidth); //OvG: Scaling
+				createDisplacement(sepz, scaledheight, scaledwidth, true); //OvG: Scaling
 				pShapeSep->addChild(sepz);
 			}
 #endif
