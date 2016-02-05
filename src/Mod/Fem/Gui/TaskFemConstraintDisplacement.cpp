@@ -421,18 +421,32 @@ void TaskFemConstraintDisplacement::addToSelection()
         return;
     }
     
+    
     std::vector<std::string> subNames=it->getSubNames();
-    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-        if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
-            QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
-            return;
+    
+    if (subNames.size()>0){
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
+                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
+                return;
+            }
         }
+    }
+    else{
+        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
     }
     
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
+    
+    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
+        if (Objects[itrObj]!=obj){
+            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+            return;
+        }
+    }
     
     for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
         std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
@@ -465,27 +479,36 @@ void TaskFemConstraintDisplacement::removeFromSelection()
     }
     
     std::vector<std::string> subNames=it->getSubNames();
-    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-        if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
-            QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
-            return;
+    
+    if (subNames.size()>0){
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
+                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
+                return;
+            }
         }
     }
-    
+    else{
+        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
+    }
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     
+    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
+        if (Objects[itrObj]!=obj){
+            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+            return;
+        }
+    }
+    
     unsigned int initialSize=SubElements.size();
     for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
         std::vector<std::string>::iterator itrNewEnd=std::remove(SubElements.begin(),SubElements.end(),subNames[subIt]);
         SubElements.erase(itrNewEnd,SubElements.end());
+        Objects.erase(itrNewEnd,Objects.end());
     }
-    
-    unsigned int rem=initialSize-SubElements.size();
-    for (unsigned int j=0;j<(rem);j++)
-        Objects.pop_back();
     
     disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
