@@ -47,12 +47,12 @@ ConstraintDisplacement::ConstraintDisplacement()
     ADD_PROPERTY(xRotation,(0.0)); 
     ADD_PROPERTY(yRotation,(0.0)); 
     ADD_PROPERTY(zRotation,(0.0)); 
-    ADD_PROPERTY(xFree,(1)); 
-    ADD_PROPERTY(yFree,(1)); 
-    ADD_PROPERTY(zFree,(1)); 
-    ADD_PROPERTY(xFix,(0)); 
-    ADD_PROPERTY(yFix,(0)); 
-    ADD_PROPERTY(zFix,(0)); 
+    ADD_PROPERTY(xFree,(0)); 
+    ADD_PROPERTY(yFree,(0)); 
+    ADD_PROPERTY(zFree,(0)); 
+    ADD_PROPERTY(xFix,(1)); 
+    ADD_PROPERTY(yFix,(1)); 
+    ADD_PROPERTY(zFix,(1)); 
     ADD_PROPERTY(rotxFree,(1)); 
     ADD_PROPERTY(rotyFree,(1)); 
     ADD_PROPERTY(rotzFree,(1)); 

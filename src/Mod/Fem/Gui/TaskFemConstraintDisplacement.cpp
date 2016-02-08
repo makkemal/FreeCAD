@@ -45,6 +45,12 @@
 #include <App/Application.h>
 #include <Gui/Command.h>
 
+
+
+#include <Gui/Selection.h>
+#include <Gui/SelectionFilter.h>
+
+
 using namespace FemGui;
 using namespace Gui;
 
@@ -62,6 +68,9 @@ TaskFemConstraintDisplacement::TaskFemConstraintDisplacement(ViewProviderFemCons
     action->connect(action, SIGNAL(triggered()), this, SLOT(onReferenceDeleted()));
     ui->lw_references->addAction(action);
     ui->lw_references->setContextMenuPolicy(Qt::ActionsContextMenu);
+    
+    connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
     
     this->groupLayout()->addWidget(proxy);
     
@@ -180,6 +189,10 @@ TaskFemConstraintDisplacement::TaskFemConstraintDisplacement(ViewProviderFemCons
     ui->rotyfree->blockSignals(false);
     ui->rotzfix->blockSignals(false);
     ui->rotzfree->blockSignals(false);
+    
+    //Selection buttons
+    connect(ui->btnAdd, SIGNAL(clicked()),  this, SLOT(addToSelection()));
+    connect(ui->btnRemove, SIGNAL(clicked()),  this, SLOT(removeFromSelection()));
 
     updateUI();
 }
@@ -198,61 +211,12 @@ void TaskFemConstraintDisplacement::updateUI()
     }
 }
 
-void TaskFemConstraintDisplacement::onSelectionChanged(const Gui::SelectionChanges& msg)
-{
-    if ((msg.Type != Gui::SelectionChanges::AddSelection) ||
-        // Don't allow selection in other document
-        (strcmp(msg.pDocName, ConstraintView->getObject()->getDocument()->getName()) != 0) ||
-        // Don't allow selection mode none
-        (selectionMode != selref) ||
-        // Don't allow empty smenu/submenu
-        (!msg.pSubName || msg.pSubName[0] == '\0')) {
-        return;
-    }
-
-    std::string subName(msg.pSubName);
-    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
-    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(msg.pObjectName);
-
-    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
-    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
-
-    if (subName.substr(0,4) != "Face") {
-        QMessageBox::warning(this, tr("Selection error"), tr("Only faces can be picked"));
-        return;
-    }
-    // Avoid duplicates
-    std::size_t pos = 0;
-    for (; pos < Objects.size(); pos++) {
-        if (obj == Objects[pos])
-            break;
-    }
-
-    if (pos != Objects.size()) {
-        if (subName == SubElements[pos])
-            return;
-    }
-
-    // add the new reference
-    Objects.push_back(obj);
-    SubElements.push_back(subName);
-    pcConstraint->References.setValues(Objects,SubElements);
-    ui->lw_references->addItem(makeRefText(obj, subName));
-
-    // Turn off reference selection mode
-    //onButtonReference(false);
-    //Gui::Selection().clearSelection();
-    updateUI();
-}
-
 void TaskFemConstraintDisplacement::x_changed(double val){
     if (val!=0)
     {
         ui->dispxfree->setChecked(false);
         ui->dispxfix->setChecked(false); 
     }
-    else
-    {  ui->dispxfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::y_changed(double val){
@@ -261,8 +225,6 @@ void TaskFemConstraintDisplacement::y_changed(double val){
         ui->dispyfree->setChecked(false);
         ui->dispyfix->setChecked(false); 
     }
-    else
-    {  ui->dispyfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::z_changed(double val){
@@ -271,8 +233,6 @@ void TaskFemConstraintDisplacement::z_changed(double val){
         ui->dispzfree->setChecked(false);
         ui->dispzfix->setChecked(false); 
     }
-    else
-    {  ui->dispzfree->setChecked(true);}
 }
 
 void TaskFemConstraintDisplacement::x_rot(double val){
@@ -305,8 +265,10 @@ void TaskFemConstraintDisplacement::fixx(int val){
         ui->dispxfree->setChecked(false);
         ui->spinxDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispxfix->setChecked(false);}
+    else if (ui->spinxDisplacement->value()==0)
+    {
+         ui->dispxfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freex(int val){
@@ -315,8 +277,10 @@ void TaskFemConstraintDisplacement::freex(int val){
         ui->dispxfix->setChecked(false);
         ui->spinxDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispxfree->setChecked(false);}
+    else if (ui->spinxDisplacement->value()==0)
+    {
+         ui->dispxfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::fixy(int val){
@@ -325,8 +289,10 @@ void TaskFemConstraintDisplacement::fixy(int val){
         ui->dispyfree->setChecked(false);
         ui->spinyDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispyfix->setChecked(false);}
+    else if (ui->spinyDisplacement->value()==0)
+    {
+         ui->dispyfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freey(int val){
@@ -335,8 +301,10 @@ void TaskFemConstraintDisplacement::freey(int val){
         ui->dispyfix->setChecked(false);
         ui->spinyDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispyfree->setChecked(false);}
+    else if (ui->spinyDisplacement->value()==0)
+    {
+         ui->dispyfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::fixz(int val){
@@ -345,8 +313,10 @@ void TaskFemConstraintDisplacement::fixz(int val){
         ui->dispzfree->setChecked(false);
         ui->spinzDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispzfix->setChecked(false);}
+    else if (ui->spinzDisplacement->value()==0)
+    {
+         ui->dispzfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::freez(int val){
@@ -355,8 +325,10 @@ void TaskFemConstraintDisplacement::freez(int val){
         ui->dispzfix->setChecked(false);
         ui->spinzDisplacement->setValue(0); 
     }
-    else
-    {  ui->dispzfree->setChecked(false);}
+    else if (ui->spinzDisplacement->value()==0)
+    {
+         ui->dispzfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixx(int val){
@@ -365,8 +337,10 @@ void TaskFemConstraintDisplacement::rotfixx(int val){
         ui->rotxfree->setChecked(false);
         ui->rotxv->setValue(0); 
     }
-    else
-    {  ui->rotxfix->setChecked(false);}
+    else if (ui->rotxv->value()==0)
+    {
+         ui->rotxfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreex(int val){
@@ -375,8 +349,10 @@ void TaskFemConstraintDisplacement::rotfreex(int val){
         ui->rotxfix->setChecked(false);
         ui->rotxv->setValue(0); 
     }
-    else
-    {  ui->rotxfree->setChecked(false);}
+    else if (ui->rotxv->value()==0)
+    {
+         ui->rotxfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixy(int val){
@@ -385,8 +361,10 @@ void TaskFemConstraintDisplacement::rotfixy(int val){
         ui->rotyfree->setChecked(false);
         ui->rotyv->setValue(0); 
     }
-    else
-    {  ui->rotyfix->setChecked(false);}
+    else if (ui->rotyv->value()==0)
+    {
+         ui->rotyfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreey(int val){
@@ -395,8 +373,10 @@ void TaskFemConstraintDisplacement::rotfreey(int val){
         ui->rotyfix->setChecked(false);
         ui->rotyv->setValue(0); 
     }
-    else
-    {  ui->rotyfree->setChecked(false);}
+    else if (ui->rotyv->value()==0)
+    {
+         ui->rotyfix->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfixz(int val){
@@ -405,8 +385,10 @@ void TaskFemConstraintDisplacement::rotfixz(int val){
         ui->rotzfree->setChecked(false);
         ui->rotzv->setValue(0); 
     }
-    else
-    {  ui->rotzfix->setChecked(false);}
+    else if (ui->rotzv->value()==0)
+    {
+         ui->rotzfree->setChecked(true);
+    }
 }
 
 void TaskFemConstraintDisplacement::rotfreez(int val){
@@ -415,8 +397,149 @@ void TaskFemConstraintDisplacement::rotfreez(int val){
         ui->rotzfix->setChecked(false);
         ui->rotzv->setValue(0); 
     }
-    else
-    {  ui->rotzfree->setChecked(false);}
+    else if (ui->rotzv->value()==0)
+    {
+         ui->rotzfix->setChecked(true);
+    }
+}
+
+void TaskFemConstraintDisplacement::addToSelection()
+{
+    std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx(); //gets vector of selected objects of active document
+    if (selection.size()==0){
+        QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
+        return;
+    }
+    else if (selection.size()>1){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one object can be selected at a time!"));
+        return;
+    }
+
+    std::vector<Gui::SelectionObject>::iterator it = selection.begin(); 
+    if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+        QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
+        return;
+    }
+    
+    
+    std::vector<std::string> subNames=it->getSubNames();
+    
+    if (subNames.size()>0){
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
+                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
+                return;
+            }
+        }
+    }
+    else{
+        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
+    }
+    
+    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
+    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
+    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
+    
+    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
+        if (Objects[itrObj]!=obj){
+            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+            return;
+        }
+    }
+    
+    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+        std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
+        if (itr == SubElements.end()){//if not already in list then add (avoid duplicates)
+            Objects.push_back(obj);
+            SubElements.push_back(subNames[subIt]);
+            ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
+        }
+    }
+    pcConstraint->References.setValues(Objects,SubElements);
+    updateUI();
+}
+
+void TaskFemConstraintDisplacement::removeFromSelection()
+{
+    std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx(); //gets vector of selected objects of active document
+    if (selection.size()==0){
+        QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
+        return;
+    }
+    else if (selection.size()>1){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one object can be selected at a time!"));
+        return;
+    }
+
+    std::vector<Gui::SelectionObject>::iterator it = selection.begin(); 
+    if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+        QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
+        return;
+    }
+    
+    std::vector<std::string> subNames=it->getSubNames();
+    
+    if (subNames.size()>0){
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
+                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
+                return;
+            }
+        }
+    }
+    else{
+        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
+    }
+    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
+    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
+    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
+    
+    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
+        if (Objects[itrObj]!=obj){
+            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+            return;
+        }
+    }
+    
+    unsigned int initialSize=SubElements.size();
+    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
+        std::vector<std::string>::iterator itrNewEnd=std::remove(SubElements.begin(),SubElements.end(),subNames[subIt]);
+        SubElements.erase(itrNewEnd,SubElements.end());
+        Objects.erase(itrNewEnd,Objects.end());
+    }
+    
+    disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
+    
+    ui->lw_references->clear();
+    for (unsigned int j=0;j<Objects.size();j++){
+        ui->lw_references->addItem(makeRefText(obj, SubElements[j]));
+    }
+    connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
+    
+    pcConstraint->References.setValues(Objects,SubElements);
+    updateUI();
+}
+
+void TaskFemConstraintDisplacement::setSelection(QListWidgetItem* item){
+    std::string docName=ConstraintView->getObject()->getDocument()->getName();
+    
+    std::string s = item->text().toStdString();
+    std::string delimiter = ":";
+
+    size_t pos = 0;
+    std::string objName;
+    std::string subName;
+    pos = s.find(delimiter);
+    objName = s.substr(0, pos);
+    s.erase(0, pos + delimiter.length());
+    subName=s;
+    
+    Gui::Selection().clearSelection();
+    Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
 }
 
 void TaskFemConstraintDisplacement::onReferenceDeleted() {

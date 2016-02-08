@@ -40,19 +40,34 @@
      <x>40</x>
      <y>0</y>
      <width>311</width>
-     <height>711</height>
+     <height>743</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-        <widget class="QLabel" name="lbl_info">
-          <property name="text">
-           <string>Click on surface to add to list, right click list item for delete option</string>
-          </property>
-          <property name="wordWrap">
-            <bool>true</bool>
-          </property>
-         </widget>
+     <widget class="QLabel" name="lbl_info">
+      <property name="text">
+       <string>Select multiple face(s), click Add or Remove</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="hLayout1">
+      <item>
+       <widget class="QPushButton" name="btnAdd">
+        <property name="text">
+         <string>Add</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnRemove">
+        <property name="text">
+         <string>Remove</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <widget class="QListWidget" name="lw_references">
@@ -65,7 +80,7 @@
       <property name="minimumSize">
        <size>
         <width>0</width>
-        <height>50</height>
+        <height>100</height>
        </size>
       </property>
      </widget>
@@ -243,7 +258,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="rotxv"/>
+           <widget class="QDoubleSpinBox" name="rotxv">
+            <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -275,7 +297,14 @@
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="rotyv"/>
+           <widget class="QDoubleSpinBox" name="rotyv">
+            <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -316,6 +345,12 @@
            <widget class="QDoubleSpinBox" name="rotzv">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="minimum">
+             <double>-99999.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>99999.000000000000000</double>
             </property>
            </widget>
           </item>
