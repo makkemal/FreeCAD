@@ -89,8 +89,8 @@ bool ViewProviderFemConstraintDisplacement::setEdit(int ModNum)
     }
 }
 
-#define HEIGHT (3)
-#define WIDTH (0.2)
+#define HEIGHT (4)
+#define WIDTH (0.3)
 //#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled display on initial drawing - so disable
 
 void ViewProviderFemConstraintDisplacement::updateData(const App::Property* prop)
