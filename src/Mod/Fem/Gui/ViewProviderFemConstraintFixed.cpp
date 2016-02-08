@@ -105,7 +105,7 @@ bool ViewProviderFemConstraintFixed::setEdit(int ModNum)
     }
 }
 
-#define HEIGHT 4
+#define HEIGHT 2
 #define WIDTH (1.5*HEIGHT)
 //#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled display on initial drawing - so disable
 
