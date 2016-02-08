@@ -507,8 +507,11 @@ void TaskFemConstraintDisplacement::removeFromSelection()
     for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
         std::vector<std::string>::iterator itrNewEnd=std::remove(SubElements.begin(),SubElements.end(),subNames[subIt]);
         SubElements.erase(itrNewEnd,SubElements.end());
-        Objects.erase(itrNewEnd,Objects.end());
     }
+    
+    unsigned int rem=initialSize-SubElements.size();
+    for (unsigned int j=0;j<(rem);j++)
+        Objects.pop_back();
     
     disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
