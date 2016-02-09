@@ -174,7 +174,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             GProp_GProps props;
             BRepGProp::VolumeProperties(toposhape._Shape, props);
             double lx = props.Mass();
-            *scale = this->calcDrawScaleFactor(sqrt(lx)); //OvG: setup draw scale for constraint
+            *scale = this->calcDrawScaleFactor(sqrt(lx)*0.5); //OvG: setup draw scale for constraint
         } else if (sh.ShapeType() == TopAbs_EDGE) {
             BRepAdaptor_Curve curve(TopoDS::Edge(sh));
             double fp = curve.FirstParameter();

@@ -105,8 +105,8 @@ bool ViewProviderFemConstraintFixed::setEdit(int ModNum)
     }
 }
 
-#define WIDTH (3)
-#define HEIGHT (WIDTH/1.5)
+#define WIDTH (2)
+#define HEIGHT (1)
 //#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled display on initial drawing - so disable
 
 void ViewProviderFemConstraintFixed::updateData(const App::Property* prop)
