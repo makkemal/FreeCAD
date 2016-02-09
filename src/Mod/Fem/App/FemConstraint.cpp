@@ -184,7 +184,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             double l = props.Mass();
             // Create points with 10 units distance, but at least one at the beginning and end of the edge
             int steps;
-            if (l >= 100) //OvG: Increase 10 units distance proportionately to l for larger objects.
+            if (l >= 30) //OvG: Increase 10 units distance proportionately to l for larger objects.
             {
                 *scale = this->calcDrawScaleFactor(l); //OvG: setup draw scale for constraint
                 steps = (int)round(l / (10*( *scale)));
@@ -232,7 +232,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             isoc.Load(GeomAbs_IsoV, ulp);
             double lu = (l + GCPnts_AbscissaPoint::Length(isoc, Precision::Confusion()))/2.0;
             int stepsv;
-            if (lv >= 100) //OvG: Increase 10 units distance proportionately to lv for larger objects.
+            if (lv >= 30) //OvG: Increase 10 units distance proportionately to lv for larger objects.
             {
                 *scale = this->calcDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
                 stepsv = (int)round(lv / (10*( *scale)));
@@ -250,7 +250,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             }
             stepsv = stepsv>CONSTRAINTSTEPLIMIT?CONSTRAINTSTEPLIMIT:stepsv; //OvG: Place upper limit on number of steps
             int stepsu;
-            if (lu >= 100) //OvG: Increase 10 units distance proportionately to lu for larger objects.
+            if (lu >= 30) //OvG: Increase 10 units distance proportionately to lu for larger objects.
             {
                 *scale = this->calcDrawScaleFactor(lv,lu); //OvG: setup draw scale for constraint
                 stepsu = (int)round(lu / (10*( *scale)));
