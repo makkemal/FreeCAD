@@ -424,18 +424,6 @@ void TaskFemConstraintDisplacement::addToSelection()
     
     std::vector<std::string> subNames=it->getSubNames();
     
-    if (subNames.size()>0){
-        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
-                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
-                return;
-            }
-        }
-    }
-    else{
-        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
-    }
-    
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
@@ -480,17 +468,6 @@ void TaskFemConstraintDisplacement::removeFromSelection()
     
     std::vector<std::string> subNames=it->getSubNames();
     
-    if (subNames.size()>0){
-        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-            if (subNames[subIt].substr(0,4).compare(std::string("Face"))!=0){
-                QMessageBox::warning(this, tr("Selection error"),tr("Selection must only consist of faces!"));
-                return;
-            }
-        }
-    }
-    else{
-        //fix me, if an object is selected completely, getSelectionEx does not return any SubElements
-    }
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
