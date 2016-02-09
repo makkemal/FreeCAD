@@ -172,8 +172,8 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             normals.push_back(NormalDirection.getValue());
             //OvG: Scale by whole object mass in case of a vertex
             GProp_GProps props;
-			BRepGProp::VolumeProperties(toposhape._Shape, props);
-			double lx = props.Mass();
+            BRepGProp::VolumeProperties(toposhape._Shape, props);
+            double lx = props.Mass();
             *scale = this->calcDrawScaleFactor(sqrt(lx)); //OvG: setup draw scale for constraint
         } else if (sh.ShapeType() == TopAbs_EDGE) {
             BRepAdaptor_Curve curve(TopoDS::Edge(sh));
