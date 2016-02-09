@@ -410,40 +410,37 @@ void TaskFemConstraintDisplacement::addToSelection()
         QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
         return;
     }
-    else if (selection.size()>1){
-        QMessageBox::warning(this, tr("Selection error"), tr("Only one object can be selected at a time!"));
-        return;
-    }
 
-    std::vector<Gui::SelectionObject>::iterator it = selection.begin(); 
-    if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
-        QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
-        return;
-    }
-    
-    
-    std::vector<std::string> subNames=it->getSubNames();
-    
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
-    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     
-    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
-        if (Objects[itrObj]!=obj){
-            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+    for (std::vector<Gui::SelectionObject>::iterator it = selection.begin();  it != selection.end(); ++it){//for every selected object
+        if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+            QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
             return;
         }
-    }
-    
-    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-        std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
-        if (itr == SubElements.end()){//if not already in list then add (avoid duplicates)
-            Objects.push_back(obj);
-            SubElements.push_back(subNames[subIt]);
-            ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
+        
+        std::vector<std::string> subNames=it->getSubNames();
+        App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){// for every selected sub element
+            bool addMe=true;
+            for (std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
+                   itr!= SubElements.end();
+                   itr =  std::find(++itr,SubElements.end(),subNames[subIt]))
+            {// for every sub element in selection that matches one in old list
+                if (obj==Objects[std::distance(SubElements.begin(),itr)]){//if selected sub element's object equals the one in old list then it was added before so don't add
+                    addMe=false;
+                }
+            }
+            if (addMe){
+                Objects.push_back(obj);
+                SubElements.push_back(subNames[subIt]);
+                ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
+            }
         }
     }
+    //Update UI
     pcConstraint->References.setValues(Objects,SubElements);
     updateUI();
 }
@@ -455,47 +452,44 @@ void TaskFemConstraintDisplacement::removeFromSelection()
         QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
         return;
     }
-    else if (selection.size()>1){
-        QMessageBox::warning(this, tr("Selection error"), tr("Only one object can be selected at a time!"));
-        return;
-    }
 
-    std::vector<Gui::SelectionObject>::iterator it = selection.begin(); 
-    if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
-        QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
-        return;
-    }
-    
-    std::vector<std::string> subNames=it->getSubNames();
-    
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
-    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     
-    for (unsigned int itrObj=0;itrObj<Objects.size();itrObj++){
-        if (Objects[itrObj]!=obj){
-            QMessageBox::warning(this, tr("Selection error"),tr("Only one object per constraint allowed. Suggest fusion of objects for now."));
+    for (std::vector<Gui::SelectionObject>::iterator it = selection.begin();  it != selection.end(); ++it){//for every selected object
+        if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+            QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
             return;
         }
+        
+        std::vector<std::string> subNames=it->getSubNames();
+        App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+        std::vector<int> itemsToDel;
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){// for every selected sub element
+            for (std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
+                   itr!= SubElements.end();
+                   itr =  std::find(++itr,SubElements.end(),subNames[subIt]))
+            {// for every sub element in selection that matches one in old list
+                if (obj==Objects[std::distance(SubElements.begin(),itr)]){//if selected sub element's object equals the one in old list then it was added before so mark for deletion
+                    itemsToDel.push_back(std::distance(SubElements.begin(),itr));
+                }
+            }
+        }
+    
+        while (itemsToDel.size()>0){
+            Objects.erase(Objects.begin()+itemsToDel.back());
+            SubElements.erase(SubElements.begin()+itemsToDel.back());
+            itemsToDel.pop_back();
+        }
     }
-    
-    unsigned int initialSize=SubElements.size();
-    for (unsigned int subIt=0;subIt<(subNames.size());++subIt){
-        std::vector<std::string>::iterator itrNewEnd=std::remove(SubElements.begin(),SubElements.end(),subNames[subIt]);
-        SubElements.erase(itrNewEnd,SubElements.end());
-    }
-    
-    unsigned int rem=initialSize-SubElements.size();
-    for (unsigned int j=0;j<(rem);j++)
-        Objects.pop_back();
-    
+    //Update UI
     disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
     
     ui->lw_references->clear();
     for (unsigned int j=0;j<Objects.size();j++){
-        ui->lw_references->addItem(makeRefText(obj, SubElements[j]));
+        ui->lw_references->addItem(makeRefText(Objects[j], SubElements[j]));
     }
     connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
