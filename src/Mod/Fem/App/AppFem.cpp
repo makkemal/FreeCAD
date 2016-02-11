@@ -52,6 +52,7 @@
 #include "FemConstraintPulley.h"
 #include "FemConstraintDisplacement.h" 
 #include "FemConstraintTemperature.h"
+#include "FemConstraintHeatflux.h"
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
@@ -142,6 +143,7 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPulley           ::init();
     Fem::ConstraintDisplacement ::init();
     Fem::ConstraintTemperature ::init();
+    Fem::ConstraintHeatflux         ::init();
 
     Fem::FemResultObject            ::init();
     Fem::FemResultObjectPython      ::init();

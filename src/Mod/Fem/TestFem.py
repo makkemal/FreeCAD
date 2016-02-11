@@ -125,7 +125,6 @@ class FemTest(unittest.TestCase):
     #    self.heatflux_constraint = self.active_doc.addObject("Fem::ConstraintHeatflux", "FemConstraintHeatflux")
     #    self.heatflux_constraint.References = [(self.box, "Face2")]
     #    self.heatflux_constraint.AmbientTemp = 25.000000
-    #    self.heatflux_constraint.FaceTemp = 25.000000
     #    self.heatflux_constraint.FilmCoef = 1.000000
 
     def force_unix_line_ends(self, line_list):

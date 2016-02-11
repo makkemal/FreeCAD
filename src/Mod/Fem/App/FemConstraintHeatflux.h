@@ -38,11 +38,9 @@ class AppFemExport ConstraintHeatflux : public Fem::Constraint
 public:
     ConstraintHeatflux(void);
 
-    App::PropertyFloat Heatflux;
     App::PropertyFloat AmbientTemp;
-    App::PropertyFloat FaceTemp;
+    /*App::PropertyFloat FaceTemp;*/
     App::PropertyFloat FilmCoef;
-    App::PropertyBool Reversed;
     App::PropertyVectorList Points;
     App::PropertyVectorList Normals;
 

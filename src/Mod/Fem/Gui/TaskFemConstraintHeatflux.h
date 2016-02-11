@@ -34,6 +34,10 @@
 
 #include "TaskFemConstraint.h"
 #include "ViewProviderFemConstraintHeatflux.h"
+
+#include <QObject>
+#include <Base/Console.h>
+#include <App/DocumentObject.h>
 #include <QListWidgetItem>
 
 class Ui_TaskFemConstraintHeatflux;
@@ -47,14 +51,14 @@ public:
     TaskFemConstraintHeatflux(ViewProviderFemConstraintHeatflux *ConstraintView,QWidget *parent = 0);
     virtual ~TaskFemConstraintHeatflux();
     double getAmbientTemp(void) const;
-    double getFaceTemp(void) const;
+    /*double getFaceTemp(void) const;*/
     double getFilmCoef(void) const;
     virtual const std::string getReferences() const;
 
 private Q_SLOTS:
     void onReferenceDeleted(void);
     void onAmbientTempChanged(double val);
-    void onFaceTempChanged(double val);
+    /*void onFaceTempChanged(double val);*/
     void onFilmCoefChanged(double val);
     
     void addToSelection();
@@ -65,7 +69,7 @@ protected:
     virtual void changeEvent(QEvent *e);
 
 private:
-    virtual void onSelectionChanged(const Gui::SelectionChanges& msg);
+    //void onSelectionChanged(const Gui::SelectionChanges& msg);
     void updateUI();
     Ui_TaskFemConstraintHeatflux* ui;
 };

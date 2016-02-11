@@ -67,8 +67,8 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
 
     connect(ui->if_ambienttemp, SIGNAL(valueChanged(double)),
             this, SLOT(onAmbientTempChanged(double)));
-    connect(ui->if_facetemp, SIGNAL(valueChanged(double)),
-            this, SLOT(onFaceTempChanged(double)));
+    //connect(ui->if_facetemp, SIGNAL(valueChanged(double)),
+    //        this, SLOT(onFaceTempChanged(double)));
     connect(ui->if_filmcoef, SIGNAL(valueChanged(double)),
             this, SLOT(onFilmCoefChanged(double)));
 
@@ -76,7 +76,7 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
 
     // Temporarily prevent unnecessary feature recomputes
     ui->if_ambienttemp->blockSignals(true);
-    ui->if_facetemp->blockSignals(true);
+    //ui->if_facetemp->blockSignals(true);
     ui->if_filmcoef->blockSignals(true);
     ui->lw_references->blockSignals(true);
     ui->btnAdd->blockSignals(true);
@@ -85,7 +85,7 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
     // Get the feature data
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
     double at = pcConstraint->AmbientTemp.getValue();
-    double ft = pcConstraint->FaceTemp.getValue();
+    //double ft = pcConstraint->FaceTemp.getValue();
     double fc = pcConstraint->FilmCoef.getValue();
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
@@ -93,13 +93,13 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
     // Fill data into dialog elements
     ui->if_ambienttemp->setMinimum(-273);
     ui->if_ambienttemp->setMaximum(100000);
-    ui->if_facetemp->setMinimum(-273);
-    ui->if_facetemp->setMaximum(100000);
+    //ui->if_facetemp->setMinimum(-273);
+    //ui->if_facetemp->setMaximum(100000);
     ui->if_filmcoef->setMinimum(0);
     ui->if_filmcoef->setMaximum(100000);
 
     ui->if_ambienttemp->setValue(at);
-    ui->if_facetemp->setValue(ft);
+    //ui->if_facetemp->setValue(ft);
     ui->if_filmcoef->setValue(fc);
     
     ui->lw_references->clear();
@@ -115,7 +115,7 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
     connect(ui->btnRemove, SIGNAL(clicked()),  this, SLOT(removeFromSelection()));
 
     ui->if_ambienttemp->blockSignals(false);
-    ui->if_facetemp->blockSignals(false);
+    //ui->if_facetemp->blockSignals(false);
     ui->if_filmcoef->blockSignals(false);
     ui->lw_references->blockSignals(false);
     ui->btnAdd->blockSignals(false);
@@ -140,64 +140,17 @@ void TaskFemConstraintHeatflux::updateUI()
     }
 }
 
-void TaskFemConstraintHeatflux::onSelectionChanged(const Gui::SelectionChanges& msg)
-{
-    if ((msg.Type != Gui::SelectionChanges::AddSelection) ||
-        // Don't allow selection in other document
-        (strcmp(msg.pDocName, ConstraintView->getObject()->getDocument()->getName()) != 0) ||
-        // Don't allow selection mode none
-        (selectionMode != selref) ||
-        // Don't allow empty smenu/submenu
-        (!msg.pSubName || msg.pSubName[0] == '\0')) {
-        return;
-    }
-
-    std::string subName(msg.pSubName);
-    Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(msg.pObjectName);
-
-    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
-    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
-
-    if (subName.substr(0,4) != "Face") {
-        QMessageBox::warning(this, tr("Selection error"), tr("Only faces can be picked"));
-        return;
-    }
-    // Avoid duplicates
-    std::size_t pos = 0;
-    for (; pos < Objects.size(); pos++) {
-        if (obj == Objects[pos])
-            break;
-    }
-
-    if (pos != Objects.size()) {
-        if (subName == SubElements[pos])
-            return;
-    }
-
-    // add the new reference
-    Objects.push_back(obj);
-    SubElements.push_back(subName);
-    pcConstraint->References.setValues(Objects,SubElements);
-    ui->lw_references->addItem(makeRefText(obj, subName));
-
-    // Turn off reference selection mode
-    onButtonReference(false);
-    Gui::Selection().clearSelection();
-    updateUI();
-}
-
 void TaskFemConstraintHeatflux::onAmbientTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
     pcConstraint->AmbientTemp.setValue(val);//[degC]
 }
 
-void TaskFemConstraintHeatflux::onFaceTempChanged(double val)
+/*void TaskFemConstraintHeatflux::onFaceTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
     pcConstraint->FaceTemp.setValue(val); //[degC]
-}
+}*/
 
 void TaskFemConstraintHeatflux::onFilmCoefChanged(double val)
 {
@@ -368,11 +321,11 @@ double TaskFemConstraintHeatflux::getAmbientTemp(void) const
     return ambienttemp; //[degC]
 }
 
-double TaskFemConstraintHeatflux::getFaceTemp(void) const
+/*double TaskFemConstraintHeatflux::getFaceTemp(void) const
 {
     double facetemp =  ui->if_facetemp->value();
     return facetemp; //[degC]
-}
+}*/
 
 double TaskFemConstraintHeatflux::getFilmCoef(void) const
 {
@@ -385,11 +338,11 @@ void TaskFemConstraintHeatflux::changeEvent(QEvent *e)
     TaskBox::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         ui->if_ambienttemp->blockSignals(true);
-        ui->if_facetemp->blockSignals(true);
+        //ui->if_facetemp->blockSignals(true);
         ui->if_filmcoef->blockSignals(true);
         ui->retranslateUi(proxy);
         ui->if_ambienttemp->blockSignals(false);
-        ui->if_facetemp->blockSignals(false);
+        //ui->if_facetemp->blockSignals(false);
         ui->if_filmcoef->blockSignals(false);
     }
 }
@@ -427,8 +380,8 @@ bool TaskDlgFemConstraintHeatflux::accept()
     try {
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.AmbientTemp = %f",
             name.c_str(), parameterHeatflux->getAmbientTemp());
-        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.FaceTemp = %f",
-            name.c_str(), parameterHeatflux->getFaceTemp()); 
+        /*Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.FaceTemp = %f",
+            name.c_str(), parameterHeatflux->getFaceTemp());*/ 
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.FilmCoef = %f",
             name.c_str(), parameterHeatflux->getFilmCoef()); 
         
