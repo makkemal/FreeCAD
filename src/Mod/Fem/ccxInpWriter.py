@@ -36,6 +36,7 @@ __url__ = "http://www.freecadweb.org"
 class inp_writer:
     def __init__(self, analysis_obj, mesh_obj, mat_obj,
                  fixed_obj,
+                 heatflux_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
                  temperature_obj, 
@@ -77,6 +78,7 @@ class inp_writer:
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_displacement_nodes(inpfile)
         self.write_temperature_nodes(inpfile)#FIXME place under thermo analysis
+        self.write_node_sets_heatflux(inpfile)
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
@@ -85,6 +87,7 @@ class inp_writer:
         self.write_constraints_fixed(inpfile)
         self.write_displacement(inpfile)
         self.write_temperature(inpfile)#FIXME place under thermo analysis
+        self.write_heatflux(inpfile)
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -576,6 +579,9 @@ class inp_writer:
                     f.write("** Load on face {}\n".format(e))
                     for i in v:
                         f.write("{},P{},{}\n".format(i[0], i[1], rev * prs_obj.Pressure))
+                        
+    def write_heatflux(self, f):
+        #OvG TODO: Implement writing out heatflux to calculix input file
 
     def write_frequency(self, f):
         f.write('\n***********************************************************\n')
