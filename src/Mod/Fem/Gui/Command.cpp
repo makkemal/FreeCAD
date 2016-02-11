@@ -347,6 +347,52 @@ bool CmdFemConstraintFixed::isActive(void)
 
 //=====================================================================================
 
+DEF_STD_CMD_A(CmdFemConstraintHeatflux);
+
+CmdFemConstraintHeatflux::CmdFemConstraintHeatflux()
+  : Command("Fem_ConstraintHeatflux")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Create FEM heatflux constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for heatflux acting on a face");
+    sWhatsThis      = "Fem_ConstraintHeatflux";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-constraint-heatflux";
+}
+
+void CmdFemConstraintHeatflux::activated(int iMsg)
+{
+    Fem::FemAnalysis        *Analysis;
+
+    if(getConstraintPrerequisits(&Analysis))
+        return;
+
+    std::string FeatName = getUniqueObjectName("FemConstraintHeatflux");
+
+    openCommand("Make FEM constraint heatflux on face");
+    doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintHeatflux\",\"%s\")",FeatName.c_str());
+    doCommand(Doc,"App.activeDocument().%s.AmbientTemp = 25.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.FaceTemp = 100.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.FilmCoef = 1.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
+    doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
+                             Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+
+    updateActive();
+
+    doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());
+}
+
+bool CmdFemConstraintHeatflux::isActive(void)
+{
+    return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
+}
+
+//=====================================================================================
+
 DEF_STD_CMD_A(CmdFemConstraintForce);
 
 CmdFemConstraintForce::CmdFemConstraintForce()
@@ -774,4 +820,5 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintGear());
     rcCmdMgr.addCommand(new CmdFemConstraintPulley());
     rcCmdMgr.addCommand(new CmdFemConstraintDisplacement());
+    rcCmdMgr.addCommand(new CmdFemConstraintHeatflux());
 }

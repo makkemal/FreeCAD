@@ -149,6 +149,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # [{'Object':fixed_constraints, 'NodeSupports':bool}, {}, ...]
         # [{'Object':force_constraints, 'NodeLoad':value}, {}, ...
         # [{'Object':pressure_constraints, 'xxxxxxxx':value}, {}, ...]
+        # [{'Object':heatflux_constraints, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':beam_sections, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':shell_thicknesses, 'xxxxxxxx':value}, {}, ...]
 
@@ -186,6 +187,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of displacements for the analysis. Updated with update_objects
         # Individual displacement_constraints are Proxy.Type "FemConstraintDisplacement"
         self.displacement_constraints = []
+        ## @var heatflux_constraints
+        # set of heatflux constraints for the analysis. Updated with update_objects
+        # Individual heatflux_constraints are Proxy.Type "FemConstraintHeatflux"
+        self.heatflux_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -214,6 +219,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 PressureObjectDict = {}
                 PressureObjectDict['Object'] = m
                 self.pressure_constraints.append(PressureObjectDict)
+            elif m.isDerivedFrom("Fem::ConstraintHeatflux"):
+                heatflux_constraint_dict = {}
+                heatflux_constraint_dict['Object'] = m
+                self.heatflux_constraints.append(heatflux_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintDisplacement"): #OvG: Replacement reference to C++ implementation of Displacement Constraint
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
@@ -278,6 +287,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         try:
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
+                                       self.heatflux_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
                                        self.beam_sections, self.shell_thicknesses,
