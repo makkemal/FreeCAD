@@ -119,6 +119,14 @@ class FemTest(unittest.TestCase):
         self.pressure_constraint.References = [(self.box, "Face2")]
         self.pressure_constraint.Pressure = 10.000000
         self.pressure_constraint.Reversed = True
+       
+    #OvG TODO: Implement create heatflux constraint
+    #def create_heatflux_constraint(self):
+    #    self.heatflux_constraint = self.active_doc.addObject("Fem::ConstraintHeatflux", "FemConstraintHeatflux")
+    #    self.heatflux_constraint.References = [(self.box, "Face2")]
+    #    self.heatflux_constraint.AmbientTemp = 25.000000
+    #    self.heatflux_constraint.FaceTemp = 25.000000
+    #    self.heatflux_constraint.FilmCoef = 1.000000
 
     def force_unix_line_ends(self, line_list):
         new_line_list = []
@@ -201,6 +209,12 @@ class FemTest(unittest.TestCase):
         self.create_pressure_constraint()
         self.assertTrue(self.pressure_constraint, "FemTest of new pressure constraint failed")
         self.analysis.Member = self.analysis.Member + [self.pressure_constraint]
+        
+        #OvG TODO: Implement test for heatflux constraint
+        #fcc_print('Checking FEM new heatflux constraint...')
+        #self.create_heatflux_constraint()
+        #self.assertTrue(self.heatflux_constraint, "FemTest of new heatflux constraint failed")
+        #self.analysis.Member = self.analysis.Member + [self.heatflux_constraint]
 
         fea = FemTools.FemTools(self.analysis, test_mode=True)
         fcc_print('Setting up working directory {}'.format(static_analysis_dir))
