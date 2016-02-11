@@ -71,16 +71,16 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
             this, SLOT(onFaceTempChanged(double)));
     connect(ui->if_filmcoef, SIGNAL(valueChanged(double)),
             this, SLOT(onFilmCoefChanged(double)));
-    connect(ui->b_add_reference, SIGNAL(pressed()),
-            this, SLOT(onButtonReference()));
 
     this->groupLayout()->addWidget(proxy);
 
     // Temporarily prevent unnecessary feature recomputes
-    ui->if_heatflux->blockSignals(true);
+    ui->if_ambienttemp->blockSignals(true);
     ui->if_facetemp->blockSignals(true);
     ui->if_filmcoef->blockSignals(true);
     ui->lw_references->blockSignals(true);
+    ui->btnAdd->blockSignals(true);
+    ui->btnRemove->blockSignals(true);
 
     // Get the feature data
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
@@ -92,11 +92,11 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
 
     // Fill data into dialog elements
     ui->if_ambienttemp->setMinimum(-273);
-    ui->if_ambienttemp->setMaximum(FLOAT_MAX);
+    ui->if_ambienttemp->setMaximum(100000);
     ui->if_facetemp->setMinimum(-273);
-    ui->if_facetemp->setMaximum(FLOAT_MAX);
+    ui->if_facetemp->setMaximum(100000);
     ui->if_filmcoef->setMinimum(0);
-    ui->if_filmcoef->setMaximum(FLOAT_MAX);
+    ui->if_filmcoef->setMaximum(100000);
 
     ui->if_ambienttemp->setValue(at);
     ui->if_facetemp->setValue(ft);
@@ -109,16 +109,19 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
     if (Objects.size() > 0) {
         ui->lw_references->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
     }
+    
+    //Selection buttons
+    connect(ui->btnAdd, SIGNAL(clicked()),  this, SLOT(addToSelection()));
+    connect(ui->btnRemove, SIGNAL(clicked()),  this, SLOT(removeFromSelection()));
 
     ui->if_ambienttemp->blockSignals(false);
     ui->if_facetemp->blockSignals(false);
     ui->if_filmcoef->blockSignals(false);
     ui->lw_references->blockSignals(false);
-    ui->b_add_reference->blockSignals(false);
+    ui->btnAdd->blockSignals(false);
+    ui->btnRemove->blockSignals(false);
     
-    //Selection buttons
-    connect(ui->btnAdd, SIGNAL(clicked()),  this, SLOT(addToSelection()));
-    connect(ui->btnRemove, SIGNAL(clicked()),  this, SLOT(removeFromSelection()));
+    
 
     updateUI();
 }
@@ -184,25 +187,22 @@ void TaskFemConstraintHeatflux::onSelectionChanged(const Gui::SelectionChanges& 
     updateUI();
 }
 
-void TaskFemConstraintHeatflux::onAmbientTempChanged(const Base::Quantity& f)
+void TaskFemConstraintHeatflux::onAmbientTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    double val = f.getValueAs(Base::Quantity::Centigrade);
-    pcConstraint->AmbientTemp.setValue(val);
+    pcConstraint->AmbientTemp.setValue(val);//[degC]
 }
 
-void TaskFemConstraintHeatflux::onFaceTempChanged(const Base::Quantity& f)
+void TaskFemConstraintHeatflux::onFaceTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    double val = f.getValueAs(Base::Quantity::Centigrade);
-    pcConstraint->FaceTemp.setValue(val);
+    pcConstraint->FaceTemp.setValue(val); //[degC]
 }
 
-void TaskFemConstraintHeatflux::onFilmCoefChanged(const Base::Quantity& f)
+void TaskFemConstraintHeatflux::onFilmCoefChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    double val = f.getValue(); // [W]/[[degC].[m^2]]
-    pcConstraint->FilmCoef.setValue(val);
+    pcConstraint->FilmCoef.setValue(val); // [W]/[[degC].[m^2]]
 }
 
 void TaskFemConstraintHeatflux::addToSelection()
@@ -213,7 +213,7 @@ void TaskFemConstraintHeatflux::addToSelection()
         return;
     }
 
-    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
+    Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     
@@ -268,7 +268,7 @@ void TaskFemConstraintHeatflux::removeFromSelection()
         return;
     }
 
-    Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
+    Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     std::vector<int> itemsToDel;
@@ -362,39 +362,22 @@ const std::string TaskFemConstraintHeatflux::getReferences() const
     return TaskFemConstraint::getReferences(items);
 }
 
-double TaskFemConstraintHeatflux::getHeatflux(void) const
-{
-    Base::Quantity ambienttemp =  ui->if_heatflux->getQuantity();
-    double ambienttemp_in_degC = heatflux.getValueAs(Base::Quantity::MegaPascal);
-    return heatflux_in_MPa;
-}
-
-double TaskFemConstraintHeatflux::getHeatflux(void) const
-{
-    Base::Quantity heatflux =  ui->if_heatflux->getQuantity();
-    double heatflux_in_MPa = heatflux.getValueAs(Base::Quantity::MegaPascal);
-    return heatflux_in_MPa;
-}
-
 double TaskFemConstraintHeatflux::getAmbientTemp(void) const
 {
-    Base::Quantity ambienttemp =  ui->if_ambienttemp->getQuantity();
-    double ambienttemp_in_degC = heatflux.getValueAs(Base::Quantity::Centigrade);
-    return ambienttemp_in_degC;
+    double ambienttemp =  ui->if_ambienttemp->value();
+    return ambienttemp; //[degC]
 }
 
-double TaskFemConstraintHeatflux::getHeatflux(void) const
+double TaskFemConstraintHeatflux::getFaceTemp(void) const
 {
-    Base::Quantity facetemp =  ui->if_facetemp->getQuantity();
-    double facetemp_in_degC = facetemp.getValueAs(Base::Quantity::Centigrade);
-    return facetemp_in_degC;
+    double facetemp =  ui->if_facetemp->value();
+    return facetemp; //[degC]
 }
 
-double TaskFemConstraintHeatflux::getHeatflux(void) const
+double TaskFemConstraintHeatflux::getFilmCoef(void) const
 {
-    Base::Quantity filmcoef =  ui->if_filmcoef->getQuantity();
-    double filmcoef_in_WpdegCMsqrd = filmcoef.getValue(); // [W]/[[degC].[m^2]]
-    return filmcoef_in_WpdegCMsqrd;
+    double filmcoef =  ui->if_filmcoef->value();
+    return filmcoef; // [W]/[[degC].[m^2]]
 }
 
 void TaskFemConstraintHeatflux::changeEvent(QEvent *e)
@@ -405,7 +388,7 @@ void TaskFemConstraintHeatflux::changeEvent(QEvent *e)
         ui->if_facetemp->blockSignals(true);
         ui->if_filmcoef->blockSignals(true);
         ui->retranslateUi(proxy);
-        ui->if_heatflux->blockSignals(false);
+        ui->if_ambienttemp->blockSignals(false);
         ui->if_facetemp->blockSignals(false);
         ui->if_filmcoef->blockSignals(false);
     }
