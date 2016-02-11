@@ -30,7 +30,7 @@ INSTALL(
 
         _CommandMechanicalShowResult.py
         _TaskPanelResultControl.py
-	_CommandResultColorbar.py
+        _CommandResultColorbar.py
 
         TaskPanelShowDisplacement.ui
 
