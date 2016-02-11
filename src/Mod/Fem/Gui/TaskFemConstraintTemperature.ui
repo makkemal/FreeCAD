@@ -14,15 +14,33 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+  <item>
+     <widget class="QLabel" name="lbl_info">
+      <property name="text">
+       <string>Select multiple face(s), click Add or Remove</string>
+      </property>
+     </widget>
+    </item>
    <item>
-    <widget class="QPushButton" name="buttonReference">
-     <property name="text">
-      <string>Add reference</string>
-     </property>
-    </widget>
-   </item>
+     <layout class="QHBoxLayout" name="hLayout1">
+      <item>
+       <widget class="QPushButton" name="btnAdd">
+        <property name="text">
+         <string>Add</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnRemove">
+        <property name="text">
+         <string>Remove</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    <item>
-    <widget class="QListWidget" name="listReferences"/>
+    <widget class="QListWidget" name="lw_references"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="layoutTemperature">
@@ -34,7 +52,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="spinForce">
+      <widget class="QDoubleSpinBox" name="spinTemperature">
        <property name="minimum">
         <double>-99999.000000000000000</double>
        </property>

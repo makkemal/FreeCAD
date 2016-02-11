@@ -606,6 +606,57 @@ bool CmdFemConstraintDisplacement::isActive(void)
 {
     return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
 }
+
+//=====================================================================================
+
+DEF_STD_CMD_A(CmdFemConstraintTemperature);
+
+CmdFemConstraintTemperature::CmdFemConstraintTemperature()
+  : Command("Fem_ConstraintTemperature")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Create FEM Temperature constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for a Temperature acting on a face");
+    sWhatsThis      = "Fem_ConstraintTemperature";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-constraint-temperature";
+}
+
+void CmdFemConstraintTemperature::activated(int iMsg)
+{
+    Fem::FemAnalysis        *Analysis;
+
+    if(getConstraintPrerequisits(&Analysis))
+        return;
+
+    std::string FeatName = getUniqueObjectName("FemConstraintTemperature");
+
+    openCommand("Make FEM constraint Temperature on face");
+    doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintTemperature\",\"%s\")",FeatName.c_str());
+    doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
+    doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
+                             Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
+   
+    std::string HideMeshShowPart =
+    "for amesh in App.activeDocument().Objects:\n\
+    if \"Mesh\" in amesh.TypeId:\n\
+        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
+        for apart in App.activeDocument().Objects:\n\
+            if aparttoshow == apart.Name:\n\
+                apart.ViewObject.Visibility = True\n\
+        amesh.ViewObject.Visibility = False\n";
+    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    updateActive();
+
+    doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());
+}
+
+bool CmdFemConstraintTemperature::isActive(void)
+{
+    return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
+}
 // #####################################################################################################
 
 
@@ -818,4 +869,5 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintGear());
     rcCmdMgr.addCommand(new CmdFemConstraintPulley());
     rcCmdMgr.addCommand(new CmdFemConstraintDisplacement());
+    rcCmdMgr.addCommand(new CmdFemConstraintTemperature());
 }

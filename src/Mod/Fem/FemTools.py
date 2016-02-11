@@ -186,6 +186,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of displacements for the analysis. Updated with update_objects
         # Individual displacement_constraints are Proxy.Type "FemConstraintDisplacement"
         self.displacement_constraints = []
+        ## @var temperature_constraints
+        # set of temperatures for the analysis. Updated with update_objects
+        # Individual temperature_constraints are Proxy.Type "FemConstraintTemperature"
+        self.temperature_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -218,6 +222,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
                 self.displacement_constraints.append(displacement_constraint_dict)
+            elif m.isDerivedFrom("Fem::ConstraintTemperature"): 
+                temperature_constraint_dict = {}
+                temperature_constraint_dict['Object'] = m
+                self.temperature_constraints.append(temperature_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -280,6 +288,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
+                                       self.temperature_constraints, 
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)

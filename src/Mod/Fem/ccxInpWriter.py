@@ -38,6 +38,7 @@ class inp_writer:
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 temperature_obj, 
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -49,6 +50,7 @@ class inp_writer:
         self.force_objects = force_obj
         self.pressure_objects = pressure_obj
         self.displacement_objects = displacement_obj
+        self.temperature_objects = temperature_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -74,6 +76,7 @@ class inp_writer:
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_displacement_nodes(inpfile)
+        self.write_temperature_nodes(inpfile)#FIXME place under thermo analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
@@ -81,6 +84,7 @@ class inp_writer:
         self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
         self.write_displacement(inpfile)
+        self.write_temperature(inpfile)#FIXME place under thermo analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -166,6 +170,26 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+                    
+    def write_temperature_nodes(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Node sets for temperature constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+#FIXME needs to be defined
+#        for fobj in self.displacement_objects:
+#            disp_obj = fobj['Object']
+#            f.write('*NSET,NSET='+disp_obj.Name + '\n')
+#            for o, elem in disp_obj.References:
+#                fo = o.Shape.getElement(elem)
+#                n = []
+#                if fo.ShapeType == 'Face':
+#                    n = self.mesh_object.FemMesh.getNodesByFace(fo)
+#                elif fo.ShapeType == 'Edge':
+#                    n = self.mesh_object.FemMesh.getNodesByEdge(fo)
+#                elif fo.ShapeType == 'Vertex':
+#                    n = self.mesh_object.FemMesh.getNodesByVertex(fo)
+#                for i in n:
+#                    f.write(str(i) + ',\n')
 
     def write_node_sets_constraints_force(self, f):
         f.write('\n***********************************************************\n')
@@ -318,6 +342,43 @@ class inp_writer:
                 elif disp_obj['Object'].rotzFree == False:
                     f.write(disp_obj_name + ',6,6,'+str(disp_obj['Object'].zRotation)+'\n')
         f.write('\n')
+
+    def write_temperature(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Temperature constraint applied\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+#FIXME needs to be defined
+#        for disp_obj in self.displacement_objects:
+#            disp_obj_name = disp_obj['Object'].Name
+#            f.write('*BOUNDARY\n')
+#            if disp_obj['Object'].xFix == True:
+#                f.write(disp_obj_name + ',1\n')
+#            elif disp_obj['Object'].xFree == False:
+#                f.write(disp_obj_name + ',1,1,'+str(disp_obj['Object'].xDisplacement)+'\n')
+#            if disp_obj['Object'].yFix == True:
+#                f.write(disp_obj_name + ',2\n')
+#            elif disp_obj['Object'].yFree == False:
+#                f.write(disp_obj_name + ',2,2,'+str(disp_obj['Object'].yDisplacement)+'\n')
+#            if disp_obj['Object'].zFix == True:
+#                f.write(disp_obj_name + ',3\n')
+#            elif disp_obj['Object'].zFree == False:
+#                f.write(disp_obj_name + ',3,3,'+str(disp_obj['Object'].zDisplacement)+'\n')
+#
+#            if self.beamsection_objects or self.shellthickness_objects:
+#                if disp_obj['Object'].rotxFix == True:
+#                    f.write(disp_obj_name + ',4\n')
+#                elif disp_obj['Object'].rotxFree == False:
+#                    f.write(disp_obj_name + ',4,4,'+str(disp_obj['Object'].xRotation)+'\n')
+#                if disp_obj['Object'].rotyFix == True:
+#                    f.write(disp_obj_name + ',5\n')
+#                elif disp_obj['Object'].rotyFree == False:
+#                    f.write(disp_obj_name + ',5,5,'+str(disp_obj['Object'].yRotation)+'\n')
+#                if disp_obj['Object'].rotzFix == True:
+#                    f.write(disp_obj_name + ',6\n')
+#                elif disp_obj['Object'].rotzFree == False:
+#                    f.write(disp_obj_name + ',6,6,'+str(disp_obj['Object'].zRotation)+'\n')
+#        f.write('\n')
+
 
     def write_constraints_force(self, f):
         f.write('\n***********************************************************\n')
