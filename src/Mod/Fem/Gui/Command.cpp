@@ -80,6 +80,18 @@ bool getConstraintPrerequisits(Fem::FemAnalysis **Analysis)
 
 }
 
+//OvG: Visibility automation show parts and hide meshes on activation of a constraint
+std::string gethideMeshShowPartStr()
+{
+    return
+    "for amesh in App.activeDocument().Objects:\n\
+    if \"Mesh\" in amesh.TypeId:\n\
+        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
+        for apart in App.activeDocument().Objects:\n\
+            if aparttoshow == apart.Name:\n\
+                apart.ViewObject.Visibility = True\n\
+        amesh.ViewObject.Visibility = False\n";
+}
 
 //=====================================================================================
 DEF_STD_CMD_A(CmdFemCreateAnalysis);
@@ -278,16 +290,8 @@ void CmdFemConstraintBearing::activated(int iMsg)
     openCommand("Make FEM constraint for bearing");
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintBearing\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -328,16 +332,8 @@ void CmdFemConstraintFixed::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintFixed\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -380,16 +376,8 @@ void CmdFemConstraintForce::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Reversed = False",FeatName.c_str()); //OvG: set default to False
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -433,16 +421,8 @@ void CmdFemConstraintPressure::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -482,16 +462,8 @@ void CmdFemConstraintGear::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintGear\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Diameter = 100.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -536,16 +508,8 @@ void CmdFemConstraintPulley::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Force = 100.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.TensionForce = 100.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-       
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -586,16 +550,8 @@ void CmdFemConstraintDisplacement::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
-   
-    std::string HideMeshShowPart =
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
-    doCommand(Doc,"%s",HideMeshShowPart.c_str()); //OvG: Hide meshes and show parts
+
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
