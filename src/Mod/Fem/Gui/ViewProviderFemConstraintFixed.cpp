@@ -117,7 +117,7 @@ void ViewProviderFemConstraintFixed::updateData(const App::Property* prop)
     float scaledheight = HEIGHT * pcConstraint->Scale.getValue();
 
 #ifdef USE_MULTIPLE_COPY
-	//OvG: always need access to cp for scaling
+    //OvG: always need access to cp for scaling
     SoMultipleCopy* cp = new SoMultipleCopy();
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes

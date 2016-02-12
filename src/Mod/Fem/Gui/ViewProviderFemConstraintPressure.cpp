@@ -98,7 +98,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintPressure* pcConstraint = static_cast<Fem::ConstraintPressure*>(this->getObject());
     float scaledheadradius = ARROWHEADRADIUS * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
-    float scaledhlength = ARROWLENGTH * pcConstraint->Scale.getValue();
+    float scaledlength = ARROWLENGTH * pcConstraint->Scale.getValue();
 
 #ifdef USE_MULTIPLE_COPY
     //OvG: always need access to cp for scaling
@@ -106,7 +106,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
         cp->matrix.setNum(0);
-        cp->addChild((SoNode*)createArrow(scaledhlength , scaledheadradius)); //OvG: Scaling
+        cp->addChild((SoNode*)createArrow(scaledlength , scaledheadradius)); //OvG: Scaling
         pShapeSep->addChild(cp);
     }
 #endif
@@ -119,7 +119,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
         }
         std::vector<Base::Vector3d>::const_iterator n = normals.begin();
  
- #ifdef USE_MULTIPLE_COPY      
+#ifdef USE_MULTIPLE_COPY      
         cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0)); //OvG: Use top cp
         cp->matrix.setNum(points.size());
         SbMatrix* matrices = cp->matrix.startEditing();
@@ -134,7 +134,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             SbVec3f dir(n->x, n->y, n->z);
             double rev;
             if (pcConstraint->Reversed.getValue()) {
-                base = base + dir * scaledhlength; //OvG: Scaling
+                base = base + dir * scaledlength; //OvG: Scaling
                 rev = 1;
             } else {
                 rev = -1;
@@ -148,7 +148,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, scaledhlength , scaledheadradius); //OvG: Scaling
+            createArrow(sep, scaledlength , scaledheadradius); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
             n++;

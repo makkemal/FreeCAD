@@ -6017,7 +6017,7 @@ SMESH_MeshEditor::Sew_Error
   // sew the border to the side 2
   // ============================
 
-  int nbNodes[]  = { (int)nSide[0].size(), (int)nSide[1].size() }; //OvG: Remove narrowing conversion warning
+  int nbNodes[]  = { (int)nSide[0].size(), (int)nSide[1].size() };
   int maxNbNodes = Max( nbNodes[0], nbNodes[1] );
 
   TListOfListOfNodes nodeGroupsToMerge;

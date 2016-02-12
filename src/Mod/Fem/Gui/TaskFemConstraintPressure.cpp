@@ -1,7 +1,7 @@
 /***************************************************************************
  *   Copyright (c) 2015 FreeCAD Developers                                 *
  *   Author: Przemo Firszt <przemo@firszt.eu>                              *
- *   Based on Force constraint by Jan Rheinl채nder                          *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -249,9 +249,8 @@ bool TaskDlgFemConstraintPressure::accept()
 {
     std::string name = ConstraintView->getObject()->getNameInDocument();
     const TaskFemConstraintPressure* parameterPressure = static_cast<const TaskFemConstraintPressure*>(parameter);
-	std::string scale = "1";
-	//bool success = TaskDlgFemConstraint::accept(); //OvG: call base first.
-	
+    std::string scale = "1";
+
     try {
         if (parameterPressure->getPressure()<=0)
         {
@@ -265,10 +264,10 @@ bool TaskDlgFemConstraintPressure::accept()
         }
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Reversed = %s",
             name.c_str(), parameterPressure->getReverse() ? "True" : "False");
-        
+
         scale = parameterPressure->getScale();  //OvG: determine modified scale
         Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Scale = %s",
-			name.c_str(), scale.c_str()); //OvG: implement modified scale
+            name.c_str(), scale.c_str()); //OvG: implement modified scale
     }
     catch (const Base::Exception& e) {
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));

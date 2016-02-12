@@ -114,7 +114,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
     // Gets called whenever a property of the attached object changes
     Fem::ConstraintForce* pcConstraint = static_cast<Fem::ConstraintForce*>(this->getObject());
     float scaledheadradius = ARROWHEADRADIUS * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
-    float scaledhlength = ARROWLENGTH * pcConstraint->Scale.getValue();
+    float scaledlength = ARROWLENGTH * pcConstraint->Scale.getValue();
 
 #ifdef USE_MULTIPLE_COPY
     //OvG: need access to cp for scaling
@@ -122,7 +122,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
     if (pShapeSep->getNumChildren() == 0) {
         // Set up the nodes
         cp->matrix.setNum(0);
-        cp->addChild((SoNode*)createArrow(scaledhlength , scaledheadradius)); //OvG: Scaling
+        cp->addChild((SoNode*)createArrow(scaledlength , scaledheadradius)); //OvG: Scaling
         pShapeSep->addChild(cp);
     }
 #endif
@@ -131,7 +131,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
 
 #ifdef USE_MULTIPLE_COPY
-		cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
+        cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0));
         cp->matrix.setNum(points.size());
         SbMatrix* matrices = cp->matrix.startEditing();
         int idx = 0;
@@ -153,7 +153,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
             if (forceDirection.GetAngle(normal) < M_PI_2) // Move arrow so it doesn't disappear inside the solid
-                base = base + dir * scaledhlength; //OvG: Scaling
+                base = base + dir * scaledlength; //OvG: Scaling
 #ifdef USE_MULTIPLE_COPY
             SbMatrix m;
             m.setTransform(base, rot, SbVec3f(1,1,1));
@@ -162,7 +162,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = new SoSeparator();
             createPlacement(sep, base, rot);
-            createArrow(sep, scaledhlength, scaledheadradius); //OvG: Scaling
+            createArrow(sep, scaledlength, scaledheadradius); //OvG: Scaling
             pShapeSep->addChild(sep);
 #endif
         }
@@ -192,7 +192,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
             SbVec3f base(p->x, p->y, p->z);
             if (forceDirection.GetAngle(normal) < M_PI_2)
-                base = base + dir * ARROWLENGTH * pcConstraint->Scale.getValue() ; //OvG: Scaling
+                base = base + dir * scaledlength; //OvG: Scaling
 #ifdef USE_MULTIPLE_COPY
             SbMatrix m;
             m.setTransform(base, rot, SbVec3f(1,1,1));
@@ -200,7 +200,7 @@ void ViewProviderFemConstraintForce::updateData(const App::Property* prop)
 #else
             SoSeparator* sep = static_cast<SoSeparator*>(pShapeSep->getChild(idx));
             updatePlacement(sep, 0, base, rot);
-            updateArrow(sep, 2, ARROWLENGTH * pcConstraint->Scale.getValue(), ARROWHEADRADIUS * pcConstraint->Scale.getValue()); //OvG: Scaling
+            updateArrow(sep, 2, scaledlength, scaledheadradius); //OvG: Scaling
 #endif
             idx++;
         }

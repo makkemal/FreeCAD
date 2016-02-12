@@ -203,8 +203,11 @@ class DraftTaskPanel:
     def getStandardButtons(self):
         return int(QtGui.QDialogButtonBox.Close)
     def accept(self):
-        FreeCADGui.ActiveDocument.resetEdit()
-        return True
+        if hasattr(FreeCADGui,"draftToolBar"):
+            return FreeCADGui.draftToolBar.validatePoint()
+        else:
+            FreeCADGui.ActiveDocument.resetEdit()
+            return True
     def reject(self):
         FreeCADGui.draftToolBar.isTaskOn = False
         FreeCADGui.draftToolBar.escape()
@@ -381,9 +384,11 @@ class DraftToolBar:
         xl = QtGui.QHBoxLayout()
         yl = QtGui.QHBoxLayout()
         zl = QtGui.QHBoxLayout()
+        bl = QtGui.QHBoxLayout()
         self.layout.addLayout(xl)
         self.layout.addLayout(yl)
         self.layout.addLayout(zl)
+        self.layout.addLayout(bl)
         self.labelx = self._label("labelx", xl)
         self.xValue = self._inputfield("xValue", xl) #width=60
         self.xValue.setText(self.FORMAT % 0)
@@ -393,6 +398,7 @@ class DraftToolBar:
         self.labelz = self._label("labelz", zl)
         self.zValue = self._inputfield("zValue", zl)
         self.zValue.setText(self.FORMAT % 0)
+        self.pointButton = self._pushbutton("addButton", bl, icon="Draft_AddPoint", width=100)
         
         # text
         
@@ -488,6 +494,7 @@ class DraftToolBar:
         QtCore.QObject.connect(self.zValue,QtCore.SIGNAL("textEdited(QString)"),self.checkSpecialChars)
         QtCore.QObject.connect(self.radiusValue,QtCore.SIGNAL("textEdited(QString)"),self.checkSpecialChars)
         QtCore.QObject.connect(self.zValue,QtCore.SIGNAL("returnPressed()"),self.validatePoint)
+        QtCore.QObject.connect(self.pointButton,QtCore.SIGNAL("clicked()"),self.validatePoint)
         QtCore.QObject.connect(self.radiusValue,QtCore.SIGNAL("returnPressed()"),self.validatePoint)
         QtCore.QObject.connect(self.angleValue,QtCore.SIGNAL("returnPressed()"),self.validatePoint)
         QtCore.QObject.connect(self.textValue,QtCore.SIGNAL("textChanged(QString)"),self.storeCurrentText)
@@ -610,6 +617,8 @@ class DraftToolBar:
         self.labelz.setText(translate("draft", "Z"))
         self.yValue.setToolTip(translate("draft", "Y coordinate of next point"))
         self.zValue.setToolTip(translate("draft", "Z coordinate of next point"))
+        self.pointButton.setText(translate("draft", "Enter point"))
+        self.pointButton.setToolTip(translate("draft", "Enter a new point with the given coordinates"))
         self.labellength.setText(translate("draft", "Length"))
         self.labelangle.setText(translate("draft", "Angle"))
         self.lengthValue.setToolTip(translate("draft", "Length of current segment"))
@@ -762,6 +771,7 @@ class DraftToolBar:
         self.xValue.hide()
         self.yValue.hide()
         self.zValue.hide()
+        self.pointButton.hide()
         self.lengthValue.hide()
         self.angleValue.hide()
         self.angleLock.hide()
@@ -817,6 +827,7 @@ class DraftToolBar:
         self.xValue.show()
         self.yValue.show()
         self.zValue.show()
+        self.pointButton.show()
         if rel: self.isRelative.show()
         self.xValue.setFocus()
         self.xValue.selectAll()
@@ -1188,7 +1199,7 @@ class DraftToolBar:
                     pass
                 else:
                     self.sourceCmd.offsetHandler(offset)
-            else:
+            elif (self.labelx.isVisible()):
                 try:
                     #numx=float(self.xValue.text())
                     numx = self.x
@@ -1219,6 +1230,11 @@ class DraftToolBar:
                                 numy = last.y + v.y
                                 numz = last.z + v.z
                         self.sourceCmd.numericInput(numx,numy,numz)
+            elif (self.textValue.isVisible() or self.SStringValue.isVisible() or self.SSizeValue.isVisible() or self.STrackValue.isVisible() or self.FFileValue.isVisible()):
+                return False
+            else:
+                FreeCADGui.ActiveDocument.resetEdit()
+        return True
 
     def validateSNumeric(self):
         ''' send valid numeric parameters to ShapeString '''
