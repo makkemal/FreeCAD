@@ -618,8 +618,8 @@ CmdFemConstraintTemperature::CmdFemConstraintTemperature()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Create FEM Temperature constraint");
-    sToolTipText    = QT_TR_NOOP("Create FEM constraint for a Temperature acting on a face");
+    sMenuText       = QT_TR_NOOP("Create FEM temperature constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for a temperature acting on a face");
     sWhatsThis      = "Fem_ConstraintTemperature";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-constraint-temperature";
@@ -634,7 +634,7 @@ void CmdFemConstraintTemperature::activated(int iMsg)
 
     std::string FeatName = getUniqueObjectName("FemConstraintTemperature");
 
-    openCommand("Make FEM constraint Temperature on face");
+    openCommand("Make FEM constraint temperature on face");
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintTemperature\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
