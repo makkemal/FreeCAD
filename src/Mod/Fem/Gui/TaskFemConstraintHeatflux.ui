@@ -1,123 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TaskFemConstraintHeatFlux</class>
- <widget class="QMainWindow" name="TaskFemConstraintHeatFlux">
+ <class>TaskFemConstraintHeatflux</class>
+ <widget class="QWidget" name="TaskFemConstraintHeatflux">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>379</width>
-    <height>322</height>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>TaskFemConstraintHeatFlux</string>
+   <string>TaskFemConstraintHeatflux</string>
   </property>
-  <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="Bt_Add">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>30</y>
-      <width>111</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Bt_Remove">
-    <property name="geometry">
-     <rect>
-      <x>210</x>
-      <y>30</y>
-      <width>111</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Remove</string>
-    </property>
-   </widget>
-   <widget class="QListWidget" name="list_FaCE">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>60</y>
-      <width>271</width>
-      <height>181</height>
-     </rect>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>10</y>
-      <width>251</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add or Remove multiple faces:</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_2">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>250</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Ambient Temperature[°C]</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="label_4">
-    <property name="geometry">
-     <rect>
-      <x>50</x>
-      <y>290</y>
-      <width>181</width>
-      <height>17</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Film coefficient [W/°C·m²]</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="SB_Ambient">
-    <property name="geometry">
-     <rect>
-      <x>237</x>
-      <y>250</y>
-      <width>81</width>
-      <height>27</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>1000000</number>
-    </property>
-    <property name="value">
-     <number>25</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="SB_Coefficient">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>290</y>
-      <width>81</width>
-      <height>27</height>
-     </rect>
-    </property>
-   </widget>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="lbl_references">
+     <property name="text">
+      <string>Select multiple face(s), click Add or Remove:</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="hLayout1">
+     <item>
+      <widget class="QPushButton" name="btnAdd">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemove">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QListWidget" name="lw_references">
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layoutAmbientTemp">
+     <item>
+      <widget class="QLabel" name="lbl_ambienttemp">
+       <property name="text">
+         <string>Ambient Temperature [°C]</string>
+        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="if_ambienttemp">
+        <property name="minimum">
+         <double>-273.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>99999.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>100.000000000000000</double>
+        </property>
+       </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layoutFilmCoef">
+     <item>
+      <widget class="QLabel" name="lbl_filmcoef">
+        <property name="text">
+         <string>Film coefficient [W/°C·m²]</string>
+        </property>
+       </widget>
+     </item>
+     <item>
+      <widget class="QDoubleSpinBox" name="if_filmcoef">
+        <property name="minimum">
+         <double>-99999.000000000000000</double>
+        </property>
+        <property name="maximum">
+         <double>99999.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>1.000000000000000</double>
+        </property>
+       </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
  </widget>
- <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
 </ui>

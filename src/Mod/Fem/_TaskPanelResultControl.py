@@ -49,11 +49,11 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_abs_displacement, QtCore.SIGNAL("toggled(bool)"), self.abs_displacement_selected)
         QtCore.QObject.connect(self.form.rb_vm_stress, QtCore.SIGNAL("toggled(bool)"), self.vm_stress_selected)
         #extra functions
-        QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected) #max shear stress signal
+        QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected) #Max shear stress signal
         QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.maxprin_selected) #MPH max prin
         QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.minprin_selected) #MPH min prin
         QtCore.QObject.connect(self.form.rb_midprin, QtCore.SIGNAL("toggled(bool)"), self.midprin_selected)  #MPH mid prin 
-
+        QtCore.QObject.connect(self.form.calculate, QtCore.SIGNAL("clicked()"), self.calculate)  #MPH calculate user defined loading   
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
         QtCore.QObject.connect(self.form.hsb_displacement_factor, QtCore.SIGNAL("valueChanged(int)"), self.hsb_disp_factor_changed)
@@ -207,6 +207,25 @@ class _TaskPanelResultControl:
         (minm, avg, maxm) = self.get_result_stats("Prin3")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
+        
+#    def userdef(self,  equation):
+#        FreeCAD.FEM_dialog["results_type"] = "user"
+        
+        
+    def calculate(self):  
+#        FreeCAD.FEM_dialog["results_type"] = "user"
+#        P1=self.result_object.PrinsMax
+#        P2=self.result_object.PrinsMed
+#        P3=self.result_object.PrinsMin
+#        x=self.result_object.DisplacementVectors
+        FreeCAD.Console.PrintMessage("equation \n")
+        self.form.user_def.selectAll()
+        eq=self.form.user_def.copy()
+        FreeCAD.Console.PrintMessage(eq + " \n")
+        self.form.user_def.selectAll()
+        
+        
+        
 #end extra functions
         
     def select_displacement_type(self, disp_type):
