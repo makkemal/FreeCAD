@@ -488,41 +488,44 @@ void TaskFemConstraintDisplacement::removeFromSelection()
     //Update UI
     disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
-    
+
     ui->lw_references->clear();
     for (unsigned int j=0;j<Objects.size();j++){
         ui->lw_references->addItem(makeRefText(Objects[j], SubElements[j]));
     }
     connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
-    
+
     pcConstraint->References.setValues(Objects,SubElements);
     updateUI();
 }
 
 void TaskFemConstraintDisplacement::setSelection(QListWidgetItem* item){
-    std::string docName=ConstraintView->getObject()->getDocument()->getName();
-    
-    std::string s = item->text().toStdString();
-    std::string delimiter = ":";
+    try
+    {
+        std::string s = item->text().toStdString();
+        std::string docName=ConstraintView->getObject()->getDocument()->getName();
 
-    size_t pos = 0;
-    std::string objName;
-    std::string subName;
-    pos = s.find(delimiter);
-    objName = s.substr(0, pos);
-    s.erase(0, pos + delimiter.length());
-    subName=s;
-    
-    Gui::Selection().clearSelection();
-    Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
+        std::string delimiter = ":";
+
+        size_t pos = 0;
+        std::string objName;
+        std::string subName;
+        pos = s.find(delimiter);
+        objName = s.substr(0, pos);
+        s.erase(0, pos + delimiter.length());
+         subName=s;
+
+        Gui::Selection().clearSelection();
+        Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
+    }
+    catch(...)
+    {//OvG: No item selected - happens when deleting last remaining reference item from list using right-click
+    }
 }
 
 void TaskFemConstraintDisplacement::onReferenceDeleted() {
-    int row = ui->lw_references->currentIndex().row();
-    TaskFemConstraint::onReferenceDeleted(row);
-    ui->lw_references->model()->removeRow(row);
-    ui->lw_references->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
+    TaskFemConstraintDisplacement::removeFromSelection(); //OvG: On right-click face is automatically selected, so just remove
 }
 
 const std::string TaskFemConstraintDisplacement::getReferences() const
@@ -584,8 +587,10 @@ void TaskDlgFemConstraintDisplacement::open()
 {
     // a transaction is already open at creation time of the panel
     if (!Gui::Command::hasPendingCommand()) {
-        QString msg = QObject::tr("Constraint normal stress");
+        QString msg = QObject::tr("Constraint displacement");
         Gui::Command::openCommand((const char*)msg.toUtf8());
+        ConstraintView->setVisible(true);
+        Gui::Command::doCommand(Gui::Command::Doc,ViewProviderFemConstraint::gethideMeshShowPartStr((static_cast<Fem::Constraint*>(ConstraintView->getObject()))->getNameInDocument()).c_str()); //OvG: Hide meshes and show parts
     }
 }
 
@@ -633,7 +638,7 @@ bool TaskDlgFemConstraintDisplacement::accept()
             name.c_str(), parameterDisplacement->get_rotzfix() ? "True" : "False");
             
         std::string scale = parameterDisplacement->getScale();  //OvG: determine modified scale
-		Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Scale = %s", name.c_str(), scale.c_str()); //OvG: implement modified scale
+        Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Scale = %s", name.c_str(), scale.c_str()); //OvG: implement modified scale
     }
     catch (const Base::Exception& e) {
         QMessageBox::warning(parameter, tr("Input error"), QString::fromLatin1(e.what()));
