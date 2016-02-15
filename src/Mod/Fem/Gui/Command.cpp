@@ -83,10 +83,8 @@ bool getConstraintPrerequisits(Fem::FemAnalysis **Analysis)
 //OvG: Visibility automation show parts and hide meshes on activation of a constraint
 std::string gethideMeshShowPartStr(std::string showConstr="")
 {
-   // if("" != showMe)
-   // {
     return "for amesh in App.activeDocument().Objects:\n\
-    if \""+sConstr+"\" == amesh.Name:\n\
+    if \""+showConstr+"\" == amesh.Name:\n\
         amesh.ViewObject.Visibility = True\n\
     elif \"Mesh\" in amesh.TypeId:\n\
         aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
@@ -94,15 +92,6 @@ std::string gethideMeshShowPartStr(std::string showConstr="")
             if aparttoshow == apart.Name:\n\
                 apart.ViewObject.Visibility = True\n\
         amesh.ViewObject.Visibility = False\n";
-   /* }
-    return
-    "for amesh in App.activeDocument().Objects:\n\
-    if \"Mesh\" in amesh.TypeId:\n\
-        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
-        for apart in App.activeDocument().Objects:\n\
-            if aparttoshow == apart.Name:\n\
-                apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";*/
 }
 
 //=====================================================================================
