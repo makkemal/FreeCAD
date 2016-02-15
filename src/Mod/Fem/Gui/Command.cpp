@@ -81,8 +81,20 @@ bool getConstraintPrerequisits(Fem::FemAnalysis **Analysis)
 }
 
 //OvG: Visibility automation show parts and hide meshes on activation of a constraint
-std::string gethideMeshShowPartStr()
+std::string gethideMeshShowPartStr(std::string showConstr="")
 {
+   // if("" != showMe)
+   // {
+    return "for amesh in App.activeDocument().Objects:\n\
+    if \""+sConstr+"\" == amesh.Name:\n\
+        amesh.ViewObject.Visibility = True\n\
+    elif \"Mesh\" in amesh.TypeId:\n\
+        aparttoshow = amesh.Name.replace(\"_Mesh\",\"\")\n\
+        for apart in App.activeDocument().Objects:\n\
+            if aparttoshow == apart.Name:\n\
+                apart.ViewObject.Visibility = True\n\
+        amesh.ViewObject.Visibility = False\n";
+   /* }
     return
     "for amesh in App.activeDocument().Objects:\n\
     if \"Mesh\" in amesh.TypeId:\n\
@@ -90,7 +102,7 @@ std::string gethideMeshShowPartStr()
         for apart in App.activeDocument().Objects:\n\
             if aparttoshow == apart.Name:\n\
                 apart.ViewObject.Visibility = True\n\
-        amesh.ViewObject.Visibility = False\n";
+        amesh.ViewObject.Visibility = False\n";*/
 }
 
 //=====================================================================================
@@ -291,7 +303,7 @@ void CmdFemConstraintBearing::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintBearing\",\"%s\")",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -333,7 +345,7 @@ void CmdFemConstraintFixed::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -423,7 +435,7 @@ void CmdFemConstraintForce::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -468,7 +480,7 @@ void CmdFemConstraintPressure::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -509,7 +521,7 @@ void CmdFemConstraintGear::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Diameter = 100.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -555,7 +567,7 @@ void CmdFemConstraintPulley::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.TensionForce = 100.0",FeatName.c_str());
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
@@ -597,7 +609,7 @@ void CmdFemConstraintDisplacement::activated(int iMsg)
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
 
-    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+    doCommand(Doc,"%s",gethideMeshShowPartStr(FeatName).c_str()); //OvG: Hide meshes and show parts
 
     updateActive();
 
