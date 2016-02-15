@@ -219,8 +219,7 @@ class _TaskPanelResultControl:
 #        P3=self.result_object.PrinsMin
 #        x=self.result_object.DisplacementVectors
         FreeCAD.Console.PrintMessage("equation \n")
-        self.form.user_def.selectAll()
-        eq=self.form.user_def.copy()
+        eq=self.form.user_def.text()
         FreeCAD.Console.PrintMessage(eq + " \n")
         self.form.user_def.selectAll()
         
