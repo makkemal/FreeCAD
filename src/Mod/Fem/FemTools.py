@@ -295,10 +295,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         try:
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
-                                       self.heatflux_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
-                                       self.temperature_constraints, 
+                                       #self.temperature_constraints,
+                                       #self.heatflux_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)
