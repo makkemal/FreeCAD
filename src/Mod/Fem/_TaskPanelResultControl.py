@@ -21,7 +21,7 @@
 #***************************************************************************
 
 __title__ = "Result Control Task Panel"
-__author__ = "Juergen Riegel"
+__author__ = "Juergen Riegel, Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
 
@@ -213,21 +213,30 @@ class _TaskPanelResultControl:
     def userdef(self,  equation):
         FreeCAD.FEM_dialog["results_type"] = "user"
         eq=self.form.user_def_eq.toPlainText()
-#        FreeCAD.Console.PrintMessage("equation field \n")
-#        FreeCAD.Console.PrintMessage(str(eq) + " \n")
-        
+       
         
     def calculate(self):  
         FreeCAD.FEM_dialog["results_type"] = "user"
         P1=np.array(self.result_object.PrinsMax)
         P2=np.array(self.result_object.PrinsMed)
         P3=np.array(self.result_object.PrinsMin)
-        x=np.array(self.result_object.DisplacementVectors)
+        dispvectors=np.array(self.result_object.DisplacementVectors)
+        x=np.array(dispvectors[:, 0])
+        y=np.array(dispvectors[:, 1])
+        z=np.array(dispvectors[:, 2])
         eq=self.form.user_def_eq.toPlainText()  #Get equation to be used 
-        FreeCAD.Console.PrintMessage(str(eq) + " \n")
-        
-        
-        
+#        FreeCAD.Console.PrintMessage(str(eq) + " \n")
+        UserDef=eval(eq).tolist()
+        minm=min(UserDef)
+        avg=sum(UserDef)/len(UserDef)
+        maxm=max(UserDef)
+#       UserDef=UserDefa.tolist()
+#        FreeCAD.Console.PrintMessage(str(UserDef) + " \n")
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, UserDef)
+        #self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
         
 #end extra functions
         
