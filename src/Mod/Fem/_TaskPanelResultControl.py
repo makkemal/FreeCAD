@@ -235,7 +235,7 @@ class _TaskPanelResultControl:
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
             self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, UserDef)
-        #self.set_result_stats("MPa", minm, avg, maxm)
+        self.set_result_stats("", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
         
 #end extra functions
