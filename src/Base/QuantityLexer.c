@@ -109,7 +109,10 @@ typedef unsigned int flex_uint32_t;
 #endif
 
 /* Returned upon end-of-file. */
-#define YY_NULL 0
+# ifdef YY_NULL
+#  undef YY_NULL
+#  define YY_NULL 0
+# endif
 
 /* Promotes a possibly negative, possibly signed char to an unsigned
  * integer for use as an array index.  If the signed char is negative,
