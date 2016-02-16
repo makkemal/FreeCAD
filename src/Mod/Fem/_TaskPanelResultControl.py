@@ -27,6 +27,7 @@ __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 from FemTools import FemTools
+import numpy as np
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -53,6 +54,7 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.maxprin_selected) #MPH max prin
         QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.minprin_selected) #MPH min prin
         QtCore.QObject.connect(self.form.rb_midprin, QtCore.SIGNAL("toggled(bool)"), self.midprin_selected)  #MPH mid prin 
+        QtCore.QObject.connect(self.form.user_def_eq, QtCore.SIGNAL("textchanged()"), self.userdef)  #MPH calculate user defined loading   
         QtCore.QObject.connect(self.form.calculate, QtCore.SIGNAL("clicked()"), self.calculate)  #MPH calculate user defined loading   
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
@@ -208,20 +210,22 @@ class _TaskPanelResultControl:
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
         
-#    def userdef(self,  equation):
-#        FreeCAD.FEM_dialog["results_type"] = "user"
+    def userdef(self,  equation):
+        FreeCAD.FEM_dialog["results_type"] = "user"
+        eq=self.form.user_def_eq.toPlainText()
+#        FreeCAD.Console.PrintMessage("equation field \n")
+#        FreeCAD.Console.PrintMessage(str(eq) + " \n")
         
         
     def calculate(self):  
-#        FreeCAD.FEM_dialog["results_type"] = "user"
-#        P1=self.result_object.PrinsMax
-#        P2=self.result_object.PrinsMed
-#        P3=self.result_object.PrinsMin
-#        x=self.result_object.DisplacementVectors
-        FreeCAD.Console.PrintMessage("equation \n")
-        eq=self.form.user_def.text()
-        FreeCAD.Console.PrintMessage(eq + " \n")
-        self.form.user_def.selectAll()
+        FreeCAD.FEM_dialog["results_type"] = "user"
+        P1=np.array(self.result_object.PrinsMax)
+        P2=np.array(self.result_object.PrinsMed)
+        P3=np.array(self.result_object.PrinsMin)
+        x=np.array(self.result_object.DisplacementVectors)
+        eq=self.form.user_def_eq.toPlainText()  #Get equation to be used 
+        FreeCAD.Console.PrintMessage(str(eq) + " \n")
+        
         
         
         
