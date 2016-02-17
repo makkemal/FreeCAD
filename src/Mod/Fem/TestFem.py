@@ -119,6 +119,28 @@ class FemTest(unittest.TestCase):
         self.pressure_constraint.References = [(self.box, "Face2")]
         self.pressure_constraint.Pressure = 10.000000
         self.pressure_constraint.Reversed = True
+        
+    def create_displacement_constraint(self):
+        self.displacement_constraint = self.active_doc.addObject("Fem::ConstraintDisplacement", "FemConstraintDisplacement")
+        self.displacement_constraint.References = [(self.box, "Face1")]
+        self.displacement_constraint.xDisplacement=0.0 
+        self.displacement_constraint.yDisplacement=0.0 
+        self.displacement_constraint.zDisplacement=0.0 
+        self.displacement_constraint.xRotation=0.0 
+        self.displacement_constraint.yRotation=0.0 
+        self.displacement_constraint.zRotation=0.0 
+        self.displacement_constraint.xFree=0 
+        self.displacement_constraint.yFree=0 
+        self.displacement_constraint.zFree=0 
+        self.displacement_constraint.xFix=1 
+        self.displacement_constraint.yFix=1 
+        self.displacement_constraint.zFix=1 
+        self.displacement_constraint.rotxFree=0 
+        self.displacement_constraint.rotyFree=0 
+        self.displacement_constraint.rotzFree=0 
+        self.displacement_constraint.rotxFix=1
+        self.displacement_constraint.rotyFix=1
+        self.displacement_constraint.rotzFix=1
        
     #OvG TODO: Implement create heatflux constraint
     #def create_heatflux_constraint(self):
@@ -208,6 +230,11 @@ class FemTest(unittest.TestCase):
         self.create_pressure_constraint()
         self.assertTrue(self.pressure_constraint, "FemTest of new pressure constraint failed")
         self.analysis.Member = self.analysis.Member + [self.pressure_constraint]
+        
+        fcc_print('Checking FEM new displacement constraint...')
+        self.create_displacement_constraint()
+        self.assertTrue(self.displacement_constraint, "FemTest of new displacement constraint failed")
+        self.analysis.Member = self.analysis.Member + [self.displacement_constraint]
         
         #OvG TODO: Implement test for heatflux constraint
         #fcc_print('Checking FEM new heatflux constraint...')
