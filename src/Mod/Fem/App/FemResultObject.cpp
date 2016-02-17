@@ -46,7 +46,6 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(PrinsMed,(0), "Fem",Prop_None,"List of Second Pricipal stress values");
     ADD_PROPERTY_TYPE(PrinsMin,(0), "Fem",Prop_None,"List of Third Pricipal stress values");
     ADD_PROPERTY_TYPE(MaxShear,(0), "Fem",Prop_None,"List of Maximum Shear stress values");
-    ADD_PROPERTY_TYPE(UserDef,(0), "Fem",Prop_None,"User defined formula values");
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
     ADD_PROPERTY_TYPE(Eigenmode,(0), "Fem",Prop_None,"Number of the eigenmode");
     ADD_PROPERTY_TYPE(EigenmodeFrequency,(0), "Fem",Prop_None,"Frequency of the eigenmode");
@@ -61,7 +60,6 @@ FemResultObject::FemResultObject()
     PrinsMed.setStatus(App::Property::ReadOnly, true);
     PrinsMin.setStatus(App::Property::ReadOnly, true);
     MaxShear.setStatus(App::Property::ReadOnly, true);
-    UserDef.setStatus(App::Property::ReadOnly, false);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
 }
