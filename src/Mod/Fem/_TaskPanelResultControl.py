@@ -145,11 +145,6 @@ class _TaskPanelResultControl:
     def abs_displacement_selected(self, state):
         FreeCAD.FEM_dialog["results_type"] = "Uabs"
         self.select_displacement_type("Uabs")
-#        try:
-#            mw.removeDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # MPH remove color bar if exists 
-#        finally:
-#            self.plotlegend(self.result_object.DisplacementLength)
-#        
 
     def x_displacement_selected(self, state):
         FreeCAD.FEM_dialog["results_type"] = "U1"
@@ -225,13 +220,10 @@ class _TaskPanelResultControl:
         y=np.array(dispvectors[:, 1])
         z=np.array(dispvectors[:, 2])
         eq=self.form.user_def_eq.toPlainText()  #Get equation to be used 
-#        FreeCAD.Console.PrintMessage(str(eq) + " \n")
         UserDef=eval(eq).tolist()
         minm=min(UserDef)
         avg=sum(UserDef)/len(UserDef)
         maxm=max(UserDef)
-#       UserDef=UserDefa.tolist()
-#        FreeCAD.Console.PrintMessage(str(UserDef) + " \n")
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
             self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, UserDef)
@@ -320,16 +312,7 @@ class _TaskPanelResultControl:
     def reject(self):
         FreeCADGui.Control.closeDialog()
         
- #MPH colorbar 
-    def plotlegend(self, value):   
-        from  _CommandResultColorbar import ColorMap
-        FreeCAD.Console.PrintMessage("Plotlegend called \n")
-        mw = FreeCADGui.getMainWindow()  # access the main window 
-        ColorMapWidget = QtGui.QDockWidget() # create a new dockwidget
-        ColorMapWidget.setWidget(ColorMap(value)) # load the Ui script
-        mw.addDockWidget(QtCore.Qt.RightDockWidgetArea,ColorMapWidget)  # add the widget to the main window
-
-
+ 
 #It's code duplication that should be removes wher we migrate to FemTools.py
 def get_results_object(sel):
     if (len(sel) == 1):

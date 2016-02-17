@@ -61,8 +61,6 @@ public:
     App::PropertyFloatList PrinsMin;
     ///Shear Stress values of analysis
     App::PropertyFloatList MaxShear;
-    ///User defined formula
-    App::PropertyFloatList UserDef;
     /// Eigenmode number
     App::PropertyInteger Eigenmode;
     /// Eigenmode frequency
