@@ -280,7 +280,7 @@ def calculate_principal_stress(i):
     eigvals.reverse()
     maxshear = (eigvals[0]-eigvals[2])/2.0
     return (eigvals[0],eigvals[1],eigvals[2], maxshear)
-  
+
 def importFrd(filename, analysis=None):
     m = readResult(filename)
     mesh_object = None
@@ -459,11 +459,11 @@ def importFrd(filename, analysis=None):
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
-                             s_min, s_avg, s_max, 
-                             min(results.PrincipalMax), (sum(results.PrincipalMax)/NumberOfValues), max(results.PrincipalMax),  
-                             min(results.PrincipalMed), (sum(results.PrincipalMed)/NumberOfValues), max(results.PrincipalMed),  
-                             min(results.PrincipalMin), (sum(results.PrincipalMin)/NumberOfValues), max(results.PrincipalMin),  
-                             min(results.MaxShear), (sum(results.MaxShear)/NumberOfValues), max(results.MaxShear)]  
+                             s_min, s_avg, s_max,
+                             min(results.PrincipalMax), (sum(results.PrincipalMax)/NumberOfValues), max(results.PrincipalMax),
+                             min(results.PrincipalMed), (sum(results.PrincipalMed)/NumberOfValues), max(results.PrincipalMed),
+                             min(results.PrincipalMin), (sum(results.PrincipalMin)/NumberOfValues), max(results.PrincipalMin),
+                             min(results.MaxShear), (sum(results.MaxShear)/NumberOfValues), max(results.MaxShear)]
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):
