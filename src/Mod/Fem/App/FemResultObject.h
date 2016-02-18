@@ -54,14 +54,14 @@ public:
     /// Von Mises Stress values of analysis
     App::PropertyFloatList StressValues;
     ///First principal Stress values of analysis
-    App::PropertyFloatList PrinsMax;
+    App::PropertyFloatList PrincipalMax;
     ///Second principal Stress values of analysis
-    App::PropertyFloatList PrinsMed;
+    App::PropertyFloatList PrincipalMed;
     ///Third principal Stress values of analysis
-    App::PropertyFloatList PrinsMin;
+    App::PropertyFloatList PrincipalMin;
     ///Shear Stress values of analysis
     App::PropertyFloatList MaxShear;
-    /// Eigenmode number
+    ///User defined formula
     App::PropertyInteger Eigenmode;
     /// Eigenmode frequency
     App::PropertyFloat EigenmodeFrequency;

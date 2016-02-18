@@ -274,24 +274,11 @@ def calculate_principal_stress(i):
     sigma = np.array([[i[0],i[3],i[4]],
                          [i[3],i[1],i[5]],
                          [i[4],i[5],i[2]]])
-
     # compute principal stresses
     eigvals = list(np.linalg.eigvalsh(sigma))
     eigvals.sort()
     eigvals.reverse()
     maxshear = (eigvals[0]-eigvals[2])/2.0
-    #compute von mises for check may be faster than current algorithm
-    # compute the stress invariants
-#    sigma_iso = 1.0/3.0*np.trace(sigma)*np.eye(3)
-#    sigma_dev = sigma - sigma_iso
-#    I1 = np.trace(sigma)
-#    J2 = 1.0/2.0*np.trace(numpy.dot(sigma_dev,sigma_dev))
-#    J3 = 1.0/3.0*np.trace(\
-#         np.dot(sigma_dev,numpy.dot(sigma_dev,sigma_dev)))
-#
-#    # compute other common stress measures
-#    mean_stress = 1.0/3.0*I1
-#    eqv_stress  = math.sqrt(3.0*J2)  #von mises from stress inavriants 
     return (eigvals[0],eigvals[1],eigvals[2], maxshear)
   
 def importFrd(filename, analysis=None):
@@ -397,7 +384,7 @@ def importFrd(filename, analysis=None):
                     break
 
             disp = result_set['disp']
-            l = len(disp)
+            NumberOfValues = len(disp)
             displacement = []
             for k, v in disp.iteritems():
                 displacement.append(v)
@@ -434,16 +421,16 @@ def importFrd(filename, analysis=None):
                     shearstress.append(shear)
                 if eigenmode_number > 0:
                     results.StressValues = map((lambda x: x * scale), mstress)
-                    results.PrinsMax = map((lambda x: x * scale), prinstress1)
-                    results.PrinsMed = map((lambda x: x * scale), prinstress2)
-                    results.PrinsMin = map((lambda x: x * scale), prinstress3)
-                    results.Maxshear = map((lambda x: x * scale), shearstress)
+                    results.PrincipalMax = map((lambda x: x * scale), prinstress1)
+                    results.PrincipalMed = map((lambda x: x * scale), prinstress2)
+                    results.PrincipalMin = map((lambda x: x * scale), prinstress3)
+                    results.MaxShear = map((lambda x: x * scale), shearstress)
                     results.Eigenmode = eigenmode_number
                 else:
                     results.StressValues = mstress
-                    results.PrinsMax = prinstress1
-                    results.PrinsMed = prinstress2
-                    results.PrinsMin = prinstress3
+                    results.PrincipalMax = prinstress1
+                    results.PrincipalMed = prinstress2
+                    results.PrincipalMin = prinstress3
                     results.MaxShear = shearstress
 
             if (results.NodeNumbers != 0 and results.NodeNumbers != stress.keys()):
@@ -453,11 +440,11 @@ def importFrd(filename, analysis=None):
 
             x_min, y_min, z_min = map(min, zip(*displacement))
             sum_list = map(sum, zip(*displacement))
-            x_avg, y_avg, z_avg = [i / l for i in sum_list]
+            x_avg, y_avg, z_avg = [i / NumberOfValues for i in sum_list]
 
             s_max = max(results.StressValues)
             s_min = min(results.StressValues)
-            s_avg = sum(results.StressValues) / l
+            s_avg = sum(results.StressValues) / NumberOfValues
 
             disp_abs = []
             for d in displacement:
@@ -466,17 +453,17 @@ def importFrd(filename, analysis=None):
 
             a_max = max(disp_abs)
             a_min = min(disp_abs)
-            a_avg = sum(disp_abs) / l
+            a_avg = sum(disp_abs) / NumberOfValues
 
             results.Stats = [x_min, x_avg, x_max,
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
                              s_min, s_avg, s_max, 
-                             min(results.PrinsMax), (sum(results.PrinsMax)/l), max(results.PrinsMax),  
-                             min(results.PrinsMed), (sum(results.PrinsMed)/l), max(results.PrinsMed), 
-                             min(results.PrinsMin), (sum(results.PrinsMin)/l), max(results.PrinsMin),  #MPH min pricipal stats
-                             min(results.MaxShear), (sum(results.MaxShear)/l), max(results.MaxShear)]  #MPH shear stress stats
+                             min(results.PrincipalMax), (sum(results.PrincipalMax)/NumberOfValues), max(results.PrincipalMax),  
+                             min(results.PrincipalMed), (sum(results.PrincipalMed)/NumberOfValues), max(results.PrincipalMed),  
+                             min(results.PrincipalMin), (sum(results.PrincipalMin)/NumberOfValues), max(results.PrincipalMin),  
+                             min(results.MaxShear), (sum(results.MaxShear)/NumberOfValues), max(results.MaxShear)]  
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):
