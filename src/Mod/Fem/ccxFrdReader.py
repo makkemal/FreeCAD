@@ -54,10 +54,12 @@ def readResult(frd_input):
     mode_results = {}
     mode_disp = {}
     mode_stress = {}
-
+    mode_temp = {}
+    
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
+    mode_temp_found = False
     elements_found = False
     input_continues = False
     eigenmode = 0
@@ -226,6 +228,13 @@ def readResult(frd_input):
             stress_5 = float(line[61:73])
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
+        if line[5:11] == "NDTEMP":
+            mode_temp_found = True
+        #we found a temperatures line in the frd file
+        if mode_temp_found and (line[1:3] == "-1"):
+            elem = int(line[4:13])
+            temperature = float(line[13:25])   
+            mode_temp[elem] = (temperature)
         #Check for the end of a section
         if line[1:3] == "-3":
             if mode_disp_found:
@@ -243,6 +252,15 @@ def readResult(frd_input):
                 mode_disp = {}
                 mode_stress = {}
                 eigenmode = 0
+                
+            if mode_temp_found:
+                mode_results = {}
+                mode_results['temp'] = mode_temp
+                results.append(mode_results)
+                mode_temp = {}
+                mode_stress_found = False
+                
+            
             nodes_found = False
             elements_found = False
 
@@ -404,6 +422,11 @@ def importFrd(filename, analysis=None):
                 results.NodeNumbers = disp.keys()
                 if(mesh_object):
                     results.Mesh = mesh_object
+                    
+            Temperature = result_set['temp']
+            if len(disp) > 0:
+                results.Temperature = map((lambda x: x), Temperature.values())
+                
 
             stress = result_set['stress']
             if len(stress) > 0:

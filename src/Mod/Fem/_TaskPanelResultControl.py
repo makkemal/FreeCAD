@@ -214,6 +214,7 @@ class _TaskPanelResultControl:
         P1=np.array(self.result_object.PrincipalMax)
         P2=np.array(self.result_object.PrincipalMed)
         P3=np.array(self.result_object.PrincipalMin)
+        Von=np.array(self.result_object.StressValues)
         dispvectors=np.array(self.result_object.DisplacementVectors)
         x=np.array(dispvectors[:, 0])
         y=np.array(dispvectors[:, 1])

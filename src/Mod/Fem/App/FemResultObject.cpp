@@ -46,6 +46,7 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(PrincipalMed,(0), "Fem",Prop_None,"List of Second Principal stress values");
     ADD_PROPERTY_TYPE(PrincipalMin,(0), "Fem",Prop_None,"List of Third Principal stress values");
     ADD_PROPERTY_TYPE(MaxShear,(0), "Fem",Prop_None,"List of Maximum Shear stress values");
+    ADD_PROPERTY_TYPE(Temperature,(0), "Fem",Prop_None,"Nodal temperature");
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
     ADD_PROPERTY_TYPE(Eigenmode,(0), "Fem",Prop_None,"Number of the eigenmode");
     ADD_PROPERTY_TYPE(EigenmodeFrequency,(0), "Fem",Prop_None,"Frequency of the eigenmode");
@@ -60,6 +61,7 @@ FemResultObject::FemResultObject()
     PrincipalMed.setStatus(App::Property::ReadOnly, true);
     PrincipalMin.setStatus(App::Property::ReadOnly, true);
     MaxShear.setStatus(App::Property::ReadOnly, true);
+    Temperature.setStatus(App::Property::ReadOnly, true);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
 }
