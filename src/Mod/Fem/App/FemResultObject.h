@@ -53,17 +53,17 @@ public:
     App::PropertyFloatList DisplacementLengths;
     /// Von Mises Stress values of analysis
     App::PropertyFloatList StressValues;
-    ///First principal Stress values of analysis
-    App::PropertyFloatList PrinsMax;
-    ///Second principal Stress values of analysis
-    App::PropertyFloatList PrinsMed;
-    ///Third principal Stress values of analysis
-    App::PropertyFloatList PrinsMin;
-    ///Shear Stress values of analysis
+    /// First principal Stress values of analysis
+    App::PropertyFloatList PrincipalMax;
+    /// Second principal Stress values of analysis
+    App::PropertyFloatList PrincipalMed;
+    /// Third principal Stress values of analysis
+    App::PropertyFloatList PrincipalMin;
+    /// Shear Stress values of analysis
     App::PropertyFloatList MaxShear;
-    ///User defined formula
-    App::PropertyFloatList UserDef;
-    /// Eigenmode number
+    /// Temperature
+    App::PropertyFloatList Temperature;
+    /// Eigenmode
     App::PropertyInteger Eigenmode;
     /// Eigenmode frequency
     App::PropertyFloat EigenmodeFrequency;

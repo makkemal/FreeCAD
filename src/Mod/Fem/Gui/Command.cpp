@@ -652,6 +652,49 @@ bool CmdFemConstraintTemperature::isActive(void)
 {
     return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
 }
+
+//=====================================================================================
+
+DEF_STD_CMD_A(CmdFemConstraintInitialTemperature);
+
+CmdFemConstraintInitialTemperature::CmdFemConstraintInitialTemperature()
+  : Command("Fem_ConstraintInitialTemperature")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Create FEM initial temperature constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for initial temperature acting on a body");
+    sWhatsThis      = "Fem_ConstraintInitialTemperature";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-constraint-InitialTemperature";
+}
+
+void CmdFemConstraintInitialTemperature::activated(int iMsg)
+{
+    Fem::FemAnalysis        *Analysis;
+
+    if(getConstraintPrerequisits(&Analysis))
+        return;
+
+    std::string FeatName = getUniqueObjectName("FemConstraintInitialTemperature");
+
+    openCommand("Make FEM constraint intial temperature on body");
+    doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintInitialTemperature\",\"%s\")",FeatName.c_str());
+    doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
+    doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
+                             Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
+   
+    doCommand(Doc,"%s",gethideMeshShowPartStr().c_str()); //OvG: Hide meshes and show parts
+
+    updateActive();
+
+    doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());
+}
+
+bool CmdFemConstraintInitialTemperature::isActive(void)
+{
+    return FemGui::ActiveAnalysisObserver::instance()->hasActiveObject();
+}
 // #####################################################################################################
 
 
@@ -866,4 +909,5 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintDisplacement());
     rcCmdMgr.addCommand(new CmdFemConstraintTemperature());
     rcCmdMgr.addCommand(new CmdFemConstraintHeatflux());
+    rcCmdMgr.addCommand(new CmdFemConstraintInitialTemperature());
 }

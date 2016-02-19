@@ -114,8 +114,11 @@ public:
 	static Unit Pressure;
 	static Unit Force;  
 	static Unit Work;   
-	static Unit Power;  
-
+	static Unit Power;
+	static Unit ThermalConductivity;  	
+	static Unit ThermalExpansionCoefficient;
+	static Unit SpecificHeat;
+	
 
     //@}
 protected:

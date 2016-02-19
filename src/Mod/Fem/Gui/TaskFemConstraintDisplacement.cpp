@@ -435,10 +435,27 @@ void TaskFemConstraintDisplacement::addToSelection()
                     addMe=false;
                 }
             }
+            // limit constraint such that only vertexes or faces or edges can be used depending on what was selected first
+            std::string searchStr("");
+            if (subNames[subIt].find("Vertex")!=std::string::npos)
+                searchStr="Vertex";
+            else if (subNames[subIt].find("Edge")!=std::string::npos)
+                searchStr="Edge";
+            else
+                searchStr="Face";
+            if ((std::none_of(SubElements.begin(),SubElements.end(),[&](std::string const &s){return s.find(searchStr)!=std::string::npos;}))&&(SubElements.size()>0)){
+                std::string Msg="Only one type of selection (vertex,face or edge) per constraint allowed!";
+                QMessageBox::warning(this, tr("Selection error"),QString::fromStdString(Msg));
+                addMe=false;
+            }
             if (addMe){
+                disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
                 Objects.push_back(obj);
                 SubElements.push_back(subNames[subIt]);
                 ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
+                connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
             }
         }
     }
@@ -458,7 +475,7 @@ void TaskFemConstraintDisplacement::removeFromSelection()
     Fem::ConstraintDisplacement* pcConstraint = static_cast<Fem::ConstraintDisplacement*>(ConstraintView->getObject());
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
-    std::vector<int> itemsToDel;
+    std::vector<unsigned int> itemsToDel;
     for (std::vector<Gui::SelectionObject>::iterator it = selection.begin();  it != selection.end(); ++it){//for every selected object
         if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
             QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
@@ -480,11 +497,13 @@ void TaskFemConstraintDisplacement::removeFromSelection()
         }
     }
     
+    std::sort(itemsToDel.begin(),itemsToDel.end());
     while (itemsToDel.size()>0){
         Objects.erase(Objects.begin()+itemsToDel.back());
         SubElements.erase(SubElements.begin()+itemsToDel.back());
         itemsToDel.pop_back();
     }
+    
     //Update UI
     disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
@@ -501,27 +520,21 @@ void TaskFemConstraintDisplacement::removeFromSelection()
 }
 
 void TaskFemConstraintDisplacement::setSelection(QListWidgetItem* item){
-    try
-    {
-        std::string s = item->text().toStdString();
-        std::string docName=ConstraintView->getObject()->getDocument()->getName();
+    std::string s = item->text().toStdString();
+    std::string docName=ConstraintView->getObject()->getDocument()->getName();
 
-        std::string delimiter = ":";
+    std::string delimiter = ":";
 
-        size_t pos = 0;
-        std::string objName;
-        std::string subName;
-        pos = s.find(delimiter);
-        objName = s.substr(0, pos);
-        s.erase(0, pos + delimiter.length());
-         subName=s;
+    size_t pos = 0;
+    std::string objName;
+    std::string subName;
+    pos = s.find(delimiter);
+    objName = s.substr(0, pos);
+    s.erase(0, pos + delimiter.length());
+    subName=s;
 
-        Gui::Selection().clearSelection();
-        Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
-    }
-    catch(...)
-    {//OvG: No item selected - happens when deleting last remaining reference item from list using right-click
-    }
+    Gui::Selection().clearSelection();
+    Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
 }
 
 void TaskFemConstraintDisplacement::onReferenceDeleted() {

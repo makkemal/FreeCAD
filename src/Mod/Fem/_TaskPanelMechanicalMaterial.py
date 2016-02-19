@@ -32,7 +32,7 @@ from PySide import QtCore
 
 
 class _TaskPanelMechanicalMaterial:
-    '''The editmode TaskPanel for MechanicalMaterial objects'''
+    '''The editmode TaskPanel for ThermalMechanicalMaterial objects'''
     def __init__(self, obj):
         FreeCADGui.Selection.clearSelection()
         self.sel_server = None
@@ -48,24 +48,23 @@ class _TaskPanelMechanicalMaterial:
         QtCore.QObject.connect(self.form.spinBox_poisson_ratio, QtCore.SIGNAL("valueChanged(double)"), self.pr_changed)
         QtCore.QObject.connect(self.form.input_fd_density, QtCore.SIGNAL("valueChanged(double)"), self.density_changed)
         QtCore.QObject.connect(self.form.pushButton_Reference, QtCore.SIGNAL("clicked()"), self.add_references)
+        QtCore.QObject.connect(self.form.input_fd_thermal_conductivity, QtCore.SIGNAL("valueChanged(double)"), self.tc_changed)
+        QtCore.QObject.connect(self.form.input_fd_expansion_coefficient, QtCore.SIGNAL("valueChanged(double)"), self.ec_changed)
+        QtCore.QObject.connect(self.form.input_fd_specific_heat, QtCore.SIGNAL("valueChanged(double)"), self.sh_changed)
+        
         self.form.list_References.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.form.list_References.connect(self.form.list_References, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), self.references_list_right_clicked)
 
         self.import_materials()
         previous_mat_path = self.get_material_path(self.material)
         if not previous_mat_path:
+            FreeCAD.Console.PrintMessage("Previously used material cannot be found in material directories. Using transient material.\n")
             material_name = self.get_material_name(self.material)
             if material_name != 'None':
-                FreeCAD.Console.PrintMessage("Previously used material cannot be found in material directories. Using transient material.\n")
                 self.add_transient_material(self.material)
                 index = self.form.cb_materials.findData(material_name)
             else:
-                if not self.material:
-                    index = self.form.cb_materials.findText(material_name)
-                else:
-                    FreeCAD.Console.PrintMessage("None material was previously used. Reload values.\n")
-                    self.add_transient_material(self.material)
-                    index = self.form.cb_materials.findData(material_name)
+                index = self.form.cb_materials.findText(material_name)
             self.choose_material(index)
         else:
             index = self.form.cb_materials.findData(previous_mat_path)
@@ -113,40 +112,52 @@ class _TaskPanelMechanicalMaterial:
 
     def ym_changed(self, value):
         import Units
-        # FreeCADs standard unit for stress is kPa
         old_ym = Units.Quantity(self.material['YoungsModulus'])
-        variation = 0.001
-        if value:
-            if not (1 - variation < float(old_ym) / value < 1 + variation):
-                # YoungsModulus has changed
-                material = self.material
-                material['YoungsModulus'] = unicode(value) + " kPa"
-                self.material = material
+        if old_ym != value:
+            material = self.material
+            # FreeCAD uses kPa internall for Stress
+            material['YoungsModulus'] = unicode(value) + " kPa"
+            self.material = material
 
     def density_changed(self, value):
         import Units
-        # FreeCADs standard unit for density is kg/mm^3
         old_density = Units.Quantity(self.material['Density'])
-        variation = 0.001
-        if value:
-            if not (1 - variation < float(old_density) / value < 1 + variation):
-                # density has changed
-                material = self.material
-                value_in_kg_per_m3 = value * 1e9
-                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3"
-                # material['Density'] = unicode(value) + " kg/mm^3"
-                self.material = material
+        if old_density != value:
+            material = self.material
+            material['Density'] = unicode(value) + " kg/mm^3"
+            self.material = material
 
     def pr_changed(self, value):
         import Units
         old_pr = Units.Quantity(self.material['PoissonRatio'])
-        variation = 0.001
-        if value:
-            if  not (1 - variation < float(old_pr) / value < 1 + variation):
-                # PoissonRatio has changed
-                material = self.material
-                material['PoissonRatio'] = unicode(value)
-                self.material = material
+        if old_pr != value:
+            material = self.material
+            material['PoissonRatio'] = unicode(value)
+            self.material = material
+
+    def tc_changed(self, value):
+        import Units
+        old_tc = Units.Quantity(self.material['ThermalConductivity'])
+        if old_tc != value:
+            material = self.material
+            material['ThermalConductivity'] = unicode(value) + " uW/mm/K"
+            self.material = material
+            
+    def ec_changed(self, value):
+        import Units
+        old_ec = Units.Quantity(self.material['ThermalExpansionCoefficient'])
+        if old_ec != value:
+            material = self.material
+            material['ThermalExpansionCoefficient'] = unicode(value) + " mm"
+            self.material = material
+
+    def sh_changed(self, value):
+        import Units
+        old_sh = Units.Quantity(self.material['SpecificHeat'])
+        if old_sh != value:
+            material = self.material
+            material['SpecificHeat'] = unicode(value) + " mm"
+            self.material = material
 
     def choose_material(self, index):
         if index < 0:
@@ -186,6 +197,21 @@ class _TaskPanelMechanicalMaterial:
             density = FreeCAD.Units.Quantity(matmap['Density'])
             density_with_new_unit = density.getValueAs(density_new_unit)
             self.form.input_fd_density.setText("{} {}".format(density_with_new_unit, density_new_unit))
+        if 'ThermalConductivity' in matmap:
+            tc_new_unit = "W/m/K"
+            tc = FreeCAD.Units.Quantity(matmap['ThermalConductivity'])
+            tc_with_new_unit = tc.getValueAs(tc_new_unit)
+            self.form.input_fd_thermal_conductivity.setText("{} {}".format(tc_with_new_unit, tc_new_unit))
+        if 'ThermalExpansionCoefficient' in matmap:
+            te_new_unit = "m"
+            te = FreeCAD.Units.Quantity(matmap['ThermalExpansionCoefficient'])
+            te_with_new_unit = te.getValueAs(te_new_unit)
+            self.form.input_fd_expansion_coefficient.setText("{} {}".format(te_with_new_unit, te_new_unit))
+        if 'SpecificHeat' in matmap:
+            sh_new_unit = "m"
+            sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
+            sh_with_new_unit = sh.getValueAs(sh_new_unit)
+            self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))
 
     def add_transient_material(self, material):
         material_name = self.get_material_name(material)
@@ -223,7 +249,6 @@ class _TaskPanelMechanicalMaterial:
         if use_mat_from_config_dir:
             user_mat_dirname = FreeCAD.getUserAppDataDir() + "Materials"
             self.add_mat_dir(user_mat_dirname, ":/icons/preferences-general.svg")
-
         use_mat_from_custom_dir = self.fem_preferences.GetBool("UseMaterialsFromCustomDir", True)
         if use_mat_from_custom_dir:
             custom_mat_dir = self.fem_preferences.GetString("CustomMaterialsDir", "")

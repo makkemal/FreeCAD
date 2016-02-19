@@ -42,11 +42,11 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(DisplacementVectors,(), "Fem",Prop_None,"List of displacement vectors");
     ADD_PROPERTY_TYPE(DisplacementLengths,(0), "Fem",Prop_None,"List of displacement lengths");
     ADD_PROPERTY_TYPE(StressValues,(0), "Fem",Prop_None,"List of Von Misses stress values");
-    ADD_PROPERTY_TYPE(PrinsMax,(0), "Fem",Prop_None,"List of First Pricipal stress values");
-    ADD_PROPERTY_TYPE(PrinsMed,(0), "Fem",Prop_None,"List of Second Pricipal stress values");
-    ADD_PROPERTY_TYPE(PrinsMin,(0), "Fem",Prop_None,"List of Third Pricipal stress values");
+    ADD_PROPERTY_TYPE(PrincipalMax,(0), "Fem",Prop_None,"List of First Principal stress values");
+    ADD_PROPERTY_TYPE(PrincipalMed,(0), "Fem",Prop_None,"List of Second Principal stress values");
+    ADD_PROPERTY_TYPE(PrincipalMin,(0), "Fem",Prop_None,"List of Third Principal stress values");
     ADD_PROPERTY_TYPE(MaxShear,(0), "Fem",Prop_None,"List of Maximum Shear stress values");
-    ADD_PROPERTY_TYPE(UserDef,(0), "Fem",Prop_None,"User defined formula values");
+    ADD_PROPERTY_TYPE(Temperature,(0), "Fem",Prop_None,"Nodal temperature");
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
     ADD_PROPERTY_TYPE(Eigenmode,(0), "Fem",Prop_None,"Number of the eigenmode");
     ADD_PROPERTY_TYPE(EigenmodeFrequency,(0), "Fem",Prop_None,"Frequency of the eigenmode");
@@ -57,11 +57,11 @@ FemResultObject::FemResultObject()
     DisplacementVectors.setStatus(App::Property::ReadOnly, true);
     DisplacementLengths.setStatus(App::Property::ReadOnly, true);
     StressValues.setStatus(App::Property::ReadOnly, true);
-    PrinsMax.setStatus(App::Property::ReadOnly, true);
-    PrinsMed.setStatus(App::Property::ReadOnly, true);
-    PrinsMin.setStatus(App::Property::ReadOnly, true);
+    PrincipalMax.setStatus(App::Property::ReadOnly, true);
+    PrincipalMed.setStatus(App::Property::ReadOnly, true);
+    PrincipalMin.setStatus(App::Property::ReadOnly, true);
     MaxShear.setStatus(App::Property::ReadOnly, true);
-    UserDef.setStatus(App::Property::ReadOnly, false);
+    Temperature.setStatus(App::Property::ReadOnly, true);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
 }
@@ -81,7 +81,7 @@ PyObject *FemResultObject::getPyObject()
         // ref counter is set to 1
         PythonObject = Py::Object(new DocumentObjectPy(this),true);
     }
-    return Py::new_reference_to(PythonObject); 
+    return Py::new_reference_to(PythonObject);
 }
 
 // Python feature ---------------------------------------------------------

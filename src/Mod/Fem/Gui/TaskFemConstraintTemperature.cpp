@@ -145,9 +145,13 @@ void TaskFemConstraintTemperature::addToSelection()
                 }
             }
             if (addMe){
+                disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
                 Objects.push_back(obj);
                 SubElements.push_back(subNames[subIt]);
                 ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
+                connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
             }
         }
     }
@@ -189,6 +193,7 @@ void TaskFemConstraintTemperature::removeFromSelection()
         }
     }
     
+    std::sort(itemsToDel.begin(),itemsToDel.end());
     while (itemsToDel.size()>0){
         Objects.erase(Objects.begin()+itemsToDel.back());
         SubElements.erase(SubElements.begin()+itemsToDel.back());
@@ -228,10 +233,7 @@ void TaskFemConstraintTemperature::setSelection(QListWidgetItem* item){
 }
 
 void TaskFemConstraintTemperature::onReferenceDeleted() {
-    int row = ui->lw_references->currentIndex().row();
-    TaskFemConstraint::onReferenceDeleted(row);
-    ui->lw_references->model()->removeRow(row);
-    ui->lw_references->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
+    TaskFemConstraintTemperature::removeFromSelection();
 }
 
 const std::string TaskFemConstraintTemperature::getReferences() const
