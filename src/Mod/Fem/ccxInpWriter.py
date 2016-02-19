@@ -210,18 +210,18 @@ class inp_writer:
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for ftobj in self.temperature_objects:
             fixedtemp_obj = ftobj['Object']
-            #f.write('*NSET,NSET='+fixedtemp_obj.Name + '\n')
-            #~ for o, elem in fixedtemp_obj.References:
-                #~ fto = o.Shape.getElement(elem)
-                #~ n = []
-                #~ if fto.ShapeType == 'Face':
-                    #~ n = self.mesh_object.FemMesh.getNodesByFace(fto)
-                #~ elif fto.ShapeType == 'Edge':
-                    #~ n = self.mesh_object.FemMesh.getNodesByEdge(fto)
-                #~ elif fto.ShapeType == 'Vertex':
-                    #~ n = self.mesh_object.FemMesh.getNodesByVertex(fto)
-                #~ for i in n:
-                    #~ f.write(str(i) + ',\n')
+            f.write('*NSET,NSET='+fixedtemp_obj.Name + '\n')
+            for o, elem in fixedtemp_obj.References:
+                fto = o.Shape.getElement(elem)
+                n = []
+                if fto.ShapeType == 'Face':
+                    n = self.mesh_object.FemMesh.getNodesByFace(fto)
+                elif fto.ShapeType == 'Edge':
+                    n = self.mesh_object.FemMesh.getNodesByEdge(fto)
+                elif fto.ShapeType == 'Vertex':
+                    n = self.mesh_object.FemMesh.getNodesByVertex(fto)
+                for i in n:
+                    f.write(str(i) + ',\n')
 
     def write_node_sets_constraints_force(self, f):
         f.write('\n***********************************************************\n')
@@ -428,7 +428,7 @@ class inp_writer:
         for ftobj in self.temperature_objects:
             fixedtemp_obj = ftobj['Object']
             f.write('*BOUNDARY\n')
-            f.write('{},11,{}'.format(fixedtemp_obj.Name,fixedtemp_obj.Temperature))
+            f.write('{},11,11,{}\n'.format(fixedtemp_obj.Name,fixedtemp_obj.Temperature))
             f.write('\n')
 
     def write_constraints_force(self, f):
@@ -655,7 +655,7 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
-        f.write('.1,1\n'); #OvG: 0.1 increment, total time 1 for steady state 
+        f.write('0.1,1\n'); #OvG: 0.3 increment, total time 1 for steady state 
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
