@@ -111,8 +111,6 @@ SET(FemScripts_SRCS
     MechanicalMaterial.py
     SelectionObserverFem.py
     TestFem.py
-    
-    ccxInpWriterFemConstraintDisplacement.py
 
     TaskPanelFemBeamSection.ui
     TaskPanelFemShellThickness.ui
@@ -128,6 +126,7 @@ SET(FemTests_SRCS
     test_files/ccx/mesh_volumes.csv
     test_files/ccx/static_analysis.inp
     test_files/ccx/frequency_analysis.inp
+    #test_files/ccx/thermomech_analysis.inp
     test_files/ccx/cube_frequency.inp
     test_files/ccx/cube_frequency.dat
     test_files/ccx/cube_frequency.frd
@@ -136,6 +135,10 @@ SET(FemTests_SRCS
     test_files/ccx/cube_static.dat
     test_files/ccx/cube_static.frd
     test_files/ccx/cube_static_expected_values
+    #test_files/ccx/cube_thermomech.inp
+    #test_files/ccx/cube_thermomech.dat
+    #test_files/ccx/cube_thermomech.frd
+    #test_files/ccx/cube_thermomech_expected_values
 )
 
 SET(FemBase_SRCS

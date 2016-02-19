@@ -141,8 +141,8 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPressure         ::init();
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
-    Fem::ConstraintDisplacement ::init();
-    Fem::ConstraintTemperature ::init();
+    Fem::ConstraintDisplacement     ::init();
+    Fem::ConstraintTemperature      ::init();
     Fem::ConstraintHeatflux         ::init();
 
     Fem::FemResultObject            ::init();
