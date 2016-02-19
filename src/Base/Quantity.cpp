@@ -229,7 +229,8 @@ Quantity Quantity::MicroWatt        (1.0           ,Unit(2,1,-3));  // Watt (kg*
 Quantity Quantity::VoltAmpere       (1e+6          ,Unit(2,1,-3));  // VoltAmpere (kg*m^2/s^3) 
 
 Quantity Quantity::Joule            (1e+6          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2)
-Quantity Quantity::KiloJoule        (1e+9          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2) 
+Quantity Quantity::KiloJoule        (1e+9          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2)
+Quantity Quantity::MicroJoule       (1.0           ,Unit(2,1,-3));  // Joule (kg*m^2/s^2) 
 Quantity Quantity::NewtonMeter      (1e+6          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2) 
 Quantity Quantity::VoltAmpereSecond (1e+6          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2) 
 Quantity Quantity::WattSecond       (1e+6          ,Unit(2,1,-2));  // Joule (kg*m^2/s^2) 

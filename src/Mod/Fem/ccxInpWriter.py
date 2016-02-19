@@ -226,7 +226,7 @@ class inp_writer:
             TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
             TC_in_WmK = TC.getValueAs('W/m/K')
             TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
-            TEC_in_m = TEC.getValueAs('m')
+            TEC_in_mmK = TEC.getValueAs('m/m/K')
             SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
             SH_in_m = SH.getValueAs('m')
             mat_name = mat_obj.Material['Name'][:80]
@@ -242,7 +242,7 @@ class inp_writer:
             f.write('*CONDUCTIVITY \n')
             f.write('{}, \n'.format(TC_in_WmK))
             f.write('*EXPANSION \n')
-            f.write('{}, \n'.format(TEC_in_m))
+            f.write('{}, \n'.format(TEC_in_mmK))
             f.write('*SPECIFIC HEAT \n')
             f.write('{}, \n'.format(SH_in_m))
 
