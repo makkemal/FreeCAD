@@ -42,7 +42,7 @@ public:
     App::PropertyVectorList Normals;
 
     //Temperature parameters
-    App::PropertyFloat temperature; 
+    App::PropertyFloat Temperature; 
     
 
     /// recalculate the object

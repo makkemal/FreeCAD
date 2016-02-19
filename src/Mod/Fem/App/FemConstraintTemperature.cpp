@@ -41,7 +41,7 @@ PROPERTY_SOURCE(Fem::ConstraintTemperature, Fem::Constraint);
 
 ConstraintTemperature::ConstraintTemperature()
 {
-    ADD_PROPERTY(temperature,(0.0)); 
+    ADD_PROPERTY(Temperature,(0.0)); 
     
     ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                       "Points where symbols are drawn");
