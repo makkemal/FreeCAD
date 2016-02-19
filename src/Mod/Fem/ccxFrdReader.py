@@ -423,9 +423,10 @@ def importFrd(filename, analysis=None):
                 if(mesh_object):
                     results.Mesh = mesh_object
                     
-            Temperature = result_set['temp']
-            if len(disp) > 0:
-                results.Temperature = map((lambda x: x), Temperature.values())
+            if hasattr(result_set, 'temp'):
+                Temperature = result_set['temp']
+                if len(Temperature) > 0:
+                   results.Temperature = map((lambda x: x), Temperature.values())
                 
 
             stress = result_set['stress']
