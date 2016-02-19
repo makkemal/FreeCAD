@@ -107,9 +107,9 @@ void ViewProviderFemConstraintHeatflux::updateData(const App::Property* prop)
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(this->getObject());
     float scaledradius = RADIUS * pcConstraint->Scale.getValue(); //OvG: Calculate scaled values once only
     float scaledheight = HEIGHT * pcConstraint->Scale.getValue();
-    float ambienttemp = pcConstraint->AmbientTemp.getValue();
-    //float facetemp = pcConstraint->FaceTemp.getValue();
-    float filmcoef = pcConstraint->FilmCoef.getValue();
+    //float ambienttemp = pcConstraint->AmbientTemp.getValue();
+    ////float facetemp = pcConstraint->FaceTemp.getValue();
+    //float filmcoef = pcConstraint->FilmCoef.getValue();
 
     if (strcmp(prop->getName(),"Points") == 0) {
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
@@ -122,112 +122,61 @@ void ViewProviderFemConstraintHeatflux::updateData(const App::Property* prop)
         pShapeSep->removeAllChildren();
 
         for (std::vector<Base::Vector3d>::const_iterator p = points.begin(); p != points.end(); p++) {
+            //Define base and normal directions
             SbVec3f base(p->x, p->y, p->z);
-            SbVec3f dir(n->x, n->y, n->z);
-            SbRotation r(SbVec3f(-1,0,0), dir);
+            SbVec3f dir(n->x, n->y, n->z);//normal
             
-            //Heatflux indication
-            SoSeparator* sep = new SoSeparator();
-            
-            ////draw a temp gauge,with sphere and a cylinder
-            //first move to correct postion and orientation
-            SoTranslation* trans = new SoTranslation();
-            SbVec3f newPos=base+scaledradius*2*dir;
-            trans->translation.setValue(newPos);
-            sep->addChild(trans);
-            SoRotation* rot = new SoRotation();
-            rot->rotation.setValue(r);
-            sep->addChild(rot);
-            
-            //experiment
-            SoMaterial        *myMaterial = new SoMaterial;
-            SoMaterialBinding *myBinding = new SoMaterialBinding;
-            myMaterial->diffuseColor.set1Value(0,SbColor(1,0,0));
-            //myMaterial->diffuseColor.set1Value(1,SbColor(.1,.1,.1));
-            myBinding->value = SoMaterialBinding::PER_PART;
-            sep->addChild(myMaterial);
-            sep->addChild(myBinding);
-            
-            //now draw a sphere
-            SoSphere* sph = new SoSphere();
-            sph->radius.setValue(scaledradius*2);
-            sep->addChild(sph);
-            //now translate postion
-            SoTranslation* trans2 = new SoTranslation();
-            trans2->translation.setValue(SbVec3f(0,scaledheight*0.6,0));
-            sep->addChild(trans2);
-            //now draw a cylinder
-            SoCylinder* cyl = new SoCylinder();
-            cyl->height.setValue(scaledheight);
-            cyl->radius.setValue(scaledradius);
-            sep->addChild(cyl);
-            //now translate postion
-            SoTranslation* trans3 = new SoTranslation();
-            trans3->translation.setValue(SbVec3f(0,0,scaledradius*1.8));
-            sep->addChild(trans3);
-            {
-                //now for some tildes
-                    //fix orientation
-                SoTranslation* trans4 = new SoTranslation();
-                trans4->translation.setValue(SbVec3f(0,0,scaledradius*0.1));
-                sep->addChild(trans4);
-                SoRotation* rot2 = new SoRotation();
-                SbRotation r2(SbVec3f(1,0,0), dir);
-                rot2->rotation.setValue(r2);
-                sep->addChild(rot2);
-                    //first determine font and size
-                SoFont* font=new SoFont();
-                font->name.setValue("Times-Roman");
-                font->size.setValue(0.3*scaledheight);
-                sep->addChild(font);
-                    //draw text 
-                SoText3* txt3D = new SoText3();
-                std::ostringstream strs;
-                std::string strToDisp = "~";
-                txt3D->parts = SoText3::ALL;
-                txt3D->string.setValue(strToDisp.c_str());
-                sep->addChild(txt3D);
-            }
-            if (p == points.begin())//at first point add text
-            {
-                //now for some text
-                    //fix orientation
-                SoTranslation* trans5 = new SoTranslation();
-                trans5->translation.setValue(SbVec3f(0,0,scaledradius*0.4));
-                sep->addChild(trans5);
-                SoRotation* rot2 = new SoRotation();
-                SbRotation r2(SbVec3f(1,0,0), dir);
-                rot2->rotation.setValue(r2);
-                sep->addChild(rot2);
-                    //first determine font and size
-                SoFont* font=new SoFont();
-                font->name.setValue("Times-Roman");
-                font->size.setValue(0.2*scaledheight);
-                sep->addChild(font);
-                    //draw text 
-                SoText3* txt3D = new SoText3();
-                std::ostringstream strsAmb;
-                std::ostringstream strsFace;
-                std::ostringstream strsCoef;
-                strsAmb << ambienttemp;
-                //strsFace << facetemp;
-                strsCoef << filmcoef;
-                std::string strToDisp = "Ta: ";
-                strToDisp += strsAmb.str();
-                strToDisp += "°C ";
-                //strToDisp += "Tf: ";
-                //strToDisp += strsFace.str();
-                //strToDisp +="°C\n";
-                strToDisp += "coef: ";
-                strToDisp += strsCoef.str();
-                strToDisp +="W/(°C.m^2)";
-                txt3D->parts = SoText3::ALL;
-                txt3D->string.setValue(strToDisp.c_str());
-                sep->addChild(txt3D);
-            }
-            
-            pShapeSep->addChild(sep);
-            
+			///Temperature indication
+			//define separator
+			SoSeparator* sep = new SoSeparator();
+			
+			///draw a temp gauge,with sphere and a cylinder
+			//first move to correct postion
+			SoTranslation* trans = new SoTranslation();
+			SbVec3f newPos=base+scaledradius*dir*0.7;
+			trans->translation.setValue(newPos);
+			sep->addChild(trans);
+			
+			//adjust orientation
+			SoRotation* rot = new SoRotation();
+			rot->rotation.setValue(SbRotation(SbVec3f(0,1,0),dir));
+			sep->addChild(rot);
+			
+			//define color of shape
+			SoMaterial* myMaterial = new SoMaterial;
+			myMaterial->diffuseColor.set1Value(0,SbColor(0.65,0.1,0.25));//RGB
+			//myMaterial->diffuseColor.set1Value(1,SbColor(.1,.1,.1));//possible to adjust sides separately
+			sep->addChild(myMaterial);
+			
+			//draw a sphere
+			SoSphere* sph = new SoSphere();
+			sph->radius.setValue(scaledradius*0.75);
+			sep->addChild(sph);
+			//translate postion
+			SoTranslation* trans2 = new SoTranslation();
+			trans2->translation.setValue(SbVec3f(0,scaledheight*0.375,0));
+			sep->addChild(trans2);
+			//draw a cylinder
+			SoCylinder* cyl = new SoCylinder();
+			cyl->height.setValue(scaledheight*0.5);
+			cyl->radius.setValue(scaledradius*0.375);
+			sep->addChild(cyl);
+			//translate postion
+			SoTranslation* trans3 = new SoTranslation();
+			trans3->translation.setValue(SbVec3f(0,scaledheight*0.375,0));
+			sep->addChild(trans3);
+			//define color of shape
+			SoMaterial *myMaterial2 = new SoMaterial;
+			myMaterial2->diffuseColor.set1Value(0,SbColor(1,1,1));//RGB
+			sep->addChild(myMaterial2);
+			//draw a cylinder
+			SoCylinder* cyl2 = new SoCylinder();
+			cyl2->height.setValue(scaledheight*0.25);
+			cyl2->radius.setValue(scaledradius*0.375);
+			sep->addChild(cyl2);
+			
+			pShapeSep->addChild(sep);
+			
             n++;
         }
     }
