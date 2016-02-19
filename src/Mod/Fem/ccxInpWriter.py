@@ -215,16 +215,22 @@ class inp_writer:
         f.write('** Materials\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('** Young\'s modulus unit is MPa = N/mm2\n')
+        f.write('** Thermal conductivity unit is W/m/K = kg*m/K*s^3\n')
+        f.write('** Specific Heat unit is kJ/kg/K \n')
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties
             YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
             YM_in_MPa = YM.getValueAs('MPa')
             PR = float(mat_obj.Material['PoissonRatio'])
-            mat_info_name = mat_obj.Material['Name']
-            mat_name = mat_obj.Name
+            TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
+            TC_in_WmK = TC.getValueAs('W/m/K')
+            TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
+            TEC_in_m = TEC.getValueAs('m')
+            SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
+            SH_in_m = SH.getValueAs('m')
+            mat_name = mat_obj.Material['Name'][:80]
             # write material properties
-            f.write('**FreeCAD material name: ' + mat_info_name + '\n')
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
             f.write('{}, \n'.format(YM_in_MPa))
@@ -233,6 +239,12 @@ class inp_writer:
             density_in_tone_per_mm3 = float(density.getValueAs('t/mm^3'))
             f.write('*DENSITY \n')
             f.write('{0:.3e}, \n'.format(density_in_tone_per_mm3))
+            f.write('*CONDUCTIVITY \n')
+            f.write('{}, \n'.format(TC_in_WmK))
+            f.write('*EXPANSION \n')
+            f.write('{}, \n'.format(TEC_in_m))
+            f.write('*SPECIFIC HEAT \n')
+            f.write('{}, \n'.format(SH_in_m))
 
     def write_femelementsets(self, f):
         f.write('\n***********************************************************\n')
@@ -243,7 +255,7 @@ class inp_writer:
                 if 'beamsection_obj'in ccx_elset:  # beam mesh
                     beamsec_obj = ccx_elset['beamsection_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*BEAM SECTION, ' + elsetdef + material + ', SECTION=RECT\n'
                     setion_geo = str(beamsec_obj.Height.getValueAs('mm')) + ', ' + str(beamsec_obj.Width.getValueAs('mm')) + '\n'
                     f.write(setion_def)
@@ -251,14 +263,14 @@ class inp_writer:
                 elif 'shellthickness_obj'in ccx_elset:  # shell mesh
                     shellth_obj = ccx_elset['shellthickness_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SHELL SECTION, ' + elsetdef + material + '\n'
                     setion_geo = str(shellth_obj.Thickness.getValueAs('mm')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 else:  # solid mesh
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SOLID SECTION, ' + elsetdef + material + '\n'
                     f.write(setion_def)
 
@@ -571,7 +583,7 @@ class inp_writer:
     #                        'ccx_elset' : [e1, e2, e3, ... , en] or string self.ccx_eall
     #                        'ccx_elset_name' : 'ccx_identifier_elset'
     #                        'mat_obj_name' : 'mat_obj.Name'
-    #                        'ccx_mat_name' : 'mat_obj.Material['Name']'   !!! not unique !!!
+    #                        'ccx_mat_name' : 'mat_obj.Material['Name'][:80]'   !!! not unique !!!
     #                     },
     #                     {}, ... , {} ]
     def get_ccx_elsets_single_mat_single_beam(self):
@@ -582,7 +594,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_single_shell(self):
@@ -593,7 +605,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_solid(self):
@@ -602,7 +614,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_solid_name(mat_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_multiple_beam(self):
@@ -615,7 +627,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = beamsec_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, None, beamsec_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_multiple_shell(self):
@@ -628,7 +640,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = shellth_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, None, shellth_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_single_beam(self):
@@ -641,7 +653,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_single_shell(self):
@@ -654,7 +666,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_solid(self):
@@ -665,7 +677,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_solid_name(mat_obj.Name, None, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_multiple_beam(self):
@@ -684,7 +696,7 @@ class inp_writer:
                 ccx_elset['ccx_elset'] = elemids
                 ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, mat_data['ShortName'], beamsec_data['ShortName'])
                 ccx_elset['mat_obj_name'] = mat_obj.Name
-                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
                 self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_multiple_shell(self):
@@ -703,7 +715,7 @@ class inp_writer:
                 ccx_elset['ccx_elset'] = elemids
                 ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, mat_data['ShortName'], shellth_data['ShortName'])
                 ccx_elset['mat_obj_name'] = mat_obj.Name
-                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
+                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
                 self.ccx_elsets.append(ccx_elset)
 
     def get_femelement_sets(self, fem_objects):
