@@ -195,10 +195,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of heatflux constraints for the analysis. Updated with update_objects
         # Individual heatflux_constraints are Proxy.Type "FemConstraintHeatflux"
         self.heatflux_constraints = []
-        ## @var initialTemperature_constraints
+        ## @var initialtemperature_constraints
         # set of initial temperatures for the analysis. Updated with update_objects
         # Individual initialTemperature_constraints are Proxy.Type "FemConstraintInitialTemperature"
-        self.initialTemperature_constraints = []
+        self.initialtemperature_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -240,9 +240,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 temperature_constraint_dict['Object'] = m
                 self.temperature_constraints.append(temperature_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintInitialTemperature"): 
-                initialTemperature_constraint_dict = {}
-                initialTemperature_constraint_dict['Object'] = m
-                self.initialTemperature_constraints.append(initialTemperature_constraint_dict)
+                initialtemperature_constraint_dict = {}
+                initialtemperature_constraint_dict['Object'] = m
+                self.initialtemperature_constraints.append(initialtemperature_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -301,28 +301,26 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         return message
 
     def write_inp_file(self):
-        FreeCAD.Console.PrintError("hello\n")
         import ccxInpWriter as iw
-        FreeCAD.Console.PrintError("hello 2 u: {}\n".format(iw))
         import sys
         self.inp_file_name = ""
-        FreeCAD.Console.PrintError("entering file writer\n")
+        FreeCAD.Console.PrintError("Entering file writer\n")
         try:
-            FreeCAD.Console.PrintError("initialising file writer\n")
+            FreeCAD.Console.PrintError("Initialising file writer\n")
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
-                                       #self.initialTemperature_constraints,
+                                       self.initialtemperature_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)
-            FreeCAD.Console.PrintError("calling write function\n")
+            FreeCAD.Console.PrintError("Calling write function\n")
             self.inp_file_name = inp_writer.write_calculix_input_file()
         except:
-            FreeCAD.Console.PrintError("failing calling write function raising exception: {}\n".format(sys.exc_info()[0]))
+            FreeCAD.Console.PrintError("Failing calling write function raising exception: {}\n".format(sys.exc_info()[0]))
             print("Unexpected error when writing CalculiX input file:", sys.exc_info()[0])
             raise
 

@@ -181,11 +181,9 @@ class _TaskPanelFemSolverCalculix:
         self.form.le_working_dir.setText(self.solver_object.WorkingDir)
 
     def write_input_file_handler(self):
-        FreeCAD.Console.PrintError("restore override cursor\n")
         QApplication.restoreOverrideCursor()
-        FreeCAD.Console.PrintError("checking prerquisites\n")
+        FreeCAD.Console.PrintError("Checking prerequisites\n")
         if self.check_prerequisites_helper():
-            FreeCAD.Console.PrintError("waitcursor\n")
             QApplication.setOverrideCursor(Qt.WaitCursor)
             self.inp_file_name = ""
             FreeCAD.Console.PrintError("Initialising solver\n")
@@ -201,7 +199,7 @@ class _TaskPanelFemSolverCalculix:
                 self.form.pb_edit_inp.setEnabled(True)
                 self.form.pb_run_ccx.setEnabled(True)
             else:
-                FreeCAD.Console.PrintError("Write failed")
+                FreeCAD.Console.PrintError("Write failed!\n")
                 self.femConsoleMessage("Write .inp file failed!", "#FF0000")
         QApplication.restoreOverrideCursor()
 
