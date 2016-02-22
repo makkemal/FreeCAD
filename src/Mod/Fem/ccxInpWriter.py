@@ -277,10 +277,10 @@ class inp_writer:
             mat_obj = m['Object']
             # get material properties
             YM_in_MPa = 1
-            TC_in_WmK = 1
-            TEC_in_mmK = 1
-            SH_in_m = 1
-            PR = 1
+            TC_in_WmK = 50
+            TEC_in_mmK = 1.2e-05
+            SH_in_m = 500
+            PR = 0.3
             density_in_tone_per_mm3 = 1
             try:
                 YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
