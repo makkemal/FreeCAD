@@ -124,6 +124,7 @@ CGRP     '\,'[0-9][0-9][0-9]
 
 "J"        yylval = Quantity::Joule;               return UNIT; // Joule (kg*m^2/s^2)
 "kJ"       yylval = Quantity::KiloJoule;           return UNIT; // Joule (kg*m^2/s^2)
+"mJ"       yylval = Quantity::MilliJoule;          return UNIT; // Joule (kg*m^2/s^2)
 "uJ"       yylval = Quantity::MicroJoule;          return UNIT; // micro Joule
 "\xC2\xB5J"    yylval = Quantity::MicroJoule;      return UNIT; // micro Joule    (greek micro in UTF8) 
 "Nm"       yylval = Quantity::NewtonMeter;         return UNIT; // N*m = Joule 

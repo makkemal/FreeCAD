@@ -108,9 +108,12 @@ QString UnitsSchemaInternal::schemaTranslate(Base::Quantity quant,double &factor
             factor = 1.0;	
 		}	
  	}else if (unit == Unit::SpecificHeat){
-        if(UnitValue < 10000.0){
+        if(UnitValue < 1000.0){
             unitString = QString::fromLatin1("uJ/kg/K");
             factor = 1.0;
+		}else if(UnitValue < 1000000.0){
+            unitString = QString::fromLatin1("mJ/kg/K");
+            factor = 1000.0;		
 		}else if(UnitValue < 1000000000.0){
             unitString = QString::fromLatin1("J/kg/K");
             factor = 1000000.0;	
