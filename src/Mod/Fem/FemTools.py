@@ -29,7 +29,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
 
     finished = QtCore.Signal(int)
 
-    known_analysis_types = ['static', 'frequency']#, 'thermomech']
+    known_analysis_types = ['static', 'frequency', 'thermomech']
 
     ## The constructor
     #  @param analysis - analysis object to be used as the core object.
@@ -280,10 +280,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         if self.analysis_type == "static":
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
-        #if self.analysis_type == "thermomech":
-        #    if not (self.heatflux_constraints):
-        #        if not (self.temperature_constraints):
-        #            message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
+        if self.analysis_type == "thermomech":
+            if not (self.heatflux_constraints or self.temperature_constraints):
+                message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
             has_no_references = False
             for b in self.beam_sections:

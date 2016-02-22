@@ -45,8 +45,7 @@ class _FemSolverCalculix():
         obj.addProperty("App::PropertyPath", "WorkingDir", "Fem", "Working directory for calculations")
         obj.WorkingDir = fem_prefs.GetString("WorkingDir", "")
 
-        obj.addProperty("App::PropertyEnumeration", "AnalysisType", "Fem", "Type of the analysis").AnalysisType = FemTools.known_analysis_types
-        #obj.AnalysisType = ['static', 'frequency', 'thermomech'] #OvG: does not load correctly from FemTools.known_analysis_types
+        obj.addProperty("App::PropertyEnumeration", "AnalysisType", "Fem", "Type of the analysis").AnalysisType = ["static", "frequency", "thermomech"]
         analysis_type = fem_prefs.GetInt("AnalysisType", 0)
         obj.AnalysisType = FemTools.known_analysis_types[analysis_type]
 

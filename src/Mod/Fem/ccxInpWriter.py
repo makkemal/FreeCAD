@@ -83,32 +83,32 @@ class inp_writer:
         FreeCAD.Console.PrintError("Written node sets\n")
         self.write_displacement_nodes(inpfile)
         FreeCAD.Console.PrintError("Written displacement nodes\n")
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-        self.write_temperature_nodes(inpfile)
-        FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_temperature_nodes(inpfile)
+            FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
             FreeCAD.Console.PrintError("Written force constraint node sets\n")
         self.write_materials(inpfile)
         FreeCAD.Console.PrintError("Written materials\n")
         self.write_femelementsets(inpfile)
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-#            self.write_step_begin_thermomech(inpfile)
-#            FreeCAD.Console.PrintError("Written step begin for thermomech")
-#        else:
-        self.write_step_begin(inpfile)
-        FreeCAD.Console.PrintError("Written step begin\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_step_begin_thermomech(inpfile)
+            FreeCAD.Console.PrintError("Written step begin for thermomech")
+        else:
+            self.write_step_begin(inpfile)
+            FreeCAD.Console.PrintError("Written step begin\n")
         self.write_constraints_fixed(inpfile)
         FreeCAD.Console.PrintError("Written fixed constraints\n")
         self.write_displacement(inpfile)
         FreeCAD.Console.PrintError("Written displacement constraints\n")
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-        self.write_temperature(inpfile)
-        FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
-        self.write_heatflux(inpfile)
-        FreeCAD.Console.PrintError("Written heatflux constraints\n")
-        self.write_initialtemperature(inpfile)
-        FreeCAD.Console.PrintError("Written initial temperature constraints\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_temperature(inpfile)
+            FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
+            self.write_heatflux(inpfile)
+            FreeCAD.Console.PrintError("Written heatflux constraints\n")
+            self.write_initialtemperature(inpfile)
+            FreeCAD.Console.PrintError("Written initial temperature constraints\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -116,9 +116,9 @@ class inp_writer:
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
             FreeCAD.Console.PrintError("Written frequency card\n")
-#        elif self.analysis_type == "thermomech":
-        self.write_thermomech(inpfile)
-        FreeCAD.Console.PrintError("Written thermomech card\n")
+        elif self.analysis_type == "thermomech":
+            self.write_thermomech(inpfile)
+            FreeCAD.Console.PrintError("Written thermomech card\n")
         self.write_outputs_types(inpfile)
         FreeCAD.Console.PrintError("Written outputtypes\n")
         self.write_step_end(inpfile)
