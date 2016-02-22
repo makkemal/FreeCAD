@@ -169,6 +169,7 @@ public:
 
 	static Quantity Joule;
     static Quantity KiloJoule;
+	static Quantity MilliJoule;
 	static Quantity MicroJoule;
 	static Quantity NewtonMeter; 
 	static Quantity VoltAmpereSecond; 
