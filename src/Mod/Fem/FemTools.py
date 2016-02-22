@@ -29,7 +29,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
 
     finished = QtCore.Signal(int)
 
-    known_analysis_types = ["static", "frequency"]
+    known_analysis_types = ['static', 'frequency']#, 'thermomech']
 
     ## The constructor
     #  @param analysis - analysis object to be used as the core object.
@@ -106,7 +106,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
     #  - U1, U2, U3 - deformation
     #  - Uabs - absolute deformation
     #  - Sabs - Von Mises stress
-    #  @param limit cutoff value. All values over the limit are treated as equel to the limit. Useful for filtering out hot spots.
+    #  @param limit cutoff value. All values over the limit are treated as equal to the limit. Useful for filtering out hot spots.
     def show_result(self, result_type="Sabs", limit=None):
         self.update_objects()
         if result_type == "None":
@@ -195,6 +195,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of heatflux constraints for the analysis. Updated with update_objects
         # Individual heatflux_constraints are Proxy.Type "FemConstraintHeatflux"
         self.heatflux_constraints = []
+        ## @var initialtemperature_constraints
+        # set of initial temperatures for the analysis. Updated with update_objects
+        # Individual initialTemperature_constraints are Proxy.Type "FemConstraintInitialTemperature"
+        self.initialtemperature_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -235,6 +239,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 temperature_constraint_dict = {}
                 temperature_constraint_dict['Object'] = m
                 self.temperature_constraints.append(temperature_constraint_dict)
+            elif m.isDerivedFrom("Fem::ConstraintInitialTemperature"): 
+                initialtemperature_constraint_dict = {}
+                initialtemperature_constraint_dict['Object'] = m
+                self.initialtemperature_constraints.append(initialtemperature_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -267,11 +275,15 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 if has_no_references is True:
                     message += "More than one Material has empty References list (Only one empty References list is allowed!).\n"
                 has_no_references = True
-        if not (self.fixed_constraints): 
+        if not (self.fixed_constraints):
             message += "No fixed-constraint nodes defined in the Analysis\n"
         if self.analysis_type == "static":
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
+        #if self.analysis_type == "thermomech":
+        #    if not (self.heatflux_constraints):
+        #        if not (self.temperature_constraints):
+        #            message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
             has_no_references = False
             for b in self.beam_sections:
@@ -292,18 +304,23 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         import ccxInpWriter as iw
         import sys
         self.inp_file_name = ""
+        FreeCAD.Console.PrintError("Entering file writer\n")
         try:
+            FreeCAD.Console.PrintError("Initialising file writer\n")
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
-                                       #self.temperature_constraints,
-                                       #self.heatflux_constraints,
+                                       self.temperature_constraints,
+                                       self.heatflux_constraints,
+                                       self.initialtemperature_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)
+            FreeCAD.Console.PrintError("Calling write function\n")
             self.inp_file_name = inp_writer.write_calculix_input_file()
         except:
+            FreeCAD.Console.PrintError("Failing calling write function raising exception: {}\n".format(sys.exc_info()[0]))
             print("Unexpected error when writing CalculiX input file:", sys.exc_info()[0])
             raise
 
@@ -396,6 +413,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
     #  @param analysis_type type of the analysis. Allowed values are:
     #  - static
     #  - frequency
+    #  - thermomech
     def set_analysis_type(self, analysis_type=None):
         if analysis_type is not None:
             self.analysis_type = analysis_type
@@ -431,7 +449,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # Update inp file name
         self.set_inp_file_name()
 
-    ## Sets CalculiX ccx binary path and velidates if the binary can be executed
+    ## Sets CalculiX ccx binary path and validates if the binary can be executed
     #  @param self The python object self
     #  @ccx_binary path to ccx binary, default is guessed: "bin/ccx" windows, "ccx" for other systems
     #  @ccx_binary_sig expected output form ccx when run empty. Default value is "CalculiX.exe -i jobname"

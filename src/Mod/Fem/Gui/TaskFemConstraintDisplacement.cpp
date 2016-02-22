@@ -3,7 +3,7 @@
  *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
  *            Ruan Olwagen <olwager@eskom.co.za>                           *
  *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinl채nder                          *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -436,18 +436,21 @@ void TaskFemConstraintDisplacement::addToSelection()
                 }
             }
             // limit constraint such that only vertexes or faces or edges can be used depending on what was selected first
-            std::string searchStr("");
-            if (subNames[subIt].find("Vertex")!=std::string::npos)
-                searchStr="Vertex";
-            else if (subNames[subIt].find("Edge")!=std::string::npos)
-                searchStr="Edge";
-            else
-                searchStr="Face";
-            if ((std::none_of(SubElements.begin(),SubElements.end(),[&](std::string const &s){return s.find(searchStr)!=std::string::npos;}))&&(SubElements.size()>0)){
-                std::string Msg="Only one type of selection (vertex,face or edge) per constraint allowed!";
-                QMessageBox::warning(this, tr("Selection error"),QString::fromStdString(Msg));
-                addMe=false;
-            }
+			std::string searchStr("");
+			if (subNames[subIt].find("Vertex")!=std::string::npos)
+				searchStr="Vertex";
+			else if (subNames[subIt].find("Edge")!=std::string::npos)
+				searchStr="Edge";
+			else
+				searchStr="Face";
+			for (unsigned int iStr=0;iStr<(SubElements.size());++iStr){
+				if ((SubElements[iStr].find(searchStr)==std::string::npos)&&(SubElements.size()>0)){
+					std::string Msg="Only one type of selection (vertex,face or edge) per constraint allowed!";
+					QMessageBox::warning(this, tr("Selection error"),QString::fromStdString(Msg));
+					addMe=false;
+					break;
+				}
+			}
             if (addMe){
                 disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
                     this, SLOT(setSelection(QListWidgetItem*)));

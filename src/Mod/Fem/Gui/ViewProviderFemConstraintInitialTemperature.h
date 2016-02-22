@@ -1,6 +1,9 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
- *                                                                         *
+ *   Copyright (c) 2015 FreeCAD Developers                                 *
+ *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
+ *            Ruan Olwagen <olwager@eskom.co.za>                           *
+ *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
+ *   Based on Force constraint by Jan Rheinländer                          *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -20,43 +23,26 @@
  *                                                                         *
  ***************************************************************************/
 
+#ifndef GUI_VIEWPROVIDERFEMCONSTRAINTInitialTemperature_H
+#define GUI_VIEWPROVIDERFEMCONSTRAINTInitialTemperature_H
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#include "ViewProviderFemConstraint.h"
 
-#include "FemConstraint.h"
+namespace FemGui {
 
-namespace Fem
+class FemGuiExport ViewProviderFemConstraintInitialTemperature : public FemGui::ViewProviderFemConstraint
 {
-
-class AppFemExport ConstraintTemperature : public Fem::Constraint
-{
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
+    PROPERTY_HEADER(FemGui::ViewProviderFemConstraintInitialTemperature);
 
 public:
-    /// Constructor
-    ConstraintTemperature(void);
-    
-    // Read-only (calculated values). These trigger changes in the ViewProvider
-    App::PropertyVectorList Points;
-    App::PropertyVectorList Normals;
-
-    //Temperature parameters
-    App::PropertyFloat Temperature; 
-    
-
-    /// recalculate the object
-    virtual App::DocumentObjectExecReturn *execute(void);
-
-    /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const;
+    ViewProviderFemConstraintInitialTemperature();
+    virtual ~ViewProviderFemConstraintInitialTemperature();
+    virtual void updateData(const App::Property*);
 
 protected:
-    virtual void onChanged(const App::Property* prop);
-
+    virtual bool setEdit(int ModNum);
 };
 
-} //namespace Fem
+}
 
-
-#endif // FEM_CONSTRAINTTEMPERATURE_H
+#endif // GUI_VIEWPROVIDERFEMCONSTRAINTInitialTemperature_H

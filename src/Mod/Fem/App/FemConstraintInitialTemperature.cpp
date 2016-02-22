@@ -33,35 +33,35 @@
 #include <gp_Pnt.hxx>
 #endif
 
-#include "FemConstraintTemperature.h"
+#include "FemConstraintInitialTemperature.h"
 
 using namespace Fem;
 
-PROPERTY_SOURCE(Fem::ConstraintTemperature, Fem::Constraint);
+PROPERTY_SOURCE(Fem::ConstraintInitialTemperature, Fem::Constraint);
 
-ConstraintTemperature::ConstraintTemperature()
+ConstraintInitialTemperature::ConstraintInitialTemperature()
 {
-    ADD_PROPERTY(Temperature,(0.0)); 
+    ADD_PROPERTY(initialTemperature,(0.0)); 
     
-    ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
+    ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintInitialTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                       "Points where symbols are drawn");
-    ADD_PROPERTY_TYPE(Normals,(Base::Vector3d()),"ConstraintTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
+    ADD_PROPERTY_TYPE(Normals,(Base::Vector3d()),"ConstraintInitialTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                                                                              "Normals where symbols are drawn");
     Points.setValues(std::vector<Base::Vector3d>());
     Normals.setValues(std::vector<Base::Vector3d>());
 }
 
-App::DocumentObjectExecReturn *ConstraintTemperature::execute(void)
+App::DocumentObjectExecReturn *ConstraintInitialTemperature::execute(void)
 {
     return Constraint::execute();
 }
 
-const char* ConstraintTemperature::getViewProviderName(void) const
+const char* ConstraintInitialTemperature::getViewProviderName(void) const
 {
-	return "FemGui::ViewProviderFemConstraintTemperature";
+	return "FemGui::ViewProviderFemConstraintInitialTemperature";
 }
 
-void ConstraintTemperature::onChanged(const App::Property* prop)
+void ConstraintInitialTemperature::onChanged(const App::Property* prop)
 {
     // Note: If we call this at the end, then the arrows are not oriented correctly initially
     // because the NormalDirection has not been calculated yet

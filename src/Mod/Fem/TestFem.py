@@ -42,12 +42,16 @@ test_file_dir = home_path + 'Mod/Fem/test_files/ccx'
 
 static_base_name = 'cube_static'
 frequency_base_name = 'cube_frequency'
+thermomech_base_name = 'cube_thermomech'
 static_analysis_dir = temp_dir + '/FEM_static'
 frequency_analysis_dir = temp_dir + '/FEM_frequency'
+thermomech_analysis_dir = temp_dir + '/FEM_thermomech' #OvG: temp directory for thermo mechanical analysis
 static_analysis_inp_file = test_file_dir + '/' + static_base_name + '.inp'
 static_expected_values = test_file_dir + "/cube_static_expected_values"
 frequency_analysis_inp_file = test_file_dir + '/' + frequency_base_name + '.inp'
 frequency_expected_values = test_file_dir + "/cube_frequency_expected_values"
+thermomech_analysis_inp_file = test_file_dir + '/' + thermomech_base_name + '.inp'
+thermomech_expected_values = test_file_dir + "/cube_thermomech_expected_values"
 mesh_points_file = test_file_dir + '/mesh_points.csv'
 mesh_volumes_file = test_file_dir + '/mesh_volumes.csv'
 

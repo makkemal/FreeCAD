@@ -21,28 +21,28 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#ifndef FEM_CONSTRAINTINITIALTEMPERATURE_H
+#define FEM_CONSTRAINTINITIALTEMPERATURE_H
 
 #include "FemConstraint.h"
 
 namespace Fem
 {
 
-class AppFemExport ConstraintTemperature : public Fem::Constraint
+class AppFemExport ConstraintInitialTemperature : public Fem::Constraint
 {
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
+    PROPERTY_HEADER(Fem::ConstraintInitialTemperature);
 
 public:
     /// Constructor
-    ConstraintTemperature(void);
+    ConstraintInitialTemperature(void);
     
     // Read-only (calculated values). These trigger changes in the ViewProvider
     App::PropertyVectorList Points;
     App::PropertyVectorList Normals;
 
     //Temperature parameters
-    App::PropertyFloat Temperature; 
+    App::PropertyFloat initialTemperature; 
     
 
     /// recalculate the object
@@ -59,4 +59,4 @@ protected:
 } //namespace Fem
 
 
-#endif // FEM_CONSTRAINTTEMPERATURE_H
+#endif // FEM_CONSTRAINTINITIALTEMPERATURE_H
