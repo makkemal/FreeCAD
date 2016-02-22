@@ -278,7 +278,7 @@ class inp_writer:
             # get material properties
             YM_in_MPa = 1
             TC_in_WmK = 1
-            TEC_in_m = 1
+            TEC_in_mmK = 1
             SH_in_m = 1
             PR = 1
             density_in_tone_per_mm3 = 1
@@ -298,7 +298,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalConductivity defined for material: default used\n")
             try:
                 TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
-                TEC_in_m = TEC.getValueAs('m')
+                TEC_in_mmK = TEC.getValueAs('m/m/K')
             except:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
@@ -322,7 +322,7 @@ class inp_writer:
             f.write('*CONDUCTIVITY \n')
             f.write('{}, \n'.format(TC_in_WmK))
             f.write('*EXPANSION \n')
-            f.write('{}, \n'.format(TEC_in_m))
+            f.write('{}, \n'.format(TEC_in_mmK))
             f.write('*SPECIFIC HEAT \n')
             f.write('{}, \n'.format(SH_in_m))
 

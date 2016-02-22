@@ -49,7 +49,7 @@ class _TaskPanelMechanicalMaterial:
         QtCore.QObject.connect(self.form.input_fd_density, QtCore.SIGNAL("valueChanged(double)"), self.density_changed)
         QtCore.QObject.connect(self.form.pushButton_Reference, QtCore.SIGNAL("clicked()"), self.add_references)
         QtCore.QObject.connect(self.form.input_fd_thermal_conductivity, QtCore.SIGNAL("valueChanged(double)"), self.tc_changed)
-        QtCore.QObject.connect(self.form.input_fd_expansion_coefficient, QtCore.SIGNAL("valueChanged(double)"), self.ec_changed)
+        QtCore.QObject.connect(self.form.input_fd_expansion_coefficient, QtCore.SIGNAL("valueChanged(double)"), self.tec_changed)
         QtCore.QObject.connect(self.form.input_fd_specific_heat, QtCore.SIGNAL("valueChanged(double)"), self.sh_changed)
         
         self.form.list_References.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
@@ -143,12 +143,12 @@ class _TaskPanelMechanicalMaterial:
             material['ThermalConductivity'] = unicode(value) + " uW/mm/K"
             self.material = material
             
-    def ec_changed(self, value):
+    def tec_changed(self, value):
         import Units
-        old_ec = Units.Quantity(self.material['ThermalExpansionCoefficient'])
-        if old_ec != value:
+        old_tec = Units.Quantity(self.material['ThermalExpansionCoefficient'])
+        if old_tec != value:
             material = self.material
-            material['ThermalExpansionCoefficient'] = unicode(value) + " mm"
+            material['ThermalExpansionCoefficient'] = unicode(value) + " m/m/K"
             self.material = material
 
     def sh_changed(self, value):
@@ -156,7 +156,7 @@ class _TaskPanelMechanicalMaterial:
         old_sh = Units.Quantity(self.material['SpecificHeat'])
         if old_sh != value:
             material = self.material
-            material['SpecificHeat'] = unicode(value) + " mm"
+            material['SpecificHeat'] = unicode(value) + " uJ/kg/K"
             self.material = material
 
     def choose_material(self, index):
@@ -203,12 +203,12 @@ class _TaskPanelMechanicalMaterial:
             tc_with_new_unit = tc.getValueAs(tc_new_unit)
             self.form.input_fd_thermal_conductivity.setText("{} {}".format(tc_with_new_unit, tc_new_unit))
         if 'ThermalExpansionCoefficient' in matmap:
-            te_new_unit = "m"
-            te = FreeCAD.Units.Quantity(matmap['ThermalExpansionCoefficient'])
-            te_with_new_unit = te.getValueAs(te_new_unit)
-            self.form.input_fd_expansion_coefficient.setText("{} {}".format(te_with_new_unit, te_new_unit))
+            tec_new_unit = "um/m/K"
+            tec = FreeCAD.Units.Quantity(matmap['ThermalExpansionCoefficient'])
+            tec_with_new_unit = tec.getValueAs(tec_new_unit)
+            self.form.input_fd_expansion_coefficient.setText("{} {}".format(tec_with_new_unit, tec_new_unit))
         if 'SpecificHeat' in matmap:
-            sh_new_unit = "m"
+            sh_new_unit = "J/kg/K"
             sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
             sh_with_new_unit = sh.getValueAs(sh_new_unit)
             self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))

@@ -460,8 +460,6 @@ Unit Unit::Work    (2,1,-2);
 Unit Unit::Power   (2,1,-3);
 
 Unit Unit::ThermalConductivity   (1,1,-3,0,-1);
-Unit Unit::ThermalExpansionCoefficient   (1);
-Unit Unit::SpecificHeat   (1);
-/* Unit Unit::ThermalConductivity   (1,1,-3,0,-1);
 Unit Unit::ThermalExpansionCoefficient   (0,0,0,0,-1);
-Unit Unit::SpecificHeat   (2,0,-2,0,-1); */
+Unit Unit::SpecificHeat   (2,0,-2,0,-1);
+
