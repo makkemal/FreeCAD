@@ -208,7 +208,7 @@ class _TaskPanelMechanicalMaterial:
             tec_with_new_unit = tec.getValueAs(tec_new_unit)
             self.form.input_fd_expansion_coefficient.setText("{} {}".format(tec_with_new_unit, tec_new_unit))
         if 'SpecificHeat' in matmap:
-            sh_new_unit = "J/kg/K"
+            sh_new_unit = "kJ/kg/K"
             sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
             sh_with_new_unit = sh.getValueAs(sh_new_unit)
             self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))
