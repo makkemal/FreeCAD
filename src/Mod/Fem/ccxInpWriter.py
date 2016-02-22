@@ -298,7 +298,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalConductivity defined for material: default used\n")
             try:
                 TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
-            TEC_in_mmK = TEC.getValueAs('m/m/K')
+                TEC_in_mmK = TEC.getValueAs('m/m/K')
             except:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
