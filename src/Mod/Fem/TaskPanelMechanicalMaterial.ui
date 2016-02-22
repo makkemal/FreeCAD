@@ -278,7 +278,7 @@
            </size>
           </property>
           <property name="text">
-           <string>12 um/m/K</string>
+           <string>0.000012 m/m/K</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -290,7 +290,7 @@
            <double>2000000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
-           <string notr="true">um/m/K</string>
+           <string notr="true">m/m/K</string>
           </property>
           <property name="decimals" stdset="0">
            <number>3</number>
@@ -322,7 +322,7 @@
            </size>
           </property>
           <property name="text">
-           <string>0.5 kJ/kg/K</string>
+           <string>500 J/kg/K</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -334,7 +334,7 @@
            <double>2000000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
-           <string notr="true">kJ/kg/K</string>
+           <string notr="true">J/kg/K</string>
           </property>
           <property name="decimals" stdset="0">
            <number>3</number>

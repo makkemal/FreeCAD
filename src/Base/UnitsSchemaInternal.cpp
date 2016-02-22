@@ -102,16 +102,16 @@ QString UnitsSchemaInternal::schemaTranslate(Base::Quantity quant,double &factor
 	}else if (unit == Unit::ThermalExpansionCoefficient){
         if(UnitValue < 0.001){
             unitString = QString::fromLatin1("um/m/K");
-            factor = 1000000.0;
+            factor = 0.000001;
         }else{
             unitString = QString::fromLatin1("mm/mm/K");
             factor = 1.0;	
 		}	
  	}else if (unit == Unit::SpecificHeat){
-        if(UnitValue < 1000.0){
+        if(UnitValue < 10000.0){
             unitString = QString::fromLatin1("uJ/kg/K");
-            factor = 1000000.0;
-		}else if(UnitValue < 100000.0){
+            factor = 1.0;
+		}else if(UnitValue < 1000000000.0){
             unitString = QString::fromLatin1("J/kg/K");
             factor = 1000000.0;	
         }else{
