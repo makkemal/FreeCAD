@@ -655,7 +655,7 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
-        f.write('0.1,1\n'); #OvG: 0.3 increment, total time 1 for steady state 
+        f.write('0.1,1.0\n'); #OvG: 0.3 increment, total time 1 for steady state 
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
