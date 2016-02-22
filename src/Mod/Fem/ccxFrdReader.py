@@ -254,10 +254,10 @@ def readResult(frd_input):
                 eigenmode = 0
                 
             if mode_temp_found:
-                mode_results = {}
-                mode_results['temp'] = mode_temp
-                results.append(mode_results)
-                mode_temp = {}
+#                mode_results = {}
+#                mode_results['temp'] = mode_temp
+#                results.append(mode_results)
+#                mode_temp = {}
                 mode_stress_found = False
                 
             
