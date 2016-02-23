@@ -123,10 +123,9 @@ CGRP     '\,'[0-9][0-9][0-9]
 "VA"       yylval = Quantity::VoltAmpere;          return UNIT; // VoltAmpere (kg*m^2/s^3) 
 
 "J"        yylval = Quantity::Joule;               return UNIT; // Joule (kg*m^2/s^2)
-"kJ"       yylval = Quantity::KiloJoule;           return UNIT; // Joule (kg*m^2/s^2)
-"mJ"       yylval = Quantity::MilliJoule;          return UNIT; // Joule (kg*m^2/s^2)
-"uJ"       yylval = Quantity::MicroJoule;          return UNIT; // micro Joule
-"\xC2\xB5J"    yylval = Quantity::MicroJoule;      return UNIT; // micro Joule    (greek micro in UTF8) 
+"kJ"       yylval = Quantity::KiloJoule;           return UNIT; // KiloJoule (kg*m^2/s^2)
+"mJ"       yylval = Quantity::MilliJoule;          return UNIT; // MilliJoule (kg*m^2/s^2)
+"uJ"       yylval = Quantity::MicroJoule;          return UNIT  // MicroJoule (kg*m^2/s^2)
 "Nm"       yylval = Quantity::NewtonMeter;         return UNIT; // N*m = Joule 
 "VAs"      yylval = Quantity::VoltAmpereSecond;    return UNIT; // V*A*s = Joule 
 "CV"       yylval = Quantity::WattSecond;          return UNIT; //  
