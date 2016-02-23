@@ -275,16 +275,16 @@ class inp_writer:
         f.write('** Specific Heat unit is kJ/kg/K \n')
         for m in self.material_objects:
             mat_obj = m['Object']
-            # get material properties
-            YM_in_MPa = 1
+            # get material properties - Currently in SI units: M/kg/s/Kelvin
+            YM_in_Pa = 200e+09
             TC_in_WmK = 50
             TEC_in_mmK = 1.2e-05
-            SH_in_m = 500
+            SH_in_JkgK = 500
             PR = 0.3
-            density_in_tone_per_mm3 = 1
+            density_in_kgm3 = 8000
             try:
                 YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
-                YM_in_MPa = YM.getValueAs('MPa')
+                YM_in_Pa = YM.getValueAs('Pa')
             except:
                 FreeCAD.Console.PrintError("No YoungsModulus defined for material: default used\n")
             try:
@@ -303,28 +303,28 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
                 SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_m = SH.getValueAs('m')
+                SH_in_JkgK = SH.getValueAs('J/kg*K')
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
             mat_name = mat_obj.Material['Name'][:80]
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{}, \n'.format(YM_in_MPa))
+            f.write('{}, \n'.format(YM_in_Pa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
-                density_in_tone_per_mm3 = float(density.getValueAs('t/mm^3'))
+                density_in_kgm3 = float(density.getValueAs('kg/m^3'))
             except:
                 FreeCAD.Console.PrintError("No Density defined for material: default used\n")
             f.write('*DENSITY \n')
-            f.write('{0:.3e}, \n'.format(density_in_tone_per_mm3))
+            f.write('{0:.3e}, \n'.format(density_in_kgm3))
             f.write('*CONDUCTIVITY \n')
             f.write('{}, \n'.format(TC_in_WmK))
             f.write('*EXPANSION \n')
             f.write('{}, \n'.format(TEC_in_mmK))
             f.write('*SPECIFIC HEAT \n')
-            f.write('{}, \n'.format(SH_in_m))
+            f.write('{}, \n'.format(SH_in_JkgK))
 
     def write_femelementsets(self, f):
         f.write('\n***********************************************************\n')
@@ -337,7 +337,7 @@ class inp_writer:
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
                     material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*BEAM SECTION, ' + elsetdef + material + ', SECTION=RECT\n'
-                    setion_geo = str(beamsec_obj.Height.getValueAs('mm')) + ', ' + str(beamsec_obj.Width.getValueAs('mm')) + '\n'
+                    setion_geo = str(beamsec_obj.Height.getValueAs('m')) + ', ' + str(beamsec_obj.Width.getValueAs('m')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 elif 'shellthickness_obj'in ccx_elset:  # shell mesh
@@ -345,7 +345,7 @@ class inp_writer:
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
                     material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SHELL SECTION, ' + elsetdef + material + '\n'
-                    setion_geo = str(shellth_obj.Thickness.getValueAs('mm')) + '\n'
+                    setion_geo = str(shellth_obj.Thickness.getValueAs('m')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 else:  # solid mesh
@@ -706,8 +706,8 @@ class inp_writer:
         f.write('**\n')
         f.write('**   Units\n')
         f.write('**\n')
-        f.write('**   Geometry (mesh data)        --> mm\n')
-        f.write("**   Materials (Young's modulus) --> N/mm2 = MPa\n")
+        f.write('**   Geometry (mesh data)        --> m\n')
+        f.write("**   Materials (Young's modulus) --> N/m2 = Pa\n")
         f.write('**   Loads (nodal loads)         --> N\n')
         f.write('**\n')
 
