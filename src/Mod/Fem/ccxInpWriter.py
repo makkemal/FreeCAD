@@ -83,32 +83,32 @@ class inp_writer:
         FreeCAD.Console.PrintError("Written node sets\n")
         self.write_displacement_nodes(inpfile)
         FreeCAD.Console.PrintError("Written displacement nodes\n")
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-        self.write_temperature_nodes(inpfile)
-        FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_temperature_nodes(inpfile)
+            FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
             FreeCAD.Console.PrintError("Written force constraint node sets\n")
         self.write_materials(inpfile)
         FreeCAD.Console.PrintError("Written materials\n")
         self.write_femelementsets(inpfile)
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-#            self.write_step_begin_thermomech(inpfile)
-#            FreeCAD.Console.PrintError("Written step begin for thermomech")
-#        else:
-        self.write_step_begin(inpfile)
-        FreeCAD.Console.PrintError("Written step begin\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_step_begin_thermomech(inpfile)
+            FreeCAD.Console.PrintError("Written step begin for thermomech")
+        else:
+            self.write_step_begin(inpfile)
+            FreeCAD.Console.PrintError("Written step begin\n")
         self.write_constraints_fixed(inpfile)
         FreeCAD.Console.PrintError("Written fixed constraints\n")
         self.write_displacement(inpfile)
         FreeCAD.Console.PrintError("Written displacement constraints\n")
-#        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
-        self.write_temperature(inpfile)
-        FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
-        self.write_heatflux(inpfile)
-        FreeCAD.Console.PrintError("Written heatflux constraints\n")
-        self.write_initialtemperature(inpfile)
-        FreeCAD.Console.PrintError("Written initial temperature constraints\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_temperature(inpfile)
+            FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
+            self.write_heatflux(inpfile)
+            FreeCAD.Console.PrintError("Written heatflux constraints\n")
+            self.write_initialtemperature(inpfile)
+            FreeCAD.Console.PrintError("Written initial temperature constraints\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -116,9 +116,9 @@ class inp_writer:
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
             FreeCAD.Console.PrintError("Written frequency card\n")
-#        elif self.analysis_type == "thermomech":
-        self.write_thermomech(inpfile)
-        FreeCAD.Console.PrintError("Written thermomech card\n")
+        elif self.analysis_type == "thermomech":
+            self.write_thermomech(inpfile)
+            FreeCAD.Console.PrintError("Written thermomech card\n")
         self.write_outputs_types(inpfile)
         FreeCAD.Console.PrintError("Written outputtypes\n")
         self.write_step_end(inpfile)
@@ -277,10 +277,10 @@ class inp_writer:
             mat_obj = m['Object']
             # get material properties
             YM_in_MPa = 1
-            TC_in_WmK = 1
-            TEC_in_mmK = 1
-            SH_in_m = 1
-            PR = 1
+            TC_in_WmK = 50
+            TEC_in_mmK = 1.2e-05
+            SH_in_m = 500
+            PR = 0.3
             density_in_tone_per_mm3 = 1
             try:
                 YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
@@ -655,7 +655,7 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
-        f.write('0.1,1\n'); #OvG: 0.3 increment, total time 1 for steady state 
+        f.write('0.1,1.0\n'); #OvG: 0.3 increment, total time 1 for steady state 
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
