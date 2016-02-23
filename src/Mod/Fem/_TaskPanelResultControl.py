@@ -41,7 +41,7 @@ class _TaskPanelResultControl:
     '''The control for the displacement post-processing'''
     def __init__(self):
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/TaskPanelShowDisplacement.ui")
-
+        
         #Connect Signals and Slots
         QtCore.QObject.connect(self.form.rb_none, QtCore.SIGNAL("toggled(bool)"), self.none_selected)
         QtCore.QObject.connect(self.form.rb_x_displacement, QtCore.SIGNAL("toggled(bool)"), self.x_displacement_selected)
@@ -53,7 +53,7 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected)
         QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.maxprin_selected)
         QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.minprin_selected)
-        QtCore.QObject.connect(self.form.rb_midprin, QtCore.SIGNAL("toggled(bool)"), self.midprin_selected)
+        QtCore.QObject.connect(self.form.rb_temperature, QtCore.SIGNAL("toggled(bool)"), self.temperature_selected)
         QtCore.QObject.connect(self.form.user_def_eq, QtCore.SIGNAL("textchanged()"), self.userdef)
         QtCore.QObject.connect(self.form.calculate, QtCore.SIGNAL("clicked()"), self.calculate)
 
@@ -92,12 +92,13 @@ class _TaskPanelResultControl:
             elif rt== "Prin1":
                 self.form.rb_maxprin.setChecked(True)
                 self.rb_maxprin(True)
-            elif rt== "Prin2":
-                self.form.rb_midprin.setChecked(True)
-                self.rb_midprin(True)
+            elif rt== "Temp":
+                self.form.rb_temperature.setChecked(True)
+                self.rb_temperature(True)
             elif rt== "Prin3":
                 self.form.rb_minprin.setChecked(True)
                 self.rb_minprin(True)
+            
 
             sd = FreeCAD.FEM_dialog["show_disp"]
             self.form.cb_show_displacement.setChecked(sd)
@@ -184,13 +185,15 @@ class _TaskPanelResultControl:
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
-    def midprin_selected(self,  state):
-        FreeCAD.FEM_dialog["results_type"] = "Prin2"
+    def temperature_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Temp"
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
-            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrincipalMed)
-        (minm, avg, maxm) = self.get_result_stats("Prin2")
-        self.set_result_stats("MPa", minm, avg, maxm)
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.Temperature)
+        minm=min(self.result_object.Temperature)
+        avg=sum(self.result_object.Temperature)/len(self.result_object.Temperature)
+        maxm=max(self.result_object.Temperature)    
+        self.set_result_stats("K", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
     def minprin_selected(self,  state):
@@ -215,6 +218,7 @@ class _TaskPanelResultControl:
         P2=np.array(self.result_object.PrincipalMed)
         P3=np.array(self.result_object.PrincipalMin)
         Von=np.array(self.result_object.StressValues)
+        T=np.array(self.result_object.Temperature)
         dispvectors=np.array(self.result_object.DisplacementVectors)
         x=np.array(dispvectors[:, 0])
         y=np.array(dispvectors[:, 1])
@@ -291,7 +295,12 @@ class _TaskPanelResultControl:
     def update(self):
         self.MeshObject = None
         self.result_object = get_results_object(FreeCADGui.Selection.getSelection())
-
+        #Disable temperature radio button if it does ot exist in results
+        
+        if len(self.result_object.Temperature)==1:
+#            FreeCAD.Console.PrintMessage(str(len(self.result_object.Temperature)) + "\n  ")
+            self.form.rb_temperature.setEnabled(0)
+            
         for i in FemGui.getActiveAnalysis().Member:
             if i.isDerivedFrom("Fem::FemMeshObject"):
                 self.MeshObject = i
