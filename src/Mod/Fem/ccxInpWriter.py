@@ -674,7 +674,12 @@ class inp_writer:
             f.write('*NODE FILE, OUTPUT=2d\n')
         else:
             f.write('*NODE FILE\n')
-        f.write('U\n')
+            
+        if self.analysis_type == "thermomech": #MPH write out nodal temperatures is thermomechanical 
+            f.write('U, NT\n')
+        else:
+            f.write('U \n')
+            
         f.write('*EL FILE\n')
         f.write('S, E\n')
         f.write('** outputs --> dat file\n')

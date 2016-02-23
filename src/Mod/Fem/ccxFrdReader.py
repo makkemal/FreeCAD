@@ -242,6 +242,24 @@ def readResult(frd_input):
 
             if mode_stress_found:
                 mode_stress_found = False
+            
+            if mode_temp_found:
+                mode_temp_found = False
+                
+            if mode_disp and mode_stress and mode_temp:
+                mode_results = {}
+                mode_results['number'] = eigenmode
+                mode_results['disp'] = mode_disp
+                mode_results['stress'] = mode_stress
+                mode_results['temp'] = mode_temp
+#                FreeCAD.Console.PrintMessage(str(mode_temp) + "\n  ")
+#                FreeCAD.Console.PrintMessage(str(mode_disp) + "\n  ")
+#                FreeCAD.Console.PrintMessage(str(mode_stress) + "\n  ")
+                results.append(mode_results)
+                mode_disp = {}
+                mode_stress = {}
+                mode_temp ={}
+                eigenmode = 0
 
             if mode_disp and mode_stress:
                 mode_results = {}
@@ -252,15 +270,7 @@ def readResult(frd_input):
                 mode_disp = {}
                 mode_stress = {}
                 eigenmode = 0
-                
-            if mode_temp_found:
-#                mode_results = {}
-#                mode_results['temp'] = mode_temp
-#                results.append(mode_results)
-#                mode_temp = {}
-                mode_stress_found = False
-                
-            
+           
             nodes_found = False
             elements_found = False
 
@@ -423,12 +433,16 @@ def importFrd(filename, analysis=None):
                 if(mesh_object):
                     results.Mesh = mesh_object
                     
-            if hasattr(result_set, 'temp'):
+            
+            #Read temperatures if they exist
+            try:
                 Temperature = result_set['temp']
+#                FreeCAD.Console.PrintMessage(str(Temperature) + "\n  ")
                 if len(Temperature) > 0:
                    results.Temperature = map((lambda x: x), Temperature.values())
+            except:
+                pass
                 
-
             stress = result_set['stress']
             if len(stress) > 0:
                 mstress = []
