@@ -55,7 +55,7 @@ def readResult(frd_input):
     mode_disp = {}
     mode_stress = {}
     mode_temp = {}
-    
+
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
@@ -242,19 +242,16 @@ def readResult(frd_input):
 
             if mode_stress_found:
                 mode_stress_found = False
-            
+
             if mode_temp_found:
                 mode_temp_found = False
-                
+
             if mode_disp and mode_stress and mode_temp:
                 mode_results = {}
                 mode_results['number'] = eigenmode
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
                 mode_results['temp'] = mode_temp
-#                FreeCAD.Console.PrintMessage(str(mode_temp) + "\n  ")
-#                FreeCAD.Console.PrintMessage(str(mode_disp) + "\n  ")
-#                FreeCAD.Console.PrintMessage(str(mode_stress) + "\n  ")
                 results.append(mode_results)
                 mode_disp = {}
                 mode_stress = {}
@@ -270,7 +267,7 @@ def readResult(frd_input):
                 mode_disp = {}
                 mode_stress = {}
                 eigenmode = 0
-           
+
             nodes_found = False
             elements_found = False
 
@@ -297,7 +294,6 @@ def calculate_von_mises(i):
     vm_stress = sqrt(0.5 * (s11s22 + s22s33 + s33s11 + s12s23s31))
     return vm_stress
 
-#calculate pricipal stresses
 def calculate_principal_stress(i):
     sigma = np.array([[i[0],i[3],i[4]],
                          [i[3],i[1],i[5]],
@@ -412,7 +408,7 @@ def importFrd(filename, analysis=None):
                     break
 
             disp = result_set['disp']
-            NumberOfValues = len(disp)
+            no_of_values = len(disp)
             displacement = []
             for k, v in disp.iteritems():
                 displacement.append(v)
@@ -432,8 +428,8 @@ def importFrd(filename, analysis=None):
                 results.NodeNumbers = disp.keys()
                 if(mesh_object):
                     results.Mesh = mesh_object
-                    
-            
+
+
             #Read temperatures if they exist
             try:
                 Temperature = result_set['temp']
@@ -442,7 +438,7 @@ def importFrd(filename, analysis=None):
                    results.Temperature = map((lambda x: x), Temperature.values())
             except:
                 pass
-                
+
             stress = result_set['stress']
             if len(stress) > 0:
                 mstress = []
@@ -478,11 +474,24 @@ def importFrd(filename, analysis=None):
 
             x_min, y_min, z_min = map(min, zip(*displacement))
             sum_list = map(sum, zip(*displacement))
-            x_avg, y_avg, z_avg = [i / NumberOfValues for i in sum_list]
+            x_avg, y_avg, z_avg = [i / no_of_values for i in sum_list]
 
             s_max = max(results.StressValues)
             s_min = min(results.StressValues)
-            s_avg = sum(results.StressValues) / NumberOfValues
+            s_avg = sum(results.StressValues)/no_of_values
+            p1_min =min(results.PrincipalMax)
+            p1_avg=sum(results.PrincipalMax)/no_of_values
+            p1_max=max(results.PrincipalMax)
+            p2_min =min(results.PrincipalMed)
+            p2_avg=sum(results.PrincipalMed)/no_of_values
+            p2_max=max(results.PrincipalMed)
+            p3_min =min(results.PrincipalMin)
+            p3_avg=sum(results.PrincipalMin)/no_of_values
+            p3_max=max(results.PrincipalMin)
+            ms_min=min(results.MaxShear)
+            ms_avg=sum(results.MaxShear)/no_of_values
+            ms_max=max(results.MaxShear)
+            
 
             disp_abs = []
             for d in displacement:
@@ -491,17 +500,17 @@ def importFrd(filename, analysis=None):
 
             a_max = max(disp_abs)
             a_min = min(disp_abs)
-            a_avg = sum(disp_abs) / NumberOfValues
-
+            a_avg = sum(disp_abs) /no_of_values
+            
             results.Stats = [x_min, x_avg, x_max,
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
                              s_min, s_avg, s_max,
-                             min(results.PrincipalMax), (sum(results.PrincipalMax)/NumberOfValues), max(results.PrincipalMax),
-                             min(results.PrincipalMed), (sum(results.PrincipalMed)/NumberOfValues), max(results.PrincipalMed),
-                             min(results.PrincipalMin), (sum(results.PrincipalMin)/NumberOfValues), max(results.PrincipalMin),
-                             min(results.MaxShear), (sum(results.MaxShear)/NumberOfValues), max(results.MaxShear)]
+                             p1_min, p1_avg, p1_max,
+                             p2_min, p2_avg, p2_max,
+                             p3_min, p3_avg, p3_max,
+                             ms_min, ms_avg, ms_max]
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):

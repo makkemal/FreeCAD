@@ -262,7 +262,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QLabel" name="userdefhead">
+           <widget class="QLabel" name="user_def_head">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User Defined equation &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>

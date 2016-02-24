@@ -42,11 +42,11 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(DisplacementVectors,(), "Fem",Prop_None,"List of displacement vectors");
     ADD_PROPERTY_TYPE(DisplacementLengths,(0), "Fem",Prop_None,"List of displacement lengths");
     ADD_PROPERTY_TYPE(StressValues,(0), "Fem",Prop_None,"List of Von Misses stress values");
-    ADD_PROPERTY_TYPE(PrincipalMax,(0), "Fem",Prop_None,"List of First Principal stress values");
-    ADD_PROPERTY_TYPE(PrincipalMed,(0), "Fem",Prop_None,"List of Second Principal stress values");
-    ADD_PROPERTY_TYPE(PrincipalMin,(0), "Fem",Prop_None,"List of Third Principal stress values");
+    ADD_PROPERTY_TYPE(PrincipalMax,(0), "Fem",Prop_None,"List of First Principal (Max) stress values");
+    ADD_PROPERTY_TYPE(PrincipalMed,(0), "Fem",Prop_None,"List of Second Principal (Med) stress values");
+    ADD_PROPERTY_TYPE(PrincipalMin,(0), "Fem",Prop_None,"List of Third Principal (Min) stress values");
     ADD_PROPERTY_TYPE(MaxShear,(0), "Fem",Prop_None,"List of Maximum Shear stress values");
-    ADD_PROPERTY_TYPE(Temperature,(0), "Fem",Prop_None,"Nodal temperature");
+    ADD_PROPERTY_TYPE(Temperature,(0), "Fem",Prop_None,"Nodal temperatures");
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
     ADD_PROPERTY_TYPE(Eigenmode,(0), "Fem",Prop_None,"Number of the eigenmode");
     ADD_PROPERTY_TYPE(EigenmodeFrequency,(0), "Fem",Prop_None,"Frequency of the eigenmode");

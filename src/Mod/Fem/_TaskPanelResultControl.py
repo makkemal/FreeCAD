@@ -51,10 +51,10 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_vm_stress, QtCore.SIGNAL("toggled(bool)"), self.vm_stress_selected)
 
         QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected)
-        QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.maxprin_selected)
-        QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.minprin_selected)
+        QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.max_prin_selected)
+        QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.min_prin_selected)
         QtCore.QObject.connect(self.form.rb_temperature, QtCore.SIGNAL("toggled(bool)"), self.temperature_selected)
-        QtCore.QObject.connect(self.form.user_def_eq, QtCore.SIGNAL("textchanged()"), self.userdef)
+        QtCore.QObject.connect(self.form.user_def_eq, QtCore.SIGNAL("textchanged()"), self.user_defined_text)
         QtCore.QObject.connect(self.form.calculate, QtCore.SIGNAL("clicked()"), self.calculate)
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
@@ -86,20 +86,18 @@ class _TaskPanelResultControl:
             elif rt == "Sabs":
                 self.form.rb_vm_stress.setChecked(True)
                 self.vm_stress_selected(True)
-            elif rt == "mShear":
+            elif rt == "MaxShear":
                 self.form.rb_max_shear.setChecked(True)
                 self.rb_max_shear(True)
-            elif rt== "Prin1":
+            elif rt== "MaxPrin":
                 self.form.rb_maxprin.setChecked(True)
                 self.rb_maxprin(True)
             elif rt== "Temp":
                 self.form.rb_temperature.setChecked(True)
                 self.rb_temperature(True)
-            elif rt== "Prin3":
+            elif rt== "MinPrin":
                 self.form.rb_minprin.setChecked(True)
                 self.rb_minprin(True)
-            
-
             sd = FreeCAD.FEM_dialog["show_disp"]
             self.form.cb_show_displacement.setChecked(sd)
             self.show_displacement(sd)
@@ -128,10 +126,10 @@ class _TaskPanelResultControl:
                                "U3": (i.Stats[6], i.Stats[7], i.Stats[8]),
                                "Uabs": (i.Stats[9], i.Stats[10], i.Stats[11]),
                                "Sabs": (i.Stats[12], i.Stats[13], i.Stats[14]),
-                               "Prin1": (i.Stats[15], i.Stats[16], i.Stats[17]),
-                               "Prin2": (i.Stats[18], i.Stats[19], i.Stats[20]),
-                               "Prin3": (i.Stats[21], i.Stats[22], i.Stats[23]),
-                               "mShear": (i.Stats[24], i.Stats[25], i.Stats[26]),
+                               "MaxPrin": (i.Stats[15], i.Stats[16], i.Stats[17]),
+                               "MidPrin": (i.Stats[18], i.Stats[19], i.Stats[20]),
+                               "MinPrin": (i.Stats[21], i.Stats[22], i.Stats[23]),
+                               "MaxShear": (i.Stats[24], i.Stats[25], i.Stats[26]),
                                "None": (0.0, 0.0, 0.0)}
                 return match_table[type_name]
         return (0.0, 0.0, 0.0)
@@ -168,20 +166,20 @@ class _TaskPanelResultControl:
         QtGui.qApp.restoreOverrideCursor()
 
     def max_shear_selected(self, state):
-        FreeCAD.FEM_dialog["results_type"] = "mShear"
+        FreeCAD.FEM_dialog["results_type"] = "MaxShear"
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
             self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.MaxShear)
-        (minm, avg, maxm) = self.get_result_stats("mShear")
+        (minm, avg, maxm) = self.get_result_stats("MaxShear")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
-    def maxprin_selected(self,  state):
-        FreeCAD.FEM_dialog["results_type"] = "Prin1"
+    def max_prin_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "MaxPrin"
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
             self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrincipalMax)
-        (minm, avg, maxm) = self.get_result_stats("Prin1")
+        (minm, avg, maxm) = self.get_result_stats("MaxPrin")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
@@ -196,16 +194,16 @@ class _TaskPanelResultControl:
         self.set_result_stats("K", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
-    def minprin_selected(self,  state):
-        FreeCAD.FEM_dialog["results_type"] = "Prin3"
+    def min_prin_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "MinPrin"
         QApplication.setOverrideCursor(Qt.WaitCursor)
         if self.suitable_results:
             self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrincipalMin)
-        (minm, avg, maxm) = self.get_result_stats("Prin3")
+        (minm, avg, maxm) = self.get_result_stats("MinPrin")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
 
-    def userdef(self,  equation):
+    def user_defined_text(self,  equation):
         FreeCAD.FEM_dialog["results_type"] = "user"
         eq=self.form.user_def_eq.toPlainText()
 
