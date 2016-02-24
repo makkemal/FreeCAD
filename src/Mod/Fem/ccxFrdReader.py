@@ -55,16 +55,19 @@ def readResult(frd_input):
     mode_disp = {}
     mode_stress = {}
     mode_temp = {}
-
+   
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
     mode_temp_found = False
+    mode_time_found = False
     elements_found = False
     input_continues = False
     eigenmode = 0
     elem = -1
     elemType = 0
+    timestep=0
+    timetemp=0
 
     for line in frd_file:
         #Check if we found nodes section
@@ -228,6 +231,14 @@ def readResult(frd_input):
             stress_5 = float(line[61:73])
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
+        #Check if we found a time step 
+        if line[4:10] == "1PSTEP":    
+            mode_time_found = True
+        if mode_time_found and (line[2:7] == "100CL"):
+            timetemp=float(line[13:25])    
+            if timetemp > timestep:
+                timestep=timetemp
+                FreeCAD.Console.PrintMessage(str(timestep) + "\n  ")
         if line[5:11] == "NDTEMP":
             mode_temp_found = True
         #we found a temperatures line in the frd file
@@ -245,6 +256,9 @@ def readResult(frd_input):
 
             if mode_temp_found:
                 mode_temp_found = False
+                
+            if mode_time_found:
+                mode_time_found = False
 
             if mode_disp and mode_stress and mode_temp:
                 mode_results = {}
@@ -252,6 +266,7 @@ def readResult(frd_input):
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
                 mode_results['temp'] = mode_temp
+                mode_results['time'] = timestep
                 results.append(mode_results)
                 mode_disp = {}
                 mode_stress = {}
@@ -263,6 +278,7 @@ def readResult(frd_input):
                 mode_results['number'] = eigenmode
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
+                mode_results['time'] = 0 #Dont return time if static
                 results.append(mode_results)
                 mode_disp = {}
                 mode_stress = {}
@@ -397,8 +413,11 @@ def importFrd(filename, analysis=None):
 
         for result_set in m['Results']:
             eigenmode_number = result_set['number']
+            step_time=result_set['time']
             if eigenmode_number > 0:
                 results_name = 'Mode_' + str(eigenmode_number) + '_results'
+            elif step_time > 0:  
+                results_name = 'Time_' + str(step_time) + '_results'
             else:
                 results_name = 'Results'
             results = FreeCAD.ActiveDocument.addObject('Fem::FemResultObject', results_name)
