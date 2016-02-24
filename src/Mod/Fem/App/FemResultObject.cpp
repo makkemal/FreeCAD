@@ -50,6 +50,7 @@ FemResultObject::FemResultObject()
     ADD_PROPERTY_TYPE(Mesh,(0), "General",Prop_None,"Link to the corresponding mesh");
     ADD_PROPERTY_TYPE(Eigenmode,(0), "Fem",Prop_None,"Number of the eigenmode");
     ADD_PROPERTY_TYPE(EigenmodeFrequency,(0), "Fem",Prop_None,"Frequency of the eigenmode");
+    ADD_PROPERTY_TYPE(Time,(0), "Fem",Prop_None,"Time of analysis incement");
 
     // make read-only for property editor
     NodeNumbers.setStatus(App::Property::ReadOnly, true);
@@ -64,7 +65,7 @@ FemResultObject::FemResultObject()
     Temperature.setStatus(App::Property::ReadOnly, true);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
-}
+    Time.setStatus(App::Property::ReadOnly, true);}
 
 FemResultObject::~FemResultObject()
 {

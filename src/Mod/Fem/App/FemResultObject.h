@@ -67,6 +67,8 @@ public:
     App::PropertyInteger Eigenmode;
     /// Eigenmode frequency
     App::PropertyFloat EigenmodeFrequency;
+    /// Increment time
+    App::PropertyFloat Time;
 
     /// returns the type name of the ViewProvider
     virtual const char* getViewProviderName(void) const {

@@ -455,6 +455,9 @@ def importFrd(filename, analysis=None):
 #                FreeCAD.Console.PrintMessage(str(Temperature) + "\n  ")
                 if len(Temperature) > 0:
                    results.Temperature = map((lambda x: x), Temperature.values())
+                   FreeCAD.Console.PrintMessage(str(step_time) + "\n  ")                 
+ #                 step_time=result_set['temp']
+                   results.Time = step_time
             except:
                 pass
 
