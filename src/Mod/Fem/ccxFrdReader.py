@@ -238,7 +238,7 @@ def readResult(frd_input):
             timetemp=float(line[13:25])    
             if timetemp > timestep:
                 timestep=timetemp
-                FreeCAD.Console.PrintMessage(str(timestep) + "\n  ")
+#                FreeCAD.Console.PrintMessage(str(timestep) + "\n  ")
         if line[5:11] == "NDTEMP":
             mode_temp_found = True
         #we found a temperatures line in the frd file
@@ -455,8 +455,6 @@ def importFrd(filename, analysis=None):
 #                FreeCAD.Console.PrintMessage(str(Temperature) + "\n  ")
                 if len(Temperature) > 0:
                    results.Temperature = map((lambda x: x), Temperature.values())
-                   FreeCAD.Console.PrintMessage(str(step_time) + "\n  ")                 
- #                 step_time=result_set['temp']
                    results.Time = step_time
             except:
                 pass
