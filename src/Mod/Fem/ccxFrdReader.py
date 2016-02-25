@@ -412,7 +412,6 @@ def importFrd(filename, analysis=None):
                 analysis_object.Member = analysis_object.Member + [mesh_object]
 
         number_of_increments=len(m['Results'])
-        FreeCAD.Console.PrintMessage(str(number_of_increments) + "\n  ")
         for result_set in m['Results']:
             eigenmode_number = result_set['number']
             step_time=result_set['time']
