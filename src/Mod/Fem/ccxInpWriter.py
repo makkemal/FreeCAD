@@ -310,7 +310,7 @@ class inp_writer:
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{}, \n'.format(YM_in_Pa))
+            f.write('{}, '.format(YM_in_Pa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
@@ -318,7 +318,7 @@ class inp_writer:
             except:
                 FreeCAD.Console.PrintError("No Density defined for material: default used\n")
             f.write('*DENSITY \n')
-            f.write('{0:.3e}, '.format(density_in_kgm3))
+            f.write('{0:.3e}, \n'.format(density_in_kgm3))
             f.write('*CONDUCTIVITY \n')
             f.write('{}, \n'.format(TC_in_WmK))
             f.write('*EXPANSION \n')

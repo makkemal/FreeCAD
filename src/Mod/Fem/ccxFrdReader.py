@@ -411,12 +411,14 @@ def importFrd(filename, analysis=None):
                 mesh_object.FemMesh = mesh
                 analysis_object.Member = analysis_object.Member + [mesh_object]
 
+        number_of_increments=len(m['Results'])
+        FreeCAD.Console.PrintMessage(str(number_of_increments) + "\n  ")
         for result_set in m['Results']:
             eigenmode_number = result_set['number']
             step_time=result_set['time']
             if eigenmode_number > 0:
                 results_name = 'Mode_' + str(eigenmode_number) + '_results'
-            elif step_time > 0:  
+            elif number_of_increments > 1:  
                 results_name = 'Time_' + str(step_time) + '_results'
             else:
                 results_name = 'Results'
