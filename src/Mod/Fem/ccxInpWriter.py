@@ -91,10 +91,16 @@ class inp_writer:
             FreeCAD.Console.PrintError("Written force constraint node sets\n")
         self.write_materials(inpfile)
         FreeCAD.Console.PrintError("Written materials\n")
+        if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
+            self.write_initialtemperature(inpfile)
+            FreeCAD.Console.PrintError("Written initial temperature constraints\n")
         self.write_femelementsets(inpfile)
+        FreeCAD.Console.PrintError("Written element sets\n")
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             FreeCAD.Console.PrintError("Written step begin for thermomech")
+            self.write_thermomech(inpfile)
+            FreeCAD.Console.PrintError("Written thermomech card\n")
         else:
             self.write_step_begin(inpfile)
             FreeCAD.Console.PrintError("Written step begin\n")
@@ -107,8 +113,6 @@ class inp_writer:
             FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
             self.write_heatflux(inpfile)
             FreeCAD.Console.PrintError("Written heatflux constraints\n")
-            self.write_initialtemperature(inpfile)
-            FreeCAD.Console.PrintError("Written initial temperature constraints\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -116,9 +120,6 @@ class inp_writer:
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
             FreeCAD.Console.PrintError("Written frequency card\n")
-        elif self.analysis_type == "thermomech":
-            self.write_thermomech(inpfile)
-            FreeCAD.Console.PrintError("Written thermomech card\n")
         self.write_outputs_types(inpfile)
         FreeCAD.Console.PrintError("Written outputtypes\n")
         self.write_step_end(inpfile)
@@ -368,7 +369,6 @@ class inp_writer:
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP,INC=2000\n') #OvG: updated card to allow for 2000 iterations until conversion
-#        f.write('*STATIC\n')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
