@@ -28,7 +28,7 @@ from math import pow, sqrt
 import numpy as np
 
 __title__ = "FreeCAD Calculix library"
-__author__ = "Juergen Riegel "
+__author__ = "Juergen Riegel , Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
 if open.__module__ == '__builtin__':
