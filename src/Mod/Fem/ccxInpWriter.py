@@ -310,7 +310,7 @@ class inp_writer:
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{},  '.format(YM_in_MPa))
+            f.write('{},  '.format(YM_in_Pa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
