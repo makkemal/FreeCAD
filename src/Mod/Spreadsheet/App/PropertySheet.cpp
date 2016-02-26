@@ -41,6 +41,7 @@
 #include "SpreadsheetExpression.h"
 #include "Utils.h"
 #include <PropertySheetPy.h>
+#include <App/ExpressionVisitors.h>
 
 using namespace App;
 using namespace Base;
@@ -48,32 +49,12 @@ using namespace Spreadsheet;
 
 namespace Spreadsheet {
 
-class RelabelDocumentObjectExpressionVisitor : public ExpressionVisitor {
+class BuildDocDepsExpressionVisitor : public ExpressionModifier<PropertySheet> {
 public:
 
-    RelabelDocumentObjectExpressionVisitor(const std::string & _oldName, const std::string & _newName)
-        : oldName(_oldName)
-        , newName(_newName)
-    {
-    }
-
-    void visit(Expression * node) {
-        VariableExpression *expr = freecad_dynamic_cast<VariableExpression>(node);
-
-        if (expr)
-            expr->renameDocumentObject(oldName, newName);
-    }
-
-private:
-    std::string oldName;
-    std::string newName;
-};
-
-class BuildDocDepsExpressionVisitor : public ExpressionVisitor {
-public:
-
-    BuildDocDepsExpressionVisitor(std::set<App::DocumentObject*> & _docDeps)
-        : docDeps(_docDeps)
+    BuildDocDepsExpressionVisitor(PropertySheet & prop, std::set<App::DocumentObject*> & _docDeps)
+        : ExpressionModifier(prop)
+        , docDeps(_docDeps)
     {
 
     }
@@ -86,8 +67,10 @@ public:
                 const App::Property * prop = expr->getProperty();
                 App::DocumentObject * docObj = freecad_dynamic_cast<App::DocumentObject>(prop->getContainer());
 
-                if (docObj)
+                if (docObj) {
+                    setExpressionChanged();
                     docDeps.insert(docObj);
+                }
             }
             catch (const Base::Exception &) {
                 // Ignore this type of exception; it means that the property was not found, which is ok here
@@ -97,27 +80,6 @@ public:
 
 private:
     std::set<App::DocumentObject*> & docDeps;
-};
-
-class RelabelDocumentExpressionVisitor : public ExpressionVisitor {
-public:
-
-    RelabelDocumentExpressionVisitor(const std::string & _oldName, const std::string & _newName)
-        : oldName(_oldName)
-        , newName(_newName)
-    {
-    }
-
-    void visit(Expression * node) {
-        VariableExpression *expr = freecad_dynamic_cast<VariableExpression>(node);
-
-        if (expr)
-            expr->renameDocument(oldName, newName);
-    }
-
-private:
-    std::string oldName;
-    std::string newName;
 };
 
 }
@@ -176,6 +138,33 @@ const Cell * PropertySheet::getValueFromAlias(const std::string &alias) const
         return getValue(it->second);
     else
         return 0;
+
+}
+
+bool PropertySheet::isValidAlias(const std::string &candidate)
+{
+    static const boost::regex gen("^[A-Za-z][_A-Za-z0-9]*$");
+    boost::cmatch cm;
+
+    /* Check if it is used before */
+    if (getValueFromAlias(candidate) != 0)
+        return false;
+
+    if (boost::regex_match(candidate.c_str(), cm, gen)) {
+        static const boost::regex e("\\${0,1}([A-Z]{1,2})\\${0,1}([0-9]{1,5})");
+
+        if (boost::regex_match(candidate.c_str(), cm, e)) {
+            const boost::sub_match<const char *> colstr = cm[1];
+            const boost::sub_match<const char *> rowstr = cm[2];
+
+            // A valid cell address?
+            if (Spreadsheet::validRow(rowstr.str()) >= 0 && Spreadsheet::validColumn(colstr.str()) >= 0)
+                return false;
+        }
+        return true;
+    }
+    else
+        return false;
 }
 
 std::set<CellAddress> PropertySheet::getUsedCells() const
@@ -212,18 +201,19 @@ Cell * PropertySheet::createCell(CellAddress address)
 
 PropertySheet::PropertySheet(Sheet *_owner)
     : Property()
+    , AtomicPropertyChangeInterface()
     , owner(_owner)
-    , signalCounter(0)
 {
 }
 
 PropertySheet::PropertySheet(const PropertySheet &other)
-    : dirty(other.dirty)
+    : Property()
+    , AtomicPropertyChangeInterface()
+    , dirty(other.dirty)
     , mergedCells(other.mergedCells)
     , owner(other.owner)
     , propertyNameToCellMap(other.propertyNameToCellMap)
     , documentObjectToCellMap(other.documentObjectToCellMap)
-    , signalCounter(0)
 {
     std::map<CellAddress, Cell* >::const_iterator i = other.data.begin();
 
@@ -246,7 +236,7 @@ App::Property *PropertySheet::Copy(void) const
 
 void PropertySheet::Paste(const Property &from)
 {
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     const PropertySheet * froms = static_cast<const PropertySheet*>(&from);
 
@@ -452,7 +442,15 @@ void PropertySheet::setDisplayUnit(CellAddress address, const std::string &unit)
 
 void PropertySheet::setAlias(CellAddress address, const std::string &alias)
 {
+    if (alias.size() > 0 && !isValidAlias(alias))
+        throw Base::Exception("Invalid alias");
+
+    const Cell * aliasedCell = getValueFromAlias(alias);
     Cell * cell = nonNullCellAt(address);
+
+    if (aliasedCell != 0 && cell != aliasedCell)
+        throw Base::Exception("Alias already defined.");
+
     assert(cell != 0);
 
     /* Mark cells depending on this cell dirty; they need to be resolved when an alias changes or disappears */
@@ -506,7 +504,7 @@ void PropertySheet::clear(CellAddress address)
     if (i == data.end())
         return;
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     // Spit cell to clean up mergeCells map; all data is in first cell anyway
     splitCell(address);
@@ -536,7 +534,7 @@ void PropertySheet::moveCell(CellAddress currPos, CellAddress newPos, std::map<A
     std::map<CellAddress, Cell*>::const_iterator i = data.find(currPos);
     std::map<CellAddress, Cell*>::const_iterator j = data.find(newPos);
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     if (j != data.end())
         clear(newPos);
@@ -649,7 +647,7 @@ void PropertySheet::insertRows(int row, int count)
 
     RewriteExpressionVisitor visitor(CellAddress(row, CellAddress::MAX_COLUMNS), count, 0);
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     for (std::vector<CellAddress>::const_reverse_iterator i = keys.rbegin(); i != keys.rend(); ++i) {
         std::map<CellAddress, Cell*>::iterator j = data.find(*i);
 
@@ -697,7 +695,7 @@ void PropertySheet::removeRows(int row, int count)
 
     RewriteExpressionVisitor visitor(CellAddress(row + count - 1, CellAddress::MAX_COLUMNS), -count, 0);
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     for (std::vector<CellAddress>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
         std::map<CellAddress, Cell*>::iterator j = data.find(*i);
 
@@ -735,7 +733,7 @@ void PropertySheet::insertColumns(int col, int count)
 
     RewriteExpressionVisitor visitor(CellAddress(CellAddress::MAX_ROWS, col), 0, count);
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     for (std::vector<CellAddress>::const_reverse_iterator i = keys.rbegin(); i != keys.rend(); ++i) {
         std::map<CellAddress, Cell*>::iterator j = data.find(*i);
 
@@ -783,7 +781,7 @@ void PropertySheet::removeColumns(int col, int count)
 
     RewriteExpressionVisitor visitor(CellAddress(CellAddress::MAX_ROWS, col + count - 1), 0, -count);
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     for (std::vector<CellAddress>::const_iterator i = keys.begin(); i != keys.end(); ++i) {
         std::map<CellAddress, Cell*>::iterator j = data.find(*i);
 
@@ -824,7 +822,7 @@ bool PropertySheet::mergeCells(CellAddress from, CellAddress to)
         }
     }
 
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     // Clear cells that will be hidden by the merge
     for (int r = from.row(); r <= to.row(); ++r)
@@ -853,7 +851,7 @@ void PropertySheet::splitCell(CellAddress address)
         return;
 
     CellAddress anchor = i->second;
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     cellAt(anchor)->getSpans(rows, cols);
 
     for (int r = anchor.row(); r <= anchor.row() + rows; ++r)
@@ -1092,8 +1090,8 @@ void PropertySheet::renamedDocumentObject(const App::DocumentObject * docObj)
 
     std::map<CellAddress, Cell* >::iterator i = data.begin();
 
-    Signaller signaller(*this);
-    RelabelDocumentObjectExpressionVisitor v(documentObjectName[docObj], docObj->Label.getValue());
+    AtomicPropertyChange signaller(*this);
+    RelabelDocumentObjectExpressionVisitor<PropertySheet> v(*this, documentObjectName[docObj], docObj->Label.getValue());
 
     while (i != data.end()) {
         i->second->visit(v);
@@ -1113,8 +1111,8 @@ void PropertySheet::renamedDocument(const App::Document * doc)
     std::map<CellAddress, Cell* >::iterator i = data.begin();
 
     /* Resolve all cells */
-    Signaller signaller(*this);
-    RelabelDocumentExpressionVisitor v(documentName[doc], doc->Label.getValue());
+    AtomicPropertyChange signaller(*this);
+    RelabelDocumentExpressionVisitor<PropertySheet> v(*this, documentName[doc], doc->Label.getValue());
 
     while (i != data.end()) {
         i->second->visit(v);
@@ -1122,6 +1120,14 @@ void PropertySheet::renamedDocument(const App::Document * doc)
         setDirty(i->first);
         ++i;
     }
+}
+
+void PropertySheet::renameObjectIdentifiers(const std::map<App::ObjectIdentifier, App::ObjectIdentifier> &paths)
+{
+    RenameObjectIdentifierExpressionVisitor<PropertySheet> v(*this, paths, *this);
+
+    for (std::map<CellAddress, Cell*>::iterator it = data.begin(); it != data.end(); ++it)
+        it->second->visit(v);
 }
 
 void PropertySheet::deletedDocumentObject(const App::DocumentObject *docObj)
@@ -1183,7 +1189,7 @@ const std::set<std::string> &PropertySheet::getDeps(CellAddress pos) const
 
 void PropertySheet::recomputeDependencies(CellAddress key)
 {
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     removeDependencies(key);
     addDependencies(key);
@@ -1192,10 +1198,10 @@ void PropertySheet::recomputeDependencies(CellAddress key)
 
 void PropertySheet::rebuildDocDepList()
 {
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
 
     docDeps.clear();
-    BuildDocDepsExpressionVisitor v(docDeps);
+    BuildDocDepsExpressionVisitor v(*this, docDeps);
 
     std::map<CellAddress, Cell* >::iterator i = data.begin();
 
@@ -1220,26 +1226,11 @@ void PropertySheet::resolveAll()
     std::map<CellAddress, Cell* >::iterator i = data.begin();
 
     /* Resolve all cells */
-    Signaller signaller(*this);
+    AtomicPropertyChange signaller(*this);
     while (i != data.end()) {
         recomputeDependencies(i->first);
         setDirty(i->first);
         ++i;
     }
     touch();
-}
-
-PropertySheet::Signaller::Signaller(PropertySheet &sheet)
-    : mSheet(sheet)
-{
-    if (mSheet.signalCounter == 0)
-        mSheet.aboutToSetValue();
-    mSheet.signalCounter++;
-}
-
-PropertySheet::Signaller::~Signaller()
-{
-    mSheet.signalCounter--;
-    if (mSheet.signalCounter == 0)
-           mSheet.hasSetValue();
 }

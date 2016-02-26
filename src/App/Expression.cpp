@@ -989,7 +989,7 @@ const Property * VariableExpression::getProperty() const
     if (prop)
         return prop;
     else
-        throw ExpressionError(std::string("Property '") + var.getPropertyName() + std::string("' not found."));
+        throw Expression::Exception(var.resolveErrorString().c_str());
 }
 
 /**
@@ -1100,9 +1100,19 @@ void VariableExpression::setPath(const ObjectIdentifier &path)
      var = path;
 }
 
+bool VariableExpression::validDocumentObjectRename(const std::string &oldName, const std::string &newName)
+{
+    return var.validDocumentObjectRename(oldName, newName);
+}
+
 bool VariableExpression::renameDocumentObject(const std::string &oldName, const std::string &newName)
 {
     return var.renameDocumentObject(oldName, newName);
+}
+
+bool VariableExpression::validDocumentRename(const std::string &oldName, const std::string &newName)
+{
+    return var.validDocumentRename(oldName, newName);
 }
 
 bool VariableExpression::renameDocument(const std::string &oldName, const std::string &newName)

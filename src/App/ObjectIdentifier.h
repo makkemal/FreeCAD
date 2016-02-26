@@ -190,7 +190,11 @@ public:
 
     const String getDocumentObjectName() const;
 
+    bool validDocumentObjectRename(const std::string &oldName, const std::string &newName);
+
     bool renameDocumentObject(const std::string & oldName, const std::string & newName);
+
+    bool validDocumentRename(const std::string &oldName, const std::string &newName);
 
     bool renameDocument(const std::string &oldName, const std::string &newName);
 
@@ -225,24 +229,37 @@ public:
 
     static ObjectIdentifier parse(const App::DocumentObject *docObj, const std::string & str);
 
+    std::string resolveErrorString() const;
+
 protected:
+
+    struct ResolveResults {
+
+        ResolveResults(const ObjectIdentifier & oi);
+
+        int propertyIndex;
+        App::Document * resolvedDocument;
+        String resolvedDocumentName;
+        App::DocumentObject * resolvedDocumentObject;
+        String resolvedDocumentObjectName;
+        App::Property * resolvedProperty;
+        std::string propertyName;
+
+        std::string resolveErrorString() const;
+    };
 
     std::string getPythonAccessor() const;
 
-    void resolve() const;
+    void resolve(ResolveResults & results) const;
 
     App::DocumentObject *getDocumentObject(const App::Document *doc, const String &name, bool &byIdentifier) const;
 
     const App::PropertyContainer * owner;
+    String  documentName;
     bool documentNameSet;
+    String  documentObjectName;
     bool documentObjectNameSet;
     std::vector<Component> components;
-
-    /// Mutable elements, updated by resolve()
-    mutable int propertyIndex;
-    mutable String documentName;
-    mutable String documentObjectName;
-    mutable std::string propertyName;
 
 };
 

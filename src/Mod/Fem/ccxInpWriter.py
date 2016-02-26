@@ -310,7 +310,7 @@ class inp_writer:
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{}, '.format(YM_in_Pa))
+            f.write('{},  '.format(YM_in_MPa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
@@ -368,7 +368,7 @@ class inp_writer:
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP,INC=2000\n') #OvG: updated card to allow for 2000 iterations until conversion
-        f.write('*STATIC\n')
+#        f.write('*STATIC\n')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
@@ -385,6 +385,41 @@ class inp_writer:
                 f.write(fix_obj_name + ',5\n')
                 f.write(fix_obj_name + ',6\n')
             f.write('\n')
+
+    def write_displacement(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Displacement constraint applied\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for disp_obj in self.displacement_objects:
+            disp_obj_name = disp_obj['Object'].Name
+            f.write('*BOUNDARY\n')
+            if disp_obj['Object'].xFix == True:
+                f.write(disp_obj_name + ',1\n')
+            elif disp_obj['Object'].xFree == False:
+                f.write(disp_obj_name + ',1,1,'+str(disp_obj['Object'].xDisplacement)+'\n')
+            if disp_obj['Object'].yFix == True:
+                f.write(disp_obj_name + ',2\n')
+            elif disp_obj['Object'].yFree == False:
+                f.write(disp_obj_name + ',2,2,'+str(disp_obj['Object'].yDisplacement)+'\n')
+            if disp_obj['Object'].zFix == True:
+                f.write(disp_obj_name + ',3\n')
+            elif disp_obj['Object'].zFree == False:
+                f.write(disp_obj_name + ',3,3,'+str(disp_obj['Object'].zDisplacement)+'\n')
+
+            if self.beamsection_objects or self.shellthickness_objects:
+                if disp_obj['Object'].rotxFix == True:
+                    f.write(disp_obj_name + ',4\n')
+                elif disp_obj['Object'].rotxFree == False:
+                    f.write(disp_obj_name + ',4,4,'+str(disp_obj['Object'].xRotation)+'\n')
+                if disp_obj['Object'].rotyFix == True:
+                    f.write(disp_obj_name + ',5\n')
+                elif disp_obj['Object'].rotyFree == False:
+                    f.write(disp_obj_name + ',5,5,'+str(disp_obj['Object'].yRotation)+'\n')
+                if disp_obj['Object'].rotzFix == True:
+                    f.write(disp_obj_name + ',6\n')
+                elif disp_obj['Object'].rotzFree == False:
+                    f.write(disp_obj_name + ',6,6,'+str(disp_obj['Object'].zRotation)+'\n')
+        f.write('\n')
 
     def write_displacement(self,f):
         f.write('\n***********************************************************\n')
