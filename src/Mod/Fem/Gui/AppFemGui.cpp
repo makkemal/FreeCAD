@@ -34,6 +34,7 @@
 #include <Gui/Language/Translator.h>
 #include "PropertyFemMeshItem.h"
 #include "DlgSettingsFemImp.h"
+#include "DlgSettingsFemThermoMechImp.h"
 #include "ViewProviderFemMesh.h"
 #include "ViewProviderFemMeshShape.h"
 #include "ViewProviderFemMeshShapeNetgen.h"
@@ -144,6 +145,7 @@ PyMODINIT_FUNC initFemGui()
 
     // register preferences pages
     new Gui::PrefPageProducer<FemGui::DlgSettingsFemImp> ("FEM");
+    new Gui::PrefPageProducer<FemGui::DlgSettingsFemThermoMechImp> ("FEM/ThermoMech");
 
      // add resources and reloads the translators
     loadFemResource();
