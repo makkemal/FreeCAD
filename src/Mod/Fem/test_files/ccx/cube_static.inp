@@ -465,8 +465,8 @@ Eall
 69,
 
 ***********************************************************
-** Node sets for prescribed displacement
-
+** Node sets for prescribed displacement constraint
+** written by write_displacement_nodes function
 
 ***********************************************************
 ** Node sets for loads
@@ -480,8 +480,7 @@ Eall
 **FreeCAD material name: Steel
 *MATERIAL, NAME=MechanicalMaterial
 *ELASTIC 
-200000 , 
-0.300
+200000 ,  0.300
 *DENSITY 
 7.900e-09, 
 
@@ -507,7 +506,8 @@ FemConstraintFixed,3
 
 
 ***********************************************************
-** Prescribed displacements applied
+** Displacement constraint applied
+** written by write_displacement function
 
 
 ***********************************************************

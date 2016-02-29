@@ -11,6 +11,8 @@ INSTALL(
         Init.py
         InitGui.py
 
+        ccxInpWriterFemConstraintDisplacement.py
+
         convert2TetGen.py
 
         SelectionObserverFem.py
@@ -28,7 +30,6 @@ INSTALL(
 
         _CommandMechanicalShowResult.py
         _TaskPanelResultControl.py
-        _CommandResultColorbar.py
 
         TaskPanelShowDisplacement.ui
 
