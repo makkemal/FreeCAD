@@ -276,15 +276,16 @@ class inp_writer:
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties - Currently in SI units: M/kg/s/Kelvin
-            YM_in_Pa = 200e+09
-            TC_in_WmK = 50
-            TEC_in_mmK = 1.2e-05
-            SH_in_JkgK = 500
-            PR = 0.3
-            density_in_kgm3 = 8000
+#            YM_in_Pa = 200e+09 #Stress output values is out by a factor of e+03
+            YM_in_Pa = 1  #Trying stress in kPa
+            TC_in_WmK = 1
+            TEC_in_mmK = 1
+            SH_in_JkgK = 1
+            PR = 1
+            density_in_kgm3 = 1
             try:
                 YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
-                YM_in_Pa = YM.getValueAs('Pa')
+                YM_in_Pa = YM.getValueAs('MPa')
             except:
                 FreeCAD.Console.PrintError("No YoungsModulus defined for material: default used\n")
             try:
@@ -293,12 +294,12 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No PoissonRatio defined for material: default used\n")
             try:
                 TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
-                TC_in_WmK = TC.getValueAs('W/m/K')
+                TC_in_WmK = TC.getValueAs('W/mm/K')
             except:
                 FreeCAD.Console.PrintError("No ThermalConductivity defined for material: default used\n")
             try:
                 TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
-                TEC_in_mmK = TEC.getValueAs('m/m/K')
+                TEC_in_mmK = TEC.getValueAs('mm/mm/K')
             except:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
@@ -314,7 +315,7 @@ class inp_writer:
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
-                density_in_kgm3 = float(density.getValueAs('kg/m^3'))
+                density_in_kgm3 = float(density.getValueAs('t/mm^3'))
             except:
                 FreeCAD.Console.PrintError("No Density defined for material: default used\n")
             f.write('*DENSITY \n')
@@ -337,7 +338,7 @@ class inp_writer:
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
                     material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*BEAM SECTION, ' + elsetdef + material + ', SECTION=RECT\n'
-                    setion_geo = str(beamsec_obj.Height.getValueAs('m')) + ', ' + str(beamsec_obj.Width.getValueAs('m')) + '\n'
+                    setion_geo = str(beamsec_obj.Height.getValueAs('mm')) + ', ' + str(beamsec_obj.Width.getValueAs('mm')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 elif 'shellthickness_obj'in ccx_elset:  # shell mesh
@@ -345,7 +346,7 @@ class inp_writer:
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
                     material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SHELL SECTION, ' + elsetdef + material + '\n'
-                    setion_geo = str(shellth_obj.Thickness.getValueAs('m')) + '\n'
+                    setion_geo = str(shellth_obj.Thickness.getValueAs('mm')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 else:  # solid mesh
