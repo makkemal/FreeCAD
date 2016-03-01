@@ -199,6 +199,8 @@ SET(FemConstraints_SRCS
     FemConstraintHeatflux.cpp
     FemConstraintInitialTemperature.h
     FemConstraintInitialTemperature.cpp
+    FemConstraintFrictionless.cpp
+    FemConstraintFrictionless.h    
 	)
 SOURCE_GROUP("Constraints" FILES ${FemConstraints_SRCS})
 
