@@ -331,15 +331,15 @@ QString Unit::getString(void) const
            Sig.Density                 < 0 ){
             ret << "/";
 
-            int nnom = Sig.Length<0?1:2 +
-                Sig.Mass<0?1:2 +
-                Sig.Time<0?1:2 +
-                Sig.ElectricCurrent<0?1:2 +
-                Sig.ThermodynamicTemperature<0?1:2 +
-                Sig.AmountOfSubstance<0?1:2 +
-                Sig.LuminoseIntensity<0?1:2 +
-                Sig.Angle<0?1:2 +
-                Sig.Density<0?1:2 ;
+            int nnom = (Sig.Length<0?1:2) +
+                (Sig.Mass<0?1:2) +
+                (Sig.Time<0?1:2) +
+                (Sig.ElectricCurrent<0?1:2) +
+                (Sig.ThermodynamicTemperature<0?1:2) +
+                (Sig.AmountOfSubstance<0?1:2) +
+                (Sig.LuminoseIntensity<0?1:2) +
+                (Sig.Angle<0?1:2) +
+                (Sig.Density<0?1:2) ;
             if (nnom > 1) ret << '(';
             bool mult=false;
             if(Sig.Length < 0){
@@ -432,6 +432,7 @@ QString Unit::getTypeString(void) const
     if(*this == Unit::ThermalConductivity             				)       return QString::fromLatin1("ThermalConductivity"); else
 	if(*this == Unit::ThermalExpansionCoefficient             		)       return QString::fromLatin1("ThermalExpansionCoefficient"); else
 	if(*this == Unit::SpecificHeat             						)       return QString::fromLatin1("SpecificHeat"); else
+    if(*this == Unit::ThermalTransferCoefficient             		)       return QString::fromLatin1("ThermalTransferCoefficient"); else
     return QString();
 
 }
@@ -462,4 +463,4 @@ Unit Unit::Power   (2,1,-3);
 Unit Unit::ThermalConductivity   (1,1,-3,0,-1);
 Unit Unit::ThermalExpansionCoefficient   (0,0,0,0,-1);
 Unit Unit::SpecificHeat   (2,0,-2,0,-1);
-
+Unit Unit::ThermalTransferCoefficient (0,1,-3,0,-1);
