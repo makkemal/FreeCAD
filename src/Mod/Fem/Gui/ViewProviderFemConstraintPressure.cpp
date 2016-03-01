@@ -110,7 +110,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
         pShapeSep->addChild(cp);
     }
 #endif
-    
+
     if (strcmp(prop->getName(),"Points") == 0) {
         const std::vector<Base::Vector3d>& points = pcConstraint->Points.getValues();
         const std::vector<Base::Vector3d>& normals = pcConstraint->Normals.getValues();
@@ -118,7 +118,7 @@ void ViewProviderFemConstraintPressure::updateData(const App::Property* prop)
             return;
         }
         std::vector<Base::Vector3d>::const_iterator n = normals.begin();
- 
+
 #ifdef USE_MULTIPLE_COPY      
         cp = static_cast<SoMultipleCopy*>(pShapeSep->getChild(0)); //OvG: Use top cp
         cp->matrix.setNum(points.size());

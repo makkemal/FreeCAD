@@ -1,5 +1,4 @@
 /***************************************************************************
- *   Copyright (c) 2013 Jan Rheinl채nder <jrheinlaender[at]users.sourceforge.net>     *
  *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
@@ -73,7 +72,7 @@ protected:
     Base::Vector3d getBasePoint(const Base::Vector3d& base, const Base::Vector3d& axis,
                                 const App::PropertyLinkSub &location, const double& dist);
     const Base::Vector3d getDirection(const App::PropertyLinkSub &direction);
-    
+
 };
 
 } //namespace Fem

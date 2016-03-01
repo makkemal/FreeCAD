@@ -45,7 +45,8 @@ class _FemSolverCalculix():
         obj.addProperty("App::PropertyPath", "WorkingDir", "Fem", "Working directory for calculations")
         obj.WorkingDir = fem_prefs.GetString("WorkingDir", "")
 
-        obj.addProperty("App::PropertyEnumeration", "AnalysisType", "Fem", "Type of the analysis").AnalysisType = ["static", "frequency", "thermomech"]
+        obj.addProperty("App::PropertyEnumeration", "AnalysisType", "Fem", "Type of the analysis")
+        obj.AnalysisType = FemTools.known_analysis_types
         analysis_type = fem_prefs.GetInt("AnalysisType", 0)
         obj.AnalysisType = FemTools.known_analysis_types[analysis_type]
 
