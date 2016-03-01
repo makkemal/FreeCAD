@@ -199,6 +199,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of initial temperatures for the analysis. Updated with update_objects
         # Individual initialTemperature_constraints are Proxy.Type "FemConstraintInitialTemperature"
         self.initialtemperature_constraints = []
+        ## @var PlaneRotation_constraints
+        #  set of PlaneRotation constraints from the analysis. Updated with update_objects
+        #  Individual constraints are "Fem::ConstraintPlaneRotation" type
+        self.PlaneRotation_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -243,6 +247,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 initialtemperature_constraint_dict = {}
                 initialtemperature_constraint_dict['Object'] = m
                 self.initialtemperature_constraints.append(initialtemperature_constraint_dict)
+            elif m.isDerivedFrom("Fem::ConstraintPlaneRotation"):
+                PlaneRotation_constraint_dict = {}
+                PlaneRotation_constraint_dict['Object'] = m
+                self.PlaneRotation_constraints.append(PlaneRotation_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -313,6 +321,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
                                        self.initialtemperature_constraints,
+                                       self.PlaneRotation_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)

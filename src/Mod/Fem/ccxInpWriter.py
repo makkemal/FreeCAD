@@ -41,6 +41,7 @@ class inp_writer:
                  temperature_obj,
                  heatflux_obj,
                  initialtemperature_obj, 
+                 PlaneRotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -55,6 +56,7 @@ class inp_writer:
         self.temperature_objects = temperature_obj
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
+        self.PlaneRotation_objects = PlaneRotation_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -75,6 +77,9 @@ class inp_writer:
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
         FreeCAD.Console.PrintError("Opening input file\n")
+        inpfile = open(self.file_name, 'r')       
+        nodelist = self.get_all_nodes(inpfile)
+        inpfile.close() 
         inpfile = open(self.file_name, 'a')
         inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
@@ -83,6 +88,8 @@ class inp_writer:
         FreeCAD.Console.PrintError("Written node sets\n")
         self.write_displacement_nodes(inpfile)
         FreeCAD.Console.PrintError("Written displacement nodes\n")
+        self.write_node_sets_contraints_PlaneRotation(inpfile,nodelist)
+        FreeCAD.Console.PrintError("Written PlaneRotation nodes\n")        
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
             FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
@@ -92,6 +99,8 @@ class inp_writer:
         self.write_materials(inpfile)
         FreeCAD.Console.PrintError("Written materials\n")
         self.write_femelementsets(inpfile)
+        self.write_constraints_PlaneRotation(inpfile)
+        FreeCAD.Console.PrintError("Written PlaneRotation constraints\n") 
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             FreeCAD.Console.PrintError("Written step begin for thermomech")
@@ -101,7 +110,7 @@ class inp_writer:
         self.write_constraints_fixed(inpfile)
         FreeCAD.Console.PrintError("Written fixed constraints\n")
         self.write_displacement(inpfile)
-        FreeCAD.Console.PrintError("Written displacement constraints\n")
+        FreeCAD.Console.PrintError("Written displacement constraints\n")       
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
@@ -184,6 +193,94 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+
+    def get_all_nodes(self,f):
+        s_line = f.readline()
+        s_line = f.readline()
+        l_table = []
+        while s_line[0] != "*":
+            l_coords = []
+            dummy = ""
+            for i in range(len(s_line)):
+                if (s_line[i] != ",") and (s_line[i] != " "):
+                    dummy = dummy + s_line[i]
+                elif s_line[i] == ",":
+                    dummy = float(dummy)                    
+                    l_coords.append(dummy)
+                    dummy = ""
+            dummy = float(dummy)
+            l_coords.append(dummy)
+            l_table.append(l_coords)
+            s_line = f.readline()     
+        return l_table
+    
+    def write_node_sets_contraints_PlaneRotation(self,f,l_table):
+        f.write('\n\n')
+        f.write('\n***********************************************************\n')
+        f.write('** Node set for PlaneRotation constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        l_Nodes = []
+        for fobj in self.PlaneRotation_objects:
+            fric_obj = fobj['Object']
+            f.write('*NSET,NSET=' + fric_obj.Name + '\n')
+            for o, elem in fric_obj.References:
+                fo = o.Shape.getElement(elem)
+                n = []
+                if fo.ShapeType == 'Face':
+                    n = self.mesh_object.FemMesh.getNodesByFace(fo)
+                elif fo.ShapeType == 'Edge':
+                    n = self.mesh_object.FemMesh.getNodesByEdge(fo)
+                elif fo.ShapeType == 'Vertex':
+                    n = self.mesh_object.FemMesh.getNodesByVertex(fo)
+                for i in n:
+                    l_Nodes.append(i)
+            #Code to extract nodes and coordinates on the PlaneRotation support face
+            Nodes_coords = []
+            for i in range(len(l_table)):
+                for j in range(len(n)):
+                    if l_table[i][0] == l_Nodes[j]:
+                        Nodes_coords.append(l_table[i])
+            #Code to obtain three non-colinear nodes on the PlaneRotation support face
+            dum_max = [1,2,3,4,5,6,7,8,0]
+            for i in range(len(Nodes_coords)):
+                for j in range(len(Nodes_coords)-1-i):
+                    x_1 = Nodes_coords[j][1]
+                    x_2 = Nodes_coords[j+1][1]
+                    y_1 = Nodes_coords[j][2]
+                    y_2 = Nodes_coords[j+1][2]
+                    z_1 = Nodes_coords[j][3]
+                    z_2 = Nodes_coords[j+1][3]
+                    node_1 = Nodes_coords[j][0] 
+                    node_2 = Nodes_coords[j+1][0]
+                    distance = ((x_1-x_2)**2 + (y_1-y_2)**2 + (z_1-z_2)**2)**0.5
+                    if distance> dum_max[8]:
+                        dum_max = [node_1,x_1,y_1,z_1,node_2,x_2,y_2,z_2,distance]
+            Node_dis = [1,0]
+            for i in range(len(Nodes_coords)):
+               x_1 = dum_max[1]
+               x_2 = dum_max[5]
+               x_3 = Nodes_coords[i][1]
+               y_1 = dum_max[2]
+               y_2 = dum_max[6]
+               y_3 = Nodes_coords[i][2]
+               z_1 = dum_max[3]
+               z_2 = dum_max[7]
+               z_3 = Nodes_coords[i][3]
+               Node_3 = int(Nodes_coords[j][0])
+               distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
+               distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
+               tot = distance_1 + distance_2
+               if tot> Node_dis[1]:
+                   Node_dis = [Node_3,tot]
+            Node_1 = int(dum_max[0])
+            Node_2 = int(dum_max[4])
+            NodePlaneRotation = [Node_1,Node_2,Node_3]
+            for i in range(len(l_Nodes)):
+                if (l_Nodes[i] != Node_1) and (l_Nodes[i] != Node_2) and (l_Nodes[i] != Node_3):
+                    NodePlaneRotation.append(l_Nodes[i])
+            for i in range(len(NodePlaneRotation)):
+                f.write(str(NodePlaneRotation[i]) + ',\n')
+
 
     def write_displacement_nodes(self,f):
         f.write('\n***********************************************************\n')
@@ -420,6 +517,18 @@ class inp_writer:
                 elif disp_obj['Object'].rotzFree == False:
                     f.write(disp_obj_name + ',6,6,'+str(disp_obj['Object'].zRotation)+'\n')
         f.write('\n')
+
+    def write_constraints_PlaneRotation(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** PlaneRotation Constaints\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for fric_object in self.PlaneRotation_objects:
+            fric_obj_name = fric_object['Object'].Name
+            f.write('*MPC\n')
+            f.write('PLANE,' + fric_obj_name  +'\n')
+            f.write('\n')
+        
+    
 
     def write_temperature(self,f):
         f.write('\n***********************************************************\n')

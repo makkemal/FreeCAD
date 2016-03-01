@@ -54,6 +54,7 @@
 #include "ViewProviderFemConstraintTemperature.h"
 #include "ViewProviderFemConstraintHeatflux.h"
 #include "ViewProviderFemConstraintInitialTemperature.h"
+#include "ViewProviderFemConstraintPlaneRotation.h"
 #include "ViewProviderResult.h"
 #include "Workbench.h"
 
@@ -110,6 +111,7 @@ PyMODINIT_FUNC initFemGui()
     FemGui::ViewProviderFemConstraintHeatflux     ::init();
     FemGui::ViewProviderFemConstraintTemperature  ::init();
     FemGui::ViewProviderFemConstraintInitialTemperature  ::init();
+    FemGui::ViewProviderFemConstraintPlaneRotation       ::init();    
     FemGui::ViewProviderResult                    ::init();
     FemGui::ViewProviderResultPython              ::init();
     FemGui::PropertyFemMeshItem                   ::init();
