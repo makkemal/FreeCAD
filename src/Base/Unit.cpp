@@ -331,15 +331,15 @@ QString Unit::getString(void) const
            Sig.Density                 < 0 ){
             ret << "/";
 
-            int nnom = Sig.Length<0?1:2 +
-                Sig.Mass<0?1:2 +
-                Sig.Time<0?1:2 +
-                Sig.ElectricCurrent<0?1:2 +
-                Sig.ThermodynamicTemperature<0?1:2 +
-                Sig.AmountOfSubstance<0?1:2 +
-                Sig.LuminoseIntensity<0?1:2 +
-                Sig.Angle<0?1:2 +
-                Sig.Density<0?1:2 ;
+            int nnom = (Sig.Length<0?1:2) +
+                (Sig.Mass<0?1:2) +
+                (Sig.Time<0?1:2) +
+                (Sig.ElectricCurrent<0?1:2) +
+                (Sig.ThermodynamicTemperature<0?1:2) +
+                (Sig.AmountOfSubstance<0?1:2) +
+                (Sig.LuminoseIntensity<0?1:2) +
+                (Sig.Angle<0?1:2) +
+                (Sig.Density<0?1:2) ;
             if (nnom > 1) ret << '(';
             bool mult=false;
             if(Sig.Length < 0){
