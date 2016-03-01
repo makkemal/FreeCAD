@@ -149,7 +149,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # [{'Object':fixed_constraints, 'NodeSupports':bool}, {}, ...]
         # [{'Object':force_constraints, 'NodeLoad':value}, {}, ...
         # [{'Object':pressure_constraints, 'xxxxxxxx':value}, {}, ...]
+        # [{'Object':temerature_constraints, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':heatflux_constraints, 'xxxxxxxx':value}, {}, ...]
+        # [{'Object':initialtemperature_constraints, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':beam_sections, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':shell_thicknesses, 'xxxxxxxx':value}, {}, ...]
 

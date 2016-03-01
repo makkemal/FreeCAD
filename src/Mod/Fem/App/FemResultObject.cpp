@@ -65,7 +65,8 @@ FemResultObject::FemResultObject()
     Temperature.setStatus(App::Property::ReadOnly, true);
     Eigenmode.setStatus(App::Property::ReadOnly, true);
     EigenmodeFrequency.setStatus(App::Property::ReadOnly, true);
-    Time.setStatus(App::Property::ReadOnly, true);}
+    Time.setStatus(App::Property::ReadOnly, true);
+}
 
 FemResultObject::~FemResultObject()
 {
