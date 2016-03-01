@@ -163,9 +163,14 @@ public:
 	static Quantity KSI; 
 
 	static Quantity Watt; 
+    static Quantity MilliWatt;
+	static Quantity MicroWatt;
 	static Quantity VoltAmpere; 
 
 	static Quantity Joule; 
+	static Quantity KiloJoule;
+	static Quantity MilliJoule;
+	static Quantity MicroJoule;
 	static Quantity NewtonMeter; 
 	static Quantity VoltAmpereSecond; 
 	static Quantity WattSecond; 
