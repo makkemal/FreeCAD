@@ -118,6 +118,7 @@ public:
 	static Unit ThermalConductivity;  	
 	static Unit ThermalExpansionCoefficient;
 	static Unit SpecificHeat;
+    static Unit ThermalTransferCoefficient;
 	
 
     //@}
