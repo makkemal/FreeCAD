@@ -320,7 +320,7 @@ class _TaskPanelResultControl:
         FreeCADGui.Control.closeDialog()
 
 
-#It's code duplication that should be removes wher we migrate to FemTools.py
+#It's code duplication that should be removed when we migrate to FemTools.py
 def get_results_object(sel):
     if (len(sel) == 1):
         if sel[0].isDerivedFrom("Fem::FemResultObject"):
