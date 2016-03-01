@@ -83,7 +83,10 @@ TaskFemConstraintTemperature::TaskFemConstraintTemperature(ViewProviderFemConstr
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
     
     // Fill data into dialog elements
-    ui->spinTemperature->setValue(pcConstraint->Temperature.getValue());
+    ui->if_temperature->setMinimum(0);
+    ui->if_temperature->setMaximum(FLOAT_MAX);
+    Base::Quantity t = Base::Quantity(pcConstraint->Temperature.getValue(), Base::Unit::Temperature);
+    ui->if_temperature->setValue(t);
     
     ui->lw_references->clear();
     for (std::size_t i = 0; i < Objects.size(); i++) {
@@ -246,7 +249,11 @@ const std::string TaskFemConstraintTemperature::getReferences() const
     return TaskFemConstraint::getReferences(items);
 }
 
-double TaskFemConstraintTemperature::get_temperature() const{return ui->spinTemperature->value();}
+double TaskFemConstraintTemperature::get_temperature() const{
+    Base::Quantity temperature =  ui->if_temperature->getQuantity();
+    double temperature_in_kelvin = temperature.getValueAs(Base::Quantity::Kelvin);
+    return temperature_in_kelvin; 
+}
 
 void TaskFemConstraintTemperature::changeEvent(QEvent *e)
 {

@@ -84,23 +84,19 @@ TaskFemConstraintHeatflux::TaskFemConstraintHeatflux(ViewProviderFemConstraintHe
 
     // Get the feature data
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    double at = pcConstraint->AmbientTemp.getValue();
-    //double ft = pcConstraint->FaceTemp.getValue();
-    double fc = pcConstraint->FilmCoef.getValue();
     std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
     std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
 
     // Fill data into dialog elements
-    ui->if_ambienttemp->setMinimum(-273);
-    ui->if_ambienttemp->setMaximum(100000);
-    //ui->if_facetemp->setMinimum(-273);
-    //ui->if_facetemp->setMaximum(100000);
+    ui->if_ambienttemp->setMinimum(0);
+    ui->if_ambienttemp->setMaximum(FLOAT_MAX);
+    Base::Quantity t = Base::Quantity(pcConstraint->AmbientTemp.getValue(), Base::Unit::Temperature);
+    ui->if_ambienttemp->setValue(t);
+    
     ui->if_filmcoef->setMinimum(0);
-    ui->if_filmcoef->setMaximum(100000);
-
-    ui->if_ambienttemp->setValue(at);
-    //ui->if_facetemp->setValue(ft);
-    ui->if_filmcoef->setValue(fc);
+    ui->if_filmcoef->setMaximum(FLOAT_MAX);
+    Base::Quantity f = Base::Quantity(pcConstraint->FilmCoef.getValue(), Base::Unit::ThermalTransferCoefficient);
+    ui->if_filmcoef->setValue(f);
     
     ui->lw_references->clear();
     for (std::size_t i = 0; i < Objects.size(); i++) {
@@ -319,20 +315,16 @@ const std::string TaskFemConstraintHeatflux::getReferences() const
 
 double TaskFemConstraintHeatflux::getAmbientTemp(void) const
 {
-    double ambienttemp =  ui->if_ambienttemp->value();
-    return ambienttemp; //[degC]
+    Base::Quantity temperature =  ui->if_ambienttemp->getQuantity();
+    double temperature_in_kelvin = temperature.getValueAs(Base::Quantity::Kelvin);
+    return temperature_in_kelvin; 
 }
-
-/*double TaskFemConstraintHeatflux::getFaceTemp(void) const
-{
-    double facetemp =  ui->if_facetemp->value();
-    return facetemp; //[degC]
-}*/
 
 double TaskFemConstraintHeatflux::getFilmCoef(void) const
 {
-    double filmcoef =  ui->if_filmcoef->value();
-    return filmcoef; // [W]/[[degC].[m^2]]
+    Base::Quantity filmcoef =  ui->if_filmcoef->getQuantity();
+    double filmcoef_in_units = filmcoef.getValueAs(Base::Quantity(1.0,Base::Unit::ThermalTransferCoefficient));
+    return filmcoef_in_units;
 }
 
 void TaskFemConstraintHeatflux::changeEvent(QEvent *e)
@@ -340,11 +332,9 @@ void TaskFemConstraintHeatflux::changeEvent(QEvent *e)
     TaskBox::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         ui->if_ambienttemp->blockSignals(true);
-        //ui->if_facetemp->blockSignals(true);
         ui->if_filmcoef->blockSignals(true);
         ui->retranslateUi(proxy);
         ui->if_ambienttemp->blockSignals(false);
-        //ui->if_facetemp->blockSignals(false);
         ui->if_filmcoef->blockSignals(false);
     }
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>257</width>
+    <width>309</width>
     <height>233</height>
    </rect>
   </property>
@@ -14,53 +14,50 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-  <item>
-     <widget class="QLabel" name="lbl_info">
-      <property name="text">
-       <string>Select multiple face(s), click Add or Remove</string>
-      </property>
-     </widget>
-    </item>
    <item>
-     <layout class="QHBoxLayout" name="hLayout1">
-      <item>
-       <widget class="QPushButton" name="btnAdd">
-        <property name="text">
-         <string>Add</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="btnRemove">
-        <property name="text">
-         <string>Remove</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
+    <widget class="QLabel" name="lbl_info">
+     <property name="text">
+      <string>Select multiple face(s), click Add or Remove</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="hLayout1">
+     <item>
+      <widget class="QPushButton" name="btnAdd">
+       <property name="text">
+        <string>Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="btnRemove">
+       <property name="text">
+        <string>Remove</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <widget class="QListWidget" name="lw_references"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="layoutTemperature">
      <item>
-      <widget class="QLabel" name="labelTemperature">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Temperature [°C]</string>
+        <string>Temperature</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="spinTemperature">
-       <property name="minimum">
-        <double>-99999.000000000000000</double>
+      <widget class="Gui::InputField" name="if_temperature">
+       <property name="text">
+        <string>300 K</string>
        </property>
-       <property name="maximum">
-        <double>99999.000000000000000</double>
-       </property>
-       <property name="value">
-        <double>25.000000000000000</double>
+       <property name="unit" stdset="0">
+        <string notr="true"/>
        </property>
       </widget>
      </item>
@@ -68,6 +65,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Gui::InputField</class>
+   <extends>QLineEdit</extends>
+   <header>Gui/InputField.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
