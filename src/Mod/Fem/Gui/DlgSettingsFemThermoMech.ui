@@ -84,7 +84,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="l_YM_Pa">
             <property name="text">
-             <string>Young's Modulus (Pa)</string>
+             <string>Young&apos;s Modulus (Pa)</string>
             </property>
            </widget>
           </item>
@@ -103,7 +103,7 @@
              <double>200000000000.000000000000000</double>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>YM_Pa</cstring>
+             <cstring>YMPa</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem/ThermoMech</cstring>
@@ -132,7 +132,7 @@
              <double>50.000000000000000</double>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>TC_WmK</cstring>
+             <cstring>TCWmK</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem/ThermoMech</cstring>
@@ -161,7 +161,7 @@
              <double>0.000000000000000</double>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>TEC_mmK</cstring>
+             <cstring>TECmmK</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem/ThermoMech</cstring>
@@ -190,7 +190,7 @@
              <double>500.000000000000000</double>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>SH_JkgK</cstring>
+             <cstring>SHJkgK</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem/ThermoMech</cstring>
@@ -198,7 +198,7 @@
            </widget>
           </item>
           <item row="4" column="0">
-           <widget class="QLabel" name="l_SH_JkgK">
+           <widget class="QLabel" name="l_PR">
             <property name="text">
              <string>Poisson Ratio</string>
             </property>
@@ -234,7 +234,7 @@
            </widget>
           </item>
           <item row="5" column="1">
-           <widget class="Gui::PrefDoubleSpinBox" name="dsb_density_in_kgm3">
+           <widget class="Gui::PrefDoubleSpinBox" name="dsb_density_kgm3">
             <property name="minimum">
              <double>0.000000000000000</double>
             </property>
@@ -248,7 +248,7 @@
              <double>8000.000000000000000</double>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>density_kgm3</cstring>
+             <cstring>Densitykgm3</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem/ThermoMech</cstring>

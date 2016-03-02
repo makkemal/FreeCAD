@@ -26,7 +26,7 @@
 #ifndef FEMGUI_DLGSETTINGSFEMTHERMOMECHIMP_H
 #define FEMGUI_DLGSETTINGSFEMTHERMOMECHIMP_H
 
-#include "ui_DlgSettingsFemThermoMechImp.h"
+#include "ui_DlgSettingsFemThermoMech.h"
 #include <Gui/PropertyPage.h>
 
 namespace FemGui {

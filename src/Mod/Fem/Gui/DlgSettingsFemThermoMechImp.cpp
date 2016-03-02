@@ -44,8 +44,8 @@ DlgSettingsFemThermoMechImp::~DlgSettingsFemThermoMechImp()
 
 void DlgSettingsFemThermoMechImp::saveSettings()
 {
-    //ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-    //    ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
+        ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
     
     //OvG: Solver settings for thermo mechanical analysis
     sb_num_increments->onSave();        //Number of increments
@@ -72,14 +72,14 @@ void DlgSettingsFemThermoMechImp::loadSettings()
     dsb_TC_WmK->onRestore();            //Thermal Conductivity
     dsb_YM_Pa->onRestore();             //Young's modulus
 
-    //ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-    //    ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
+    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
+        ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
 }
 
 /**
  * Sets the strings of the subwidgets using the current language.
  */
-void DlgSettingsFemImp::changeEvent(QEvent *e)
+void DlgSettingsFemThermoMechImp::changeEvent(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange) {
     }

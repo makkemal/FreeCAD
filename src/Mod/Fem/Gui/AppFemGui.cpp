@@ -145,7 +145,7 @@ PyMODINIT_FUNC initFemGui()
 
     // register preferences pages
     new Gui::PrefPageProducer<FemGui::DlgSettingsFemImp> ("FEM");
-    new Gui::PrefPageProducer<FemGui::DlgSettingsFemThermoMechImp> ("FEM/ThermoMech");
+    new Gui::PrefPageProducer<FemGui::DlgSettingsFemThermoMechImp> ("ThermoMech");
 
      // add resources and reloads the translators
     loadFemResource();

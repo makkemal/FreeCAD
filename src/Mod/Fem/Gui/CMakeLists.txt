@@ -84,7 +84,7 @@ SOURCE_GROUP("Moc" FILES ${FemGui_MOC_SRCS})
 
 set(FemGui_UIC_SRCS
     DlgSettingsFem.ui
-    DlgSettingsFemThermoMechImp.ui
+    DlgSettingsFemThermoMech.ui
     TaskCreateNodeSet.ui
     TaskObjectName.ui
     TaskFemConstraint.ui
@@ -120,7 +120,7 @@ SET(FemGui_DLG_SRCS
     DlgSettingsFem.ui
     DlgSettingsFemImp.cpp
     DlgSettingsFemImp.h
-    DlgSettingsFemThermoMechImp.ui
+    DlgSettingsFemThermoMech.ui
     DlgSettingsFemThermoMechImp.cpp
     DlgSettingsFemThermoMechImp.h
     TaskFemConstraint.ui
