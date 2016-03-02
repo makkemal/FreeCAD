@@ -154,6 +154,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
 {
     std::vector<App::DocumentObject*> Objects = References.getValues();
     std::vector<std::string> SubElements = References.getSubValues();
+
     // Extract geometry from References
     TopoDS_Shape sh;
 
@@ -207,7 +208,6 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
                 points.push_back(Base::Vector3d(p.X(), p.Y(), p.Z()));
                 normals.push_back(NormalDirection.getValue());
             }
-            
         } else if (sh.ShapeType() == TopAbs_FACE) {
             TopoDS_Face face = TopoDS::Face(sh);
             // Surface boundaries
@@ -286,6 +286,7 @@ const bool Constraint::getPoints(std::vector<Base::Vector3d> &points, std::vecto
             }
         }
     }
+
     return true;
 }
 

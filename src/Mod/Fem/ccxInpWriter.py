@@ -76,66 +76,44 @@ class inp_writer:
     def write_calculix_input_file(self):
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
-        FreeCAD.Console.PrintError("Opening input file\n")
         inpfile = open(self.file_name, 'r')       
         nodelist = self.get_all_nodes(inpfile)
         inpfile.close() 
         inpfile = open(self.file_name, 'a')
         inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
-        FreeCAD.Console.PrintError("Written element sets\n")
         self.write_node_sets_constraints_fixed(inpfile)
-        FreeCAD.Console.PrintError("Written node sets\n")
         self.write_displacement_nodes(inpfile)
-        FreeCAD.Console.PrintError("Written displacement nodes\n")
         self.write_node_sets_contraints_PlaneRotation(inpfile,nodelist)
         FreeCAD.Console.PrintError("Written PlaneRotation nodes\n")        
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
-            FreeCAD.Console.PrintError("Written fixed temperature nodes\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
-            FreeCAD.Console.PrintError("Written force constraint node sets\n")
         self.write_materials(inpfile)
-        FreeCAD.Console.PrintError("Written materials\n")
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
-            FreeCAD.Console.PrintError("Written initial temperature constraints\n")
         self.write_femelementsets(inpfile)
         self.write_constraints_PlaneRotation(inpfile)
-        FreeCAD.Console.PrintError("Written PlaneRotation constraints\n") 
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
-            FreeCAD.Console.PrintError("Written step begin for thermomech")
             self.write_thermomech(inpfile)
-            FreeCAD.Console.PrintError("Written thermomech card\n")
         else:
             self.write_step_begin(inpfile)
-            FreeCAD.Console.PrintError("Written step begin\n")
         self.write_constraints_fixed(inpfile)
-        FreeCAD.Console.PrintError("Written fixed constraints\n")
         self.write_displacement(inpfile)
-        FreeCAD.Console.PrintError("Written displacement constraints\n")       
         if self.analysis_type == "thermomech": #OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
-            FreeCAD.Console.PrintError("Written fixed temperature constraints\n")
             self.write_heatflux(inpfile)
-            FreeCAD.Console.PrintError("Written heatflux constraints\n")
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
-            FreeCAD.Console.PrintError("Written pressure and force constraints\n")
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
-            FreeCAD.Console.PrintError("Written frequency card\n")
         self.write_outputs_types(inpfile)
-        FreeCAD.Console.PrintError("Written outputtypes\n")
         self.write_step_end(inpfile)
-        FreeCAD.Console.PrintError("Written step end\n")
         self.write_footer(inpfile)
-        FreeCAD.Console.PrintError("Written footer\n")
         inpfile.close()
-        FreeCAD.Console.PrintError("Closed input file\n")
         return self.file_name
 
     def write_element_sets_material_and_femelement_type(self, f):
@@ -373,8 +351,7 @@ class inp_writer:
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties - Currently in SI units: M/kg/s/Kelvin
-#            YM_in_Pa = 200e+09 #Stress output values is out by a factor of e+03
-            YM_in_Pa = 1  #Trying stress in kPa
+            YM_in_MPa = 1
             TC_in_WmK = 1
             TEC_in_mmK = 1
             SH_in_JkgK = 1
@@ -382,7 +359,7 @@ class inp_writer:
             density_in_kgm3 = 1
             try:
                 YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
-                YM_in_Pa = YM.getValueAs('MPa')
+                YM_in_MPa = YM.getValueAs('MPa')
             except:
                 FreeCAD.Console.PrintError("No YoungsModulus defined for material: default used\n")
             try:
@@ -404,11 +381,11 @@ class inp_writer:
                 SH_in_JkgK = SH.getValueAs('J/kg*K')
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
-            mat_name = mat_obj.Material['Name'][:80]
+            mat_name = mat_obj.Material['Name']
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{},  '.format(YM_in_Pa))
+            f.write('{},  '.format(YM_in_MPa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
@@ -851,7 +828,7 @@ class inp_writer:
         f.write('**   Units\n')
         f.write('**\n')
         f.write('**   Geometry (mesh data)        --> m\n')
-        f.write("**   Materials (Young's modulus) --> N/m2 = Pa\n")
+        f.write("**   Materials (Young's modulus) --> N/m2 = MPa\n")
         f.write('**   Loads (nodal loads)         --> N\n')
         f.write('**\n')
 
@@ -861,7 +838,7 @@ class inp_writer:
     #                        'ccx_elset' : [e1, e2, e3, ... , en] or string self.ccx_eall
     #                        'ccx_elset_name' : 'ccx_identifier_elset'
     #                        'mat_obj_name' : 'mat_obj.Name'
-    #                        'ccx_mat_name' : 'mat_obj.Material['Name'][:80]'   !!! not unique !!!
+    #                        'ccx_mat_name' : 'mat_obj.Material['Name']'   !!! not unique !!!
     #                     },
     #                     {}, ... , {} ]
     def get_ccx_elsets_single_mat_single_beam(self):
@@ -872,7 +849,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_single_shell(self):
@@ -883,7 +860,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_solid(self):
@@ -892,7 +869,7 @@ class inp_writer:
         ccx_elset['ccx_elset'] = self.ccx_eall
         ccx_elset['ccx_elset_name'] = get_ccx_elset_solid_name(mat_obj.Name)
         ccx_elset['mat_obj_name'] = mat_obj.Name
-        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+        ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
         self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_multiple_beam(self):
@@ -905,7 +882,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = beamsec_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, None, beamsec_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_single_mat_multiple_shell(self):
@@ -918,7 +895,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = shellth_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, None, shellth_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_single_beam(self):
@@ -931,7 +908,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_single_shell(self):
@@ -944,7 +921,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_solid(self):
@@ -955,7 +932,7 @@ class inp_writer:
             ccx_elset['ccx_elset'] = mat_data['FEMElements']
             ccx_elset['ccx_elset_name'] = get_ccx_elset_solid_name(mat_obj.Name, None, mat_data['ShortName'])
             ccx_elset['mat_obj_name'] = mat_obj.Name
-            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+            ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
             self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_multiple_beam(self):
@@ -974,7 +951,7 @@ class inp_writer:
                 ccx_elset['ccx_elset'] = elemids
                 ccx_elset['ccx_elset_name'] = get_ccx_elset_beam_name(mat_obj.Name, beamsec_obj.Name, mat_data['ShortName'], beamsec_data['ShortName'])
                 ccx_elset['mat_obj_name'] = mat_obj.Name
-                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
                 self.ccx_elsets.append(ccx_elset)
 
     def get_ccx_elsets_multiple_mat_multiple_shell(self):
@@ -993,7 +970,7 @@ class inp_writer:
                 ccx_elset['ccx_elset'] = elemids
                 ccx_elset['ccx_elset_name'] = get_ccx_elset_shell_name(mat_obj.Name, shellth_obj.Name, mat_data['ShortName'], shellth_data['ShortName'])
                 ccx_elset['mat_obj_name'] = mat_obj.Name
-                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name'][:80]
+                ccx_elset['ccx_mat_name'] = mat_obj.Material['Name']
                 self.ccx_elsets.append(ccx_elset)
 
     def get_femelement_sets(self, fem_objects):

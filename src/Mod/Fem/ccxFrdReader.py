@@ -55,7 +55,7 @@ def readResult(frd_input):
     mode_disp = {}
     mode_stress = {}
     mode_temp = {}
-   
+
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
@@ -238,7 +238,6 @@ def readResult(frd_input):
             timetemp=float(line[13:25])    
             if timetemp > timestep:
                 timestep=timetemp
-#                FreeCAD.Console.PrintMessage(str(timestep) + "\n  ")
         if line[5:11] == "NDTEMP":
             mode_temp_found = True
         #we found a temperatures line in the frd file
@@ -453,7 +452,6 @@ def importFrd(filename, analysis=None):
             #Read temperatures if they exist
             try:
                 Temperature = result_set['temp']
-#                FreeCAD.Console.PrintMessage(str(Temperature) + "\n  ")
                 if len(Temperature) > 0:
                    results.Temperature = map((lambda x: x), Temperature.values())
                    results.Time = step_time
@@ -522,7 +520,7 @@ def importFrd(filename, analysis=None):
             a_max = max(disp_abs)
             a_min = min(disp_abs)
             a_avg = sum(disp_abs) /no_of_values
-            
+
             results.Stats = [x_min, x_avg, x_max,
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,

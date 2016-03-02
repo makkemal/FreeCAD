@@ -41,7 +41,7 @@ class _TaskPanelResultControl:
     '''The control for the displacement post-processing'''
     def __init__(self):
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/TaskPanelShowDisplacement.ui")
-        
+
         #Connect Signals and Slots
         QtCore.QObject.connect(self.form.rb_none, QtCore.SIGNAL("toggled(bool)"), self.none_selected)
         QtCore.QObject.connect(self.form.rb_x_displacement, QtCore.SIGNAL("toggled(bool)"), self.x_displacement_selected)
@@ -98,6 +98,7 @@ class _TaskPanelResultControl:
             elif rt== "MinPrin":
                 self.form.rb_minprin.setChecked(True)
                 self.rb_minprin(True)
+
             sd = FreeCAD.FEM_dialog["show_disp"]
             self.form.cb_show_displacement.setChecked(sd)
             self.show_displacement(sd)
@@ -108,7 +109,6 @@ class _TaskPanelResultControl:
             self.form.hsb_displacement_factor.setValue(df)
             self.form.sb_displacement_factor_max.setValue(dfm)
             self.form.sb_displacement_factor.setValue(df)
-
         except:
             FreeCAD.FEM_dialog = {"results_type": "None", "show_disp": False,
                                   "disp_factor": 0, "disp_factor_max": 100}
@@ -296,7 +296,6 @@ class _TaskPanelResultControl:
         #Disable temperature radio button if it does ot exist in results
         
         if len(self.result_object.Temperature)==1:
-#            FreeCAD.Console.PrintMessage(str(len(self.result_object.Temperature)) + "\n  ")
             self.form.rb_temperature.setEnabled(0)
             
         for i in FemGui.getActiveAnalysis().Member:

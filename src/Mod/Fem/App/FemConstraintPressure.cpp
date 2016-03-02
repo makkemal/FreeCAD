@@ -66,7 +66,7 @@ const char* ConstraintPressure::getViewProviderName(void) const
 void ConstraintPressure::onChanged(const App::Property* prop)
 {
     Constraint::onChanged(prop);
-   
+
     if (prop == &References) {
         std::vector<Base::Vector3d> points;
         std::vector<Base::Vector3d> normals;
@@ -79,5 +79,5 @@ void ConstraintPressure::onChanged(const App::Property* prop)
         }
     } else if (prop == &Reversed) {
         Points.touch();
-    }	
+    }
 }

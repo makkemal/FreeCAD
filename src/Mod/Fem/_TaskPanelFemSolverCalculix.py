@@ -182,24 +182,19 @@ class _TaskPanelFemSolverCalculix:
 
     def write_input_file_handler(self):
         QApplication.restoreOverrideCursor()
-        FreeCAD.Console.PrintError("Checking prerequisites\n")
         if self.check_prerequisites_helper():
             QApplication.setOverrideCursor(Qt.WaitCursor)
             self.inp_file_name = ""
-            FreeCAD.Console.PrintError("Initialising solver\n")
             fea = FemTools()
             fea.set_analysis_type(self.solver_object.AnalysisType)
             fea.update_objects()
-            FreeCAD.Console.PrintError("Writing input file\n")
             fea.write_inp_file()
             if fea.inp_file_name != "":
                 self.inp_file_name = fea.inp_file_name
-                FreeCAD.Console.PrintError("Write completed\n")
                 self.femConsoleMessage("Write completed.")
                 self.form.pb_edit_inp.setEnabled(True)
                 self.form.pb_run_ccx.setEnabled(True)
             else:
-                FreeCAD.Console.PrintError("Write failed!\n")
                 self.femConsoleMessage("Write .inp file failed!", "#FF0000")
         QApplication.restoreOverrideCursor()
 
@@ -255,10 +250,7 @@ class _TaskPanelFemSolverCalculix:
     def select_analysis_type(self, analysis_type):
         if self.solver_object.AnalysisType != analysis_type:
             #self.solver_object.set_analysis_type(analysis_type)
-            FreeCAD.Console.PrintError("Setting analysis type to: \'{}\'.\n".format(analysis_type))
-            FreeCAD.Console.PrintError("Active analysis type: \'{}\'.\n".format(self.solver_object.AnalysisType))
             self.solver_object.AnalysisType = analysis_type
-            FreeCAD.Console.PrintError("Active analysis type: \'{}\'.\n".format(self.solver_object.AnalysisType))
             self.form.pb_edit_inp.setEnabled(False)
             self.form.pb_run_ccx.setEnabled(False)
 
