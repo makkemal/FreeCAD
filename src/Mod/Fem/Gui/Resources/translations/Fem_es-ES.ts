@@ -4,7 +4,7 @@
 <context>
     <name>CmdFemAddPart</name>
     <message>
-        <location filename="../../Command.cpp" line="+153"/>
+        <location filename="../../Command.cpp" line="+165"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -34,9 +34,27 @@
     </message>
 </context>
 <context>
+    <name>CmdFemConstraintDisplacement</name>
+    <message>
+        <location line="+256"/>
+        <source>Fem</source>
+        <translation>FEM</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create FEM displacement constraint</source>
+        <translation>Crear restricción de desplazamiento FEM</translation>
+    </message>
+    <message>
+        <location line="+1"/>
+        <source>Create FEM constraint for a displacement acting on a face</source>
+        <translation>Crear restricción FEM para un desplazamiento actuando en una cara</translation>
+    </message>
+</context>
+<context>
     <name>CmdFemConstraintFixed</name>
     <message>
-        <location line="+36"/>
+        <location line="-219"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -54,7 +72,7 @@
 <context>
     <name>CmdFemConstraintForce</name>
     <message>
-        <location line="+37"/>
+        <location line="+40"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -72,7 +90,7 @@
 <context>
     <name>CmdFemConstraintGear</name>
     <message>
-        <location line="+81"/>
+        <location line="+87"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -90,7 +108,7 @@
 <context>
     <name>CmdFemConstraintPressure</name>
     <message>
-        <location line="-44"/>
+        <location line="-47"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -108,7 +126,7 @@
 <context>
     <name>CmdFemConstraintPulley</name>
     <message>
-        <location line="+78"/>
+        <location line="+84"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -126,7 +144,7 @@
 <context>
     <name>CmdFemCreateAnalysis</name>
     <message>
-        <location line="-370"/>
+        <location line="-385"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -155,7 +173,7 @@
 <context>
     <name>CmdFemCreateNodesSet</name>
     <message>
-        <location line="+555"/>
+        <location line="+614"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -179,7 +197,7 @@
 <context>
     <name>CmdFemCreateSolver</name>
     <message>
-        <location line="-463"/>
+        <location line="-522"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -193,7 +211,7 @@
 <context>
     <name>CmdFemDefineNodesSet</name>
     <message>
-        <location line="+373"/>
+        <location line="+432"/>
         <source>Fem</source>
         <translation>FEM</translation>
     </message>
@@ -376,6 +394,14 @@
     </message>
 </context>
 <context>
+    <name>FemGui::TaskDlgFemConstraintDisplacement</name>
+    <message>
+        <location filename="../../TaskFemConstraintDisplacement.cpp" line="+639"/>
+        <source>Input error</source>
+        <translation>Error de entrada</translation>
+    </message>
+</context>
+<context>
     <name>FemGui::TaskDlgFemConstraintForce</name>
     <message>
         <location filename="../../TaskFemConstraintForce.cpp" line="+358"/>
@@ -386,7 +412,7 @@
     <message>
         <location line="-26"/>
         <source>Please specify a force greater than 0</source>
-        <translation type="unfinished"></translation>
+        <translation>Por favor especifique una fuerza mas grande que 0</translation>
     </message>
 </context>
 <context>
@@ -408,7 +434,7 @@
     <message>
         <location line="-16"/>
         <source>Please specify a pressure greater than 0</source>
-        <translation type="unfinished"></translation>
+        <translation>Por favor especifique una presión mas grande que 0</translation>
     </message>
 </context>
 <context>
@@ -494,6 +520,34 @@
         <location line="+5"/>
         <source>Only faces and edges can be picked</source>
         <translation>Se pueden seleccionar caras y aristas únicamente</translation>
+    </message>
+</context>
+<context>
+    <name>FemGui::TaskFemConstraintDisplacement</name>
+    <message>
+        <location filename="../../TaskFemConstraintDisplacement.cpp" line="-570"/>
+        <source>Delete</source>
+        <translation>Borrar</translation>
+    </message>
+    <message>
+        <location line="+343"/>
+        <location line="+10"/>
+        <location line="+32"/>
+        <location line="+10"/>
+        <source>Selection error</source>
+        <translation>Error de selección</translation>
+    </message>
+    <message>
+        <location line="-52"/>
+        <location line="+42"/>
+        <source>Nothing selected!</source>
+        <translation>Nada seleccionado!</translation>
+    </message>
+    <message>
+        <location line="-32"/>
+        <location line="+42"/>
+        <source>Selected object is not a part!</source>
+        <translation>El objeto seleccionado no es una pieza!</translation>
     </message>
 </context>
 <context>
@@ -883,7 +937,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../Command.cpp" line="-524"/>
+        <location filename="../../Command.cpp" line="-595"/>
         <source>No active Analysis</source>
         <translation>Ningún análisis activo</translation>
     </message>
@@ -893,7 +947,7 @@
         <translation>Tienes que crear o activar un análisis</translation>
     </message>
     <message>
-        <location line="+30"/>
+        <location line="+42"/>
         <location line="+8"/>
         <location line="+54"/>
         <location line="+8"/>
@@ -929,7 +983,7 @@
     <message>
         <location filename="../../TaskFemConstraint.cpp" line="+16"/>
         <source>Ok</source>
-        <translation>Ok</translation>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <location line="+1"/>
@@ -990,6 +1044,7 @@
         <translation>Restringir fuerza</translation>
     </message>
     <message>
+        <location filename="../../TaskFemConstraintDisplacement.cpp" line="+123"/>
         <location filename="../../TaskFemConstraintPressure.cpp" line="+98"/>
         <source>Constraint normal stress</source>
         <translation>Restricción normal de la tensión</translation>
@@ -1294,6 +1349,84 @@
         <location line="+14"/>
         <source>Distance</source>
         <translation>Distancia</translation>
+    </message>
+</context>
+<context>
+    <name>TaskFemConstraintDisplacement</name>
+    <message>
+        <location filename="../../TaskFemConstraintDisplacement.ui" line="+35"/>
+        <source>Prescribed Displacement</source>
+        <translation>Desplazamiento Prescrito</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Select multiple face(s), click Add or Remove</source>
+        <translation>Seleccione cara(s) múltiple(s), haga click en Agregar o Remover</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <source>Add</source>
+        <translation>Añadir</translation>
+    </message>
+    <message>
+        <location line="+7"/>
+        <source>Remove</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <location line="+29"/>
+        <source>Displacement x</source>
+        <translation>Desplazamiento en x</translation>
+    </message>
+    <message>
+        <location line="+9"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+61"/>
+        <location line="+39"/>
+        <location line="+42"/>
+        <source>Free</source>
+        <translation>Liberar</translation>
+    </message>
+    <message>
+        <location line="-219"/>
+        <location line="+42"/>
+        <location line="+42"/>
+        <location line="+61"/>
+        <location line="+39"/>
+        <location line="+45"/>
+        <source>Fixed</source>
+        <translation>Fijo</translation>
+    </message>
+    <message>
+        <location line="-203"/>
+        <source>Displacement y</source>
+        <translation>Desplazamiento en y</translation>
+    </message>
+    <message>
+        <location line="+42"/>
+        <source>Displacement z</source>
+        <translation>Desplazamiento en z</translation>
+    </message>
+    <message>
+        <location line="+46"/>
+        <source>Rotations are only valid for Beam and Shell elements.</source>
+        <translation type="unfinished">Rotations are only valid for Beam and Shell elements.</translation>
+    </message>
+    <message>
+        <location line="+15"/>
+        <source>Rotation x</source>
+        <translation>Rotación x</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Rotation y</source>
+        <translation>Rotación y</translation>
+    </message>
+    <message>
+        <location line="+39"/>
+        <source>Rotation z</source>
+        <translation>Rotación z</translation>
     </message>
 </context>
 <context>

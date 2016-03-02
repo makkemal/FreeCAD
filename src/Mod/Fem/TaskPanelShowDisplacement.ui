@@ -59,10 +59,10 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QRadioButton" name="rb_abs_displacement">
+          <item row="2" column="1">
+           <widget class="QRadioButton" name="rb_maxprin">
             <property name="text">
-             <string>Abs displacement</string>
+             <string>Max Principal stress</string>
             </property>
            </widget>
           </item>
@@ -76,24 +76,24 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1">
-           <widget class="QRadioButton" name="rb_maxprin">
+          <item row="0" column="1">
+           <widget class="QRadioButton" name="rb_abs_displacement">
             <property name="text">
-             <string>Max Principal stress</string>
+             <string>Abs displacement</string>
             </property>
            </widget>
           </item>
           <item row="3" column="1">
-           <widget class="QRadioButton" name="rb_midprin">
+           <widget class="QRadioButton" name="rb_minprin">
             <property name="text">
-             <string>Middle Principal stress</string>
+             <string>Min Principal stress</string>
             </property>
            </widget>
           </item>
           <item row="4" column="1">
-           <widget class="QRadioButton" name="rb_minprin">
+           <widget class="QRadioButton" name="rb_temperature">
             <property name="text">
-             <string>Min Principal stress</string>
+             <string>Temperature</string>
             </property>
            </widget>
           </item>
@@ -262,7 +262,7 @@
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
-           <widget class="QLabel" name="userdefhead">
+           <widget class="QLabel" name="user_def_head">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;User Defined equation &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>

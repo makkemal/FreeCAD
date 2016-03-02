@@ -131,7 +131,7 @@ void Constraint::onChanged(const App::Property* prop)
                     props.Bounds(u1,u2,v1,v2);
                     props.Normal((u1+u2)/2.0,(v1+v2)/2.0,center,normal);
                     normal.Normalize();
-                    NormalDirection.setValue(normal.X(), normal.Y(), normal.Z());                   
+                    NormalDirection.setValue(normal.X(), normal.Y(), normal.Z());
                     // One face is enough...
                     App::DocumentObject::onChanged(prop);
                     return;

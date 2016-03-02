@@ -40,30 +40,26 @@
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="lw_references">
-    </widget>
+    <widget class="QListWidget" name="lw_references"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="layoutAmbientTemp">
      <item>
       <widget class="QLabel" name="lbl_ambienttemp">
        <property name="text">
-         <string>Ambient Temperature [°C]</string>
-        </property>
+        <string>Ambient Temperature</string>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="if_ambienttemp">
-        <property name="minimum">
-         <double>-273.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>100.000000000000000</double>
-        </property>
-       </widget>
+      <widget class="Gui::InputField" name="if_ambienttemp">
+       <property name="text">
+        <string>300 K</string>
+       </property>
+       <property name="unit" stdset="0">
+        <string notr="true"/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -71,28 +67,32 @@
     <layout class="QHBoxLayout" name="layoutFilmCoef">
      <item>
       <widget class="QLabel" name="lbl_filmcoef">
-        <property name="text">
-         <string>Film coefficient [W/°C·m²]</string>
-        </property>
-       </widget>
+       <property name="text">
+        <string>Film coefficient</string>
+       </property>
+      </widget>
      </item>
      <item>
-      <widget class="QDoubleSpinBox" name="if_filmcoef">
-        <property name="minimum">
-         <double>-99999.000000000000000</double>
-        </property>
-        <property name="maximum">
-         <double>99999.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>1.000000000000000</double>
-        </property>
-       </widget>
+      <widget class="Gui::InputField" name="if_filmcoef">
+       <property name="text">
+        <string>1 kg/(s^3*K)</string>
+       </property>
+       <property name="unit" stdset="0">
+        <string notr="true"/>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Gui::InputField</class>
+   <extends>QLineEdit</extends>
+   <header>Gui/InputField.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

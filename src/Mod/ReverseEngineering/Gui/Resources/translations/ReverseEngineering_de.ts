@@ -29,7 +29,7 @@
     <message>
         <location line="+1"/>
         <source>Approximate B-Spline surface...</source>
-        <translation>Angenäherte B-Spline Oberfläche...</translation>
+        <translation>B-Spline-Fläche approximieren...</translation>
     </message>
     <message>
         <source>Approximate surface...</source>
@@ -38,7 +38,7 @@
     <message>
         <location line="+1"/>
         <source>Approximate a B-Spline surface</source>
-        <translation>Ungefähre B-Spline-Oberfläche</translation>
+        <translation>Approximiere eine B-Spline-Fläche</translation>
     </message>
 </context>
 <context>
@@ -68,10 +68,18 @@
     </message>
     <message>
         <location line="+1"/>
+        <source>Structured point clouds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location line="+1"/>
         <location line="+1"/>
+        <source>Triangulation of structured point clouds</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>View triangulation</source>
-        <translation>Vernetzung anzeigen</translation>
+        <translation type="obsolete">Vernetzung anzeigen</translation>
     </message>
 </context>
 <context>
@@ -79,7 +87,7 @@
     <message>
         <location filename="../../FitBSplineSurface.ui" line="+14"/>
         <source>Fit B-Spline surface</source>
-        <translation>B-Spline Fläche annähern</translation>
+        <translation>B-Spline-Fläche annähern</translation>
     </message>
     <message>
         <location line="+6"/>
@@ -131,7 +139,7 @@
     <message>
         <location line="+29"/>
         <source>Length of gradient</source>
-        <translation>Länge des Farbverlaufs</translation>
+        <translation>Länge des Gradienten</translation>
     </message>
     <message>
         <location line="+29"/>

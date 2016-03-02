@@ -1,4 +1,6 @@
-PYSIDE_WRAP_RC(Arch_QRC_SRCS Resources/Arch.qrc)
+IF (BUILD_GUI)
+    PYSIDE_WRAP_RC(Arch_QRC_SRCS Resources/Arch.qrc)
+ENDIF (BUILD_GUI)
 
 SET(Arch_SRCS
     Init.py
@@ -53,10 +55,12 @@ fc_target_copy_resource(Arch
     ${Arch_presets}
 )
 
-fc_target_copy_resource(Arch
-    ${CMAKE_CURRENT_BINARY_DIR}
-    ${CMAKE_BINARY_DIR}/Mod/Arch
-    Arch_rc.py)
+IF (BUILD_GUI)
+    fc_target_copy_resource(Arch
+        ${CMAKE_CURRENT_BINARY_DIR}
+        ${CMAKE_BINARY_DIR}/Mod/Arch
+        Arch_rc.py)
+ENDIF (BUILD_GUI)
 
 INSTALL(
     FILES
@@ -70,5 +74,13 @@ INSTALL(
         Presets
     DESTINATION
         ${CMAKE_INSTALL_DATADIR}/Mod/Arch
-	FILES_MATCHING PATTERN "*.csv*"
+    FILES_MATCHING PATTERN "*.csv*"
 )
+
+SET(ArchGuiIcon_SVG
+    Resources/icons/ArchWorkbench.svg
+)
+
+fc_copy_sources(Arch "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Arch" ${ArchGuiIcon_SVG})
+
+INSTALL(FILES ${ArchGuiIcon_SVG} DESTINATION "${CMAKE_INSTALL_DATADIR}/Mod/Arch/Resources/icons")

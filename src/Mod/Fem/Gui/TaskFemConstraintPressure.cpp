@@ -89,8 +89,9 @@ TaskFemConstraintPressure::TaskFemConstraintPressure(ViewProviderFemConstraintPr
     ui->if_pressure->setMinimum(0);
     ui->if_pressure->setMaximum(FLOAT_MAX);
     //1000 because FreeCAD used kPa internally
-    Base::Quantity p = Base::Quantity(1000 * f, Base::Unit::Stress);
-    ui->if_pressure->setValue(p);
+    //Base::Quantity p = Base::Quantity(1000 * f, Base::Unit::Stress); //We observed a order of magnitude error of 10^3, we think the '*1000' may be the error. Its possibly not the best option to hardcode units if a unit system is already defined
+    Base::Quantity p = Base::Quantity(f, Base::Unit::Stress);//We postulate that the internally defined units will sort out the values by itself.
+	ui->if_pressure->setValue(p);
     ui->lw_references->clear();
     for (std::size_t i = 0; i < Objects.size(); i++) {
         ui->lw_references->addItem(makeRefText(Objects[i], SubElements[i]));

@@ -174,6 +174,15 @@ void ViewProviderFemConstraintHeatflux::updateData(const App::Property* prop)
 			cyl2->height.setValue(scaledheight*0.25);
 			cyl2->radius.setValue(scaledradius*0.375);
 			sep->addChild(cyl2);
+                        //translate postion
+			SoTranslation* trans4 = new SoTranslation();
+			trans4->translation.setValue(SbVec3f(0,-scaledheight*0.375,0));
+			sep->addChild(trans4);
+                        //draw a cylinder
+			SoCylinder* cyl3 = new SoCylinder();
+			cyl3->height.setValue(scaledheight*0.05);
+			cyl3->radius.setValue(scaledradius*1);
+			sep->addChild(cyl3);
 			
 			pShapeSep->addChild(sep);
 			
