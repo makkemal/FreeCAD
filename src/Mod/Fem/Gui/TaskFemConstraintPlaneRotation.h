@@ -51,8 +51,6 @@ public:
     TaskFemConstraintPlaneRotation(ViewProviderFemConstraintPlaneRotation *ConstraintView,QWidget *parent = 0);
     ~TaskFemConstraintPlaneRotation();
     const std::string getReferences() const;
-    double get_parameter1()const;
-    bool get_parameter2()const;
 
 private Q_SLOTS:
     void onReferenceDeleted(void);
