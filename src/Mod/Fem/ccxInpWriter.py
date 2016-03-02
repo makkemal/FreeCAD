@@ -381,8 +381,10 @@ class inp_writer:
                 SH_in_JkgK = SH.getValueAs('J/kg/K')
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
-            mat_name = mat_obj.Material['Name']
+            mat_info_name = mat_obj.Material['Name']
+            mat_name = mat_obj.Name
             # write material properties
+            f.write('**FreeCAD material name: ' + mat_info_name + '\n')
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
             f.write('{}, \n'.format(YM_in_MPa))
