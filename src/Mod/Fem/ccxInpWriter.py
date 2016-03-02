@@ -282,7 +282,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
                 SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_JkgK = SH.getValueAs('J/kg*K')
+                SH_in_JkgK = SH.getValueAs('J/kg/K')
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
             mat_name = mat_obj.Material['Name']
@@ -314,7 +314,7 @@ class inp_writer:
                 if 'beamsection_obj'in ccx_elset:  # beam mesh
                     beamsec_obj = ccx_elset['beamsection_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*BEAM SECTION, ' + elsetdef + material + ', SECTION=RECT\n'
                     setion_geo = str(beamsec_obj.Height.getValueAs('mm')) + ', ' + str(beamsec_obj.Width.getValueAs('mm')) + '\n'
                     f.write(setion_def)
@@ -322,14 +322,14 @@ class inp_writer:
                 elif 'shellthickness_obj'in ccx_elset:  # shell mesh
                     shellth_obj = ccx_elset['shellthickness_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SHELL SECTION, ' + elsetdef + material + '\n'
                     setion_geo = str(shellth_obj.Thickness.getValueAs('mm')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 else:  # solid mesh
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
+                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
                     setion_def = '*SOLID SECTION, ' + elsetdef + material + '\n'
                     f.write(setion_def)
 
