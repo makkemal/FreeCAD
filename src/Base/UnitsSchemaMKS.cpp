@@ -109,13 +109,8 @@ QString UnitsSchemaMKS::schemaTranslate(Base::Quantity quant,double &factor,QStr
             factor = 1.0;
         }
     }else if (unit == Unit::ThermalConductivity){
-        if(UnitValue < 1000000.0){
-            unitString = QString::fromLatin1("W/m/K");
-            factor = 1000.0;
-        }else{
-            unitString = QString::fromLatin1("uW/mm/K");
-            factor = 1.0;
-        }
+        unitString = QString::fromLatin1("W/m/K");
+        factor = 1000.0;
     }else if (unit == Unit::ThermalExpansionCoefficient){
         if(UnitValue < 0.001){
             unitString = QString::fromLatin1("um/m/K");
@@ -125,19 +120,8 @@ QString UnitsSchemaMKS::schemaTranslate(Base::Quantity quant,double &factor,QStr
             factor = 1.0;
         }
     }else if (unit == Unit::SpecificHeat){
-        if(UnitValue < 1000.0){
-            unitString = QString::fromLatin1("uJ/kg/K");
-            factor = 1.0;
-        }else if(UnitValue < 1000000.0){
-            unitString = QString::fromLatin1("mJ/kg/K");
-            factor = 1000.0;
-        }else if(UnitValue < 1000000000.0){
-            unitString = QString::fromLatin1("J/kg/K");
-            factor = 1000000.0;
-        }else{
-            unitString = QString::fromLatin1("kJ/kg/K");
-            factor = 1000000000.0;
-        }
+        unitString = QString::fromLatin1("J/kg/K");
+        factor = 1000000.0;        
     }else{
         // default action for all cases without special treatment:
         unitString = quant.getUnit().getString();

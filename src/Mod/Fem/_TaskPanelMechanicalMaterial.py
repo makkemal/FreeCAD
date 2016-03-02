@@ -140,7 +140,7 @@ class _TaskPanelMechanicalMaterial:
         old_tc = Units.Quantity(self.material['ThermalConductivity'])
         if old_tc != value:
             material = self.material
-            material['ThermalConductivity'] = unicode(value) + " uW/mm/K"
+            material['ThermalConductivity'] = unicode(value) + " W/m/K"
             self.material = material
             
     def tec_changed(self, value):
@@ -156,7 +156,7 @@ class _TaskPanelMechanicalMaterial:
         old_sh = Units.Quantity(self.material['SpecificHeat'])
         if old_sh != value:
             material = self.material
-            material['SpecificHeat'] = unicode(value) + " uJ/kg/K"
+            material['SpecificHeat'] = unicode(value) + " J/kg/K"
             self.material = material
 
     def choose_material(self, index):
