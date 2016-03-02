@@ -347,7 +347,7 @@ class inp_writer:
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('** Young\'s modulus unit is MPa = N/mm2\n')
         f.write('** Thermal conductivity unit is W/m/K = kg*m/K*s^3\n')
-        f.write('** Specific Heat unit is kJ/kg/K \n')
+        f.write('** Specific Heat unit is kJ/kg*K \n')
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties - Currently in SI units: M/kg/s/Kelvin
@@ -385,7 +385,7 @@ class inp_writer:
             # write material properties
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC \n')
-            f.write('{},  '.format(YM_in_MPa))
+            f.write('{}, \n'.format(YM_in_MPa))
             f.write('{0:.3f}\n'.format(PR))
             try:
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
@@ -410,7 +410,7 @@ class inp_writer:
                 if 'beamsection_obj'in ccx_elset:  # beam mesh
                     beamsec_obj = ccx_elset['beamsection_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
+                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
                     setion_def = '*BEAM SECTION, ' + elsetdef + material + ', SECTION=RECT\n'
                     setion_geo = str(beamsec_obj.Height.getValueAs('mm')) + ', ' + str(beamsec_obj.Width.getValueAs('mm')) + '\n'
                     f.write(setion_def)
@@ -418,14 +418,14 @@ class inp_writer:
                 elif 'shellthickness_obj'in ccx_elset:  # shell mesh
                     shellth_obj = ccx_elset['shellthickness_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
+                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
                     setion_def = '*SHELL SECTION, ' + elsetdef + material + '\n'
                     setion_geo = str(shellth_obj.Thickness.getValueAs('mm')) + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
                 else:  # solid mesh
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
-                    material = 'MATERIAL=' + ccx_elset['ccx_mat_name']
+                    material = 'MATERIAL=' + ccx_elset['mat_obj_name']
                     setion_def = '*SOLID SECTION, ' + elsetdef + material + '\n'
                     f.write(setion_def)
 
@@ -799,7 +799,7 @@ class inp_writer:
         if self.analysis_type == "thermomech": #MPH write out nodal temperatures is thermomechanical 
             f.write('U, NT\n')
         else:
-            f.write('U \n')
+            f.write('U\n')
             
         f.write('*EL FILE\n')
         f.write('S, E\n')
