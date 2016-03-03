@@ -99,8 +99,8 @@ bool ViewProviderFemConstraintPlaneRotation::setEdit(int ModNum)
     }
 }
 
-#define HEIGHT (1.5)
-#define RADIUS (0.3)
+#define HEIGHT (0.5)
+#define RADIUS (5)
 //#define USE_MULTIPLE_COPY  //OvG: MULTICOPY fails to update scaled display on initial drawing - so disable
 
 void ViewProviderFemConstraintPlaneRotation::updateData(const App::Property* prop)
@@ -139,47 +139,47 @@ void ViewProviderFemConstraintPlaneRotation::updateData(const App::Property* pro
 			///draw a temp gauge,with sphere and a cylinder
 			//first move to correct postion
 			SoTranslation* trans = new SoTranslation();
-			SbVec3f newPos=base+scaledradius*dir*0.7;
+			SbVec3f newPos=base+scaledradius*dir*0.08;
 			trans->translation.setValue(newPos);
 			sep->addChild(trans);
 			
 			//adjust orientation
 			SoRotation* rot = new SoRotation();
-			rot->rotation.setValue(SbRotation(SbVec3f(0,1,0),dir));
+			rot->rotation.setValue(SbRotation(SbVec3f(1,0,0),dir));
 			sep->addChild(rot);
 			
 			//define color of shape
 			SoMaterial* myMaterial = new SoMaterial;
-			myMaterial->diffuseColor.set1Value(0,SbColor(1,0,0));//RGB
+			myMaterial->diffuseColor.set1Value(0,SbColor(0,1,0));//RGB
 			//myMaterial->diffuseColor.set1Value(1,SbColor(0,0,1));//possible to adjust sides separately
 			sep->addChild(myMaterial);
 			
 			//draw a sphere
-			SoSphere* sph = new SoSphere();
-			sph->radius.setValue(scaledradius*0.75);
-			sep->addChild(sph);
+			//SoSphere* sph = new SoSphere();
+			//sph->radius.setValue(scaledradius*0.75);
+			//sep->addChild(sph);
 			//translate postion
-			SoTranslation* trans2 = new SoTranslation();
-			trans2->translation.setValue(SbVec3f(0,scaledheight*0.375,0));
-			sep->addChild(trans2);
+			//SoTranslation* trans2 = new SoTranslation();
+			//trans2->translation.setValue(SbVec3f(0,scaledheight*0.375,0));
+			//sep->addChild(trans2);
 			//draw a cylinder
 			SoCylinder* cyl = new SoCylinder();
 			cyl->height.setValue(scaledheight*0.5);
 			cyl->radius.setValue(scaledradius*0.375);
 			sep->addChild(cyl);
 			//translate postion
-			SoTranslation* trans3 = new SoTranslation();
-			trans3->translation.setValue(SbVec3f(0,scaledheight*0.375,0));
-			sep->addChild(trans3);
+			//SoTranslation* trans3 = new SoTranslation();
+			//trans3->translation.setValue(SbVec3f(0,scaledheight*0.05,0));
+			//sep->addChild(trans3);
 			//define color of shape
 			SoMaterial *myMaterial2 = new SoMaterial;
 			myMaterial2->diffuseColor.set1Value(0,SbColor(1,1,1));//RGB
 			sep->addChild(myMaterial2);
 			//draw a cylinder
-			SoCylinder* cyl2 = new SoCylinder();
-			cyl2->height.setValue(scaledheight*0.25);
-			cyl2->radius.setValue(scaledradius*0.375);
-			sep->addChild(cyl2);
+			//SoCylinder* cyl2 = new SoCylinder();
+			//cyl2->height.setValue(scaledheight*0.25);
+			//cyl2->radius.setValue(scaledradius*0.375);
+			//sep->addChild(cyl2);
 			
 			pShapeSep->addChild(sep);
 			
