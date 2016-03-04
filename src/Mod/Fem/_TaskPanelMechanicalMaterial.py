@@ -32,7 +32,7 @@ from PySide import QtCore
 
 
 class _TaskPanelMechanicalMaterial:
-    '''The editmode TaskPanel for ThermalMechanicalMaterial objects'''
+    '''The editmode TaskPanel for MechanicalMaterial objects'''
     def __init__(self, obj):
         FreeCADGui.Selection.clearSelection()
         self.sel_server = None
@@ -58,13 +58,18 @@ class _TaskPanelMechanicalMaterial:
         self.import_materials()
         previous_mat_path = self.get_material_path(self.material)
         if not previous_mat_path:
-            FreeCAD.Console.PrintMessage("Previously used material cannot be found in material directories. Using transient material.\n")
             material_name = self.get_material_name(self.material)
             if material_name != 'None':
+                FreeCAD.Console.PrintMessage("Previously used material cannot be found in material directories. Using transient material.\n")
                 self.add_transient_material(self.material)
                 index = self.form.cb_materials.findData(material_name)
             else:
-                index = self.form.cb_materials.findText(material_name)
+                if not self.material:
+                    index = self.form.cb_materials.findText(material_name)
+                else:
+                    FreeCAD.Console.PrintMessage("None material was previously used. Reload values.\n")
+                    self.add_transient_material(self.material)
+                    index = self.form.cb_materials.findData(material_name)
             self.choose_material(index)
         else:
             index = self.form.cb_materials.findData(previous_mat_path)
@@ -112,52 +117,73 @@ class _TaskPanelMechanicalMaterial:
 
     def ym_changed(self, value):
         import Units
+        # FreeCADs standard unit for stress is kPa
         old_ym = Units.Quantity(self.material['YoungsModulus'])
-        if old_ym != value:
-            material = self.material
-            # FreeCAD uses kPa internall for Stress
-            material['YoungsModulus'] = unicode(value) + " kPa"
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_ym) / value < 1 + variation):
+                # YoungsModulus has changed
+                material = self.material
+                material['YoungsModulus'] = unicode(value) + " kPa"
+                self.material = material
 
     def density_changed(self, value):
         import Units
+        # FreeCADs standard unit for density is kg/mm^3
         old_density = Units.Quantity(self.material['Density'])
-        if old_density != value:
-            material = self.material
-            material['Density'] = unicode(value) + " kg/mm^3"
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_density) / value < 1 + variation):
+                # density has changed
+                material = self.material
+                value_in_kg_per_m3 = value * 1e9
+                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3"
+                # material['Density'] = unicode(value) + " kg/mm^3"
+                self.material = material
 
     def pr_changed(self, value):
         import Units
         old_pr = Units.Quantity(self.material['PoissonRatio'])
-        if old_pr != value:
-            material = self.material
-            material['PoissonRatio'] = unicode(value)
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_pr) / value < 1 + variation):
+                # PoissonRatio has changed
+                material = self.material
+                material['PoissonRatio'] = unicode(value)
+                self.material = material
 
     def tc_changed(self, value):
         import Units
         old_tc = Units.Quantity(self.material['ThermalConductivity'])
-        if old_tc != value:
-            material = self.material
-            material['ThermalConductivity'] = unicode(value) + " W/m/K"
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_tc) / value < 1 + variation):
+                #ThermalConductivity has changed
+                material = self.material
+                material['ThermalConductivity'] = unicode(value) + " W/m/K"
+                self.material = material
             
     def tec_changed(self, value):
         import Units
         old_tec = Units.Quantity(self.material['ThermalExpansionCoefficient'])
-        if old_tec != value:
-            material = self.material
-            material['ThermalExpansionCoefficient'] = unicode(value) + " m/m/K"
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_tec) / value < 1 + variation):
+                #ThermalExpansionCoefficient has changed
+                material = self.material
+                material['ThermalExpansionCoefficient'] = unicode(value) + " m/m/K"
+                self.material = material
 
     def sh_changed(self, value):
         import Units
         old_sh = Units.Quantity(self.material['SpecificHeat'])
-        if old_sh != value:
-            material = self.material
-            material['SpecificHeat'] = unicode(value) + " J/kg/K"
-            self.material = material
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_sh) / value < 1 + variation):
+                #SpecificHeat has changed
+                material = self.material
+                material['SpecificHeat'] = unicode(value) + " J/kg/K"
+                self.material = material
 
     def choose_material(self, index):
         if index < 0:
@@ -249,6 +275,7 @@ class _TaskPanelMechanicalMaterial:
         if use_mat_from_config_dir:
             user_mat_dirname = FreeCAD.getUserAppDataDir() + "Materials"
             self.add_mat_dir(user_mat_dirname, ":/icons/preferences-general.svg")
+
         use_mat_from_custom_dir = self.fem_preferences.GetBool("UseMaterialsFromCustomDir", True)
         if use_mat_from_custom_dir:
             custom_mat_dir = self.fem_preferences.GetString("CustomMaterialsDir", "")

@@ -1,9 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
- *            Ruan Olwagen <olwager@eskom.co.za>                           *
- *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2016 Werner Mayer <wmayer[at]users.sourceforge.net>     *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -24,42 +21,27 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#ifndef REEN_SAMPLECONSENSUS_H
+#define REEN_SAMPLECONSENSUS_H
 
-#include "FemConstraint.h"
+#include <Base/Vector3D.h>
+#include <vector>
 
-namespace Fem
+namespace Points {class PointKernel;}
+
+namespace Reen {
+
+class SampleConsensus
 {
-
-class AppFemExport ConstraintTemperature : public Fem::Constraint
-{
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
-
 public:
-    /// Constructor
-    ConstraintTemperature(void);
-    
-    // Read-only (calculated values). These trigger changes in the ViewProvider
-    App::PropertyVectorList Points;
-    App::PropertyVectorList Normals;
+    SampleConsensus(const Points::PointKernel&);
+    double perform(std::vector<float>& parameters);
 
-    //Temperature parameters
-    App::PropertyFloat Temperature; 
-    
-
-    /// recalculate the object
-    virtual App::DocumentObjectExecReturn *execute(void);
-
-    /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const;
-
-protected:
-    virtual void onChanged(const App::Property* prop);
-
+private:
+    const Points::PointKernel& myPoints;
 };
 
-} //namespace Fem
+} // namespace Reen
 
+#endif // REEN_SAMPLECONSENSUS_H
 
-#endif // FEM_CONSTRAINTTEMPERATURE_H
