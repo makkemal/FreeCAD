@@ -164,7 +164,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         self.mesh = None
         ## @var materials
         # set of materials from the analysis. Updated with update_objects
-        # Induvidual materials are "App::MaterialObjectPython" type
+        #  Individual materials are "App::MaterialObjectPython" type
         self.materials = []
         ## @var fixed_constraints
         #  set of fixed constraints from the analysis. Updated with update_objects
@@ -294,6 +294,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
         if self.analysis_type == "thermomech":
+            if not (self.initialtemperature_constraints):
+                message += "No initial-temperature constraint defined in the Analysis\n"
             if not (self.heatflux_constraints or self.temperature_constraints):
                 message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
