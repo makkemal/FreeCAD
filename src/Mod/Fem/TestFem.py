@@ -105,6 +105,9 @@ class FemTest(unittest.TestCase):
         mat['YoungsModulus'] = "200000 MPa"
         mat['PoissonRatio'] = "0.30"
         mat['Density'] = "7900 kg/m^3"
+        mat['ThermalConductivity'] = "43 W/m/K"
+        mat['ThermalExpansionCoefficient'] = "12 um/m/K"
+        mat['SpecificHeat'] = "0.59 J/kg/K"
         self.new_material_object.Material = mat
 
     def create_fixed_constraint(self):
