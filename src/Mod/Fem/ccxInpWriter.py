@@ -41,7 +41,7 @@ class inp_writer:
                  temperature_obj,
                  heatflux_obj,
                  initialtemperature_obj, 
-                 PlaneRotation_obj,
+                 planerotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -56,7 +56,7 @@ class inp_writer:
         self.temperature_objects = temperature_obj
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
-        self.PlaneRotation_objects = PlaneRotation_obj
+        self.planerotation_objects = planerotation_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -84,7 +84,7 @@ class inp_writer:
         inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
-        self.write_node_sets_contraints_PlaneRotation(inpfile,nodelist)
+        self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         self.write_node_sets_constraints_displacement(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
@@ -94,7 +94,7 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
-        self.write_constraints_PlaneRotation(inpfile)
+        self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             self.write_thermomech(inpfile)
@@ -192,13 +192,13 @@ class inp_writer:
             s_line = f.readline()     
         return l_table
     
-    def write_node_sets_contraints_PlaneRotation(self,f,l_table):
+    def write_node_sets_constraints_planerotation(self, f, l_table):
         f.write('\n\n')
         f.write('\n***********************************************************\n')
         f.write('** Node set for PlaneRotation constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        l_Nodes = []
-        for fobj in self.PlaneRotation_objects:
+        l_nodes = []
+        for fobj in self.planerotation_objects:
             fric_obj = fobj['Object']
             f.write('*NSET,NSET=' + fric_obj.Name + '\n')
             for o, elem in fric_obj.References:
@@ -211,53 +211,53 @@ class inp_writer:
                 elif fo.ShapeType == 'Vertex':
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
-                    l_Nodes.append(i)
+                    l_nodes.append(i)
             #Code to extract nodes and coordinates on the PlaneRotation support face
-            Nodes_coords = []
+            nodes_coords = []
             for i in range(len(l_table)):
                 for j in range(len(n)):
-                    if l_table[i][0] == l_Nodes[j]:
-                        Nodes_coords.append(l_table[i])
+                    if l_table[i][0] == l_nodes[j]:
+                        nodes_coords.append(l_table[i])
             #Code to obtain three non-colinear nodes on the PlaneRotation support face
             dum_max = [1,2,3,4,5,6,7,8,0]
-            for i in range(len(Nodes_coords)):
-                for j in range(len(Nodes_coords)-1-i):
-                    x_1 = Nodes_coords[j][1]
-                    x_2 = Nodes_coords[j+1][1]
-                    y_1 = Nodes_coords[j][2]
-                    y_2 = Nodes_coords[j+1][2]
-                    z_1 = Nodes_coords[j][3]
-                    z_2 = Nodes_coords[j+1][3]
-                    node_1 = Nodes_coords[j][0] 
-                    node_2 = Nodes_coords[j+1][0]
+            for i in range(len(nodes_coords)):
+                for j in range(len(nodes_coords)-1-i):
+                    x_1 = nodes_coords[j][1]
+                    x_2 = nodes_coords[j+1][1]
+                    y_1 = nodes_coords[j][2]
+                    y_2 = nodes_coords[j+1][2]
+                    z_1 = nodes_coords[j][3]
+                    z_2 = nodes_coords[j+1][3]
+                    node_1 = nodes_coords[j][0] 
+                    node_2 = nodes_coords[j+1][0]
                     distance = ((x_1-x_2)**2 + (y_1-y_2)**2 + (z_1-z_2)**2)**0.5
                     if distance> dum_max[8]:
                         dum_max = [node_1,x_1,y_1,z_1,node_2,x_2,y_2,z_2,distance]
-            Node_dis = [1,0]
-            for i in range(len(Nodes_coords)):
-               x_1 = dum_max[1]
-               x_2 = dum_max[5]
-               x_3 = Nodes_coords[i][1]
-               y_1 = dum_max[2]
-               y_2 = dum_max[6]
-               y_3 = Nodes_coords[i][2]
-               z_1 = dum_max[3]
-               z_2 = dum_max[7]
-               z_3 = Nodes_coords[i][3]
-               Node_3 = int(Nodes_coords[j][0])
-               distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
-               distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
-               tot = distance_1 + distance_2
-               if tot> Node_dis[1]:
-                   Node_dis = [Node_3,tot]
-            Node_1 = int(dum_max[0])
-            Node_2 = int(dum_max[4])
-            NodePlaneRotation = [Node_1,Node_2,Node_3]
-            for i in range(len(l_Nodes)):
-                if (l_Nodes[i] != Node_1) and (l_Nodes[i] != Node_2) and (l_Nodes[i] != Node_3):
-                    NodePlaneRotation.append(l_Nodes[i])
-            for i in range(len(NodePlaneRotation)):
-                f.write(str(NodePlaneRotation[i]) + ',\n')
+            node_dis = [1,0]
+            for i in range(len(nodes_coords)):
+                x_1 = dum_max[1]
+                x_2 = dum_max[5]
+                x_3 = nodes_coords[i][1]
+                y_1 = dum_max[2]
+                y_2 = dum_max[6]
+                y_3 = nodes_coords[i][2]
+                z_1 = dum_max[3]
+                z_2 = dum_max[7]
+                z_3 = nodes_coords[i][3]
+                node_3 = int(nodes_coords[j][0])
+                distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
+                distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
+                tot = distance_1 + distance_2
+                if tot>node_dis[1]:
+                    node_dis = [node_3,tot]
+            node_1 = int(dum_max[0])
+            node_2 = int(dum_max[4])
+            node_planerotation = [node_1,node_2,node_3]
+            for i in range(len(l_nodes)):
+                if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
+                    node_planerotation.append(l_nodes[i])
+            for i in range(len(node_planerotation)):
+                f.write(str(node_planerotation[i]) + ',\n')
 
 
     def write_node_sets_constraints_displacement(self, f):
@@ -497,11 +497,11 @@ class inp_writer:
                     f.write(disp_obj_name + ',6,6,' + str(disp_obj['Object'].zRotation) + '\n')
         f.write('\n')
 
-    def write_constraints_PlaneRotation(self,f):
+    def write_constraints_planerotation(self,f):
         f.write('\n***********************************************************\n')
         f.write('** PlaneRotation Constaints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        for fric_object in self.PlaneRotation_objects:
+        for fric_object in self.planerotation_objects:
             fric_obj_name = fric_object['Object'].Name
             f.write('*MPC\n')
             f.write('PLANE,' + fric_obj_name  +'\n')
