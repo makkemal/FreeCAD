@@ -29,7 +29,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
 
     finished = QtCore.Signal(int)
 
-    known_analysis_types = ['static', 'frequency', 'thermomech']
     known_analysis_types = ["static", "frequency", "thermomech"]
 
     ## The constructor
@@ -324,7 +323,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
-                                       self.displacement_constraints, #OvG: Stick to naming convention
+                                       self.displacement_constraints,  # OvG: Stick to naming convention
                                        self.displacement_constraints,  # OvG: Stick to naming convention
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
