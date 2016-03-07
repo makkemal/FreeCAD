@@ -322,7 +322,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints,  # OvG: Stick to naming convention
-                                       self.displacement_constraints,  # OvG: Stick to naming convention
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
                                        self.initialtemperature_constraints,

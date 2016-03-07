@@ -172,7 +172,7 @@ class inp_writer:
                 for i in n:
                     f.write(str(i) + ',\n')
 
-    def write_node_sets_constraints_displacement(self, f):
+    def get_all_nodes(self, f):
         s_line = f.readline()
         s_line = f.readline()
         l_table = []
