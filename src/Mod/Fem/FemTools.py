@@ -237,7 +237,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 heatflux_constraint_dict = {}
                 heatflux_constraint_dict['Object'] = m
                 self.heatflux_constraints.append(heatflux_constraint_dict)
-            elif m.isDerivedFrom("Fem::ConstraintDisplacement"): #OvG: Replacement reference to C++ implementation of Displacement Constraint
             elif m.isDerivedFrom("Fem::ConstraintDisplacement"):  # OvG: Replacement reference to C++ implementation of Displacement Constraint
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
@@ -254,7 +253,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 PlaneRotation_constraint_dict = {}
                 PlaneRotation_constraint_dict['Object'] = m
                 self.PlaneRotation_constraints.append(PlaneRotation_constraint_dict)
-            elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
             elif hasattr(m, "Proxy") and m.Proxy.Type == "FemBeamSection":
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
