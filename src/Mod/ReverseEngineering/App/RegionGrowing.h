@@ -1,9 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
- *            Ruan Olwagen <olwager@eskom.co.za>                           *
- *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2016 Werner Mayer <wmayer[at]users.sourceforge.net>     *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -24,42 +21,36 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#ifndef REEN_REGIONGROWING_H
+#define REEN_REGIONGROWING_H
 
-#include "FemConstraint.h"
+#include <Base/Vector3D.h>
+#include <vector>
+#include <list>
 
-namespace Fem
+namespace Points {class PointKernel;}
+
+namespace Reen {
+
+class RegionGrowing
 {
-
-class AppFemExport ConstraintTemperature : public Fem::Constraint
-{
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
-
 public:
-    /// Constructor
-    ConstraintTemperature(void);
-    
-    // Read-only (calculated values). These trigger changes in the ViewProvider
-    App::PropertyVectorList Points;
-    App::PropertyVectorList Normals;
+    RegionGrowing(const Points::PointKernel&, std::list<std::vector<int> >&);
+    /** \brief Set the number of k nearest neighbors to use for the normal estimation.
+      * \param[in] k the number of k-nearest neighbors
+      */
+    void perform(int ksearch);
+    /** \brief Pass the normals to the points given in the constructor.
+      * \param[in] normals the normals to the given points.
+      */
+    void perform(const std::vector<Base::Vector3f>& normals);
 
-    //Temperature parameters
-    App::PropertyFloat Temperature; 
-    
-
-    /// recalculate the object
-    virtual App::DocumentObjectExecReturn *execute(void);
-
-    /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const;
-
-protected:
-    virtual void onChanged(const App::Property* prop);
-
+private:
+    const Points::PointKernel& myPoints;
+    std::list<std::vector<int> >& myClusters;
 };
 
-} //namespace Fem
+} // namespace Reen
 
+#endif // REEN_REGIONGROWING_H
 
-#endif // FEM_CONSTRAINTTEMPERATURE_H

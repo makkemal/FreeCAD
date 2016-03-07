@@ -30,6 +30,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
     finished = QtCore.Signal(int)
 
     known_analysis_types = ['static', 'frequency', 'thermomech']
+    known_analysis_types = ["static", "frequency", "thermomech"]
 
     ## The constructor
     #  @param analysis - analysis object to be used as the core object.
@@ -163,7 +164,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         self.mesh = None
         ## @var materials
         # set of materials from the analysis. Updated with update_objects
-        # Induvidual materials are "App::MaterialObjectPython" type
+        #  Individual materials are "App::MaterialObjectPython" type
         self.materials = []
         ## @var fixed_constraints
         #  set of fixed constraints from the analysis. Updated with update_objects
@@ -238,6 +239,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 heatflux_constraint_dict['Object'] = m
                 self.heatflux_constraints.append(heatflux_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintDisplacement"): #OvG: Replacement reference to C++ implementation of Displacement Constraint
+            elif m.isDerivedFrom("Fem::ConstraintDisplacement"):  # OvG: Replacement reference to C++ implementation of Displacement Constraint
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
                 self.displacement_constraints.append(displacement_constraint_dict)
@@ -254,6 +256,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 PlaneRotation_constraint_dict['Object'] = m
                 self.PlaneRotation_constraints.append(PlaneRotation_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
+            elif hasattr(m, "Proxy") and m.Proxy.Type == "FemBeamSection":
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
                 self.beam_sections.append(beam_section_dict)
@@ -291,6 +294,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
         if self.analysis_type == "thermomech":
+            if not (self.initialtemperature_constraints):
+                message += "No initial-temperature constraint defined in the Analysis\n"
             if not (self.heatflux_constraints or self.temperature_constraints):
                 message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
@@ -320,6 +325,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
                                        self.displacement_constraints, #OvG: Stick to naming convention
+                                       self.displacement_constraints,  # OvG: Stick to naming convention
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
                                        self.initialtemperature_constraints,

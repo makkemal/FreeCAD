@@ -45,7 +45,7 @@ frequency_base_name = 'cube_frequency'
 thermomech_base_name = 'cube_thermomech'
 static_analysis_dir = temp_dir + '/FEM_static'
 frequency_analysis_dir = temp_dir + '/FEM_frequency'
-thermomech_analysis_dir = temp_dir + '/FEM_thermomech' #OvG: temp directory for thermo mechanical analysis
+thermomech_analysis_dir = temp_dir + '/FEM_thermomech' # OvG: temp directory for thermo mechanical analysis
 static_analysis_inp_file = test_file_dir + '/' + static_base_name + '.inp'
 static_expected_values = test_file_dir + "/cube_static_expected_values"
 frequency_analysis_inp_file = test_file_dir + '/' + frequency_base_name + '.inp'
@@ -105,6 +105,9 @@ class FemTest(unittest.TestCase):
         mat['YoungsModulus'] = "200000 MPa"
         mat['PoissonRatio'] = "0.30"
         mat['Density'] = "7900 kg/m^3"
+        mat['ThermalConductivity'] = "43 W/m/K"
+        mat['ThermalExpansionCoefficient'] = "12 um/m/K"
+        mat['SpecificHeat'] = "0.59 J/kg/K"
         self.new_material_object.Material = mat
 
     def create_fixed_constraint(self):
@@ -146,7 +149,7 @@ class FemTest(unittest.TestCase):
         self.displacement_constraint.rotyFix=1
         self.displacement_constraint.rotzFix=1
        
-    #OvG TODO: Implement create heatflux constraint
+    # OvG TODO: Implement create heatflux constraint
     #def create_heatflux_constraint(self):
     #    self.heatflux_constraint = self.active_doc.addObject("Fem::ConstraintHeatflux", "FemConstraintHeatflux")
     #    self.heatflux_constraint.References = [(self.box, "Face2")]
@@ -240,7 +243,7 @@ class FemTest(unittest.TestCase):
         self.assertTrue(self.displacement_constraint, "FemTest of new displacement constraint failed")
         self.analysis.Member = self.analysis.Member + [self.displacement_constraint]
         
-        #OvG TODO: Implement test for heatflux constraint
+        # OvG TODO: Implement test for heatflux constraint
         #fcc_print('Checking FEM new heatflux constraint...')
         #self.create_heatflux_constraint()
         #self.assertTrue(self.heatflux_constraint, "FemTest of new heatflux constraint failed")

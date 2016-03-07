@@ -1,9 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
- *            Ruan Olwagen <olwager@eskom.co.za>                           *
- *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -36,38 +33,39 @@
 #include <gp_Pnt.hxx>
 #endif
 
-#include "FemConstraintTemperature.h"
+#include "FemConstraintTransform.h"
 
 using namespace Fem;
 
-PROPERTY_SOURCE(Fem::ConstraintTemperature, Fem::Constraint);
+PROPERTY_SOURCE(Fem::ConstraintTransform, Fem::Constraint);
 
-ConstraintTemperature::ConstraintTemperature()
+ConstraintTransform::ConstraintTransform()
 {
-    ADD_PROPERTY(Temperature,(300.0)); 
+/*Note: Initialise parameters here*/
+    /* ADD_PROPERTY(parameter1,(0.0)); //numeric value, 0.0
+    ADD_PROPERTY(parameter2,(0));//false */
+/* */
     
-    ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
+    ADD_PROPERTY_TYPE(Points,(Base::Vector3d()),"ConstraintTransform",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                       "Points where symbols are drawn");
-    ADD_PROPERTY_TYPE(Normals,(Base::Vector3d()),"ConstraintTemperature",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
+    ADD_PROPERTY_TYPE(Normals,(Base::Vector3d()),"ConstraintTransform",App::PropertyType(App::Prop_ReadOnly|App::Prop_Output),
                                                                              "Normals where symbols are drawn");
     Points.setValues(std::vector<Base::Vector3d>());
     Normals.setValues(std::vector<Base::Vector3d>());
 }
 
-App::DocumentObjectExecReturn *ConstraintTemperature::execute(void)
+App::DocumentObjectExecReturn *ConstraintTransform::execute(void)
 {
     return Constraint::execute();
 }
 
-const char* ConstraintTemperature::getViewProviderName(void) const
+const char* ConstraintTransform::getViewProviderName(void) const
 {
-	return "FemGui::ViewProviderFemConstraintTemperature";
+	return "FemGui::ViewProviderFemConstraintTransform";
 }
 
-void ConstraintTemperature::onChanged(const App::Property* prop)
+void ConstraintTransform::onChanged(const App::Property* prop)
 {
-    // Note: If we call this at the end, then the arrows are not oriented correctly initially
-    // because the NormalDirection has not been calculated yet
     Constraint::onChanged(prop);
 
     if (prop == &References) {

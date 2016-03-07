@@ -70,7 +70,7 @@ class _TaskPanelFemSolverCalculix:
         QtCore.QObject.connect(self.form.pb_run_ccx, QtCore.SIGNAL("clicked()"), self.runCalculix)
         QtCore.QObject.connect(self.form.rb_static_analysis, QtCore.SIGNAL("clicked()"), self.select_static_analysis)
         QtCore.QObject.connect(self.form.rb_frequency_analysis, QtCore.SIGNAL("clicked()"), self.select_frequency_analysis)
-        QtCore.QObject.connect(self.form.rb_thermomech_analysis, QtCore.SIGNAL("clicked()"), self.select_thermomech_analysis) #OvG: Add thermo mechanical analysis
+        QtCore.QObject.connect(self.form.rb_thermomech_analysis, QtCore.SIGNAL("clicked()"), self.select_thermomech_analysis) # OvG: Add thermo mechanical analysis
 
         QtCore.QObject.connect(self.Calculix, QtCore.SIGNAL("started()"), self.calculixStarted)
         QtCore.QObject.connect(self.Calculix, QtCore.SIGNAL("stateChanged(QProcess::ProcessState)"), self.calculixStateChanged)

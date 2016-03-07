@@ -24,42 +24,67 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#ifndef GUI_TASKVIEW_TaskFemConstraintTransform_H
+#define GUI_TASKVIEW_TaskFemConstraintTransform_H
 
-#include "FemConstraint.h"
+#include <Gui/TaskView/TaskView.h>
+#include <Gui/Selection.h>
+#include <Gui/TaskView/TaskDialog.h>
+#include <Base/Quantity.h>
 
-namespace Fem
+#include "TaskFemConstraint.h"
+#include "ViewProviderFemConstraintTransform.h"
+
+#include <QObject>
+#include <Base/Console.h>
+#include <App/DocumentObject.h>
+#include <QListWidgetItem>
+
+class Ui_TaskFemConstraintTransform;
+
+namespace FemGui {
+class TaskFemConstraintTransform : public TaskFemConstraint
 {
-
-class AppFemExport ConstraintTemperature : public Fem::Constraint
-{
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
+    Q_OBJECT
 
 public:
-    /// Constructor
-    ConstraintTemperature(void);
+    TaskFemConstraintTransform(ViewProviderFemConstraintTransform *ConstraintView,QWidget *parent = 0);
+    ~TaskFemConstraintTransform();
+    const std::string getReferences() const;
+    double get_xrotation()const;
+	double get_yrotation()const;
+	double get_zrotation()const;
+    bool get_cartesian()const;
+	bool get_cylindrical()const;
+
+private Q_SLOTS:
+    void onReferenceDeleted(void);
     
-    // Read-only (calculated values). These trigger changes in the ViewProvider
-    App::PropertyVectorList Points;
-    App::PropertyVectorList Normals;
-
-    //Temperature parameters
-    App::PropertyFloat Temperature; 
-    
-
-    /// recalculate the object
-    virtual App::DocumentObjectExecReturn *execute(void);
-
-    /// returns the type name of the ViewProvider
-    const char* getViewProviderName(void) const;
+    void addToSelection();
+    void removeFromSelection();
+    void setSelection(QListWidgetItem* item);
 
 protected:
-    virtual void onChanged(const App::Property* prop);
+    void changeEvent(QEvent *e);
 
+private:
+    //void onSelectionChanged(const Gui::SelectionChanges& msg);
+    void updateUI();
+    Ui_TaskFemConstraintTransform* ui;
+    
 };
 
-} //namespace Fem
+class TaskDlgFemConstraintTransform : public TaskDlgFemConstraint
+{
+    Q_OBJECT
 
+public:
+    TaskDlgFemConstraintTransform(ViewProviderFemConstraintTransform *ConstraintView);
+    void open();
+    bool accept();
+    bool reject();
+};
 
-#endif // FEM_CONSTRAINTTEMPERATURE_H
+} //namespace FemGui
+
+#endif // GUI_TASKVIEW_TaskFemConstraintTransform_H

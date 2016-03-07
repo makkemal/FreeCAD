@@ -1,9 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
- *            Ruan Olwagen <olwager@eskom.co.za>                           *
- *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender[at]users.sourceforge.net>     *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *
@@ -24,29 +21,38 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTTEMPERATURE_H
-#define FEM_CONSTRAINTTEMPERATURE_H
+#ifndef FEM_CONSTRAINTTransform_H
+#define FEM_CONSTRAINTTransform_H
 
 #include "FemConstraint.h"
 
 namespace Fem
 {
 
-class AppFemExport ConstraintTemperature : public Fem::Constraint
+class AppFemExport ConstraintTransform : public Fem::Constraint
 {
-    PROPERTY_HEADER(Fem::ConstraintTemperature);
+    PROPERTY_HEADER(Fem::ConstraintTransform);
 
 public:
     /// Constructor
-    ConstraintTemperature(void);
+    ConstraintTransform(void);
     
     // Read-only (calculated values). These trigger changes in the ViewProvider
     App::PropertyVectorList Points;
     App::PropertyVectorList Normals;
-
-    //Temperature parameters
-    App::PropertyFloat Temperature; 
     
+/*Note*/
+    //Constraint parameters
+    /******
+     * Add the constraint parameters here, the variables or data 
+     * that needs to be eventually send over to the calculix input file. 
+     * This is only the definitions of the variables
+     ******/
+    //ex.
+    App::PropertyFloat parameter1; //numeric decimal value
+    App::PropertyBool parameter2;  //boolean value
+    //etc
+/* */
 
     /// recalculate the object
     virtual App::DocumentObjectExecReturn *execute(void);
@@ -62,4 +68,4 @@ protected:
 } //namespace Fem
 
 
-#endif // FEM_CONSTRAINTTEMPERATURE_H
+#endif // FEM_CONSTRAINTTransform_H
