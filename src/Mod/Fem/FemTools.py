@@ -29,7 +29,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
 
     finished = QtCore.Signal(int)
 
-    known_analysis_types = ['static', 'frequency', 'thermomech']
     known_analysis_types = ["static", "frequency", "thermomech"]
 
     ## The constructor
@@ -164,7 +163,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         self.mesh = None
         ## @var materials
         # set of materials from the analysis. Updated with update_objects
-        # Induvidual materials are "App::MaterialObjectPython" type
+        #  Individual materials are "App::MaterialObjectPython" type
         self.materials = []
         ## @var fixed_constraints
         #  set of fixed constraints from the analysis. Updated with update_objects
@@ -202,10 +201,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of initial temperatures for the analysis. Updated with update_objects
         # Individual initialTemperature_constraints are Proxy.Type "FemConstraintInitialTemperature"
         self.initialtemperature_constraints = []
-        ## @var PlaneRotation_constraints
-        #  set of PlaneRotation constraints from the analysis. Updated with update_objects
+        ## @var planerotation_constraints
+        #  set of plane rotation constraints from the analysis. Updated with update_objects
         #  Individual constraints are "Fem::ConstraintPlaneRotation" type
-        self.PlaneRotation_constraints = []
+        self.planerotation_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -238,7 +237,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 heatflux_constraint_dict = {}
                 heatflux_constraint_dict['Object'] = m
                 self.heatflux_constraints.append(heatflux_constraint_dict)
-            elif m.isDerivedFrom("Fem::ConstraintDisplacement"): #OvG: Replacement reference to C++ implementation of Displacement Constraint
             elif m.isDerivedFrom("Fem::ConstraintDisplacement"):  # OvG: Replacement reference to C++ implementation of Displacement Constraint
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
@@ -252,10 +250,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 initialtemperature_constraint_dict['Object'] = m
                 self.initialtemperature_constraints.append(initialtemperature_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintPlaneRotation"):
-                PlaneRotation_constraint_dict = {}
-                PlaneRotation_constraint_dict['Object'] = m
-                self.PlaneRotation_constraints.append(PlaneRotation_constraint_dict)
-            elif hasattr(m, "Proxy") and m.Proxy.Type == 'FemBeamSection':
+                planerotation_constraint_dict = {}
+                planerotation_constraint_dict['Object'] = m
+                self.planerotation_constraints.append(planerotation_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == "FemBeamSection":
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -294,6 +291,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
         if self.analysis_type == "thermomech":
+            if not (self.initialtemperature_constraints):
+                message += "No initial-temperature constraint defined in the Analysis\n"
             if not (self.heatflux_constraints or self.temperature_constraints):
                 message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
@@ -322,12 +321,11 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             inp_writer = iw.inp_writer(self.analysis, self.mesh, self.materials,
                                        self.fixed_constraints,
                                        self.force_constraints, self.pressure_constraints,
-                                       self.displacement_constraints, #OvG: Stick to naming convention
                                        self.displacement_constraints,  # OvG: Stick to naming convention
                                        self.temperature_constraints,
                                        self.heatflux_constraints,
                                        self.initialtemperature_constraints,
-                                       self.PlaneRotation_constraints,
+                                       self.planerotation_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)

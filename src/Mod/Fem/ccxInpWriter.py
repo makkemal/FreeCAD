@@ -41,7 +41,7 @@ class inp_writer:
                  temperature_obj,
                  heatflux_obj,
                  initialtemperature_obj, 
-                 PlaneRotation_obj,
+                 planerotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -56,7 +56,7 @@ class inp_writer:
         self.temperature_objects = temperature_obj
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
-        self.PlaneRotation_objects = PlaneRotation_obj
+        self.planerotation_objects = planerotation_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -72,6 +72,7 @@ class inp_writer:
         self.fc_ver = FreeCAD.Version()
         self.ccx_eall = 'Eall'
         self.ccx_elsets = []
+        self.fem_mesh_nodes = {}
 
     def write_calculix_input_file(self):
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
@@ -83,7 +84,7 @@ class inp_writer:
         inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
-        self.write_node_sets_contraints_PlaneRotation(inpfile,nodelist)
+        self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         self.write_node_sets_constraints_displacement(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
@@ -93,7 +94,7 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
-        self.write_constraints_PlaneRotation(inpfile)
+        self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             self.write_thermomech(inpfile)
@@ -156,6 +157,7 @@ class inp_writer:
         f.write('\n***********************************************************\n')
         f.write('** Node set for fixed constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        g = open("conflict.txt", 'w')                
         for fobj in self.fixed_objects:
             fix_obj = fobj['Object']
             f.write('*NSET,NSET=' + fix_obj.Name + '\n')
@@ -170,8 +172,10 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+                    g.write(str(i) + '\n')
+        g.close()
 
-    def get_all_nodes(self,f):
+    def get_all_nodes(self, f):
         s_line = f.readline()
         s_line = f.readline()
         l_table = []
@@ -191,13 +195,23 @@ class inp_writer:
             s_line = f.readline()     
         return l_table
     
-    def write_node_sets_contraints_PlaneRotation(self,f,l_table):
+    def write_node_sets_constraints_planerotation(self, f, l_table):
+        g = open("conflict.txt", 'r')
+        testt = g.readline()
+        conflict_nodes = []        
+        while testt != "":
+            testt = int(testt)
+            conflict_nodes.append(testt)
+            testt = g.readline()
+        
+        g.close() 
+            
         f.write('\n\n')
         f.write('\n***********************************************************\n')
         f.write('** Node set for PlaneRotation constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        l_Nodes = []
-        for fobj in self.PlaneRotation_objects:
+        for fobj in self.planerotation_objects:
+            l_nodes = []            
             fric_obj = fobj['Object']
             f.write('*NSET,NSET=' + fric_obj.Name + '\n')
             for o, elem in fric_obj.References:
@@ -210,59 +224,74 @@ class inp_writer:
                 elif fo.ShapeType == 'Vertex':
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
-                    l_Nodes.append(i)
+                    l_nodes.append(i)
             #Code to extract nodes and coordinates on the PlaneRotation support face
-            Nodes_coords = []
+            nodes_coords = []
             for i in range(len(l_table)):
                 for j in range(len(n)):
-                    if l_table[i][0] == l_Nodes[j]:
-                        Nodes_coords.append(l_table[i])
+                    if l_table[i][0] == l_nodes[j]:
+                        nodes_coords.append(l_table[i])
             #Code to obtain three non-colinear nodes on the PlaneRotation support face
             dum_max = [1,2,3,4,5,6,7,8,0]
-            for i in range(len(Nodes_coords)):
-                for j in range(len(Nodes_coords)-1-i):
-                    x_1 = Nodes_coords[j][1]
-                    x_2 = Nodes_coords[j+1][1]
-                    y_1 = Nodes_coords[j][2]
-                    y_2 = Nodes_coords[j+1][2]
-                    z_1 = Nodes_coords[j][3]
-                    z_2 = Nodes_coords[j+1][3]
-                    node_1 = Nodes_coords[j][0] 
-                    node_2 = Nodes_coords[j+1][0]
+            for i in range(len(nodes_coords)):
+                for j in range(len(nodes_coords)-1-i):
+                    x_1 = nodes_coords[j][1]
+                    x_2 = nodes_coords[j+1][1]
+                    y_1 = nodes_coords[j][2]
+                    y_2 = nodes_coords[j+1][2]
+                    z_1 = nodes_coords[j][3]
+                    z_2 = nodes_coords[j+1][3]
+                    node_1 = nodes_coords[j][0] 
+                    node_2 = nodes_coords[j+1][0]
                     distance = ((x_1-x_2)**2 + (y_1-y_2)**2 + (z_1-z_2)**2)**0.5
                     if distance> dum_max[8]:
                         dum_max = [node_1,x_1,y_1,z_1,node_2,x_2,y_2,z_2,distance]
-            Node_dis = [1,0]
-            for i in range(len(Nodes_coords)):
-               x_1 = dum_max[1]
-               x_2 = dum_max[5]
-               x_3 = Nodes_coords[i][1]
-               y_1 = dum_max[2]
-               y_2 = dum_max[6]
-               y_3 = Nodes_coords[i][2]
-               z_1 = dum_max[3]
-               z_2 = dum_max[7]
-               z_3 = Nodes_coords[i][3]
-               Node_3 = int(Nodes_coords[j][0])
-               distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
-               distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
-               tot = distance_1 + distance_2
-               if tot> Node_dis[1]:
-                   Node_dis = [Node_3,tot]
-            Node_1 = int(dum_max[0])
-            Node_2 = int(dum_max[4])
-            NodePlaneRotation = [Node_1,Node_2,Node_3]
-            for i in range(len(l_Nodes)):
-                if (l_Nodes[i] != Node_1) and (l_Nodes[i] != Node_2) and (l_Nodes[i] != Node_3):
-                    NodePlaneRotation.append(l_Nodes[i])
-            for i in range(len(NodePlaneRotation)):
-                f.write(str(NodePlaneRotation[i]) + ',\n')
-
+            node_dis = [1,0]
+            for i in range(len(nodes_coords)):
+                x_1 = dum_max[1]
+                x_2 = dum_max[5]
+                x_3 = nodes_coords[i][1]
+                y_1 = dum_max[2]
+                y_2 = dum_max[6]
+                y_3 = nodes_coords[i][2]
+                z_1 = dum_max[3]
+                z_2 = dum_max[7]
+                z_3 = nodes_coords[i][3]
+                node_3 = int(nodes_coords[j][0])
+                distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
+                distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
+                tot = distance_1 + distance_2
+                if tot>node_dis[1]:
+                    node_dis = [node_3,tot]
+            node_1 = int(dum_max[0])
+            node_2 = int(dum_max[4])
+            node_planerotation = [node_1,node_2,node_3]
+            for i in range(len(l_nodes)):
+                if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
+                    node_planerotation.append(l_nodes[i])
+            
+            
+            MPC_nodes = []
+            for i in range(len(node_planerotation)):
+                cnt = 0
+                for j in range(len(conflict_nodes)):
+                    if node_planerotation[i] == conflict_nodes[j]:
+                        cnt = cnt+1
+                if cnt == 0:
+                    MPC = node_planerotation[i]                    
+                    MPC_nodes.append(MPC)
+            
+            for i in range(len(MPC_nodes)):
+                f.write(str(MPC_nodes[i]) + ',\n')
+            
+        
+        
 
     def write_node_sets_constraints_displacement(self, f):
         f.write('\n***********************************************************\n')
         f.write('** Node sets for prescribed displacement constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        g = open("conflict.txt", 'a') 
         for fobj in self.displacement_objects:
             disp_obj = fobj['Object']
             f.write('*NSET,NSET=' + disp_obj.Name + '\n')
@@ -277,6 +306,9 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+                    g.write(str(i) + '\n')
+        g.close()
+
 
     def write_temperature_nodes(self,f): #Fixed temperature
         f.write('\n***********************************************************\n')
@@ -496,11 +528,11 @@ class inp_writer:
                     f.write(disp_obj_name + ',6,6,' + str(disp_obj['Object'].zRotation) + '\n')
         f.write('\n')
 
-    def write_constraints_PlaneRotation(self,f):
+    def write_constraints_planerotation(self,f):
         f.write('\n***********************************************************\n')
         f.write('** PlaneRotation Constaints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        for fric_object in self.PlaneRotation_objects:
+        for fric_object in self.planerotation_objects:
             fric_obj_name = fric_object['Object'].Name
             f.write('*MPC\n')
             f.write('PLANE,' + fric_obj_name  +'\n')
@@ -508,39 +540,38 @@ class inp_writer:
         
     
 
-    def write_displacement(self,f):
         f.write('\n***********************************************************\n')
         f.write('** Displacement constraint applied\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for disp_obj in self.displacement_objects:
             disp_obj_name = disp_obj['Object'].Name
             f.write('*BOUNDARY\n')
-            if disp_obj['Object'].xFix == True:
+            if disp_obj['Object'].xFix:
                 f.write(disp_obj_name + ',1\n')
-            elif disp_obj['Object'].xFree == False:
-                f.write(disp_obj_name + ',1,1,'+str(disp_obj['Object'].xDisplacement)+'\n')
-            if disp_obj['Object'].yFix == True:
+            elif not disp_obj['Object'].xFree:
+                f.write(disp_obj_name + ',1,1,' + str(disp_obj['Object'].xDisplacement) + '\n')
+            if disp_obj['Object'].yFix:
                 f.write(disp_obj_name + ',2\n')
-            elif disp_obj['Object'].yFree == False:
-                f.write(disp_obj_name + ',2,2,'+str(disp_obj['Object'].yDisplacement)+'\n')
-            if disp_obj['Object'].zFix == True:
+            elif not disp_obj['Object'].yFree:
+                f.write(disp_obj_name + ',2,2,' + str(disp_obj['Object'].yDisplacement) + '\n')
+            if disp_obj['Object'].zFix:
                 f.write(disp_obj_name + ',3\n')
-            elif disp_obj['Object'].zFree == False:
-                f.write(disp_obj_name + ',3,3,'+str(disp_obj['Object'].zDisplacement)+'\n')
+            elif not disp_obj['Object'].zFree:
+                f.write(disp_obj_name + ',3,3,' + str(disp_obj['Object'].zDisplacement) + '\n')
 
             if self.beamsection_objects or self.shellthickness_objects:
-                if disp_obj['Object'].rotxFix == True:
+                if disp_obj['Object'].rotxFix:
                     f.write(disp_obj_name + ',4\n')
-                elif disp_obj['Object'].rotxFree == False:
-                    f.write(disp_obj_name + ',4,4,'+str(disp_obj['Object'].xRotation)+'\n')
-                if disp_obj['Object'].rotyFix == True:
+                elif not disp_obj['Object'].rotxFree:
+                    f.write(disp_obj_name + ',4,4,' + str(disp_obj['Object'].xRotation) + '\n')
+                if disp_obj['Object'].rotyFix:
                     f.write(disp_obj_name + ',5\n')
-                elif disp_obj['Object'].rotyFree == False:
-                    f.write(disp_obj_name + ',5,5,'+str(disp_obj['Object'].yRotation)+'\n')
-                if disp_obj['Object'].rotzFix == True:
+                elif not disp_obj['Object'].rotyFree:
+                    f.write(disp_obj_name + ',5,5,' + str(disp_obj['Object'].yRotation) + '\n')
+                if disp_obj['Object'].rotzFix:
                     f.write(disp_obj_name + ',6\n')
-                elif disp_obj['Object'].rotzFree == False:
-                    f.write(disp_obj_name + ',6,6,'+str(disp_obj['Object'].zRotation)+'\n')
+                elif not disp_obj['Object'].rotzFree:
+                    f.write(disp_obj_name + ',6,6,' + str(disp_obj['Object'].zRotation) + '\n')
         f.write('\n')
 
     def write_temperature(self,f):
@@ -1103,14 +1134,16 @@ class inp_writer:
         #  [ (nodeID, length), ... , (nodeID, length) ]  some nodes will have more than one entry
         node_length_table = []
         mesh_edge_length = 0
+        if not self.fem_mesh_nodes:
+            self.fem_mesh_nodes = self.mesh_object.FemMesh.Nodes
         # print(len(edge_table))
         for me in edge_table:
             if len(edge_table[me]) == 2:  # 2 node mesh edge
                 # end_node_length = mesh_edge_length / 2
                 #    ______
                 #  P1      P2
-                P1 = self.mesh_object.FemMesh.Nodes[edge_table[me][0]]
-                P2 = self.mesh_object.FemMesh.Nodes[edge_table[me][1]]
+                P1 = self.fem_mesh_nodes[edge_table[me][0]]
+                P2 = self.fem_mesh_nodes[edge_table[me][1]]
                 edge_vec = P2 - P1
                 mesh_edge_length = edge_vec.Length
                 # print(mesh_edge_length)
@@ -1123,9 +1156,9 @@ class inp_writer:
                 # middle_node_length = mesh_face_area * 2 / 3
                 #   _______ _______
                 # P1       P3      P2
-                P1 = self.mesh_object.FemMesh.Nodes[edge_table[me][0]]
-                P2 = self.mesh_object.FemMesh.Nodes[edge_table[me][1]]
-                P3 = self.mesh_object.FemMesh.Nodes[edge_table[me][2]]
+                P1 = self.fem_mesh_nodes[edge_table[me][0]]
+                P2 = self.fem_mesh_nodes[edge_table[me][1]]
+                P3 = self.fem_mesh_nodes[edge_table[me][2]]
                 edge_vec1 = P3 - P1
                 edge_vec2 = P2 - P3
                 mesh_edge_length = edge_vec1.Length + edge_vec2.Length
@@ -1147,6 +1180,8 @@ class inp_writer:
         #  [ (nodeID,Area), ... , (nodeID,Area) ]  some nodes will have more than one entry
         node_area_table = []
         mesh_face_area = 0
+        if not self.fem_mesh_nodes:
+            self.fem_mesh_nodes = self.mesh_object.FemMesh.Nodes
         for mf in face_table:
             if len(face_table[mf]) == 3:  # 3 node mesh face triangle
                 # corner_node_area = mesh_face_area / 3.0
@@ -1155,9 +1190,9 @@ class inp_writer:
                 #     /  \
                 #    /____\
                 #  P1      P2
-                P1 = self.mesh_object.FemMesh.Nodes[face_table[mf][0]]
-                P2 = self.mesh_object.FemMesh.Nodes[face_table[mf][1]]
-                P3 = self.mesh_object.FemMesh.Nodes[face_table[mf][2]]
+                P1 = self.fem_mesh_nodes[face_table[mf][0]]
+                P2 = self.fem_mesh_nodes[face_table[mf][1]]
+                P3 = self.fem_mesh_nodes[face_table[mf][2]]
 
                 mesh_face_area = getTriangleArea(P1, P2, P3)
                 corner_node_area = mesh_face_area / 3.0
@@ -1181,12 +1216,12 @@ class inp_writer:
                 #    /t1 \  /t2 \
                 #   /_____\/_____\
                 # P1      P4      P2
-                P1 = self.mesh_object.FemMesh.Nodes[face_table[mf][0]]
-                P2 = self.mesh_object.FemMesh.Nodes[face_table[mf][1]]
-                P3 = self.mesh_object.FemMesh.Nodes[face_table[mf][2]]
-                P4 = self.mesh_object.FemMesh.Nodes[face_table[mf][3]]
-                P5 = self.mesh_object.FemMesh.Nodes[face_table[mf][4]]
-                P6 = self.mesh_object.FemMesh.Nodes[face_table[mf][5]]
+                P1 = self.fem_mesh_nodes[face_table[mf][0]]
+                P2 = self.fem_mesh_nodes[face_table[mf][1]]
+                P3 = self.fem_mesh_nodes[face_table[mf][2]]
+                P4 = self.fem_mesh_nodes[face_table[mf][3]]
+                P5 = self.fem_mesh_nodes[face_table[mf][4]]
+                P6 = self.fem_mesh_nodes[face_table[mf][5]]
 
                 mesh_face_t1_area = getTriangleArea(P1, P4, P6)
                 mesh_face_t2_area = getTriangleArea(P2, P5, P4)

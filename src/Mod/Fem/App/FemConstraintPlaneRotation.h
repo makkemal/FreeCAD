@@ -21,8 +21,8 @@
  ***************************************************************************/
 
 
-#ifndef FEM_CONSTRAINTPlaneRotation_H
-#define FEM_CONSTRAINTPlaneRotation_H
+#ifndef FEM_CONSTRAINTPLANEROTATION_H
+#define FEM_CONSTRAINTPLANEROTATION_H
 
 #include "FemConstraint.h"
 
@@ -56,4 +56,4 @@ protected:
 } //namespace Fem
 
 
-#endif // FEM_CONSTRAINTPlaneRotation_H
+#endif // FEM_CONSTRAINTPLANEROTATION_H

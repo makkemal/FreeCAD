@@ -23,8 +23,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef GUI_VIEWPROVIDERFEMCONSTRAINTPlaneRotation_H
-#define GUI_VIEWPROVIDERFEMCONSTRAINTPlaneRotation_H
+#ifndef GUI_VIEWPROVIDERFEMCONSTRAINTPLANEROTATION_H
+#define GUI_VIEWPROVIDERFEMCONSTRAINTPLANEROTATION_H
 
 #include "ViewProviderFemConstraint.h"
 
@@ -45,4 +45,4 @@ protected:
 
 }
 
-#endif // GUI_VIEWPROVIDERFEMCONSTRAINTPlaneRotation_H
+#endif // GUI_VIEWPROVIDERFEMCONSTRAINTPLANEROTATION_H

@@ -118,7 +118,7 @@ class _TaskPanelMechanicalMaterial:
     def ym_changed(self, value):
         import Units
         # FreeCADs standard unit for stress is kPa
-        old_ym = Units.Quantity(self.material['YoungsModulus'])
+        old_ym = Units.Quantity(self.material['YoungsModulus']).getValueAs(" kPa")
         variation = 0.001
         if value:
             if not (1 - variation < float(old_ym) / value < 1 + variation):
@@ -130,7 +130,7 @@ class _TaskPanelMechanicalMaterial:
     def density_changed(self, value):
         import Units
         # FreeCADs standard unit for density is kg/mm^3
-        old_density = Units.Quantity(self.material['Density'])
+        old_density = Units.Quantity(self.material['Density']).getValueAs("kg/m^3")
         variation = 0.001
         if value:
             if not (1 - variation < float(old_density) / value < 1 + variation):
@@ -154,7 +154,7 @@ class _TaskPanelMechanicalMaterial:
 
     def tc_changed(self, value):
         import Units
-        old_tc = Units.Quantity(self.material['ThermalConductivity'])
+        old_tc = Units.Quantity(self.material['ThermalConductivity']).getValueAs("W/m/K")
         variation = 0.001
         if value:
             if not (1 - variation < float(old_tc) / value < 1 + variation):
@@ -165,18 +165,18 @@ class _TaskPanelMechanicalMaterial:
             
     def tec_changed(self, value):
         import Units
-        old_tec = Units.Quantity(self.material['ThermalExpansionCoefficient'])
+        old_tec = Units.Quantity(self.material['ThermalExpansionCoefficient']).getValueAs("um/m/K")
         variation = 0.001
         if value:
             if not (1 - variation < float(old_tec) / value < 1 + variation):
                 #ThermalExpansionCoefficient has changed
                 material = self.material
-                material['ThermalExpansionCoefficient'] = unicode(value) + " m/m/K"
+                material['ThermalExpansionCoefficient'] = unicode(value) + " um/m/K"
                 self.material = material
 
     def sh_changed(self, value):
         import Units
-        old_sh = Units.Quantity(self.material['SpecificHeat'])
+        old_sh = Units.Quantity(self.material['SpecificHeat']).getValueAs("J/kg/K")
         variation = 0.001
         if value:
             if not (1 - variation < float(old_sh) / value < 1 + variation):
