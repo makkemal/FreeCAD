@@ -157,6 +157,7 @@ class inp_writer:
         f.write('\n***********************************************************\n')
         f.write('** Node set for fixed constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        g = open("conflict.txt", 'w')                
         for fobj in self.fixed_objects:
             fix_obj = fobj['Object']
             f.write('*NSET,NSET=' + fix_obj.Name + '\n')
@@ -171,6 +172,8 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+                    g.write(str(i) + '\n')
+        g.close()
 
     def get_all_nodes(self, f):
         s_line = f.readline()
@@ -193,12 +196,22 @@ class inp_writer:
         return l_table
     
     def write_node_sets_constraints_planerotation(self, f, l_table):
+        g = open("conflict.txt", 'r')
+        testt = g.readline()
+        conflict_nodes = []        
+        while testt != "":
+            testt = int(testt)
+            conflict_nodes.append(testt)
+            testt = g.readline()
+        
+        g.close() 
+            
         f.write('\n\n')
         f.write('\n***********************************************************\n')
         f.write('** Node set for PlaneRotation constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        l_nodes = []
         for fobj in self.planerotation_objects:
+            l_nodes = []            
             fric_obj = fobj['Object']
             f.write('*NSET,NSET=' + fric_obj.Name + '\n')
             for o, elem in fric_obj.References:
@@ -256,14 +269,29 @@ class inp_writer:
             for i in range(len(l_nodes)):
                 if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
                     node_planerotation.append(l_nodes[i])
+            
+            
+            MPC_nodes = []
             for i in range(len(node_planerotation)):
-                f.write(str(node_planerotation[i]) + ',\n')
-
+                cnt = 0
+                for j in range(len(conflict_nodes)):
+                    if node_planerotation[i] == conflict_nodes[j]:
+                        cnt = cnt+1
+                if cnt == 0:
+                    MPC = node_planerotation[i]                    
+                    MPC_nodes.append(MPC)
+            
+            for i in range(len(MPC_nodes)):
+                f.write(str(MPC_nodes[i]) + ',\n')
+            
+        
+        
 
     def write_node_sets_constraints_displacement(self, f):
         f.write('\n***********************************************************\n')
         f.write('** Node sets for prescribed displacement constraint\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        g = open("conflict.txt", 'a') 
         for fobj in self.displacement_objects:
             disp_obj = fobj['Object']
             f.write('*NSET,NSET=' + disp_obj.Name + '\n')
@@ -278,6 +306,9 @@ class inp_writer:
                     n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                 for i in n:
                     f.write(str(i) + ',\n')
+                    g.write(str(i) + '\n')
+        g.close()
+
 
     def write_temperature_nodes(self,f): #Fixed temperature
         f.write('\n***********************************************************\n')
