@@ -139,19 +139,19 @@ void TaskFemConstraintHeatflux::updateUI()
 void TaskFemConstraintHeatflux::onAmbientTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    pcConstraint->AmbientTemp.setValue(val);//[degC]
+    pcConstraint->AmbientTemp.setValue(val);//[K]
 }
 
 /*void TaskFemConstraintHeatflux::onFaceTempChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    pcConstraint->FaceTemp.setValue(val); //[degC]
+    pcConstraint->FaceTemp.setValue(val); //[K]
 }*/
 
 void TaskFemConstraintHeatflux::onFilmCoefChanged(double val)
 {
     Fem::ConstraintHeatflux* pcConstraint = static_cast<Fem::ConstraintHeatflux*>(ConstraintView->getObject());
-    pcConstraint->FilmCoef.setValue(val); // [W]/[[degC].[m^2]]
+    pcConstraint->FilmCoef.setValue(val); // [W]/[[m^2]/[K]]
 }
 
 void TaskFemConstraintHeatflux::addToSelection()
