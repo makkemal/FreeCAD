@@ -108,6 +108,20 @@ QString UnitsSchemaMKS::schemaTranslate(Base::Quantity quant,double &factor,QStr
             unitString = QString::fromLatin1("Pa");
             factor = 1.0;
         }
+    }else if (unit == Unit::ThermalConductivity){
+        unitString = QString::fromLatin1("W/m/K");
+        factor = 1000.0;
+    }else if (unit == Unit::ThermalExpansionCoefficient){
+        if(UnitValue < 0.001){
+            unitString = QString::fromLatin1("um/m/K");
+            factor = 0.000001;
+        }else{
+            unitString = QString::fromLatin1("m/m/K");
+            factor = 1.0;
+        }
+    }else if (unit == Unit::SpecificHeat){
+        unitString = QString::fromLatin1("J/kg/K");
+        factor = 1000000.0;        
     }else{
         // default action for all cases without special treatment:
         unitString = quant.getUnit().getString();

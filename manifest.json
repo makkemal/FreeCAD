@@ -1,0 +1,15 @@
+{
+    "name": "com.ubuntu.developer.username.freecad-bhb",
+    "description": "description of FreeCAD-bhb",
+    "framework": "ubuntu-sdk-14.04-qml",
+    "architecture": "all",
+    "title": "FreeCAD-bhb",
+    "hooks": {
+        "FreeCAD-bhb": {
+            "apparmor": "FreeCAD-bhb.json",
+            "desktop": "FreeCAD_bhb.desktop"
+        }
+    },
+    "version": "0.1",
+    "maintainer": ""
+}

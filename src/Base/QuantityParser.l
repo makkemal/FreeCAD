@@ -116,10 +116,10 @@ CGRP     '\,'[0-9][0-9][0-9]
 "psi"      yylval = Quantity::PSI;                 return UNIT; // pounds/in^2 
 "ksi"      yylval = Quantity::KSI;                 return UNIT; // 1000 x pounds/in^2 
 
-"W"        yylval = Quantity::Watt;                return UNIT; // Watt (kg*m^2/s^3) 
+"W"        yylval = Quantity::Watt;                return UNIT; // Watt (kg*m^2/s^3)
 "VA"       yylval = Quantity::VoltAmpere;          return UNIT; // VoltAmpere (kg*m^2/s^3) 
 
-"J"        yylval = Quantity::Joule;               return UNIT; // Joule (kg*m^2/s^2) 
+"J"        yylval = Quantity::Joule;               return UNIT; // Joule (kg*m^2/s^2)
 "Nm"       yylval = Quantity::NewtonMeter;         return UNIT; // N*m = Joule 
 "VAs"      yylval = Quantity::VoltAmpereSecond;    return UNIT; // V*A*s = Joule 
 "CV"       yylval = Quantity::WattSecond;          return UNIT; //  

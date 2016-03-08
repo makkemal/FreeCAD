@@ -70,6 +70,7 @@ class _TaskPanelFemSolverCalculix:
         QtCore.QObject.connect(self.form.pb_run_ccx, QtCore.SIGNAL("clicked()"), self.runCalculix)
         QtCore.QObject.connect(self.form.rb_static_analysis, QtCore.SIGNAL("clicked()"), self.select_static_analysis)
         QtCore.QObject.connect(self.form.rb_frequency_analysis, QtCore.SIGNAL("clicked()"), self.select_frequency_analysis)
+        QtCore.QObject.connect(self.form.rb_thermomech_analysis, QtCore.SIGNAL("clicked()"), self.select_thermomech_analysis) # OvG: Add thermo mechanical analysis
 
         QtCore.QObject.connect(self.Calculix, QtCore.SIGNAL("started()"), self.calculixStarted)
         QtCore.QObject.connect(self.Calculix, QtCore.SIGNAL("stateChanged(QProcess::ProcessState)"), self.calculixStateChanged)
@@ -159,6 +160,8 @@ class _TaskPanelFemSolverCalculix:
             self.form.rb_static_analysis.setChecked(True)
         elif self.solver_object.AnalysisType == 'frequency':
             self.form.rb_frequency_analysis.setChecked(True)
+        elif self.solver_object.AnalysisType == 'thermomech':
+            self.form.rb_thermomech_analysis.setChecked(True)
         return
 
     def accept(self):
@@ -193,7 +196,7 @@ class _TaskPanelFemSolverCalculix:
                 self.form.pb_run_ccx.setEnabled(True)
             else:
                 self.femConsoleMessage("Write .inp file failed!", "#FF0000")
-            QApplication.restoreOverrideCursor()
+        QApplication.restoreOverrideCursor()
 
     def check_prerequisites_helper(self):
         self.Start = time.time()
@@ -246,6 +249,7 @@ class _TaskPanelFemSolverCalculix:
 
     def select_analysis_type(self, analysis_type):
         if self.solver_object.AnalysisType != analysis_type:
+            #self.solver_object.set_analysis_type(analysis_type)
             self.solver_object.AnalysisType = analysis_type
             self.form.pb_edit_inp.setEnabled(False)
             self.form.pb_run_ccx.setEnabled(False)
@@ -255,6 +259,9 @@ class _TaskPanelFemSolverCalculix:
 
     def select_frequency_analysis(self):
         self.select_analysis_type('frequency')
+        
+    def select_thermomech_analysis(self):
+        self.select_analysis_type('thermomech')
 
     # That function overlaps with FemTools setup_working_dir and needs to be removed when we migrate fully to FemTools
     def setup_working_dir(self):

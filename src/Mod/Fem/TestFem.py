@@ -42,12 +42,16 @@ test_file_dir = home_path + 'Mod/Fem/test_files/ccx'
 
 static_base_name = 'cube_static'
 frequency_base_name = 'cube_frequency'
+thermomech_base_name = 'cube_thermomech'
 static_analysis_dir = temp_dir + '/FEM_static'
 frequency_analysis_dir = temp_dir + '/FEM_frequency'
+thermomech_analysis_dir = temp_dir + '/FEM_thermomech' # OvG: temp directory for thermo mechanical analysis
 static_analysis_inp_file = test_file_dir + '/' + static_base_name + '.inp'
 static_expected_values = test_file_dir + "/cube_static_expected_values"
 frequency_analysis_inp_file = test_file_dir + '/' + frequency_base_name + '.inp'
 frequency_expected_values = test_file_dir + "/cube_frequency_expected_values"
+thermomech_analysis_inp_file = test_file_dir + '/' + thermomech_base_name + '.inp'
+thermomech_expected_values = test_file_dir + "/cube_thermomech_expected_values"
 mesh_points_file = test_file_dir + '/mesh_points.csv'
 mesh_volumes_file = test_file_dir + '/mesh_volumes.csv'
 
@@ -101,6 +105,9 @@ class FemTest(unittest.TestCase):
         mat['YoungsModulus'] = "200000 MPa"
         mat['PoissonRatio'] = "0.30"
         mat['Density'] = "7900 kg/m^3"
+        mat['ThermalConductivity'] = "43 W/m/K"
+        mat['ThermalExpansionCoefficient'] = "12 um/m/K"
+        mat['SpecificHeat'] = "0.59 J/kg/K"
         self.new_material_object.Material = mat
 
     def create_fixed_constraint(self):
@@ -119,6 +126,35 @@ class FemTest(unittest.TestCase):
         self.pressure_constraint.References = [(self.box, "Face2")]
         self.pressure_constraint.Pressure = 10.000000
         self.pressure_constraint.Reversed = True
+        
+    def create_displacement_constraint(self):
+        self.displacement_constraint = self.active_doc.addObject("Fem::ConstraintDisplacement", "FemConstraintDisplacement")
+        self.displacement_constraint.References = [(self.box, "Face1")]
+        self.displacement_constraint.xDisplacement=0.0 
+        self.displacement_constraint.yDisplacement=0.0 
+        self.displacement_constraint.zDisplacement=0.0 
+        self.displacement_constraint.xRotation=0.0 
+        self.displacement_constraint.yRotation=0.0 
+        self.displacement_constraint.zRotation=0.0 
+        self.displacement_constraint.xFree=0 
+        self.displacement_constraint.yFree=0 
+        self.displacement_constraint.zFree=0 
+        self.displacement_constraint.xFix=1 
+        self.displacement_constraint.yFix=1 
+        self.displacement_constraint.zFix=1 
+        self.displacement_constraint.rotxFree=0 
+        self.displacement_constraint.rotyFree=0 
+        self.displacement_constraint.rotzFree=0 
+        self.displacement_constraint.rotxFix=1
+        self.displacement_constraint.rotyFix=1
+        self.displacement_constraint.rotzFix=1
+       
+    # OvG TODO: Implement create heatflux constraint
+    #def create_heatflux_constraint(self):
+    #    self.heatflux_constraint = self.active_doc.addObject("Fem::ConstraintHeatflux", "FemConstraintHeatflux")
+    #    self.heatflux_constraint.References = [(self.box, "Face2")]
+    #    self.heatflux_constraint.AmbientTemp = 25.000000
+    #    self.heatflux_constraint.FilmCoef = 1.000000
 
     def force_unix_line_ends(self, line_list):
         new_line_list = []
@@ -201,6 +237,17 @@ class FemTest(unittest.TestCase):
         self.create_pressure_constraint()
         self.assertTrue(self.pressure_constraint, "FemTest of new pressure constraint failed")
         self.analysis.Member = self.analysis.Member + [self.pressure_constraint]
+        
+        fcc_print('Checking FEM new displacement constraint...')
+        self.create_displacement_constraint()
+        self.assertTrue(self.displacement_constraint, "FemTest of new displacement constraint failed")
+        self.analysis.Member = self.analysis.Member + [self.displacement_constraint]
+        
+        # OvG TODO: Implement test for heatflux constraint
+        #fcc_print('Checking FEM new heatflux constraint...')
+        #self.create_heatflux_constraint()
+        #self.assertTrue(self.heatflux_constraint, "FemTest of new heatflux constraint failed")
+        #self.analysis.Member = self.analysis.Member + [self.heatflux_constraint]
 
         fea = FemTools.FemTools(self.analysis, test_mode=True)
         fcc_print('Setting up working directory {}'.format(static_analysis_dir))
