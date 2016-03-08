@@ -252,6 +252,35 @@ MeshPoint MeshObject::getPoint(unsigned long index) const
     return point;
 }
 
+void MeshObject::getPoints(std::vector<Base::Vector3d> &Points,
+                           std::vector<Base::Vector3d> &Normals,
+                           float Accuracy, uint16_t flags) const
+{
+    Base::Matrix4D mat = _Mtrx;
+
+    unsigned long ctpoints = _kernel.CountPoints();
+    Points.reserve(ctpoints);
+    for (unsigned long i=0; i<ctpoints; i++) {
+        Base::Vector3f vertf = _kernel.GetPoint(i);
+        Base::Vector3d vertd(vertf.x, vertf.y, vertf.z);
+        vertd = mat * vertd;
+        Points.push_back(vertd);
+    }
+
+    // nullify translation part
+    mat[0][3] = 0.0;
+    mat[1][3] = 0.0;
+    mat[2][3] = 0.0;
+    Normals.reserve(ctpoints);
+    MeshCore::MeshRefNormalToPoints ptNormals(_kernel);
+    for (unsigned long i=0; i<ctpoints; i++) {
+        Base::Vector3f normalf = ptNormals[i];
+        Base::Vector3d normald(normalf.x, normalf.y, normalf.z);
+        normald = mat * normald;
+        Normals.push_back(normald);
+    }
+}
+
 Mesh::Facet MeshObject::getFacet(unsigned long index) const
 {
     Mesh::Facet face(_kernel.GetFacets()[index], const_cast<MeshObject*>(this), index);
@@ -592,16 +621,24 @@ void MeshObject::getPointsFromSelection(std::vector<unsigned long>& inds) const
     MeshCore::MeshAlgorithm(this->_kernel).GetPointsFlag(inds, MeshCore::MeshPoint::SELECTED);
 }
 
+unsigned long MeshObject::countSelectedFacets() const
+{
+    return MeshCore::MeshAlgorithm(this->_kernel).CountFacetFlag(MeshCore::MeshFacet::SELECTED);
+}
+
 bool MeshObject::hasSelectedFacets() const
 {
-    unsigned long ct = MeshCore::MeshAlgorithm(this->_kernel).CountFacetFlag(MeshCore::MeshFacet::SELECTED);
-    return ct > 0;
+    return (countSelectedFacets() > 0);
+}
+
+unsigned long MeshObject::countSelectedPoints() const
+{
+    return MeshCore::MeshAlgorithm(this->_kernel).CountPointFlag(MeshCore::MeshPoint::SELECTED);
 }
 
 bool MeshObject::hasSelectedPoints() const
 {
-    unsigned long ct = MeshCore::MeshAlgorithm(this->_kernel).CountPointFlag(MeshCore::MeshPoint::SELECTED);
-    return ct > 0;
+    return (countSelectedPoints() > 0);
 }
 
 std::vector<unsigned long> MeshObject::getPointsFromFacets(const std::vector<unsigned long>& facets) const

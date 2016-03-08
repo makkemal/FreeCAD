@@ -1,5 +1,5 @@
 /***************************************************************************
- *   Copyright (c) 2015 Werner Mayer <wmayer[at]users.sourceforge.net>     *
+ *   Copyright (c) 2016 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
@@ -21,37 +21,33 @@
  ***************************************************************************/
 
 
-#ifndef POINTS_VIEW_FEATURE_H
-#define POINTS_VIEW_FEATURE_H
+#ifndef GUI_INVENTOR_MARKERBITMAPS_H
+#define GUI_INVENTOR_MARKERBITMAPS_H
 
-#include "PointsFeature.h"
+#include <string>
+#include <list>
+#include <map>
 
+namespace Gui { namespace Inventor {
 
-namespace Points
-{
-
-/*! For the ViewFeature class it is expected that the Point property has Width*Height vertices
-  and that with respect to their x,y coordinates they are ordered in a grid structure.
-  If a point is marked invalid then one of its coordinates is set to NaN.
- */
-class PointsExport ViewFeature : public Points::Feature
-{
-    PROPERTY_HEADER(Points::ViewFeature);
+class GuiExport MarkerBitmaps {
 
 public:
-    /// Constructor
-    ViewFeature(void);
-    virtual ~ViewFeature(void);
-    /// recalculate the Feature
-    virtual App::DocumentObjectExecReturn *execute(void);
-    //@}
+    static void initClass();
+    static int getMarkerIndex(const std::string&, int px);
+    static std::list<int> getSupportedSizes(const std::string&);
 
-    App::PropertyInteger Width; /**< The width of the view. */
-    App::PropertyInteger Height; /**< The height of the view. */
-    App::PropertyVector Direction; /**< The direction of the view. */
+private:
+    static void createBitmap(const std::string&, int px, int width, int height, const char* marker);
+
+private:
+    typedef std::pair<std::string, int> Marker;
+    static std::map<Marker, int> markerIndex;
 };
 
-} //namespace Points
+} // namespace Inventor
 
+} // namespace Gui
 
-#endif
+#endif // GUI_INVENTOR_MARKERBITMAPS_H
+

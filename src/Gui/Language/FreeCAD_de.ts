@@ -1239,10 +1239,6 @@ Wählen Sie bitte eine andere Tastenkombination.</translation>
         <translation>Makroname:</translation>
     </message>
     <message>
-        <source>Macro destination:</source>
-        <translation type="obsolete">Makro-Zielpfad:</translation>
-    </message>
-    <message>
         <source>Execute</source>
         <translation>Ausführen</translation>
     </message>
@@ -1264,15 +1260,15 @@ Wählen Sie bitte eine andere Tastenkombination.</translation>
     </message>
     <message>
         <source>User macros</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzermakros</translation>
     </message>
     <message>
         <source>System macros</source>
-        <translation type="unfinished"></translation>
+        <translation>Systemmakros</translation>
     </message>
     <message>
         <source>User macros location:</source>
-        <translation type="unfinished"></translation>
+        <translation>Speicher-Ort der Benutzer-Makros:</translation>
     </message>
 </context>
 <context>
@@ -1317,7 +1313,7 @@ Diese Datei ist bereits vorhanden.</translation>
     </message>
     <message>
         <source>Read-only</source>
-        <translation type="unfinished"></translation>
+        <translation>Nur Lesezugriff</translation>
     </message>
 </context>
 <context>
@@ -1805,14 +1801,6 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
         <translation>Kameratyp</translation>
     </message>
     <message>
-        <source>Orthographic rendering</source>
-        <translation>Orthographische Darstellung</translation>
-    </message>
-    <message>
-        <source>Perspective rendering</source>
-        <translation>Perspektivische Darstellung</translation>
-    </message>
-    <message>
         <source></source>
         <translation>Text source</translation>
     </message>
@@ -1879,6 +1867,14 @@ Wählen Sie bitte ein anderes Verzeichnis aus.</translation>
     <message>
         <source>MSAA 8x</source>
         <translation>MSAA 8x</translation>
+    </message>
+    <message>
+        <source>Or&amp;thographic rendering</source>
+        <translation>Or&amp;thographische Darstellung</translation>
+    </message>
+    <message>
+        <source>Perspective renderin&amp;g</source>
+        <translation>Perspektivische Darstellun&amp;g</translation>
     </message>
 </context>
 <context>
@@ -4862,11 +4858,11 @@ Beachten Sie, dass es auf den Punkt ankommt, auf den Sie klicken.</translation>
     </message>
     <message>
         <source>Delete macro</source>
-        <translation type="unfinished">Makro löschen</translation>
+        <translation>Makro löschen</translation>
     </message>
     <message>
         <source>Not allowed to delete system-wide macros</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine Erlaubnis, die systemweiten Makros zu löschen</translation>
     </message>
 </context>
 <context>

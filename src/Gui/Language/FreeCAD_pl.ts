@@ -1238,10 +1238,6 @@ Please define another shortcut.</source>
         <translation>Nazwa Makra:</translation>
     </message>
     <message>
-        <source>Macro destination:</source>
-        <translation type="obsolete">Przeznaczenia makra:</translation>
-    </message>
-    <message>
         <source>Execute</source>
         <translation>Uruchom</translation>
     </message>
@@ -1263,15 +1259,15 @@ Please define another shortcut.</source>
     </message>
     <message>
         <source>User macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">User macros</translation>
     </message>
     <message>
         <source>System macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">System macros</translation>
     </message>
     <message>
         <source>User macros location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">User macros location:</translation>
     </message>
 </context>
 <context>
@@ -1315,7 +1311,7 @@ This file already exists.</source>
     </message>
     <message>
         <source>Read-only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Read-only</translation>
     </message>
 </context>
 <context>
@@ -1802,14 +1798,6 @@ Specify another directory, please.</source>
         <translation>Typ projekcji</translation>
     </message>
     <message>
-        <source>Orthographic rendering</source>
-        <translation>Rzutowanie równoległe</translation>
-    </message>
-    <message>
-        <source>Perspective rendering</source>
-        <translation>Rzutowanie perspektywiczne</translation>
-    </message>
-    <message>
         <source></source>
         <translation> </translation>
     </message>
@@ -1876,6 +1864,14 @@ Specify another directory, please.</source>
     <message>
         <source>MSAA 8x</source>
         <translation>MSAA 8 x</translation>
+    </message>
+    <message>
+        <source>Or&amp;thographic rendering</source>
+        <translation type="unfinished">Or&amp;thographic rendering</translation>
+    </message>
+    <message>
+        <source>Perspective renderin&amp;g</source>
+        <translation type="unfinished">Perspective renderin&amp;g</translation>
     </message>
 </context>
 <context>
@@ -3528,7 +3524,7 @@ Do you want to save your changes?</source>
     </message>
     <message>
         <source>PDF file</source>
-        <translation type="unfinished">PDF file</translation>
+        <translation>Plik PDF</translation>
     </message>
 </context>
 <context>
@@ -4069,7 +4065,7 @@ Do you want to exit without saving your data?</source>
     </message>
     <message>
         <source>All Files</source>
-        <translation type="unfinished">All Files</translation>
+        <translation>Wszystkie pliki</translation>
     </message>
 </context>
 <context>
@@ -4333,15 +4329,15 @@ Do you want to specify another directory?</source>
     </message>
     <message>
         <source>PDF file</source>
-        <translation type="unfinished">PDF file</translation>
+        <translation>Plik PDF</translation>
     </message>
     <message>
         <source>Opening file failed</source>
-        <translation type="unfinished">Opening file failed</translation>
+        <translation>Otwarcie pliku nie powiodło się</translation>
     </message>
     <message>
         <source>Can&apos;t open file &apos;%1&apos; for writing.</source>
-        <translation type="unfinished">Can&apos;t open file &apos;%1&apos; for writing.</translation>
+        <translation>Nie można otworzyć pliku &quot;%1&quot; do zapisu.</translation>
     </message>
 </context>
 <context>
@@ -4845,11 +4841,11 @@ Be aware the point where you click matters.</source>
     </message>
     <message>
         <source>Delete macro</source>
-        <translation type="unfinished">Usuń makro</translation>
+        <translation>Usuń makro</translation>
     </message>
     <message>
         <source>Not allowed to delete system-wide macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not allowed to delete system-wide macros</translation>
     </message>
 </context>
 <context>

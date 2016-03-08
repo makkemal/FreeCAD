@@ -1239,10 +1239,6 @@ Please define another shortcut.</source>
         <translation>Makronavn:</translation>
     </message>
     <message>
-        <source>Macro destination:</source>
-        <translation type="obsolete">Makrodestinasjon:</translation>
-    </message>
-    <message>
         <source>Execute</source>
         <translation>Kjør</translation>
     </message>
@@ -1264,15 +1260,15 @@ Please define another shortcut.</source>
     </message>
     <message>
         <source>User macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">User macros</translation>
     </message>
     <message>
         <source>System macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">System macros</translation>
     </message>
     <message>
         <source>User macros location:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">User macros location:</translation>
     </message>
 </context>
 <context>
@@ -1317,7 +1313,7 @@ Denne filen finnes allerede.</translation>
     </message>
     <message>
         <source>Read-only</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Read-only</translation>
     </message>
 </context>
 <context>
@@ -1804,14 +1800,6 @@ Vennligst angi en annen mappe.</translation>
         <translation>Kameratype</translation>
     </message>
     <message>
-        <source>Orthographic rendering</source>
-        <translation>Ortografisk presentasjonsgjengivelse</translation>
-    </message>
-    <message>
-        <source>Perspective rendering</source>
-        <translation>Perspektiv presentasjonsgjengivelse</translation>
-    </message>
-    <message>
         <source></source>
         <translation> </translation>
     </message>
@@ -1878,6 +1866,14 @@ Vennligst angi en annen mappe.</translation>
     <message>
         <source>MSAA 8x</source>
         <translation type="unfinished">MSAA 8x</translation>
+    </message>
+    <message>
+        <source>Or&amp;thographic rendering</source>
+        <translation type="unfinished">Or&amp;thographic rendering</translation>
+    </message>
+    <message>
+        <source>Perspective renderin&amp;g</source>
+        <translation type="unfinished">Perspective renderin&amp;g</translation>
     </message>
 </context>
 <context>
@@ -4857,11 +4853,11 @@ Vær oppmerksom på at punktet hvor du klikker betyr noe.</translation>
     </message>
     <message>
         <source>Delete macro</source>
-        <translation type="unfinished">Slett makro</translation>
+        <translation>Slett makro</translation>
     </message>
     <message>
         <source>Not allowed to delete system-wide macros</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Not allowed to delete system-wide macros</translation>
     </message>
 </context>
 <context>
