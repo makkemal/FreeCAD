@@ -205,7 +205,13 @@ class inp_writer:
             testt = g.readline()
         
         g.close() 
-            
+        
+        import os
+        os.remove("conflict.txt")                
+        
+        
+        
+        
         f.write('\n\n')
         f.write('\n***********************************************************\n')
         f.write('** Node set for PlaneRotation constraint\n')
