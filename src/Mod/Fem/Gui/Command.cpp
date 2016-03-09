@@ -421,9 +421,9 @@ void CmdFemConstraintHeatflux::activated(int iMsg)
 
     openCommand("Make FEM constraint heatflux on face");
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintHeatflux\",\"%s\")",FeatName.c_str());
-    doCommand(Doc,"App.activeDocument().%s.AmbientTemp = 25.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.AmbientTemp = 300.0",FeatName.c_str()); //OvG: set default not equal to 0
     /*doCommand(Doc,"App.activeDocument().%s.FaceTemp = 100.0",FeatName.c_str()); //OvG: set default not equal to 0*/
-    doCommand(Doc,"App.activeDocument().%s.FilmCoef = 1.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.FilmCoef = 10.0",FeatName.c_str()); //OvG: set default not equal to 0
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",
                              Analysis->getNameInDocument(),Analysis->getNameInDocument(),FeatName.c_str());
