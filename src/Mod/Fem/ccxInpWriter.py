@@ -94,7 +94,6 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
-        self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             self.write_thermomech(inpfile)
@@ -102,6 +101,7 @@ class inp_writer:
             self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)
+        self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
