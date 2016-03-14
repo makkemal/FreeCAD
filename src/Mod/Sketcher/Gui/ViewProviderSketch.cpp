@@ -3339,7 +3339,7 @@ Restart:
                         if (geo1->getTypeId() != Part::GeomLineSegment::getClassTypeId() ||
                             geo2->getTypeId() != Part::GeomLineSegment::getClassTypeId()) {
                             if (Constr->Type == Equal) {
-                                double r1a,r1b,r2a,r2b;
+                                double r1a=0,r1b=0,r2a=0,r2b=0;
                                 double angle1,angle1plus=0.,  angle2, angle2plus=0.;//angle1 = rotation of object as a whole; angle1plus = arc angle (t parameter for ellipses).
                                 if (geo1->getTypeId() == Part::GeomCircle::getClassTypeId()) {
                                     const Part::GeomCircle *circle = dynamic_cast<const Part::GeomCircle *>(geo1);
@@ -3525,12 +3525,7 @@ Restart:
                             break;
 
                         SoDatumLabel *asciiText = dynamic_cast<SoDatumLabel *>(sep->getChild(CONSTRAINT_SEPARATOR_INDEX_MATERIAL_OR_DATUMLABEL));
-                        if ((Constr->Type == DistanceX || Constr->Type == DistanceY) &&
-                            Constr->FirstPos != Sketcher::none && Constr->Second == Constraint::GeoUndef)
-                            // display negative sign for absolute coordinates
-                            asciiText->string = SbString(Base::Quantity(Constr->getPresentationValue(),Base::Unit::Length).getUserString().toUtf8().constData());
-                        else // hide negative sign
-                            asciiText->string = SbString(Base::Quantity(std::abs(Constr->getPresentationValue()),Base::Unit::Length).getUserString().toUtf8().constData());
+                        asciiText->string = SbString(Base::Quantity(Constr->getPresentationValue(),Base::Unit::Length).getUserString().toUtf8().constData());
 
                         if (Constr->Type == Distance)
                             asciiText->datumtype = SoDatumLabel::DISTANCE;
@@ -3829,7 +3824,7 @@ Restart:
                             break;
 
                         SoDatumLabel *asciiText = dynamic_cast<SoDatumLabel *>(sep->getChild(CONSTRAINT_SEPARATOR_INDEX_MATERIAL_OR_DATUMLABEL));
-                        asciiText->string    = SbString(Base::Quantity(Base::toDegrees<double>(std::abs(Constr->getPresentationValue())),Base::Unit::Angle).getUserString().toUtf8().constData());
+                        asciiText->string    = SbString(Base::Quantity(Base::toDegrees<double>(Constr->getPresentationValue()),Base::Unit::Angle).getUserString().toUtf8().constData());
                         asciiText->datumtype = SoDatumLabel::ANGLE;
                         asciiText->param1    = Constr->LabelDistance;
                         asciiText->param2    = startangle;
