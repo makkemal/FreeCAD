@@ -238,7 +238,7 @@ Quantity Quantity::Degree           (1.0           ,Unit(0,0,0,0,0,0,0,1)); // d
 Quantity Quantity::Radian           (180/M_PI      ,Unit(0,0,0,0,0,0,0,1)); // radian
 Quantity Quantity::Gon              (360.0/400.0   ,Unit(0,0,0,0,0,0,0,1)); // gon
 
-
+Quantity Quantity::KiloJoule		(1.0e+9		   ,Unit(2,1,-2));	// Joule (kg*m^2/s^2)
 
 
 // === Parser & Scanner stuff ===============================================
