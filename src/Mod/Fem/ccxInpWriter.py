@@ -383,8 +383,9 @@ class inp_writer:
         f.write('** Materials\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('** Young\'s modulus unit is MPa = N/mm2\n')
+        f.write('** Density\'s unit is t/mm^3\n')
         f.write('** Thermal conductivity unit is kW/mm/K = t*mm/K*s^3\n')
-        f.write('** Specific Heat unit is kJ/t/K = mm^2/s^2/K \n')
+        f.write('** Specific Heat unit is kJ/t/K = mm^2/s^2/K\n')
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties - Currently in SI units: M/kg/s/Kelvin
@@ -415,7 +416,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
                 SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_JkgK = SH.getValueAs('J/kg/K')*1e+06 #SvdW: Add factor to force units to results' base units of t/mm/s/Ke+
+                SH_in_JkgK = SH.getValueAs('J/kg/K')*1e+06 #SvdW: Add factor to force units to results' base units of t/mm/s/K
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
             mat_info_name = mat_obj.Material['Name']

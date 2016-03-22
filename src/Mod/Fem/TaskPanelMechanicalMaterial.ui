@@ -290,7 +290,7 @@
            <double>2000000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
-           <string notr="true"/>
+           <string notr="true">m/m/K</string>
           </property>
           <property name="decimals" stdset="0">
            <number>3</number>
@@ -334,7 +334,7 @@
            <double>2050000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
-           <string notr="true"/>
+           <string notr="true">J/kg/K</string>
           </property>
           <property name="decimals" stdset="0">
            <number>3</number>
@@ -371,7 +371,7 @@
            <double>2000000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
-           <string notr="true"/>
+           <string notr="true">W/m/K</string>
           </property>
           <property name="decimals" stdset="0">
            <number>3</number>

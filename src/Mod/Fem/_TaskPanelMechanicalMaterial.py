@@ -137,8 +137,7 @@ class _TaskPanelMechanicalMaterial:
                 # density has changed
                 material = self.material
                 value_in_kg_per_m3 = value * 1e9
-                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3"
-                # material['Density'] = unicode(value) + " kg/mm^3"
+                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3" #SvdW:Keep density in SI units for easier readability                
                 self.material = material
 
     def pr_changed(self, value):
