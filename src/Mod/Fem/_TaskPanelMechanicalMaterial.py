@@ -160,7 +160,8 @@ class _TaskPanelMechanicalMaterial:
             if not (1 - variation < float(old_tc) / value < 1 + variation):
                 #ThermalConductivity has changed
                 material = self.material
-                material['ThermalConductivity'] = unicode(value) + " W/m/K"
+                value_in_W_per_mK = value * 1e-3 #To compensate for use of SI units
+                material['ThermalConductivity'] = unicode(value_in_W_per_mK) + " W/m/K" 
                 self.material = material
             
     def tec_changed(self, value):
@@ -171,7 +172,8 @@ class _TaskPanelMechanicalMaterial:
             if not (1 - variation < float(old_tec) / value < 1 + variation):
                 #ThermalExpansionCoefficient has changed
                 material = self.material
-                material['ThermalExpansionCoefficient'] = unicode(value) + " um/m/K"
+                value_in_um_per_mK = value * 1e6 #To compensate for use of SI units
+                material['ThermalExpansionCoefficient'] = unicode(value_in_um_per_mK) + " um/m/K"
                 self.material = material
 
     def sh_changed(self, value):
@@ -182,7 +184,8 @@ class _TaskPanelMechanicalMaterial:
             if not (1 - variation < float(old_sh) / value < 1 + variation):
                 #SpecificHeat has changed
                 material = self.material
-                material['SpecificHeat'] = unicode(value) + " J/kg/K"
+                value_in_J_per_kgK = value * 1e-6 #To compensate for use of SI units
+                material['SpecificHeat'] = unicode(value_in_J_per_kgK) + " J/kg/K"
                 self.material = material
 
     def choose_material(self, index):
