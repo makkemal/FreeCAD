@@ -364,8 +364,8 @@ static void yy_fatal_error (yyconst char msg[]  );
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
 
-#define YY_NUM_RULES 97
-#define YY_END_OF_BUFFER 98
+#define YY_NUM_RULES 98	//SvdW: Added one extra rule for the KiloJoule Quantity (case 76)
+#define YY_END_OF_BUFFER 99 //SvdW: Added an extra counter to the buffer, otherwise it won't compile
 /* This struct is not used in this scanner,
    but its presence is necessary. */
 struct yy_trans_info
@@ -1231,115 +1231,120 @@ yylval = Quantity::Gon;                 return UNIT; // gon
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
+#line 132 "QuantityParser.l"
+yylval = Quantity::KiloJoule;                 return UNIT; // SvdW: kilo joule quantity added       
+	YY_BREAK
+case 77:
+YY_RULE_SETUP
 #line 133 "QuantityParser.l"
 {  yylval = num_change(yytext,'.',',');return NUM;  }
 	YY_BREAK
-case 77:
+case 78:
 YY_RULE_SETUP
 #line 134 "QuantityParser.l"
 {  yylval = num_change(yytext,',','.');return NUM;  }
 	YY_BREAK
-case 78:
+case 79:
 YY_RULE_SETUP
 #line 137 "QuantityParser.l"
 {yylval = M_PI          ; return NUM;} // constant pi         
 	YY_BREAK
-case 79:
+case 80:
 YY_RULE_SETUP
 #line 138 "QuantityParser.l"
 {yylval = M_E           ; return NUM;} // constant e         
 	YY_BREAK
-case 80:
+case 81:
 YY_RULE_SETUP
 #line 140 "QuantityParser.l"
 return ACOS;
 	YY_BREAK
-case 81:
+case 82:
 YY_RULE_SETUP
 #line 141 "QuantityParser.l"
 return ASIN;
 	YY_BREAK
-case 82:
+case 83:
 YY_RULE_SETUP
 #line 142 "QuantityParser.l"
 return ATAN;
 	YY_BREAK
-case 83:
+case 84:
 YY_RULE_SETUP
 #line 143 "QuantityParser.l"
 return ATAN2;
 	YY_BREAK
-case 84:
+case 85:
 YY_RULE_SETUP
 #line 144 "QuantityParser.l"
 return COS;
 	YY_BREAK
-case 85:
+case 86:
 YY_RULE_SETUP
 #line 145 "QuantityParser.l"
 return EXP;
 	YY_BREAK
-case 86:
+case 87:
 YY_RULE_SETUP
 #line 146 "QuantityParser.l"
 return ABS;
 	YY_BREAK
-case 87:
+case 88:
 YY_RULE_SETUP
 #line 147 "QuantityParser.l"
 return MOD;
 	YY_BREAK
-case 88:
+case 89:
 YY_RULE_SETUP
 #line 148 "QuantityParser.l"
 return LOG;
 	YY_BREAK
-case 89:
+case 90:
 YY_RULE_SETUP
 #line 149 "QuantityParser.l"
 return LOG10;
 	YY_BREAK
-case 90:
+case 91:
 YY_RULE_SETUP
 #line 150 "QuantityParser.l"
 return POW;
 	YY_BREAK
-case 91:
+case 92:
 YY_RULE_SETUP
 #line 151 "QuantityParser.l"
 return SIN;
 	YY_BREAK
-case 92:
+case 93:
 YY_RULE_SETUP
 #line 152 "QuantityParser.l"
 return SINH;
 	YY_BREAK
-case 93:
+case 94:
 YY_RULE_SETUP
 #line 153 "QuantityParser.l"
 return TAN;
 	YY_BREAK
-case 94:
+case 95:
 YY_RULE_SETUP
 #line 154 "QuantityParser.l"
 return TANH;
 	YY_BREAK
-case 95:
+case 96:
 YY_RULE_SETUP
 #line 155 "QuantityParser.l"
 return SQRT;
 	YY_BREAK
-case 96:
+case 97:
 YY_RULE_SETUP
 #line 157 "QuantityParser.l"
 return *yytext;
 	YY_BREAK
-case 97:
+case 98:
 YY_RULE_SETUP
 #line 158 "QuantityParser.l"
 ECHO;
 	YY_BREAK
-#line 1340 "QuantityLexer.c"
+#line 1345 "QuantityLexer.c"	//SvdW: This line seem to call the line where "Echo" is programmed, changed #line to ECHO's line after inserting another rule (case 76)
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 	yyterminate();
