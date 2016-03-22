@@ -405,7 +405,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No PoissonRatio defined for material: default used\n")
             try:
                 TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
-                TC_in_WmK = TC.getValueAs('W/m/K')
+                TC_in_WmK = TC.getValueAs('W/m/K')*1e-03
             except:
                 FreeCAD.Console.PrintError("No ThermalConductivity defined for material: default used\n")
             try:
@@ -415,7 +415,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
                 SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_JkgK = SH.getValueAs('J/kg/K')*1e+06 #SvdW: Add factor to force units to results' base units of t/mm/s/K
+                SH_in_JkgK = SH.getValueAs('J/kg/K') #SvdW: Add factor to force units to results' base units of t/mm/s/K
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
             mat_info_name = mat_obj.Material['Name']
