@@ -106,16 +106,16 @@ QString UnitsSchemaInternal::schemaTranslate(Base::Quantity quant,double &factor
         unitString = QString::fromLatin1("J/kg/K");
         factor = 1000000.0;        
     }else if ((unit == Unit::Pressure) || (unit == Unit::Stress)){
-        if(UnitValue < 10.0){// Pa is the smallest
+        if(UnitValue < 1.0){// Pa is the smallest
             unitString = QString::fromLatin1("Pa");
             factor = 0.001;
-        }else if(UnitValue < 10000.0){
+        }else if(UnitValue < 1000.0){
             unitString = QString::fromLatin1("kPa");
             factor = 1.0;
-        }else if(UnitValue < 10000000.0){
+        }else if(UnitValue < 1000000.0){
             unitString = QString::fromLatin1("MPa");
             factor = 1000.0;
-        }else if(UnitValue < 10000000000.0){
+        }else if(UnitValue < 1000000000.0){
             unitString = QString::fromLatin1("GPa");
             factor = 1000000.0;
         }else{ // bigger -> scientific notation 
