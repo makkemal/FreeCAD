@@ -49,7 +49,11 @@ set(BOOST_MIN_VERSION 1.55)
 
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     set(CMAKE_COMPILER_IS_CLANGXX TRUE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    # make this an option because for older compilers C++11 doesn't work properly.
+    OPTION(BUILD_ENABLE_CXX11 "Enable C++11 support." ON)
+    if (BUILD_ENABLE_CXX11)
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif(BUILD_ENABLE_CXX11)
 endif (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
@@ -843,6 +847,13 @@ endif(WIN32)
 
 
 
+# version information of libraries
+#
+if(OCC_INCLUDE_DIR AND EXISTS ${OCC_INCLUDE_DIR}/Standard_Version.hxx)
+    set(HAVE_OCC_VERSION 1)
+endif(OCC_INCLUDE_DIR AND EXISTS ${OCC_INCLUDE_DIR}/Standard_Version.hxx)
+
+configure_file(LibraryVersions.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/LibraryVersions.h)
 
 # ================================================================================
 # == Global Compiler and Linker Settings =========================================
