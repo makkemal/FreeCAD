@@ -95,6 +95,7 @@ SET(FemScripts_SRCS
     _ViewProviderFemShellThickness.py
     _ViewProviderFemSolverCalculix.py
     _ViewProviderMechanicalMaterial.py
+    qeq.py
     ccxDatReader.py
     ccxFrdReader.py
     ccxInpWriter.py

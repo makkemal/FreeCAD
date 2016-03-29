@@ -26,7 +26,8 @@ import FreeCAD
 import os
 import sys
 import time
-
+from qeq import ProgressBar
+from PyQt4 import QtGui
 
 __title__ = "ccxInpWriter"
 __author__ = "Przemo Firszt, Bernd Hahnebach"
@@ -77,6 +78,7 @@ class inp_writer:
     def write_calculix_input_file(self):
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
+
         inpfile = open(self.file_name, 'r')       
         nodelist = self.get_all_nodes(inpfile)
         inpfile.close() 
@@ -1355,3 +1357,8 @@ def get_ccx_elset_short_name(obj, i):
         return 'Shell' + str(i)
     else:
         print('Error: ', obj.Name, ' --> ', obj.Proxy.Type)
+
+app = QtGui.QApplication(sys.argv)
+bar = ProgressBar(total=101)
+bar.show()
+QtGui.qApp.processEvents()

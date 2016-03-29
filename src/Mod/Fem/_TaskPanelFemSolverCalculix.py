@@ -28,6 +28,8 @@ from FemTools import FemTools
 import FreeCAD
 import os
 import time
+from qeq import ProgressBar
+from PyQt4 import QtGui
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -188,9 +190,15 @@ class _TaskPanelFemSolverCalculix:
             fea = FemTools()
             fea.set_analysis_type(self.solver_object.AnalysisType)
             fea.update_objects()
+            self.femConsoleMessage("0%")
             fea.write_inp_file()
+            app = QtGui.QApplication(sys.argv)
+            bar = ProgressBar(total=101)
+            bar.show()
+            QtGui.qApp.processEvents()
             if fea.inp_file_name != "":
                 self.inp_file_name = fea.inp_file_name
+                self.femConsoleMessage("100%")
                 self.femConsoleMessage("Write completed.")
                 self.form.pb_edit_inp.setEnabled(True)
                 self.form.pb_run_ccx.setEnabled(True)
