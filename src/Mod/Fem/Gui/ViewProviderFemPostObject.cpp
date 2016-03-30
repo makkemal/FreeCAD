@@ -46,6 +46,7 @@
 #include <Gui/Control.h>
 #include <Gui/Application.h>
 #include <Gui/Document.h>
+#include <Gui/SoFCColorBar.h>
 
 #include <vtkPointData.h>
 #include <vtkCellArray.h>
@@ -96,18 +97,29 @@ ViewProviderFemPostObject::ViewProviderFemPostObject() : m_blockPropertyChanges(
     m_seperator = new SoSeparator();
     m_seperator->ref();
     
+    // simple color bar
+    m_colorRoot = new SoSeparator();
+    m_colorRoot->ref();
+    m_colorStyle = new SoDrawStyle(); 
+    m_colorStyle->ref();
+    m_colorRoot->addChild(m_colorStyle);
+    m_colorBar = new Gui::SoFCColorBar;
+    m_colorBar->Attach(this);
+    m_colorBar->ref();
+    
     //create the vtk algorithms we use for visualisation
     m_outline   = vtkSmartPointer<vtkOutlineCornerFilter>::New();
     m_points = vtkSmartPointer<vtkVertexGlyphFilter>::New();
+    m_pointsSurface = vtkSmartPointer<vtkVertexGlyphFilter>::New();
     m_surface = vtkSmartPointer<vtkGeometryFilter>::New();
     m_wireframe = vtkSmartPointer<vtkExtractEdges>::New();
+    m_wireframeSurface = vtkSmartPointer<vtkExtractEdges>::New();
     m_surfaceEdges = vtkSmartPointer<vtkAppendPolyData>::New();
+    m_pointsSurface->AddInputConnection(m_surface->GetOutputPort());
+    m_wireframeSurface->AddInputConnection(m_surface->GetOutputPort());
     m_surfaceEdges->AddInputConnection(m_surface->GetOutputPort());
-    m_surfaceEdges->AddInputConnection(m_wireframe->GetOutputPort());
-        
-    m_lookup = vtkSmartPointer<vtkLookupTable>::New();
-    m_lookup->SetRampToLinear();
-      
+    m_surfaceEdges->AddInputConnection(m_wireframeSurface->GetOutputPort());
+    
     m_currentAlgorithm = m_outline;
 }
 
@@ -125,6 +137,10 @@ ViewProviderFemPostObject::~ViewProviderFemPostObject()
     m_lines->unref();
     m_seperator->unref();
     m_material->unref();
+    m_colorBar->Detach(this);
+    m_colorBar->unref();
+    m_colorStyle->unref();
+    m_colorRoot->unref();
 }
 
 void ViewProviderFemPostObject::attach(App::DocumentObject *pcObj)
@@ -140,6 +156,24 @@ void ViewProviderFemPostObject::attach(App::DocumentObject *pcObj)
     m_seperator->addChild(m_markers);
     m_seperator->addChild(m_lines);
     m_seperator->addChild(m_faces);
+    
+    // Check for an already existing color bar
+    Gui::SoFCColorBar* pcBar = ((Gui::SoFCColorBar*)findFrontRootOfType( Gui::SoFCColorBar::getClassTypeId() ));
+    if ( pcBar ) {
+        float fMin = m_colorBar->getMinValue();
+        float fMax = m_colorBar->getMaxValue();
+
+        // Attach to the foreign color bar and delete our own bar
+        pcBar->Attach(this);
+        pcBar->ref();
+        pcBar->setRange(fMin, fMax, 3);
+        pcBar->Notify(0);
+        m_colorBar->Detach(this);
+        m_colorBar->unref();
+        m_colorBar = pcBar;
+    }
+
+    m_colorRoot->addChild(m_colorBar);
  
     //all 
     addDisplayMaskMode(m_seperator, "Default");
@@ -147,6 +181,12 @@ void ViewProviderFemPostObject::attach(App::DocumentObject *pcObj)
     
     setupPipeline();   
 }
+
+SoSeparator* ViewProviderFemPostObject::getFrontRoot(void) const {
+    
+    return m_colorRoot;
+}
+
 
 void ViewProviderFemPostObject::setDisplayMode(const char* ModeName)
 {
@@ -158,9 +198,13 @@ void ViewProviderFemPostObject::setDisplayMode(const char* ModeName)
         m_currentAlgorithm = m_surface;
     else if (strcmp("Wireframe",ModeName)==0)
         m_currentAlgorithm = m_wireframe;
+    else if (strcmp("Wireframe (surface only)",ModeName)==0)
+        m_currentAlgorithm = m_wireframeSurface;
     else if (strcmp("Nodes",ModeName)==0)
         m_currentAlgorithm = m_points;
-
+    else if (strcmp("Nodes (surface only)",ModeName)==0)
+        m_currentAlgorithm = m_pointsSurface;
+    
     update();
     
     ViewProviderDocumentObject::setDisplayMode( ModeName );
@@ -171,9 +215,11 @@ std::vector<std::string> ViewProviderFemPostObject::getDisplayModes(void) const
     std::vector<std::string> StrList;
     StrList.push_back("Outline");
     StrList.push_back("Nodes");
+    //StrList.push_back("Nodes (surface only)"); somehow this filter does not work
     StrList.push_back("Surface");
     StrList.push_back("Surface with Edges");
     StrList.push_back("Wireframe");
+    StrList.push_back("Wireframe (surface only)");
     return StrList;
 }
 
@@ -416,9 +462,7 @@ void ViewProviderFemPostObject::WriteColorData() {
     //build the lookuptable
     double range[2];
     data->GetRange(range, component);
-    m_lookup->SetTableRange(range[0], range[1]);
-    m_lookup->SetScaleToLinear();
-    m_lookup->Build();
+    m_colorBar->setRange(range[0], range[1]);
 
     m_material->diffuseColor.startEditing();
      
@@ -433,9 +477,8 @@ void ViewProviderFemPostObject::WriteColorData() {
             
             value = std::sqrt(value);
         }
-        double c[3];
-        m_lookup->GetColor(value, c);
-        m_material->diffuseColor.set1Value(i, c[0], c[1], c[2]);
+        App::Color c = m_colorBar->getColor(value);
+        m_material->diffuseColor.set1Value(i, c.r, c.g, c.b);
     }
     m_material->diffuseColor.finishEditing();
     m_materialBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
@@ -557,3 +600,18 @@ void ViewProviderFemPostObject::unsetEdit(int ModNum) {
     }
 }
 
+void ViewProviderFemPostObject::hide(void) {
+    Gui::ViewProviderDocumentObject::hide();
+    m_colorStyle->style = SoDrawStyle::INVISIBLE;
+}
+
+void ViewProviderFemPostObject::show(void) {
+    Gui::ViewProviderDocumentObject::show();
+    m_colorStyle->style = SoDrawStyle::FILLED;
+}
+
+
+void ViewProviderFemPostObject::OnChange(Base::Subject< int >& rCaller, int rcReason) {
+
+    WriteColorData();
+}
