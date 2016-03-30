@@ -135,10 +135,10 @@ class _TaskPanelResultControl:
                                "U3": (Stats[6], Stats[7], Stats[8]),
                                "Uabs": (Stats[9], Stats[10], Stats[11]),
                                "Sabs": (Stats[12], Stats[13], Stats[14]),
-                               "MaxPrin": (i.Stats[15], i.Stats[16], i.Stats[17]),
-                               "MidPrin": (i.Stats[18], i.Stats[19], i.Stats[20]),
-                               "MinPrin": (i.Stats[21], i.Stats[22], i.Stats[23]),
-                               "MaxShear": (i.Stats[24], i.Stats[25], i.Stats[26]),
+                               "MaxPrin": (Stats[15], Stats[16], Stats[17]),
+                               "MidPrin": (Stats[18], Stats[19], Stats[20]),
+                               "MinPrin": (Stats[21], Stats[22], Stats[23]),
+                               "MaxShear": (Stats[24], Stats[25],Stats[26]),
                                "None": (0.0, 0.0, 0.0)}
                 return match_table[type_name]
         return (0.0, 0.0, 0.0)
@@ -302,19 +302,22 @@ class _TaskPanelResultControl:
     def update(self):
         self.MeshObject = None
         self.result_object = get_results_object(FreeCADGui.Selection.getSelection())
-        #Disable temperature radio button if it does ot exist in results
+        FreeCAD.Console.PrintMessage(str(len(self.result_object.NodeNumbers))+' Result Nodes \n')
         
+        #Disable temperature radio button if it does ot exist in results
         if len(self.result_object.Temperature)==1:
-            self.form.rb_temperature.setEnabled(0)
+                self.form.rb_temperature.setEnabled(0)
+                FreeCAD.Console.PrintMessage('Temperauture results disabled\n')
             
         for i in FemGui.getActiveAnalysis().Member:
             if i.isDerivedFrom("Fem::FemMeshObject"):
                 self.MeshObject = i
+                FreeCAD.Console.PrintMessage(str(self.MeshObject.FemMesh.NodeCount)+' Mesh Nodes \n')
                 break
 
         self.suitable_results = False
         if self.result_object:
-            if self.MeshObject.FemMesh.NodeCount == len(self.result_object.NodeNumbers):
+            if (self.MeshObject.FemMesh.NodeCount == len(self.result_object.NodeNumbers)):
                 self.suitable_results = True
             else:
                 if not self.MeshObject.FemMesh.VolumeCount:
