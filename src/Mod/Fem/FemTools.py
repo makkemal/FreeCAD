@@ -285,8 +285,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 if has_no_references is True:
                     message += "More than one Material has empty References list (Only one empty References list is allowed!).\n"
                 has_no_references = True
-        if not (self.fixed_constraints):
-            message += "No fixed-constraint nodes defined in the Analysis\n"
+        if not (self.fixed_constraints or self.displacement_constraints):
+            message += "No fixed-constraint or displacement constraint defined in the Analysis\n"
         if self.analysis_type == "static":
             if not (self.force_constraints or self.pressure_constraints):
                 message += "No force-constraint or pressure-constraint defined in the Analysis\n"
