@@ -129,7 +129,7 @@ CGRP     '\,'[0-9][0-9][0-9]
 "deg"      yylval = Quantity::Degree;              return UNIT; // degree         (internal standard angle)
 "rad"      yylval = Quantity::Radian;              return UNIT; // radian         
 "gon"      yylval = Quantity::Gon;                 return UNIT; // gon         
-"kJ"       yylval = Qunatity::KiloJoule;		   return UNIT; // KiloJoule (kg*m^2/s^2)
+"kJ"       yylval = Quantity::KiloJoule;           return UNIT; // KiloJoule (kg*m^2/s^2)
 {DIGIT}+"."?{DIGIT}*{EXPO}?                         {  yylval = num_change(yytext,'.',',');return NUM;  }
 {DIGIT}+","?{DIGIT}*{EXPO}?                         {  yylval = num_change(yytext,',','.');return NUM;  }
 
