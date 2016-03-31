@@ -302,17 +302,13 @@ class _TaskPanelResultControl:
     def update(self):
         self.MeshObject = None
         self.result_object = get_results_object(FreeCADGui.Selection.getSelection())
-        FreeCAD.Console.PrintMessage(str(len(self.result_object.NodeNumbers))+' Result Nodes \n')
-        
         #Disable temperature radio button if it does ot exist in results
         if len(self.result_object.Temperature)==1:
                 self.form.rb_temperature.setEnabled(0)
-                FreeCAD.Console.PrintMessage('Temperauture results disabled\n')
-            
+        
         for i in FemGui.getActiveAnalysis().Member:
             if i.isDerivedFrom("Fem::FemMeshObject"):
                 self.MeshObject = i
-                FreeCAD.Console.PrintMessage(str(self.MeshObject.FemMesh.NodeCount)+' Mesh Nodes \n')
                 break
 
         self.suitable_results = False
