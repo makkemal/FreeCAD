@@ -88,6 +88,7 @@ class inp_writer:
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
+            self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
@@ -105,6 +106,8 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
+            self.write_constraints_force(inpfile) #SvdW: Add the force constraint to thermomech analysis
+            self.write_constraints_pressure(inpfile) #SvdW: Add the pressure constraint to thermomech analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
