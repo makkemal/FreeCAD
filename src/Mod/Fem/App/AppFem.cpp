@@ -59,6 +59,13 @@
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
 
+#ifdef FC_USE_VTK
+#include "FemPostPipeline.h"
+#include "FemPostFilter.h"
+#include "FemPostFunction.h"
+#include "PropertyPostDataObject.h"
+#endif
+
 namespace Fem {
 extern PyObject* initModule();
 }
@@ -150,7 +157,21 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPlaneRotation     ::init();    
 
     Fem::FemResultObject            ::init();
-    Fem::FemResultObjectPython      ::init();
     Fem::FemSolverObject            ::init();
     Fem::FemSolverObjectPython      ::init();
+    
+#ifdef FC_USE_VTK
+    Fem::FemPostObject              ::init();
+    Fem::FemPostPipeline            ::init();
+    Fem::FemPostFilter              ::init();
+    Fem::FemPostClipFilter          ::init();
+    Fem::FemPostScalarClipFilter    ::init();
+    Fem::FemPostWarpVectorFilter    ::init();
+    Fem::FemPostCutFilter           ::init();
+    Fem::FemPostFunction            ::init();
+    Fem::FemPostFunctionProvider    ::init();
+    Fem::FemPostPlaneFunction       ::init();
+    Fem::FemPostSphereFunction      ::init();
+    Fem::PropertyPostDataObject     ::init();
+#endif
 }

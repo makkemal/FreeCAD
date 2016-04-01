@@ -177,7 +177,7 @@ public:
 	static Quantity Radian; 
 	static Quantity Gon; 
 
-
+	static Quantity KiloJoule;
     //@}
 
 

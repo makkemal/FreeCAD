@@ -90,6 +90,7 @@ class inp_writer:
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
+            self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
@@ -107,6 +108,8 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
+            self.write_constraints_force(inpfile) #SvdW: Add the force constraint to thermomech analysis
+            self.write_constraints_pressure(inpfile) #SvdW: Add the pressure constraint to thermomech analysis
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_constraints_force(inpfile)
             self.write_constraints_pressure(inpfile)
@@ -385,8 +388,9 @@ class inp_writer:
         f.write('** Materials\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('** Young\'s modulus unit is MPa = N/mm2\n')
-        f.write('** Thermal conductivity unit is W/m/K = kg*m/K*s^3\n')
-        f.write('** Specific Heat unit is kJ/kg/K \n')
+        f.write('** Density\'s unit is t/mm^3\n')
+        f.write('** Thermal conductivity unit is kW/mm/K = t*mm/K*s^3\n')
+        f.write('** Specific Heat unit is kJ/t/K = mm^2/s^2/K\n')
         for m in self.material_objects:
             mat_obj = m['Object']
             # get material properties - Currently in SI units: M/kg/s/Kelvin
@@ -407,7 +411,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No PoissonRatio defined for material: default used\n")
             try:
                 TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
-                TC_in_WmK = TC.getValueAs('W/mm/K')
+                TC_in_WmK = TC.getValueAs('W/m/K') #SvdW: Add factor to force units to results' base units of t/mm/s/K - W/m/K results in no factor needed
             except:
                 FreeCAD.Console.PrintError("No ThermalConductivity defined for material: default used\n")
             try:
@@ -417,7 +421,7 @@ class inp_writer:
                 FreeCAD.Console.PrintError("No ThermalExpansionCoefficient defined for material: default used\n")
             try:
                 SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_JkgK = SH.getValueAs('J/kg/K')
+                SH_in_JkgK = SH.getValueAs('J/kg/K')*1e+06 #SvdW: Add factor to force units to results' base units of t/mm/s/K
             except:
                 FreeCAD.Console.PrintError("No SpecificHeat defined for material: default used\n")
             mat_info_name = mat_obj.Material['Name']
@@ -766,7 +770,7 @@ class inp_writer:
                     v = self.mesh_object.FemMesh.getccxVolumesByFace(ho)
                     f.write("** Heat flux on face {}\n".format(e))
                     for i in v:
-                        f.write("{},F{},{},{}\n".format(i[0], i[1], heatflux_obj.AmbientTemp, heatflux_obj.FilmCoef)) # OvG: Only write out the VolumeIDs linked to a particular face
+                        f.write("{},F{},{},{}\n".format(i[0], i[1], heatflux_obj.AmbientTemp, heatflux_obj.FilmCoef*0.001))#SvdW add factor to force heatflux to units system of t/mm/s/K # OvG: Only write out the VolumeIDs linked to a particular face
 
     def write_frequency(self, f):
         f.write('\n***********************************************************\n')

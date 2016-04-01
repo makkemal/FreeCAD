@@ -31,6 +31,13 @@ set(FemGui_LIBS
     FreeCADGui
 )
 
+if(BUILD_FEM_VTK)
+    set(FemGui_LIBS
+        ${FemGui_LIBS}
+        ${VTK_LIBRARIES}
+    )
+endif(BUILD_FEM_VTK)
+
 generate_from_xml(ViewProviderFemMeshPy)
 
 SET(Python_SRCS
@@ -64,6 +71,13 @@ set(FemGui_MOC_HDRS
     TaskDlgAnalysis.h
     TaskDlgMeshShapeNetgen.h
 )
+if(BUILD_FEM_VTK) 
+    set(FemGui_MOC_HDRS
+        ${FemGui_MOC_HDRS}
+        TaskPostBoxes.h
+        ViewProviderFemPostFunction.h
+    )
+endif(BUILD_FEM_VTK) 
 fc_wrap_cpp(FemGui_MOC_SRCS ${FemGui_MOC_HDRS})
 SOURCE_GROUP("Moc" FILES ${FemGui_MOC_SRCS})
 
@@ -85,6 +99,18 @@ set(FemGui_UIC_SRCS
     TaskAnalysisInfo.ui
     TaskDriver.ui
 )
+if(BUILD_FEM_VTK) 
+    set(FemGui_UIC_SRCS 
+        ${FemGui_UIC_SRCS}
+        TaskPostDisplay.ui
+        TaskPostClip.ui
+        TaskPostScalarClip.ui
+        TaskPostWarpVector.ui
+        TaskPostCut.ui
+        PlaneWidget.ui
+        SphereWidget.ui
+    )
+endif(BUILD_FEM_VTK) 
 qt4_wrap_ui(FemGui_UIC_HDRS ${FemGui_UIC_SRCS})
 
 SET(FemGui_DLG_SRCS
@@ -200,6 +226,20 @@ SET(FemGui_SRCS_TaskBoxes
     TaskTetParameter.cpp
     TaskTetParameter.h
 )
+if(BUILD_FEM_VTK) 
+    SET(FemGui_SRCS_TaskBoxes
+        ${FemGui_SRCS_TaskBoxes}
+        PlaneWidget.ui
+        SphereWidget.ui
+        TaskPostClip.ui
+        TaskPostScalarClip.ui
+        TaskPostDisplay.ui
+        TaskPostWarpVector.ui
+        TaskPostCut.ui
+        TaskPostBoxes.h
+        TaskPostBoxes.cpp
+    )
+endif(BUILD_FEM_VTK) 
 SOURCE_GROUP("Task_Boxes" FILES ${FemGui_SRCS_TaskBoxes})
 
 SET(FemGui_SRCS_TaskDlg
@@ -230,6 +270,20 @@ SET(FemGui_SRCS_Module
 )
 SOURCE_GROUP("Module" FILES ${FemGui_SRCS_Module})
 
+if(BUILD_FEM_VTK) 
+    SET(FemGui_SRCS_Post
+        ViewProviderFemPostObject.h
+        ViewProviderFemPostObject.cpp
+        ViewProviderFemPostPipeline.h
+        ViewProviderFemPostPipeline.cpp
+        ViewProviderFemPostFunction.h
+        ViewProviderFemPostFunction.cpp
+        ViewProviderFemPostFilter.h
+        ViewProviderFemPostFilter.cpp
+        )
+    SOURCE_GROUP("PostObjects" FILES ${FemGui_SRCS_Post})
+endif(BUILD_FEM_VTK)
+
 SET(FemGui_SRCS
     ${Python_SRCS}
     ${FemGui_DLG_SRCS}
@@ -238,6 +292,7 @@ SET(FemGui_SRCS
     ${FemGui_SRCS_TaskDlg}
     ${FemGui_SRCS_TaskBoxes}
     ${FemGui_SRCS_Module}
+    ${FemGui_SRCS_Post}
 )
 
 

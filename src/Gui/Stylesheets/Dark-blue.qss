@@ -1,7 +1,7 @@
 /*
 ABOUT
 ============================================================================================================
-version 2.02
+version 2.04
 QT theme (stylesheet) specially developed for FreeCAD (http://www.freecadweb.org/).
 It might work with other software that uses QT styling.
 
@@ -168,7 +168,8 @@ QToolBar {
 }
 
 QToolBar::handle:top,
-QToolBar::handle:bottom {
+QToolBar::handle:bottom,
+QToolBar::handle:horizontal {
     background-image: url(qss:images/Hmovetoolbar_dark.png);
     width: 10px;
     margin: 4px 2px;
@@ -177,7 +178,8 @@ QToolBar::handle:bottom {
 }
 
 QToolBar::handle:left,
-QToolBar::handle:right {
+QToolBar::handle:right,
+QToolBar::handle:vertical {
     background-image: url(qss:images/Vmovetoolbar_dark.png);
     height: 10px;
     margin: 2px 4px;
@@ -186,21 +188,19 @@ QToolBar::handle:right {
 }
 
 QToolBar::separator:top,
-QToolBar::separator:bottom {
-    background-image: url(qss:images/separtoolbar_dark.png);
-    width: 10px;
-    margin: 6px 2px 6px 2px;
-    background-position: center center;
-    background-repeat: repeat-y;
+QToolBar::separator:bottom,
+QToolBar::separator:horizontal {
+    width: 1px;
+    margin: 6px 4px;
+    background-color: rgba(0,0,0,30);
 }
 
 QToolBar::separator:left,
-QToolBar::separator:right {
-    background-image: url(qss:images/separtoolbar_dark.png);
-    height: 10px;
-    margin: 2px 6px 2px 6px;
-    background-position: center center;
-    background-repeat: repeat-x;
+QToolBar::separator:right,
+QToolBar::separator:vertical {
+    height: 1px;
+    margin: 4px 6px;
+    background-color: rgba(0,0,0,30);
 }
 
 
@@ -509,7 +509,7 @@ QTabBar::tab:right {
 
 QTabBar::tab:selected {
     color: #d2d2d2;
-    background-color: transparent; /* temporal (transparent background) */
+    background-color: #6e6e6e; /* same as tab content background color */
     border-color: #5a5a5a;
 }
 
@@ -999,12 +999,6 @@ QSint--ActionGroup {
     margin: 0px; /* if not reset, it might create problems with QPushButtons and other elements */
 }
 
-
-QSint--ActionGroup QPushButton {
-    padding: 2px; /* bigger padding crops text and icons... */
-    margin: 0px;
-}
-
 /* Separator line */
 QSint--ActionGroup QFrame[height="1"],
 QSint--ActionGroup QFrame[height="2"],
@@ -1098,6 +1092,12 @@ QSint--ActionGroup QFrame[class="content"] QTabBar::tab:right:selected {
 
 QSint--ActionGroup QFrame[class="content"] QTabBar::tab:left:selected {
     border-left-color: #8c8c8c; /* same as Task Panel background color */
+}
+
+/* Fix for buttons with icons that showed cropped (still not happy with result) */
+QSint--ActionGroup QFrame[class="content"] > QWidget > QPushButton {
+    padding: 2px; /* bigger padding crops text and icons... */
+    margin: 0px;
 }
 
 
@@ -1446,6 +1446,11 @@ Gui--PropertyEditor--PropertyEditor > QWidget > QWidget > QWidget > QWidget > QF
     padding: 2px 6px;
 }
 
+QPushButton:checked {
+    background-color: #5e90fa;
+    border-color: #3874f2;
+}
+
 
 /*==================================================================================================
 Tool button inside QDialogs that works as QPushButtons
@@ -1481,9 +1486,39 @@ QDialog QToolButton:pressed {
     background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #3874f2, stop:1 #5e90fa);
 }
 
-QPushButton:checked {
-    background-color: #5e90fa;
+
+/*==================================================================================================
+Tool button inside Task Panel content that works as QPushButtons
+==================================================================================================*/
+/* found inside Part Design Workbench and "make a draft on a face" Task panel options */
+QSint--ActionGroup QFrame[class="content"] QToolButton {
+    color: #e0e0e0;
+    text-align: center;
+    background-color: qlineargradient(spread:pad, x1:0, y1:0.3, x2:0, y2:1, stop:0 #6e6e6e, stop:1 #646464);
+    border: 1px solid #5a5a5a;
+    border-bottom-color: #505050; /* simulates shadow under the button */
+    padding: 2px 6px; /* different than regular QPushButton */
+    margin: 2px; /* different than regular QPushButton */
+    min-height: 16px; /* same as QTabBar QPushButton min-width */
+    border-radius: 4px;
+}
+
+QSint--ActionGroup QFrame[class="content"] QToolButton:hover,
+QSint--ActionGroup QFrame[class="content"] QToolButton:focus {
+    color: white;
     border-color: #3874f2;
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #5e90fa, stop:1 #3874f2);
+}
+
+QSint--ActionGroup QFrame[class="content"] QToolButton:disabled,
+QSint--ActionGroup QFrame[class="content"] QToolButton:disabled:checked {
+    color: #6e6e6e;
+    border-color: #5a5a5a;
+    background-color: #5a5a5a;
+}
+
+QSint--ActionGroup QFrame[class="content"] QToolButton:pressed {
+    background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:0, y2:1, stop:0 #3874f2, stop:1 #5e90fa);
 }
 
 
@@ -1549,9 +1584,6 @@ QCheckBox::indicator {
     color: black;
     background-color: rgba(255,255,255,20);
     border: 1px solid #5a5a5a;
-}
-
-QCheckBox::indicator {
     width: 11px;
     height: 11px;
     border-radius:2px;
@@ -1588,6 +1620,69 @@ QCheckBox::indicator:indeterminate {
 
 QCheckBox:focus {
     border: none;
+}
+
+
+/*==================================================================================================
+Checkboxs inside QListWidget and QTreeView
+==================================================================================================*/
+QListWidget::indicator,
+QTreeView::indicator {
+    color: #c8c8c8;
+    background-color: rgba(255,255,255,20);
+    border: 1px solid #5a5a5a;
+    width: 11px;
+    height: 11px;
+    border-radius:2px;
+}
+
+/* fix for QTreeView::indicator loosing its margin */
+QTreeView::indicator {
+    margin: 3px;
+}
+
+QListWidget::indicator:selected,
+QTreeView::indicator:selected {
+    background-color: #e6e6e6;
+}
+
+QListWidget::indicator:checked:selected,
+QListWidget::indicator:indeterminate:selected,
+QTreeView::indicator:checked:selected,
+QTreeView::indicator:indeterminate:selected {
+    background-color: #7cabf9; /* slighly lighter than default */
+    border-color: #2053c0; /* slighly darker than default */
+}
+
+QListWidget::indicator:pressed,
+QListWidget::indicator:non-exclusive:checked:pressed,
+QListWidget::indicator:indeterminate:pressed,
+QListWidget::indicator:checked:pressed,
+QTreeView::indicator:pressed,
+QTreeView::indicator:non-exclusive:checked:pressed,
+QTreeView::indicator:indeterminate:pressed,
+QTreeView::indicator:checked:pressed {
+    border-color: #adc5ed;
+}
+
+QListWidget::indicator:checked,
+QTreeView::indicator:checked {
+    background-color: #5e90fa; /* QRadioButton has the same color */
+    border: 1px solid #3874f2; /* QRadioButton has the same color */
+    image:url(qss:images/checkbox_light.png);
+}
+
+QListWidget::indicator:disabled,
+QTreeView::indicator:disabled {
+    background-color: rgba(255,255,255,20);
+    border: 1px solid rgba(255,255,255,20);
+}
+
+QListWidget::indicator:indeterminate,
+QTreeView::indicator:indeterminate {
+    background-color: #5e90fa;
+    border: 1px solid #3874f2;
+    image: url(qss:images/checkbox_indeterminate_light.png);
 }
 
 
@@ -1679,11 +1774,6 @@ QToolBar > QDateTimeEdit {
     min-width: 70px; /* necessary to show its content */
 }
 
-QToolBar > QToolButton {
-    margin: 2px;
-    padding: 2px;
-}
-
 QToolBar > QComboBox,
 QToolBar > QAbstractSpinBox,
 QToolBar > QSpinBox,
@@ -1736,6 +1826,20 @@ QToolBar > QPushButton:checked:disabled,
 QToolBar > QPushButton:!checked:disabled {
     border: none;
     background-color: transparent;
+}
+
+QToolBar > QToolButton {
+    margin: 2px;
+    padding: 2px;
+    border-radius: 3px;
+}
+
+QToolBar > QToolButton:hover {
+    background-color: rgba(0,0,0,20);
+}
+
+QToolBar > QToolButton:pressed {
+    background-color: rgba(0,0,0,30);
 }
 
 /* ToolBar menu buttons (buttons with drop-down menu) */
@@ -1831,72 +1935,72 @@ QTableView::item:selected  {
 }
 
 /* fix for elements inside the cells */
-QTableView QComboBox,
-QTableView QAbstractSpinBox,
-QTableView QSpinBox,
-QTableView QDoubleSpinBox,
-QTableView QLineEdit,
-QTableView QTextEdit,
-QTableView QTimeEdit,
-QTableView QDateEdit,
-QTableView QDateTimeEdit,
-QTableView QComboBox:drop-down,
-QTableView QAbstractSpinBox:up-button,
-QTableView QSpinBox:up-button,
-QTableView QDoubleSpinBox:up-button,
-QTableView QTimeEdit:up-button,
-QTableView QDateEdit:up-button,
-QTableView QDateTimeEdit:up-button,
-QTableView QAbstractSpinBox:down-button,
-QTableView QSpinBox:down-button,
-QTableView QDoubleSpinBox:down-button,
-QTableView QTimeEdit:down-button,
-QTableView QDateEdit:down-button,
-QTableView QDateTimeEdit:down-button,
-QTableView Gui--ColorButton {
+QTableView > QWidget > QComboBox,
+QTableView > QWidget > QAbstractSpinBox,
+QTableView > QWidget > QSpinBox,
+QTableView > QWidget > QDoubleSpinBox,
+QTableView > QWidget > QLineEdit,
+QTableView > QWidget > QTextEdit,
+QTableView > QWidget > QTimeEdit,
+QTableView > QWidget > QDateEdit,
+QTableView > QWidget > QDateTimeEdit,
+QTableView > QWidget > QComboBox:drop-down,
+QTableView > QWidget > QAbstractSpinBox:up-button,
+QTableView > QWidget > QSpinBox:up-button,
+QTableView > QWidget > QDoubleSpinBox:up-button,
+QTableView > QWidget > QTimeEdit:up-button,
+QTableView > QWidget > QDateEdit:up-button,
+QTableView > QWidget > QDateTimeEdit:up-button,
+QTableView > QWidget > QAbstractSpinBox:down-button,
+QTableView > QWidget > QSpinBox:down-button,
+QTableView > QWidget > QDoubleSpinBox:down-button,
+QTableView > QWidget > QTimeEdit:down-button,
+QTableView > QWidget > QDateEdit:down-button,
+QTableView > QWidget > QDateTimeEdit:down-button,
+QTableView > QWidget > Gui--ColorButton {
     border-radius: 0px;
 }
 
-QTableView QComboBox,
-QTableView QAbstractSpinBox,
-QTableView QSpinBox,
-QTableView QDoubleSpinBox,
-QTableView QLineEdit,
-QTableView QTextEdit,
-QTableView QTimeEdit,
-QTableView QDateEdit,
-QTableView QDateTimeEdit {
+QTableView > QWidget > QComboBox,
+QTableView > QWidget > QAbstractSpinBox,
+QTableView > QWidget > QSpinBox,
+QTableView > QWidget > QDoubleSpinBox,
+QTableView > QWidget > QLineEdit,
+QTableView > QWidget > QTextEdit,
+QTableView > QWidget > QTimeEdit,
+QTableView > QWidget > QDateEdit,
+QTableView > QWidget > QDateTimeEdit {
     color: black;
     background-color: transparent;
     border-color: transparent;
 }
 
-QTableView QComboBox:drop-down,
-QTableView QAbstractSpinBox:up-button,
-QTableView QSpinBox:up-button,
-QTableView QDoubleSpinBox:up-button,
-QTableView QTimeEdit:up-button,
-QTableView QDateEdit:up-button,
-QTableView QDateTimeEdit:up-button,
-QTableView QAbstractSpinBox:down-button,
-QTableView QSpinBox:down-button,
-QTableView QDoubleSpinBox:down-button,
-QTableView QTimeEdit:down-button,
-QTableView QDateEdit:down-button,
-QTableView QDateTimeEdit:down-button,
-QTableView Gui--ColorButton {
+QTableView > QWidget > QComboBox:drop-down,
+QTableView > QWidget > QAbstractSpinBox:up-button,
+QTableView > QWidget > QSpinBox:up-button,
+QTableView > QWidget > QDoubleSpinBox:up-button,
+QTableView > QWidget > QTimeEdit:up-button,
+QTableView > QWidget > QDateEdit:up-button,
+QTableView > QWidget > QDateTimeEdit:up-button,
+QTableView > QWidget > QAbstractSpinBox:down-button,
+QTableView > QWidget > QSpinBox:down-button,
+QTableView > QWidget > QDoubleSpinBox:down-button,
+QTableView > QWidget > QTimeEdit:down-button,
+QTableView > QWidget > QDateEdit:down-button,
+QTableView > QWidget > QDateTimeEdit:down-button,
+QTableView > QWidget > Gui--ColorButton {
     background-color: rgba(0,0,0,30);
 }
 
-QTableView QComboBox:focus,
-QTableView QAbstractSpinBox:focus,
-QTableView QSpinBox:focus,
-QTableView QDoubleSpinBox:focus,
-QTableView QLineEdit:focus,
-QTableView QTextEdit:focus,
-QTableView QTimeEdit:focus,
-QTableView QDateEdit:focus,
-QTableView QDateTimeEdit:focus {
+QTableView > QWidget > QComboBox:focus,
+QTableView > QWidget > QAbstractSpinBox:focus,
+QTableView > QWidget > QSpinBox:focus,
+QTableView > QWidget > QDoubleSpinBox:focus,
+QTableView > QWidget > QLineEdit:focus,
+QTableView > QWidget > QTextEdit:focus,
+QTableView > QWidget > QTimeEdit:focus,
+QTableView > QWidget > QDateEdit:focus,
+QTableView > QWidget > QDateTimeEdit:focus {
     color: #1b3774;
     selection-color: white;
     selection-background-color: #5e90fa;
@@ -1904,29 +2008,29 @@ QTableView QDateTimeEdit:focus {
     background-color: #cbd8e6;
 }
 
-QTableView QComboBox:disabled,
-QTableView QAbstractSpinBox:disabled,
-QTableView QSpinBox:disabled,
-QTableView QDoubleSpinBox:disabled,
-QTableView QLineEdit:disabled,
-QTableView QTextEdit:disabled,
-QTableView QTimeEdit:disabled,
-QTableView QDateEdit:disabled,
-QTableView QDateTimeEdit:disabled {
+QTableView > QWidget > QComboBox:disabled,
+QTableView > QWidget > QAbstractSpinBox:disabled,
+QTableView > QWidget > QSpinBox:disabled,
+QTableView > QWidget > QDoubleSpinBox:disabled,
+QTableView > QWidget > QLineEdit:disabled,
+QTableView > QWidget > QTextEdit:disabled,
+QTableView > QWidget > QTimeEdit:disabled,
+QTableView > QWidget > QDateEdit:disabled,
+QTableView > QWidget > QDateTimeEdit:disabled {
     color: rgba(0,0,0,120);
     background-color: transparent;
     border-color: transparent;
 }
 
-QTableView QComboBox:read-only,
-QTableView QAbstractSpinBox:read-only,
-QTableView QSpinBox:read-only,
-QTableView QDoubleSpinBox:read-only,
-QTableView QLineEdit:read-only,
-QTableView QTextEdit:read-only,
-QTableView QTimeEdit:read-only,
-QTableView QDateEdit:read-only,
-QTableView QDateTimeEdit:read-only {
+QTableView > QWidget > QComboBox:read-only,
+QTableView > QWidget > QAbstractSpinBox:read-only,
+QTableView > QWidget > QSpinBox:read-only,
+QTableView > QWidget > QDoubleSpinBox:read-only,
+QTableView > QWidget > QLineEdit:read-only,
+QTableView > QWidget > QTextEdit:read-only,
+QTableView > QWidget > QTimeEdit:read-only,
+QTableView > QWidget > QDateEdit:read-only,
+QTableView > QWidget > QDateTimeEdit:read-only {
     color: black;
     background-color: transparent;
     border-color: transparent;

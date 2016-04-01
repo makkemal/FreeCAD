@@ -123,7 +123,7 @@
            </size>
           </property>
           <property name="text">
-           <string>200000 MPa</string>
+           <string>200 GPa</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -278,7 +278,7 @@
            </size>
           </property>
           <property name="text">
-           <string>0.000012 m/m/K</string>
+           <string>12 um/m/K</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -331,7 +331,7 @@
            <double>2.000000000000000</double>
           </property>
           <property name="maximum" stdset="0">
-           <double>2000000000.000000000000000</double>
+           <double>2050000000.000000000000000</double>
           </property>
           <property name="unit" stdset="0">
            <string notr="true">J/kg/K</string>

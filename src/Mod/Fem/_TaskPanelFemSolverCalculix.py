@@ -182,7 +182,9 @@ class _TaskPanelFemSolverCalculix:
             self.solver_object.WorkingDir = current_wd
         self.form.le_working_dir.setText(self.solver_object.WorkingDir)
 
-    def write_input_file_handler(self):
+    def write_input_file_handler(self):      
+        self.Start = time.time()
+        self.form.l_time.setText('Time: {0:4.1f}: '.format(time.time() - self.Start))
         QApplication.restoreOverrideCursor()
         if self.check_prerequisites_helper():
             QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -205,6 +207,7 @@ class _TaskPanelFemSolverCalculix:
             else:
                 self.femConsoleMessage("Write .inp file failed!", "#FF0000")
         QApplication.restoreOverrideCursor()
+        self.form.l_time.setText('Time: {0:4.1f}: '.format(time.timer() - self.Start))
 
     def check_prerequisites_helper(self):
         self.Start = time.time()

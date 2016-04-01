@@ -5,7 +5,7 @@ else(MSVC)
 endif(MSVC)
 
 if(BUILD_FEM_NETGEN)
-    add_definitions(-DFCWithNetgen)
+    add_definitions(-DFCWithNetgen ${NETGEN_DEFINITIONS})
 endif(BUILD_FEM_NETGEN)
 
 
@@ -26,27 +26,28 @@ include_directories(
 
 link_directories(${OCC_LIBRARY_DIR})
 
-
+set(Fem_LIBS
+        Part
+        FreeCADApp
+        StdMeshers
+        SMESH
+        SMDS
+        SMESHDS
+    )
+    
 if(BUILD_FEM_NETGEN)
     set(Fem_LIBS
-        Part
-        FreeCADApp
-        StdMeshers
+        ${Fem_LIBS}
         NETGENPlugin
-        SMESH
-        SMDS
-        SMESHDS
-    )
-else(BUILD_FEM_NETGEN)
-    set(Fem_LIBS
-        Part
-        FreeCADApp
-        StdMeshers
-        SMESH
-        SMDS
-        SMESHDS
     )
 endif(BUILD_FEM_NETGEN)
+
+if(BUILD_FEM_VTK)
+    set(Fem_LIBS
+        ${Fem_LIBS}
+        ${VTK_LIBRARIES}
+    )
+endif(BUILD_FEM_VTK)
 
 generate_from_xml(FemMeshPy)
 
@@ -95,7 +96,6 @@ SET(FemScripts_SRCS
     _ViewProviderFemShellThickness.py
     _ViewProviderFemSolverCalculix.py
     _ViewProviderMechanicalMaterial.py
-    qeq.py
     ccxDatReader.py
     ccxFrdReader.py
     ccxInpWriter.py
@@ -124,8 +124,6 @@ SET(FemScripts_SRCS
 SET(FemTests_SRCS
     test_files/ccx/mesh_points.csv
     test_files/ccx/mesh_volumes.csv
-    test_files/ccx/static_analysis.inp
-    test_files/ccx/frequency_analysis.inp
     #test_files/ccx/thermomech_analysis.inp
     test_files/ccx/cube_frequency.inp
     test_files/ccx/cube_frequency.dat
@@ -135,6 +133,7 @@ SET(FemTests_SRCS
     test_files/ccx/cube_static.dat
     test_files/ccx/cube_static.frd
     test_files/ccx/cube_static_expected_values
+    test_files/ccx/cube.fcstd
     #test_files/ccx/cube_thermomech.inp
     #test_files/ccx/cube_thermomech.dat
     #test_files/ccx/cube_thermomech.frd
@@ -204,15 +203,28 @@ SET(FemConstraints_SRCS
 	)
 SOURCE_GROUP("Constraints" FILES ${FemConstraints_SRCS})
 
-SET(FemResult_SRCS
+if(BUILD_FEM_VTK) 
+    SET(FemPost_SRCS
+        PropertyPostDataObject.h
+        PropertyPostDataObject.cpp
+        FemPostObject.h
+        FemPostObject.cpp
+        FemPostPipeline.h
+        FemPostPipeline.cpp
+        FemPostFilter.h
+        FemPostFilter.cpp
+        FemPostFunction.h
+        FemPostFunction.cpp
 	)
-SOURCE_GROUP("ResultObjects" FILES ${FemResult_SRCS})
+    SOURCE_GROUP("PostObjects" FILES ${FemPost_SRCS})
+endif(BUILD_FEM_VTK)
+
 
 SET(Fem_SRCS
 	${FemBase_SRCS}
 	${FemSet_SRCS}
 	${FemConstraints_SRCS}
-	${FemResult_SRCS}
+	${FemPost_SRCS}
     ${Mod_SRCS}
     ${Python_SRCS}
 )
