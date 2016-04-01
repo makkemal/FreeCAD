@@ -26,8 +26,6 @@ import FreeCAD
 import os
 import sys
 import time
-from qeq import ProgressBar
-from PyQt4 import QtGui
 
 __title__ = "ccxInpWriter"
 __author__ = "Przemo Firszt, Bernd Hahnebach"
@@ -1362,7 +1360,3 @@ def get_ccx_elset_short_name(obj, i):
     else:
         print('Error: ', obj.Name, ' --> ', obj.Proxy.Type)
 
-app = QtGui.QApplication(sys.argv)
-bar = ProgressBar(total=101)
-bar.show()
-QtGui.qApp.processEvents()
