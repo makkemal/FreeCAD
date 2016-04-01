@@ -200,7 +200,7 @@ class _TaskPanelFemSolverCalculix:
             else:
                 self.femConsoleMessage("Write .inp file failed!", "#FF0000")
         QApplication.restoreOverrideCursor()
-        self.form.l_time.setText('Time: {0:4.1f}: '.format(time.timer() - self.Start))
+        self.form.l_time.setText('Time: {0:4.1f}: '.format(time.time() - self.Start))
 
     def check_prerequisites_helper(self):
         self.Start = time.time()
