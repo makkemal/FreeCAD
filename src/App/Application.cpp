@@ -1142,6 +1142,8 @@ void Application::initTypes(void)
     App ::StringExpression          ::init();
     App ::FunctionExpression        ::init();
     App ::BooleanExpression         ::init();
+    App ::RangeExpression           ::init();
+
 }
 
 void Application::initConfig(int argc, char ** argv)
