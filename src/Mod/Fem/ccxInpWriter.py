@@ -94,6 +94,10 @@ class inp_writer:
         self.fem_mesh_nodes = {}
 
     def write_calculix_input_file(self):
+        MainWindow = QtGui.QMainWindow()
+        ui = Ui_MainWindow()
+        ui.setupUi(MainWindow)
+        MainWindow.show()  
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
         
