@@ -26,12 +26,32 @@ import FreeCAD
 import os
 import sys
 import time
+import PySide
+from PySide import QtCore, QtGui
 
 __title__ = "ccxInpWriter"
 __author__ = "Przemo Firszt, Bernd Hahnebach"
 __url__ = "http://www.freecadweb.org"
 
+global switch ; switch = 0
+global path
+#path = your_directory_path                # your directory path
+#path = FreeCAD.ConfigGet("AppHomePath")   # path FreeCAD installation
+path = FreeCAD.ConfigGet("UserAppData")    # path FreeCAD User data
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
 
+#Start ccx inout writer
 class inp_writer:
     def __init__(self, analysis_obj, mesh_obj, mat_obj,
                  fixed_obj,
@@ -76,6 +96,7 @@ class inp_writer:
     def write_calculix_input_file(self):
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
+        
 
         inpfile = open(self.file_name, 'r')       
         nodelist = self.get_all_nodes(inpfile)
@@ -1226,6 +1247,68 @@ class inp_writer:
             else:
                 node_sum_geom_table[n] = A
         return node_sum_geom_table
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        self.window = MainWindow
+        global switch
+ 
+        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.resize(400, 100)
+        MainWindow.setMinimumSize(QtCore.QSize(400, 100))
+        MainWindow.setMaximumSize(QtCore.QSize(400, 100))
+        self.widget = QtGui.QWidget(MainWindow)
+        self.widget.setObjectName(_fromUtf8("widget"))
+
+
+#        section progressBar 1
+        self.progressBar_1 = QtGui.QProgressBar(self.widget)                               # create object progressBar_1
+        self.progressBar_1.setGeometry(QtCore.QRect(20, 21, 350, 23))                      # coordinates position
+        self.progressBar_1.setValue(0)                                                     # value by default
+        self.progressBar_1.setOrientation(QtCore.Qt.Horizontal)                            # orientation Horizontal
+        self.progressBar_1.setAlignment(QtCore.Qt.AlignCenter)                             # align text center
+        self.progressBar_1.setObjectName(_fromUtf8("progressBar_1"))                        # object Name
+        self.progressBar_1.setToolTip(_translate("MainWindow", "progressBar for ccxinput writer", None)) # tooltip for explanation
+
+        self.label_1 = QtGui.QLabel(self.widget)                                            # labels displayed on widget
+        self.label_1.setGeometry(QtCore.QRect(20, 1, 350, 16))                            # label coordinates 
+        self.label_1.setObjectName(_fromUtf8("label_1"))    
+
+ 
+        
+        MainWindow.setCentralWidget(self.widget)
+        self.menuBar = QtGui.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 100, 26))
+        self.menuBar.setObjectName(_fromUtf8("menuBar"))
+        MainWindow.setMenuBar(self.menuBar)
+        self.mainToolBar = QtGui.QToolBar(MainWindow)
+        self.mainToolBar.setObjectName(_fromUtf8("mainToolBar"))
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
+        self.statusBar = QtGui.QStatusBar(MainWindow)
+        self.statusBar.setObjectName(_fromUtf8("statusBar"))
+        MainWindow.setStatusBar(self.statusBar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+ 
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+
+                                                                                           # a tooltip can be set to all objects
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowFlags(PySide.QtCore.Qt.WindowStaysOnTopHint)                   # this function turns the front window (stay to hint)
+        MainWindow.setWindowTitle(_translate("MainWindow", "CCX input file writer progress", None))            # title main window
+        MainWindow.setWindowIcon(QtGui.QIcon(path+'MEPlan.png'))                           # change the icon of the main window
+ 
+#        for horizontalScrollBar
+#        self.horizontalScrollBar.setToolTip(_translate("MainWindow", "horizontalScrollBar", None))
+#        self.verticalScrollBar.setToolTip(_translate("MainWindow", "verticalScrollBar", None))
+        
+        
+        self.label_1.setText(_translate("MainWindow", "Writing ", None))  
+           
 
 
 # Helpers
