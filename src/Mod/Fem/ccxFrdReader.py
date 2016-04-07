@@ -26,6 +26,8 @@ import FreeCAD
 import os
 from math import pow, sqrt
 import numpy as np
+import PySide
+from PySide import QtCore, QtGui
 
 __title__ = "FreeCAD Calculix library"
 __author__ = "Juergen Riegel , Michael Hindley"
@@ -33,6 +35,24 @@ __url__ = "http://www.freecadweb.org"
 
 if open.__module__ == '__builtin__':
     pyopen = open  # because we'll redefine open below
+    
+global switch ; switch = 0
+global path
+#path = your_directory_path                # your directory path
+#path = FreeCAD.ConfigGet("AppHomePath")   # path FreeCAD installation
+path = FreeCAD.ConfigGet("UserAppData")    # path FreeCAD User data
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)    
 
 
 # read a calculix result file and extract the nodes, displacement vectores and stress values.
@@ -68,8 +88,16 @@ def readResult(frd_input):
     elemType = 0
     timestep=0
     timetemp=0
+    num_lines_frd=len(frd_file.readlines(0))
+    MainWindow = QtGui.QMainWindow()
+    progress = Ui_MainWindow()
+    progress.setupUi(MainWindow)
+    MainWindow.show()  
+    progress.progressBar_1.setValue(1)
 
     for line in frd_file:
+        #Update progress bar
+        progress.progressBar_1.setValue(line/num_lines_frd)
         #Check if we found nodes section
         if line[4:6] == "2C":
             nodes_found = True
@@ -285,7 +313,7 @@ def readResult(frd_input):
 
             nodes_found = False
             elements_found = False
-
+    MainWindow.close()
     frd_file.close()
     return {'Nodes': nodes,
             'Hexa8Elem': elements_hexa8, 'Penta6Elem': elements_penta6, 'Tetra4Elem': elements_tetra4, 'Tetra10Elem': elements_tetra10,
@@ -552,3 +580,60 @@ def open(filename):
     "called when freecad opens a file"
     docname = os.path.splitext(os.path.basename(filename))[0]
     insert(filename, docname)
+    
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        self.window = MainWindow
+        global switch
+ 
+        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.resize(400, 100)
+        MainWindow.setMinimumSize(QtCore.QSize(400, 100))
+        MainWindow.setMaximumSize(QtCore.QSize(400, 100))
+        self.widget = QtGui.QWidget(MainWindow)
+        self.widget.setObjectName(_fromUtf8("widget"))
+
+
+#        section progressBar 1
+        self.progressBar_1 = QtGui.QProgressBar(self.widget)                               # create object progressBar_1
+        self.progressBar_1.setGeometry(QtCore.QRect(20, 21, 350, 23))                      # coordinates position
+        self.progressBar_1.setValue(0)                                                     # value by default
+        self.progressBar_1.setOrientation(QtCore.Qt.Horizontal)                            # orientation Horizontal
+        self.progressBar_1.setAlignment(QtCore.Qt.AlignCenter)                             # align text center
+        self.progressBar_1.setObjectName(_fromUtf8("progressBar_1"))                        # object Name
+        self.progressBar_1.setToolTip(_translate("MainWindow", "ProgressBar for Frd reader", None)) # tooltip for explanation
+
+        self.label_1 = QtGui.QLabel(self.widget)                                            # labels displayed on widget
+        self.label_1.setGeometry(QtCore.QRect(20, 1, 350, 16))                            # label coordinates 
+        self.label_1.setObjectName(_fromUtf8("label_1"))    
+
+ 
+        
+        MainWindow.setCentralWidget(self.widget)
+        self.menuBar = QtGui.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 100, 26))
+        self.menuBar.setObjectName(_fromUtf8("menuBar"))
+        MainWindow.setMenuBar(self.menuBar)
+        self.mainToolBar = QtGui.QToolBar(MainWindow)
+        self.mainToolBar.setObjectName(_fromUtf8("mainToolBar"))
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
+        self.statusBar = QtGui.QStatusBar(MainWindow)
+        self.statusBar.setObjectName(_fromUtf8("statusBar"))
+        MainWindow.setStatusBar(self.statusBar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+ 
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+
+                                                                                           # a tooltip can be set to all objects
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowFlags(PySide.QtCore.Qt.WindowStaysOnTopHint)                   # this function turns the front window (stay to hint)
+        MainWindow.setWindowTitle(_translate("MainWindow", "Frd output file reader progress", None))            # title main window
+        MainWindow.setWindowIcon(QtGui.QIcon(path+'MEPlan.png'))                           # change the icon of the main window
+ 
+#        
+           
