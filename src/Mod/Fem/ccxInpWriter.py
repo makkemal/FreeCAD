@@ -63,7 +63,13 @@ class inp_writer:
                  planerotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
-                 dir_name=None):
+                 dir_name=None):     
+        MainWindow = QtGui.QMainWindow()
+        progress = Ui_MainWindow()
+        progress.setupUi(MainWindow)
+        MainWindow.show()     
+        progress.progressBar_1.setValue(1)
+        progress.label_1.setText(_translate("MainWindow", "Getting nodes and elements" , None))           
         self.dir_name = dir_name
         self.analysis = analysis_obj
         self.mesh_object = mesh_obj
@@ -92,21 +98,26 @@ class inp_writer:
         self.ccx_eall = 'Eall'
         self.ccx_elsets = []
         self.fem_mesh_nodes = {}
+        MainWindow.close() 
 
     def write_calculix_input_file(self):
         MainWindow = QtGui.QMainWindow()
-        ui = Ui_MainWindow()
-        ui.setupUi(MainWindow)
+        progress = Ui_MainWindow()
+        progress.setupUi(MainWindow)
         MainWindow.show()  
+        progress.progressBar_1.setValue(1)
+        progress.label_1.setText(_translate("MainWindow", "Getting nodes and elements(Please be patient)" , None)) 
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
-        
-
+        progress.progressBar_1.setValue(2)
+        progress.label_1.setText(_translate("MainWindow", "Wrtting nodes and elements" , None)) 
         inpfile = open(self.file_name, 'r')       
         nodelist = self.get_all_nodes(inpfile)
         inpfile.close() 
         inpfile = open(self.file_name, 'a')
         inpfile.write('\n\n')
+        progress.progressBar_1.setValue(20)
+        progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_node_sets_constraints_displacement(inpfile)
@@ -114,11 +125,15 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
             self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
+        progress.progressBar_1.setValue(50)
+        progress.label_1.setText(_translate("MainWindow", "Writting materials" , None))         
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
+        progress.progressBar_1.setValue(60)
+        progress.label_1.setText(_translate("MainWindow", "Writting Constraints" , None))       
         self.write_femelementsets(inpfile)
         self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
@@ -128,6 +143,8 @@ class inp_writer:
             self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)
+        progress.progressBar_1.setValue(70)
+        progress.label_1.setText(_translate("MainWindow", "Writting distributed loads" , None))   
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
@@ -138,10 +155,13 @@ class inp_writer:
             self.write_constraints_pressure(inpfile)
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
+        progress.progressBar_1.setValue(80)
+        progress.label_1.setText(_translate("MainWindow", "Writing outputs" , None))           
         self.write_outputs_types(inpfile)
         self.write_step_end(inpfile)
         self.write_footer(inpfile)
         inpfile.close()
+        MainWindow.close()
         return self.file_name
 
     def write_element_sets_material_and_femelement_type(self, f):
