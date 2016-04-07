@@ -63,13 +63,7 @@ class inp_writer:
                  planerotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
-                 dir_name=None):     
-        MainWindow = QtGui.QMainWindow()
-        progress = Ui_MainWindow()
-        progress.setupUi(MainWindow)
-        MainWindow.show()     
-        progress.progressBar_1.setValue(1)
-        progress.label_1.setText(_translate("MainWindow", "Getting nodes and elements" , None))           
+                 dir_name=None):              
         self.dir_name = dir_name
         self.analysis = analysis_obj
         self.mesh_object = mesh_obj
@@ -98,7 +92,7 @@ class inp_writer:
         self.ccx_eall = 'Eall'
         self.ccx_elsets = []
         self.fem_mesh_nodes = {}
-        MainWindow.close() 
+        
 
     def write_calculix_input_file(self):
         MainWindow = QtGui.QMainWindow()
