@@ -120,20 +120,22 @@ class inp_writer:
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
+        progress.progressBar_1.setValue(25)
         self.write_node_sets_constraints_displacement(inpfile)
+        progress.progressBar_1.setValue(30)
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
+        progress.progressBar_1.setValue(35)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
             self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
-        progress.progressBar_1.setValue(50)
-        progress.label_1.setText(_translate("MainWindow", "Writting materials" , None))         
+        progress.progressBar_1.setValue(40)
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
         self.write_materials(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
-        progress.progressBar_1.setValue(60)
-        progress.label_1.setText(_translate("MainWindow", "Writting Constraints" , None))       
+        progress.label_1.setText(_translate("MainWindow", "Writting Constraints" , None))         
+        progress.progressBar_1.setValue(50)       
         self.write_femelementsets(inpfile)
         self.write_constraints_planerotation(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
