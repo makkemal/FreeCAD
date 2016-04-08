@@ -58,6 +58,9 @@ except AttributeError:
 # read a calculix result file and extract the nodes, displacement vectores and stress values.
 def readResult(frd_input):
     frd_file = pyopen(frd_input, "r")
+    num_lines_frd=float(sum(1 for line in frd_file))
+    frd_file.close()
+    frd_file = pyopen(frd_input, "r")
     nodes = {}
     elements_hexa8 = {}
     elements_penta6 = {}
@@ -88,16 +91,17 @@ def readResult(frd_input):
     elemType = 0
     timestep=0
     timetemp=0
-#    num_lines_frd=len(frd_file.readlines(0))
-#    MainWindow = QtGui.QMainWindow()
-#    progress = Ui_MainWindow()
-#    progress.setupUi(MainWindow)
-#    MainWindow.show()  
-#    progress.progressBar_1.setValue(1)
+    linenum=0
+    MainWindow = QtGui.QMainWindow()
+    progress = Ui_MainWindow()
+    progress.setupUi(MainWindow)
+    MainWindow.show()  
+    progress.progressBar_1.setValue(1)
 
     for line in frd_file:
-        #Update progress bar
-#        progress.progressBar_1.setValue(line/num_lines_frd)
+        #Update progress bar 
+        linenum=linenum+1
+        progress.progressBar_1.setValue(int(linenum/num_lines_frd))
         #Check if we found nodes section
         if line[4:6] == "2C":
             nodes_found = True
