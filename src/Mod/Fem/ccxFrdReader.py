@@ -88,16 +88,16 @@ def readResult(frd_input):
     elemType = 0
     timestep=0
     timetemp=0
-    num_lines_frd=len(frd_file.readlines(0))
-    MainWindow = QtGui.QMainWindow()
-    progress = Ui_MainWindow()
-    progress.setupUi(MainWindow)
-    MainWindow.show()  
-    progress.progressBar_1.setValue(1)
+#    num_lines_frd=len(frd_file.readlines(0))
+#    MainWindow = QtGui.QMainWindow()
+#    progress = Ui_MainWindow()
+#    progress.setupUi(MainWindow)
+#    MainWindow.show()  
+#    progress.progressBar_1.setValue(1)
 
     for line in frd_file:
         #Update progress bar
-        progress.progressBar_1.setValue(line/num_lines_frd)
+#        progress.progressBar_1.setValue(line/num_lines_frd)
         #Check if we found nodes section
         if line[4:6] == "2C":
             nodes_found = True
@@ -313,7 +313,7 @@ def readResult(frd_input):
 
             nodes_found = False
             elements_found = False
-    MainWindow.close()
+#    MainWindow.close()
     frd_file.close()
     return {'Nodes': nodes,
             'Hexa8Elem': elements_hexa8, 'Penta6Elem': elements_penta6, 'Tetra4Elem': elements_tetra4, 'Tetra10Elem': elements_tetra10,
@@ -581,7 +581,6 @@ def open(filename):
     docname = os.path.splitext(os.path.basename(filename))[0]
     insert(filename, docname)
 
-
 #progress bar class    
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -636,6 +635,5 @@ class Ui_MainWindow(object):
         MainWindow.setWindowFlags(PySide.QtCore.Qt.WindowStaysOnTopHint)                   # this function turns the front window (stay to hint)
         MainWindow.setWindowTitle(_translate("MainWindow", "Frd output file reader progress", None))            # title main window
         MainWindow.setWindowIcon(QtGui.QIcon(path+'MEPlan.png'))                           # change the icon of the main window
- 
-#        
+      
            
