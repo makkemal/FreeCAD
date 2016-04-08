@@ -580,7 +580,9 @@ def open(filename):
     "called when freecad opens a file"
     docname = os.path.splitext(os.path.basename(filename))[0]
     insert(filename, docname)
-    
+
+
+#progress bar class    
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         self.window = MainWindow
