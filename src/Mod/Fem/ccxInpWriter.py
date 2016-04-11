@@ -104,24 +104,37 @@ class inp_writer:
         self.mesh_object.FemMesh.writeABAQUS(self.file_name)
         # reopen file with "append" and add the analysis definition
         progress.progressBar_1.setValue(2)
-        progress.label_1.setText(_translate("MainWindow", "Wrtting nodes and elements" , None)) 
-        inpfile = open(self.file_name, 'r')       
+        progress.label_1.setText(_translate("MainWindow", "Wrtting nodes and elements" , None))
+        inpfile = open(self.file_name, 'r')
         nodelist = self.get_all_nodes(inpfile)
         inpfile.close() 
-        inpfile = open(self.file_name, 'a')
+        inpfile = open("Element_Fem", 'w')
         inpfile.write('\n\n')
         progress.progressBar_1.setValue(20)
-        progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
+        progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None))
         self.write_element_sets_material_and_femelement_type(inpfile)
+        inpfile.close()
+        inpfile = open("NodeSet_fixed_contrains", 'w')
+        inpfile.write('\n\n')       
         self.write_node_sets_constraints_fixed(inpfile)
+        inpfile.close()
+        inpfile = open("Displacement_contrains", 'w')
+        inpfile.write('\n\n')
         progress.progressBar_1.setValue(25)
         self.write_node_sets_constraints_displacement(inpfile)
+        inpfile.close()
+        inpfile = open("Planerotation_contrains" , 'w')
+        inpfile.write('\n\n')
         progress.progressBar_1.setValue(30)
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
+        inpfile.close()
+        inpfile = open("Nodes_SetsLoads" , 'w')
+        inpfile.write('\n\n')
         progress.progressBar_1.setValue(35)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
             self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
+            inpfile.close()
         progress.progressBar_1.setValue(40)
         if self.analysis_type is None or self.analysis_type == "static":
             self.write_node_sets_constraints_force(inpfile)
@@ -139,6 +152,8 @@ class inp_writer:
             self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)
+        inpfile = open("Node_Loads" , 'w')
+        inpfile.write('\n\n')
         progress.progressBar_1.setValue(70)
         progress.label_1.setText(_translate("MainWindow", "Writting distributed loads" , None))   
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
@@ -151,6 +166,7 @@ class inp_writer:
             self.write_constraints_pressure(inpfile)
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
+            inpfile.close()
         progress.progressBar_1.setValue(80)
         progress.label_1.setText(_translate("MainWindow", "Writing outputs" , None))           
         self.write_outputs_types(inpfile)
@@ -160,7 +176,9 @@ class inp_writer:
         MainWindow.close()
         return self.file_name
 
+        
     def write_element_sets_material_and_femelement_type(self, f):
+        f.write('* BOX MESH\n')
         f.write('\n***********************************************************\n')
         f.write('** Element sets for materials and FEM element type (solid, shell, beam)\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
@@ -851,6 +869,7 @@ class inp_writer:
         f.write('*EL FILE\n')
         f.write('S, E\n')
         f.write('** outputs --> dat file\n')
+        f.write('**NODELIST OF BEAM \n')
         f.write('*NODE PRINT , NSET=Nall \n')
         f.write('U \n')
         f.write('*EL PRINT , ELSET=Eall \n')
@@ -878,6 +897,7 @@ class inp_writer:
         f.write("**   Materials (Young's modulus) --> N/m2 = MPa\n")
         f.write('**   Loads (nodal loads)         --> N\n')
         f.write('**\n')
+        
 
     # self.ccx_elsets = [ {
     #                        'beamsection_obj' : 'beamsection_obj'       if exists
