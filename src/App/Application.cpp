@@ -94,7 +94,11 @@
 #include "Annotation.h"
 #include "MeasureDistance.h"
 #include "Placement.h"
-#include "Plane.h"
+#include "GeoFeatureGroup.h"
+#include "OriginGroup.h"
+#include "Part.h"
+#include "OriginFeature.h"
+#include "Origin.h"
 #include "MaterialObject.h"
 #include "Expression.h"
 
@@ -1129,7 +1133,14 @@ void Application::initTypes(void)
     App ::MaterialObject            ::init();
     App ::MaterialObjectPython      ::init();
     App ::Placement                 ::init();
+    App ::OriginFeature             ::init();
     App ::Plane                     ::init();
+    App ::Line                      ::init();
+    App ::GeoFeatureGroup           ::init();
+    App ::GeoFeatureGroupPython     ::init();
+    App ::OriginGroup               ::init();
+    App ::Part                      ::init();
+    App ::Origin                    ::init();
 
     // Expression classes
     App ::Expression                ::init();
@@ -1337,7 +1348,7 @@ void Application::processFiles(const std::list<std::string>& files)
                 Base::Interpreter().runFile(file.filePath().c_str(), true);
             }
             else if (file.hasExtension("py")) {
-                try {
+                try{
                     Base::Interpreter().loadModule(file.fileNamePure().c_str());
                 }
                 catch(const PyException&) {
