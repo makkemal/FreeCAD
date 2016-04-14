@@ -118,18 +118,34 @@ class inp_writer:
         progress.progressBar_1.setValue(20)
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
+        inpfile = open(self.file_name+ "_Node_sets.inp", 'w')
+        inpfile.write('\n\n')
         self.write_node_sets_constraints_fixed(inpfile)
         progress.progressBar_1.setValue(25)
         self.write_node_sets_constraints_displacement(inpfile)
         progress.progressBar_1.setValue(30)
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
+        inpfile.close()
+        inpfile = open(self.file_name, 'a')
+        inpfileforce = open(self.file_name + "_Contrants_Force", 'w')        
+        inpfile.write('\n\n')
+        inpfileforce.write('\n\n')
+        inpfileforce.close()
+        inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'w')
+        inpfilePressure.write('\n\n')
+        inpfilePressure.close()
         progress.progressBar_1.setValue(35)
+        progress.progressBar_1.setValue(40)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            self.write_temperature_nodes(inpfile)
-            self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
+            inpfileNodes = open(self.file_name+ "_Node_sets.inp", 'a')            
+            self.write_temperature_nodes(inpfileNodes)
+            self.write_node_sets_constraints_force(inpfileNodes) #SvdW: Add the node set to thermomech analysis
+            inpfileNodes.close()
         progress.progressBar_1.setValue(40)
         if self.analysis_type is None or self.analysis_type == "static":
-            self.write_node_sets_constraints_force(inpfile)
+            inpfileNodes = open(self.file_name+ "_Node_sets.inp", 'a')
+            self.write_node_sets_constraints_force(inpfileNodes)
+            inpfileNodes.close()
         self.write_materials(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
@@ -149,11 +165,19 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
-            self.write_constraints_force(inpfile) #SvdW: Add the force constraint to thermomech analysis
-            self.write_constraints_pressure(inpfile) #SvdW: Add the pressure constraint to thermomech analysis
+            inpfileforce = open(self.file_name + "_Contrants_Force", 'a')
+            self.write_constraints_force(inpfileforce) #SvdW: Add the force constraint to thermomech analysis
+            inpfileforce.close()
+            inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'a')
+            self.write_constraints_pressure( inpfilePressure) #SvdW: Add the pressure constraint to thermomech analysis
+            inpfilePressure.close()
         if self.analysis_type is None or self.analysis_type == "static":
-            self.write_constraints_force(inpfile)
-            self.write_constraints_pressure(inpfile)
+            inpfileforce = open(self.file_name + "_Contrants_Force", 'a')
+            self.write_constraints_force(inpfileforce)
+            inpfileforce.close()
+            inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'a')
+            self.write_constraints_pressure(inpfilePressure)
+            inpfilePressure.close()
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
         progress.progressBar_1.setValue(80)
