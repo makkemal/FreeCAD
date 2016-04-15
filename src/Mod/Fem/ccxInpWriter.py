@@ -119,6 +119,7 @@ class inp_writer:
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
         inpfile = open(self.file_name+ "_Node_sets.inp", 'w')
+        *INCLUDE,INPUT="_Node_sets.inp"
         inpfile.write('\n\n')
         self.write_node_sets_constraints_fixed(inpfile)
         progress.progressBar_1.setValue(25)
@@ -127,11 +128,12 @@ class inp_writer:
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         inpfile.close()
         inpfile = open(self.file_name, 'a')
-        inpfileforce = open(self.file_name + "_Contrants_Force", 'w')        
-        inpfile.write('\n\n')
+        inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'w')
+        *INCLUDE,INPUT="_Contrants_Force.inp"
         inpfileforce.write('\n\n')
         inpfileforce.close()
-        inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'w')
+        inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'w')
+        *INCLUDE,INPUT="_Contraints_Pressure.inp"
         inpfilePressure.write('\n\n')
         inpfilePressure.close()
         progress.progressBar_1.setValue(35)
@@ -165,17 +167,17 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
-            inpfileforce = open(self.file_name + "_Contrants_Force", 'a')
+            inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'a')
             self.write_constraints_force(inpfileforce) #SvdW: Add the force constraint to thermomech analysis
             inpfileforce.close()
-            inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'a')
+            inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'a')
             self.write_constraints_pressure( inpfilePressure) #SvdW: Add the pressure constraint to thermomech analysis
             inpfilePressure.close()
         if self.analysis_type is None or self.analysis_type == "static":
-            inpfileforce = open(self.file_name + "_Contrants_Force", 'a')
+            inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'a')
             self.write_constraints_force(inpfileforce)
             inpfileforce.close()
-            inpfilePressure = open(self.file_name + "_Contraints_Pressure", 'a')
+            inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'a')
             self.write_constraints_pressure(inpfilePressure)
             inpfilePressure.close()
         elif self.analysis_type == "frequency":
