@@ -605,7 +605,7 @@ const string PropertyLinkSubList::getPyReprString()
 
     std::stringstream strm;
     strm << "[";
-    for (  int i = 0  ;  i < this->_lSubList.size()  ;  i++) {
+    for (std::size_t i = 0; i < this->_lSubList.size(); i++) {
         if (i>0)
             strm << ",(";
         else
@@ -628,7 +628,7 @@ DocumentObject *PropertyLinkSubList::getValue() const
 {
     App::DocumentObject* ret = 0;
     //FIXME: cache this to avoid iterating each time, to improve speed
-    for (int i = 0  ;  i < this->_lValueList.size()  ;  i++){
+    for (std::size_t i = 0; i < this->_lValueList.size(); i++) {
         if (ret == 0)
             ret = this->_lValueList[i];
         if (ret != this->_lValueList[i])
@@ -737,7 +737,7 @@ void PropertyLinkSubList::Restore(Base::XMLReader &reader)
         std::string name = reader.getAttribute("obj");
         // In order to do copy/paste it must be allowed to have defined some
         // referenced objects in XML which do not exist anymore in the new
-        // document. Thus, we should silently ingore this.
+        // document. Thus, we should silently ignore this.
         // Property not in an object!
         DocumentObject* father = static_cast<DocumentObject*>(getContainer());
         App::Document* document = father->getDocument();
@@ -757,7 +757,7 @@ void PropertyLinkSubList::Restore(Base::XMLReader &reader)
     setValues(values,SubNames);
 }
 
-void PropertyLinkSubList::Restore_FromLinkSub(XMLReader &reader)
+void PropertyLinkSubList::RestoreFromLinkSub(XMLReader &reader)
 {
     //Copy-paste from PropertyLinkSub::Restore()
     // read my element
