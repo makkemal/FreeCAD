@@ -77,7 +77,7 @@ TaskFeaturePick::TaskFeaturePick(std::vector<App::DocumentObject*>& objects,
                                      const std::vector<featureStatus>& status,
                                      QWidget* parent)
   : TaskBox(Gui::BitmapFactory().pixmap("edit-select-box"),
-            QString::fromAscii("Select feature"), true, parent), ui(new Ui_TaskFeaturePick)
+            QString::fromLatin1("Select feature"), true, parent), ui(new Ui_TaskFeaturePick)
 {
 
     proxy = new QWidget(this);
@@ -100,8 +100,8 @@ TaskFeaturePick::TaskFeaturePick(std::vector<App::DocumentObject*>& objects,
     assert(status.size() == objects.size());
     for (; statusIt != status.end(); ++statusIt, ++objIt) {
         QListWidgetItem* item = new QListWidgetItem(
-                QString::fromAscii((*objIt)->getNameInDocument()) +
-                QString::fromAscii(" (") + getFeatureStatusString(*statusIt) + QString::fromAscii(")") );
+                QString::fromLatin1((*objIt)->getNameInDocument()) +
+                QString::fromLatin1(" (") + getFeatureStatusString(*statusIt) + QString::fromLatin1(")") );
         ui->listWidget->addItem(item);
 
         //check if we need to set any origin in temporary visibility mode
@@ -191,14 +191,14 @@ std::vector<App::DocumentObject*> TaskFeaturePick::getFeatures() {
             continue;
 
         QString t = item->text();
-        t = t.left(t.indexOf(QString::fromAscii("(")) - 1);
+        t = t.left(t.indexOf(QString::fromLatin1("(")) - 1);
         features.push_back(t);
     }
 
     std::vector<App::DocumentObject*> result;
 
     for (std::vector<QString>::const_iterator s = features.begin(); s != features.end(); s++)
-        result.push_back(App::GetApplication().getActiveDocument()->getObject(s->toAscii().data()));
+        result.push_back(App::GetApplication().getActiveDocument()->getObject(s->toLatin1().data()));
 
     return result;
 }
@@ -216,8 +216,8 @@ std::vector<App::DocumentObject*> TaskFeaturePick::buildFeatures() {
         if(item->isSelected() && !item->isHidden()) {
 
             QString t = item->text();
-            t = t.left(t.indexOf(QString::fromAscii("(")) - 1);
-            auto obj = App::GetApplication().getActiveDocument()->getObject(t.toAscii().data());
+            t = t.left(t.indexOf(QString::fromLatin1("(")) - 1);
+            auto obj = App::GetApplication().getActiveDocument()->getObject(t.toLatin1().data());
 
             //build the dependend copy or reference if wanted by the user
             if(*st == otherBody  ||
@@ -389,8 +389,8 @@ void TaskFeaturePick::onSelectionChanged(const Gui::SelectionChanges& msg)
 
             QListWidgetItem *item = ui->listWidget->item(row);
             QString t = item->text();
-            t = t.left(t.indexOf(QString::fromAscii("(")) - 1);
-            if(t.compare(QString::fromAscii(obj.FeatName))==0) {
+            t = t.left(t.indexOf(QString::fromLatin1("(")) - 1);
+            if(t.compare(QString::fromLatin1(obj.FeatName))==0) {
                 ui->listWidget->setItemSelected(item, true);
             }
         }
