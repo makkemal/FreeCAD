@@ -111,16 +111,20 @@ class inp_writer:
         inpfile = open(self.file_name, 'a')
         inpfile.write('B\n')
         inpfile = open(self.file_name, 'r')
-        self.get_mesh(inpfile)
+        name = ""        
+        for i in range(len(self.file_name)-4):
+            name = name + self.file_name[i] 
+        self.get_mesh(inpfile,name)
         inpfile.close()
         inpfile = open(self.file_name, 'w')
         inpfile.write('\n\n')
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elem.inp")
         progress.progressBar_1.setValue(20)
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
-        inpfile = open(self.file_name+ "_Node_sets.inp", 'w')
-        *INCLUDE,INPUT="_Node_sets.inp"
+        inpfile = open(name+ "_Node_sets.inp", 'w')
         inpfile.write('\n\n')
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp")
         self.write_node_sets_constraints_fixed(inpfile)
         progress.progressBar_1.setValue(25)
         self.write_node_sets_constraints_displacement(inpfile)
@@ -128,24 +132,22 @@ class inp_writer:
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         inpfile.close()
         inpfile = open(self.file_name, 'a')
-        inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'w')
-        *INCLUDE,INPUT="_Contrants_Force.inp"
+        inpfileforce = open(name + "_Contraints_Force.inp", 'w')
         inpfileforce.write('\n\n')
         inpfileforce.close()
-        inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'w')
-        *INCLUDE,INPUT="_Contraints_Pressure.inp"
+        inpfilePressure = open(name + "_Contraints_Pressure.inp", 'w')
         inpfilePressure.write('\n\n')
         inpfilePressure.close()
         progress.progressBar_1.setValue(35)
         progress.progressBar_1.setValue(40)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            inpfileNodes = open(self.file_name+ "_Node_sets.inp", 'a')            
+            inpfileNodes = open(name+ "_Node_sets.inp", 'a')            
             self.write_temperature_nodes(inpfileNodes)
             self.write_node_sets_constraints_force(inpfileNodes) #SvdW: Add the node set to thermomech analysis
             inpfileNodes.close()
         progress.progressBar_1.setValue(40)
         if self.analysis_type is None or self.analysis_type == "static":
-            inpfileNodes = open(self.file_name+ "_Node_sets.inp", 'a')
+            inpfileNodes = open(name+ "_Node_sets.inp", 'a')
             self.write_node_sets_constraints_force(inpfileNodes)
             inpfileNodes.close()
         self.write_materials(inpfile)
@@ -167,29 +169,32 @@ class inp_writer:
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature(inpfile)
             self.write_heatflux(inpfile)
-            inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'a')
+            inpfileforce = open(name + "_Contrants_Force.inp", 'a')
             self.write_constraints_force(inpfileforce) #SvdW: Add the force constraint to thermomech analysis
             inpfileforce.close()
-            inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'a')
+            inpfilePressure = open(name + "_Contraints_Pressure.inp", 'a')
             self.write_constraints_pressure( inpfilePressure) #SvdW: Add the pressure constraint to thermomech analysis
             inpfilePressure.close()
         if self.analysis_type is None or self.analysis_type == "static":
-            inpfileforce = open(self.file_name + "_Contrants_Force.inp", 'a')
+            inpfileforce = open(name + "_Contrants_Force.inp", 'a')
             self.write_constraints_force(inpfileforce)
             inpfileforce.close()
-            inpfilePressure = open(self.file_name + "_Contraints_Pressure.inp", 'a')
+            inpfilePressure = open(name + "_Contraints_Pressure.inp", 'a')
             self.write_constraints_pressure(inpfilePressure)
             inpfilePressure.close()
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
         progress.progressBar_1.setValue(80)
         progress.label_1.setText(_translate("MainWindow", "Writing outputs" , None))           
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp") 
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Contrants_Force.inp")
         self.write_outputs_types(inpfile)
         self.write_step_end(inpfile)
         self.write_footer(inpfile)
         inpfile.close()
         MainWindow.close()
-        return self.file_name
+        return self.name
+    
 
     def write_element_sets_material_and_femelement_type(self, f):
         f.write('\n***********************************************************\n')
@@ -271,9 +276,9 @@ class inp_writer:
         return l_table
         
           
-    def get_mesh(self, f):
+    def get_mesh(self, f,b):
         s_line = f.readline()
-        files = open(self.file_name+ "_Nodes_elem.inp", 'w')
+        files = open(b+ "_Nodes_elem.inp", 'w')
         while s_line[0] != "B":
             files.write(s_line)
             s_line = f.readline()  
