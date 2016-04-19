@@ -92,7 +92,6 @@ class inp_writer:
         self.ccx_eall = 'Eall'
         self.ccx_elsets = []
         self.fem_mesh_nodes = {}
-        
 
     def write_calculix_input_file(self):
         MainWindow = QtGui.QMainWindow()
@@ -118,7 +117,7 @@ class inp_writer:
         inpfile.close()
         inpfile = open(self.file_name, 'w')
         inpfile.write('\n\n')
-        inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elem.inp \n")
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elements.inp \n")
         progress.progressBar_1.setValue(20)
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
         self.write_element_sets_material_and_femelement_type(inpfile)
@@ -194,7 +193,6 @@ class inp_writer:
         inpfile.close()
         MainWindow.close()
         return self.file_name
-    
 
     def write_element_sets_material_and_femelement_type(self, f):
         f.write('\n***********************************************************\n')
