@@ -51,8 +51,24 @@
 #include "ViewProviderFemConstraintGear.h"
 #include "ViewProviderFemConstraintPulley.h"
 #include "ViewProviderFemConstraintDisplacement.h"
+#include "ViewProviderFemConstraintTemperature.h"
+#include "ViewProviderFemConstraintHeatflux.h"
+#include "ViewProviderFemConstraintInitialTemperature.h"
+#include "ViewProviderFemConstraintPlaneRotation.h"
 #include "ViewProviderResult.h"
 #include "Workbench.h"
+
+#ifdef FC_USE_VTK
+#include "ViewProviderFemPostObject.h"
+#include "ViewProviderFemPostPipeline.h"
+#include "ViewProviderFemPostFunction.h"
+#include "ViewProviderFemPostFilter.h"
+#endif
+
+#ifdef FC_USE_VTK
+#include "ViewProviderFemPostObject.h"
+#endif
+
 
 // use a different name to CreateCommand()
 void CreateFemCommands(void);
@@ -104,9 +120,27 @@ PyMODINIT_FUNC initFemGui()
     FemGui::ViewProviderFemConstraintGear         ::init();
     FemGui::ViewProviderFemConstraintPulley       ::init();
     FemGui::ViewProviderFemConstraintDisplacement ::init();
+    FemGui::ViewProviderFemConstraintHeatflux     ::init();
+    FemGui::ViewProviderFemConstraintTemperature  ::init();
+    FemGui::ViewProviderFemConstraintInitialTemperature  ::init();
+    FemGui::ViewProviderFemConstraintPlaneRotation       ::init();    
     FemGui::ViewProviderResult                    ::init();
     FemGui::ViewProviderResultPython              ::init();
     FemGui::PropertyFemMeshItem                   ::init();
+    
+#ifdef FC_USE_VTK
+    FemGui::ViewProviderFemPostObject          ::init();
+    FemGui::ViewProviderFemPostPipeline        ::init();
+    FemGui::ViewProviderFemPostFunction        ::init();
+    FemGui::ViewProviderFemPostFunctionProvider::init();
+    FemGui::ViewProviderFemPostPlaneFunction   ::init();
+    FemGui::ViewProviderFemPostSphereFunction  ::init();
+    FemGui::ViewProviderFemPostClip            ::init();
+    FemGui::ViewProviderFemPostScalarClip      ::init();
+    FemGui::ViewProviderFemPostWarpVector      ::init();
+    FemGui::ViewProviderFemPostCut             ::init();
+#endif
+
 
     // register preferences pages
     new Gui::PrefPageProducer<FemGui::DlgSettingsFemImp> ("FEM");

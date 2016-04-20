@@ -166,6 +166,7 @@ if(APPLE)
 endif(APPLE)
 
 OPTION(BUILD_FEM "Build the FreeCAD FEM module, be aware, unfinished code!" ON)
+OPTION(BUILD_FEM_VTK "Build the FreeCAD VTK Postprocessing support (need VTK 6 or higher)" OFF)
 OPTION(BUILD_SANDBOX "Build the FreeCAD Sandbox module which is only for testing purposes" OFF)
 OPTION(BUILD_TEMPLATE "Build the FreeCAD template module which is only for testing purposes" OFF)
 OPTION(BUILD_ARCH "Build the FreeCAD Architecture module" ON)
@@ -753,6 +754,11 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #---------------------------------------------------
 
+# -------------------------------- VTK --------------------------------
+    if(BUILD_FEM_VTK)
+        find_package(VTK REQUIRED)       
+    endif(BUILD_FEM_VTK)
+        
     if(BUILD_GUI)
 # -------------------------------- OpenGL --------------------------------
 

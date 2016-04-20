@@ -25,13 +25,34 @@
 import FreeCAD
 import os
 from math import pow, sqrt
+import numpy as np
+import PySide
+from PySide import QtCore, QtGui
 
 __title__ = "FreeCAD Calculix library"
-__author__ = "Juergen Riegel "
+__author__ = "Juergen Riegel , Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
 if open.__module__ == '__builtin__':
     pyopen = open  # because we'll redefine open below
+    
+global switch ; switch = 0
+global path
+#path = your_directory_path                # your directory path
+#path = FreeCAD.ConfigGet("AppHomePath")   # path FreeCAD installation
+path = FreeCAD.ConfigGet("UserAppData")    # path FreeCAD User data
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    def _fromUtf8(s):
+        return s
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)    
 
 
 # read a calculix result file and extract the nodes, displacement vectores and stress values.
@@ -53,17 +74,30 @@ def readResult(frd_input):
     mode_results = {}
     mode_disp = {}
     mode_stress = {}
+    mode_temp = {}
 
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
+    mode_temp_found = False
+    mode_time_found = False
     elements_found = False
     input_continues = False
     eigenmode = 0
     elem = -1
     elemType = 0
+    timestep=0
+    timetemp=0
+    num_lines_frd=len(frd_file.readlines(0))
+    MainWindow = QtGui.QMainWindow()
+    progress = Ui_MainWindow()
+    progress.setupUi(MainWindow)
+    MainWindow.show()  
+    progress.progressBar_1.setValue(1)
 
     for line in frd_file:
+        #Update progress bar
+        progress.progressBar_1.setValue(line/num_lines_frd)
         #Check if we found nodes section
         if line[4:6] == "2C":
             nodes_found = True
@@ -225,6 +259,20 @@ def readResult(frd_input):
             stress_5 = float(line[61:73])
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
+        #Check if we found a time step 
+        if line[4:10] == "1PSTEP":    
+            mode_time_found = True
+        if mode_time_found and (line[2:7] == "100CL"):
+            timetemp=float(line[13:25])    
+            if timetemp > timestep:
+                timestep=timetemp
+        if line[5:11] == "NDTEMP":
+            mode_temp_found = True
+        #we found a temperatures line in the frd file
+        if mode_temp_found and (line[1:3] == "-1"):
+            elem = int(line[4:13])
+            temperature = float(line[13:25])   
+            mode_temp[elem] = (temperature)
         #Check for the end of a section
         if line[1:3] == "-3":
             if mode_disp_found:
@@ -233,18 +281,39 @@ def readResult(frd_input):
             if mode_stress_found:
                 mode_stress_found = False
 
+            if mode_temp_found:
+                mode_temp_found = False
+                
+            if mode_time_found:
+                mode_time_found = False
+
+            if mode_disp and mode_stress and mode_temp:
+                mode_results = {}
+                mode_results['number'] = eigenmode
+                mode_results['disp'] = mode_disp
+                mode_results['stress'] = mode_stress
+                mode_results['temp'] = mode_temp
+                mode_results['time'] = timestep
+                results.append(mode_results)
+                mode_disp = {}
+                mode_stress = {}
+                mode_temp ={}
+                eigenmode = 0
+
             if mode_disp and mode_stress:
                 mode_results = {}
                 mode_results['number'] = eigenmode
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
+                mode_results['time'] = 0 #Dont return time if static
                 results.append(mode_results)
                 mode_disp = {}
                 mode_stress = {}
                 eigenmode = 0
+
             nodes_found = False
             elements_found = False
-
+    MainWindow.close()
     frd_file.close()
     return {'Nodes': nodes,
             'Hexa8Elem': elements_hexa8, 'Penta6Elem': elements_penta6, 'Tetra4Elem': elements_tetra4, 'Tetra10Elem': elements_tetra10,
@@ -268,6 +337,16 @@ def calculate_von_mises(i):
     vm_stress = sqrt(0.5 * (s11s22 + s22s33 + s33s11 + s12s23s31))
     return vm_stress
 
+def calculate_principal_stress(i):
+    sigma = np.array([[i[0],i[3],i[4]],
+                         [i[3],i[1],i[5]],
+                         [i[4],i[5],i[2]]])
+    # compute principal stresses
+    eigvals = list(np.linalg.eigvalsh(sigma))
+    eigvals.sort()
+    eigvals.reverse()
+    maxshear = (eigvals[0]-eigvals[2])/2.0
+    return (eigvals[0],eigvals[1],eigvals[2], maxshear)
 
 def importFrd(filename, analysis=None):
     m = readResult(filename)
@@ -359,10 +438,14 @@ def importFrd(filename, analysis=None):
                 mesh_object.FemMesh = mesh
                 analysis_object.Member = analysis_object.Member + [mesh_object]
 
+        number_of_increments=len(m['Results'])
         for result_set in m['Results']:
             eigenmode_number = result_set['number']
+            step_time=result_set['time']
             if eigenmode_number > 0:
                 results_name = 'Mode_' + str(eigenmode_number) + '_results'
+            elif number_of_increments > 1:  
+                results_name = 'Time_' + str(step_time) + '_results'
             else:
                 results_name = 'Results'
             results = FreeCAD.ActiveDocument.addObject('Fem::FemResultObject', results_name)
@@ -372,7 +455,7 @@ def importFrd(filename, analysis=None):
                     break
 
             disp = result_set['disp']
-            l = len(disp)
+            no_of_values = len(disp)
             displacement = []
             for k, v in disp.iteritems():
                 displacement.append(v)
@@ -393,16 +476,43 @@ def importFrd(filename, analysis=None):
                 if(mesh_object):
                     results.Mesh = mesh_object
 
+
+            #Read temperatures if they exist
+            try:
+                Temperature = result_set['temp']
+                if len(Temperature) > 0:
+                   results.Temperature = map((lambda x: x), Temperature.values())
+                   results.Time = step_time
+            except:
+                pass
+
             stress = result_set['stress']
             if len(stress) > 0:
                 mstress = []
+                prinstress1=[]
+                prinstress2=[]
+                prinstress3=[]
+                shearstress=[]
                 for i in stress.values():
                     mstress.append(calculate_von_mises(i))
+                    prin1, prin2, prin3, shear=calculate_principal_stress(i)
+                    prinstress1.append(prin1)
+                    prinstress2.append(prin2)
+                    prinstress3.append(prin3)
+                    shearstress.append(shear)
                 if eigenmode_number > 0:
                     results.StressValues = map((lambda x: x * scale), mstress)
+                    results.PrincipalMax = map((lambda x: x * scale), prinstress1)
+                    results.PrincipalMed = map((lambda x: x * scale), prinstress2)
+                    results.PrincipalMin = map((lambda x: x * scale), prinstress3)
+                    results.MaxShear = map((lambda x: x * scale), shearstress)
                     results.Eigenmode = eigenmode_number
                 else:
                     results.StressValues = mstress
+                    results.PrincipalMax = prinstress1
+                    results.PrincipalMed = prinstress2
+                    results.PrincipalMin = prinstress3
+                    results.MaxShear = shearstress
 
             if (results.NodeNumbers != 0 and results.NodeNumbers != stress.keys()):
                 print ("Inconsistent FEM results: element number for Stress doesn't equal element number for Displacement {} != {}"
@@ -411,11 +521,24 @@ def importFrd(filename, analysis=None):
 
             x_min, y_min, z_min = map(min, zip(*displacement))
             sum_list = map(sum, zip(*displacement))
-            x_avg, y_avg, z_avg = [i / l for i in sum_list]
+            x_avg, y_avg, z_avg = [i / no_of_values for i in sum_list]
 
             s_max = max(results.StressValues)
             s_min = min(results.StressValues)
-            s_avg = sum(results.StressValues) / l
+            s_avg = sum(results.StressValues)/no_of_values
+            p1_min =min(results.PrincipalMax)
+            p1_avg=sum(results.PrincipalMax)/no_of_values
+            p1_max=max(results.PrincipalMax)
+            p2_min =min(results.PrincipalMed)
+            p2_avg=sum(results.PrincipalMed)/no_of_values
+            p2_max=max(results.PrincipalMed)
+            p3_min =min(results.PrincipalMin)
+            p3_avg=sum(results.PrincipalMin)/no_of_values
+            p3_max=max(results.PrincipalMin)
+            ms_min=min(results.MaxShear)
+            ms_avg=sum(results.MaxShear)/no_of_values
+            ms_max=max(results.MaxShear)
+            
 
             disp_abs = []
             for d in displacement:
@@ -424,13 +547,17 @@ def importFrd(filename, analysis=None):
 
             a_max = max(disp_abs)
             a_min = min(disp_abs)
-            a_avg = sum(disp_abs) / l
+            a_avg = sum(disp_abs) /no_of_values
 
             results.Stats = [x_min, x_avg, x_max,
                              y_min, y_avg, y_max,
                              z_min, z_avg, z_max,
                              a_min, a_avg, a_max,
-                             s_min, s_avg, s_max]
+                             s_min, s_avg, s_max,
+                             p1_min, p1_avg, p1_max,
+                             p2_min, p2_avg, p2_max,
+                             p3_min, p3_avg, p3_max,
+                             ms_min, ms_avg, ms_max]
             analysis_object.Member = analysis_object.Member + [results]
 
         if(FreeCAD.GuiUp):
@@ -453,3 +580,60 @@ def open(filename):
     "called when freecad opens a file"
     docname = os.path.splitext(os.path.basename(filename))[0]
     insert(filename, docname)
+    
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        self.window = MainWindow
+        global switch
+ 
+        MainWindow.setObjectName(_fromUtf8("MainWindow"))
+        MainWindow.resize(400, 100)
+        MainWindow.setMinimumSize(QtCore.QSize(400, 100))
+        MainWindow.setMaximumSize(QtCore.QSize(400, 100))
+        self.widget = QtGui.QWidget(MainWindow)
+        self.widget.setObjectName(_fromUtf8("widget"))
+
+
+#        section progressBar 1
+        self.progressBar_1 = QtGui.QProgressBar(self.widget)                               # create object progressBar_1
+        self.progressBar_1.setGeometry(QtCore.QRect(20, 21, 350, 23))                      # coordinates position
+        self.progressBar_1.setValue(0)                                                     # value by default
+        self.progressBar_1.setOrientation(QtCore.Qt.Horizontal)                            # orientation Horizontal
+        self.progressBar_1.setAlignment(QtCore.Qt.AlignCenter)                             # align text center
+        self.progressBar_1.setObjectName(_fromUtf8("progressBar_1"))                        # object Name
+        self.progressBar_1.setToolTip(_translate("MainWindow", "ProgressBar for Frd reader", None)) # tooltip for explanation
+
+        self.label_1 = QtGui.QLabel(self.widget)                                            # labels displayed on widget
+        self.label_1.setGeometry(QtCore.QRect(20, 1, 350, 16))                            # label coordinates 
+        self.label_1.setObjectName(_fromUtf8("label_1"))    
+
+ 
+        
+        MainWindow.setCentralWidget(self.widget)
+        self.menuBar = QtGui.QMenuBar(MainWindow)
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 100, 26))
+        self.menuBar.setObjectName(_fromUtf8("menuBar"))
+        MainWindow.setMenuBar(self.menuBar)
+        self.mainToolBar = QtGui.QToolBar(MainWindow)
+        self.mainToolBar.setObjectName(_fromUtf8("mainToolBar"))
+        MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.mainToolBar)
+        self.statusBar = QtGui.QStatusBar(MainWindow)
+        self.statusBar.setObjectName(_fromUtf8("statusBar"))
+        MainWindow.setStatusBar(self.statusBar)
+        self.statusbar = QtGui.QStatusBar(MainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MainWindow.setStatusBar(self.statusbar)
+ 
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+
+
+
+                                                                                           # a tooltip can be set to all objects
+    def retranslateUi(self, MainWindow):
+        MainWindow.setWindowFlags(PySide.QtCore.Qt.WindowStaysOnTopHint)                   # this function turns the front window (stay to hint)
+        MainWindow.setWindowTitle(_translate("MainWindow", "Frd output file reader progress", None))            # title main window
+        MainWindow.setWindowIcon(QtGui.QIcon(path+'MEPlan.png'))                           # change the icon of the main window
+ 
+#        
+           

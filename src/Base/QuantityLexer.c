@@ -590,7 +590,7 @@ char *yytext;
 /* the manual says "somewhat more optimized" */
 /* no support for include files is planned */
 
-#line 591 "QuantityLexer.c"
+#line 594 "QuantityLexer.c"
 
 #define INITIAL 0
 #define C_COMMENT 1
@@ -774,7 +774,7 @@ YY_DECL
 #line 31 "QuantityParser.l"
 
 
-#line 775 "QuantityLexer.c"
+#line 778 "QuantityLexer.c"
 
 	if ( !(yy_init) )
 		{
@@ -1339,7 +1339,7 @@ YY_RULE_SETUP
 #line 158 "QuantityParser.l"
 ECHO;
 	YY_BREAK
-#line 1340 "QuantityLexer.c"
+#line 1348 "QuantityLexer.c"	// OvG: This line indicates the line number of the next line in this file itself  
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 	yyterminate();
