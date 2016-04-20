@@ -117,9 +117,13 @@ class inp_writer:
         inpfile.close()
         inpfile = open(self.file_name, 'w')
         inpfile.write('\n\n')
-        inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elements.inp \n")
+        inpfile.write('\n***********************************************************\n')
+        inpfile.write('** Element sets for materials and FEM element type (solid, shell, beam)\n')
+        inpfile.write('** written by write_element_sets_material_and_femelement_type\n')
+        inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elem.inp \n")
         progress.progressBar_1.setValue(20)
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
+        inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
         inpfile = open(name+ "_Node_sets.inp", 'w')
         inpfile.write('\n\n')
@@ -130,6 +134,12 @@ class inp_writer:
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
         inpfile.close()
         inpfile = open(self.file_name, 'a')
+        inpfile.write('\n***********************************************************\n')
+        inpfile.write('** Node set for fixed constraint\n')
+        inpfile.write('** Node set for PlaneRotation constraint\n')
+        inpfile.write('** Node sets for prescribed displacement constraint\n')
+        inpfile.write('** Node sets for loads\n')
+        inpfile.write('** written by write_node_sets_constraints \n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         inpfileforce = open(name + "_Contraints_Force.inp", 'w')
         inpfileforce.write('\n\n')   
@@ -137,6 +147,9 @@ class inp_writer:
         inpfilePressure = open(name + "_Contraints_Pressure.inp", 'w')
         inpfilePressure.write('\n\n')
         inpfilePressure.close()
+        inpfileHeat = open(name + "_Heatflux.inp", 'w')
+        inpfileHeat.write('\n\n')
+        inpfileHeat.close()
         progress.progressBar_1.setValue(35)
         progress.progressBar_1.setValue(40)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
@@ -164,16 +177,22 @@ class inp_writer:
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)
         progress.progressBar_1.setValue(70)
-        progress.label_1.setText(_translate("MainWindow", "Writting distributed loads" , None))   
+        progress.label_1.setText(_translate("MainWindow", "Writting distributed loads" , None))
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            self.write_temperature(inpfile)
-            self.write_heatflux(inpfile)
+            self.write_temperature(inpfileTemp)
+            inpfileHeat = open(name + "_Heatflux.inp", 'w')
+            self.write_heatflux(inpfileHeat)
+            inpfileHeat.close()
             inpfileforce = open(name + "_Contraints_Force.inp", 'a')
             self.write_constraints_force(inpfileforce) #SvdW: Add the force constraint to thermomech analysis
             inpfileforce.close()
             inpfilePressure = open(name + "_Contraints_Pressure.inp", 'a')
             self.write_constraints_pressure( inpfilePressure) #SvdW: Add the pressure constraint to thermomech analysis
             inpfilePressure.close()
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Convective heat transfer (heat flux)\n')
+            inpfile.write('** written by write_heatflux\n')
+            inpfile.write('*INCLUDE,INPUT=' +name+ "_Heatflux.inp.inp \n\n")
         if self.analysis_type is None or self.analysis_type == "static":
             inpfileforce = open(name + "_Contraints_Force.inp", 'a')
             self.write_constraints_force(inpfileforce)
@@ -184,8 +203,14 @@ class inp_writer:
         elif self.analysis_type == "frequency":
             self.write_frequency(inpfile)
         progress.progressBar_1.setValue(80)
-        progress.label_1.setText(_translate("MainWindow", "Writing outputs" , None))  
+        progress.label_1.setText(_translate("MainWindow", "Writing outputs" , None))
+        inpfile.write('\n***********************************************************\n')
+        inpfile.write('** Node loads\n')
+        inpfile.write('** written by write_constraints_force\n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
+        inpfile.write('\n***********************************************************\n')
+        inpfile.write('** Element + CalculiX face + load in [MPa]\n')
+        inpfile.write('** written by write_constraints_pressure\n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp \n\n")        
         self.write_outputs_types(inpfile)
         self.write_step_end(inpfile)
@@ -195,9 +220,6 @@ class inp_writer:
         return self.file_name
 
     def write_element_sets_material_and_femelement_type(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Element sets for materials and FEM element type (solid, shell, beam)\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         if len(self.material_objects) == 1:
             if self.beamsection_objects and len(self.beamsection_objects) == 1:          # single mat, single beam
                 self.get_ccx_elsets_single_mat_single_beam()
@@ -232,9 +254,6 @@ class inp_writer:
                 f.write('**No elements found for these objects\n')
 
     def write_node_sets_constraints_fixed(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Node set for fixed constraint\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         g = open("conflict.txt", 'w')                
         for fobj in self.fixed_objects:
             fix_obj = fobj['Object']
@@ -302,9 +321,6 @@ class inp_writer:
         
         
         f.write('\n\n')
-        f.write('\n***********************************************************\n')
-        f.write('** Node set for PlaneRotation constraint\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for fobj in self.planerotation_objects:
             l_nodes = []            
             fric_obj = fobj['Object']
@@ -383,9 +399,6 @@ class inp_writer:
         
 
     def write_node_sets_constraints_displacement(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Node sets for prescribed displacement constraint\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         g = open("conflict.txt", 'a') 
         for fobj in self.displacement_objects:
             disp_obj = fobj['Object']
@@ -406,9 +419,6 @@ class inp_writer:
 
 
     def write_temperature_nodes(self,f): #Fixed temperature
-        f.write('\n***********************************************************\n')
-        f.write('** Node sets for temperature constraint\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for ftobj in self.temperature_objects:
             fixedtemp_obj = ftobj['Object']
             f.write('*NSET,NSET='+fixedtemp_obj.Name + '\n')
@@ -425,9 +435,6 @@ class inp_writer:
                     f.write(str(i) + ',\n')
 
     def write_node_sets_constraints_force(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Node sets for loads\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for fobj in self.force_objects:
             frc_obj = fobj['Object']
             # in GUI defined frc_obj all ref_shape have the same shape type
@@ -464,9 +471,7 @@ class inp_writer:
                     fobj['NodeLoad'] = (frc_obj.Force) / NbrForceNodes
                     f.write('** concentrated load [N] distributed on all mesh nodes of the given vertieces\n')
                     f.write('** ' + str(frc_obj.Force) + ' N / ' + str(NbrForceNodes) + ' Nodes = ' + str(fobj['NodeLoad']) + ' N on each node\n')
-            else:
-                f.write('** no point load on vertices --> no set for node loads\n')
-
+        
     def write_materials(self, f):
         f.write('\n***********************************************************\n')
         f.write('** Materials\n')
@@ -645,9 +650,6 @@ class inp_writer:
             f.write('\n')
 
     def write_constraints_force(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Node loads\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*CLOAD\n')
         for fobj in self.force_objects:
             frc_obj = fobj['Object']
@@ -826,9 +828,6 @@ class inp_writer:
                     print('  the reason could also be an problem in retrieving the ref_face_node_area')
 
     def write_constraints_pressure(self, f):
-        f.write('\n***********************************************************\n')
-        f.write('** Element + CalculiX face + load in [MPa]\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for fobj in self.pressure_objects:
             prs_obj = fobj['Object']
             f.write('*DLOAD\n')
@@ -842,9 +841,6 @@ class inp_writer:
                         f.write("{},P{},{}\n".format(i[0], i[1], rev * prs_obj.Pressure))
                         
     def write_heatflux(self, f): # OvG Implemented writing out heatflux to calculix input file
-        f.write('\n***********************************************************\n')
-        f.write('** Convective heat transfer (heat flux)\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for hfobj in self.heatflux_objects:
             heatflux_obj = hfobj['Object']
             f.write('*FILM\n')
