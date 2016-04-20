@@ -26,31 +26,38 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <BRepAdaptor_Curve.hxx>
-# include <BRepAdaptor_Surface.hxx>
-# include <Geom_Line.hxx>
-# include <Geom_Plane.hxx>
-# include <Precision.hxx>
-# include <QMessageBox>
+# include <sstream>
 # include <QRegExp>
 # include <QTextStream>
+# include <QMessageBox>
+# include <Precision.hxx>
 # include <TopoDS.hxx>
-# include <gp_Ax1.hxx>
-# include <gp_Lin.hxx>
+# include <BRepAdaptor_Surface.hxx>
+# include <Geom_Plane.hxx>
 # include <gp_Pln.hxx>
-# include <sstream>
+# include <gp_Ax1.hxx>
+# include <BRepAdaptor_Curve.hxx>
+# include <Geom_Line.hxx>
+# include <gp_Lin.hxx>
 #endif
 
-#include "Mod/Fem/App/FemConstraintPlaneRotation.h"
 #include "TaskFemConstraintPlaneRotation.h"
 #include "ui_TaskFemConstraintPlaneRotation.h"
 #include <App/Application.h>
-#include <Gui/Command.h>
-
-
-
+#include <App/Document.h>
+#include <App/PropertyGeo.h>
+#include <Gui/Application.h>
+#include <Gui/Document.h>
+#include <Gui/BitmapFactory.h>
+#include <Gui/ViewProvider.h>
+#include <Gui/WaitCursor.h>
 #include <Gui/Selection.h>
-#include <Gui/SelectionFilter.h>
+#include <Gui/Command.h>
+#include <Mod/Fem/App/FemConstraintPlaneRotation.h>
+#include <Mod/Fem/App/FemTools.h>
+#include <Mod/Part/App/PartFeature.h>
+
+#include <Base/Console.h>
 
 
 using namespace FemGui;
@@ -148,6 +155,14 @@ void TaskFemConstraintPlaneRotation::addToSelection()
 			if ((subNames[subIt].substr(0,4) != "Face")) {
 				QMessageBox::warning(this, tr("Selection error"), tr("Only faces can be picked"));
 				return;
+			}
+			Part::Feature* feat = static_cast<Part::Feature*>(obj);
+			TopoDS_Shape ref = feat->Shape.getShape().getSubShape(subNames[subIt].c_str());
+			if ((subNames[subIt].substr(0,4) == "Face")) {
+				if (!Fem::Tools::isPlanar(TopoDS::Face(ref))) {
+					QMessageBox::warning(this, tr("Selection error"), tr("Only planar faces can be picked"));
+					return;
+				}
 			}
 			for (std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
 				itr!= SubElements.end();
