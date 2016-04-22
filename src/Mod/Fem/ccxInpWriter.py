@@ -569,7 +569,7 @@ class inp_writer:
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP\n')
-        f.write('*STATIC,SOLVER=ITERATIVE SCALING\n')
+        f.write('*STATIC\n')
         
     def write_step_begin_thermomech(self, f):
         f.write('\n***********************************************************\n')
@@ -863,7 +863,7 @@ class inp_writer:
         f.write('\n***********************************************************\n')
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE,SOLVER=ITERATIVE SCALING\n')
+        f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
         f.write('1.0,1.0\n'); # OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
 
     def write_initialtemperature(self, f):
