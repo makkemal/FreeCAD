@@ -50,7 +50,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-
+        
 #Start ccx inout writer
 class inp_writer:
     def __init__(self, analysis_obj, mesh_obj, mat_obj,
@@ -63,7 +63,7 @@ class inp_writer:
                  planerotation_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
-                 dir_name=None):              
+                 dir_name=None): 
         self.dir_name = dir_name
         self.analysis = analysis_obj
         self.mesh_object = mesh_obj
@@ -113,20 +113,17 @@ class inp_writer:
         name = ""        
         for i in range(len(self.file_name)-4):
             name = name + self.file_name[i] 
-        self.get_mesh(inpfile,name)
+        self.write_nodes_elements(inpfile,name)
         inpfile.close()
         inpfile = open(self.file_name, 'w')
-        inpfile.write('\n\n')
         inpfile.write('\n***********************************************************\n')
-        inpfile.write('** Element sets for materials and FEM element type (solid, shell, beam)\n')
-        inpfile.write('** written by write_element_sets_material_and_femelement_type\n')
+        inpfile.write('**Nodes and Elements\n')
+        inpfile.write('** written by write_nodes_elements\n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Nodes_elem.inp \n")
         progress.progressBar_1.setValue(20)
         progress.label_1.setText(_translate("MainWindow", "Writting element sets" , None)) 
-        inpfile.write('\n\n')
         self.write_element_sets_material_and_femelement_type(inpfile)
         inpfile = open(name+ "_Node_sets.inp", 'w')
-        inpfile.write('\n\n')
         self.write_node_sets_constraints_fixed(inpfile)
         progress.progressBar_1.setValue(25)
         self.write_node_sets_constraints_displacement(inpfile)
@@ -139,17 +136,13 @@ class inp_writer:
         inpfile.write('** Node set for PlaneRotation constraint\n')
         inpfile.write('** Node sets for prescribed displacement constraint\n')
         inpfile.write('** Node sets for loads\n')
+        inpfile.write('** Node sets for temperature constraint\n')
         inpfile.write('** written by write_node_sets_constraints \n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         inpfileforce = open(name + "_Contraints_Force.inp", 'w')
-        inpfileforce.write('\n\n')   
         inpfileforce.close()
         inpfilePressure = open(name + "_Contraints_Pressure.inp", 'w')
-        inpfilePressure.write('\n\n')
         inpfilePressure.close()
-        inpfileHeat = open(name + "_Heatflux.inp", 'w')
-        inpfileHeat.write('\n\n')
-        inpfileHeat.close()
         progress.progressBar_1.setValue(35)
         progress.progressBar_1.setValue(40)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
@@ -179,7 +172,7 @@ class inp_writer:
         progress.progressBar_1.setValue(70)
         progress.label_1.setText(_translate("MainWindow", "Writting distributed loads" , None))
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            self.write_temperature(inpfileTemp)
+            self.write_temperature(inpfile)
             inpfileHeat = open(name + "_Heatflux.inp", 'w')
             self.write_heatflux(inpfileHeat)
             inpfileHeat.close()
@@ -192,7 +185,7 @@ class inp_writer:
             inpfile.write('\n***********************************************************\n')
             inpfile.write('** Convective heat transfer (heat flux)\n')
             inpfile.write('** written by write_heatflux\n')
-            inpfile.write('*INCLUDE,INPUT=' +name+ "_Heatflux.inp.inp \n\n")
+            inpfile.write('*INCLUDE,INPUT=' +name+ "_Heatflux.inp \n\n")
         if self.analysis_type is None or self.analysis_type == "static":
             inpfileforce = open(name + "_Contraints_Force.inp", 'a')
             self.write_constraints_force(inpfileforce)
@@ -218,8 +211,11 @@ class inp_writer:
         inpfile.close()
         MainWindow.close()
         return self.file_name
-
+    
     def write_element_sets_material_and_femelement_type(self, f):
+        f.write('\n***********************************************************\n')
+        f.write('** Element sets for materials and FEM element type (solid, shell, beam)\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         if len(self.material_objects) == 1:
             if self.beamsection_objects and len(self.beamsection_objects) == 1:          # single mat, single beam
                 self.get_ccx_elsets_single_mat_single_beam()
@@ -293,7 +289,7 @@ class inp_writer:
         return l_table
         
           
-    def get_mesh(self, f,b):
+    def write_nodes_elements(self, f,b):
         s_line = f.readline()
         files = open(b+ "_Nodes_elem.inp", 'w')
         while s_line[0] != "B":
@@ -311,15 +307,9 @@ class inp_writer:
             testt = int(testt)
             conflict_nodes.append(testt)
             testt = g.readline()
-        
         g.close() 
-        
         import os
         os.remove("conflict.txt")                
-        
-        
-        
-        
         f.write('\n\n')
         for fobj in self.planerotation_objects:
             l_nodes = []            
@@ -642,7 +632,7 @@ class inp_writer:
     def write_temperature(self,f):
         f.write('\n***********************************************************\n')
         f.write('** Fixed temperature constraint applied\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))        
         for ftobj in self.temperature_objects:
             fixedtemp_obj = ftobj['Object']
             f.write('*BOUNDARY\n')
