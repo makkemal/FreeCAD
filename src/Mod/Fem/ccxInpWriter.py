@@ -307,15 +307,9 @@ class inp_writer:
             testt = int(testt)
             conflict_nodes.append(testt)
             testt = g.readline()
-        
         g.close() 
-        
         import os
         os.remove("conflict.txt")                
-        
-        
-        
-        
         f.write('\n\n')
         for fobj in self.planerotation_objects:
             l_nodes = []            
