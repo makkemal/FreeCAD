@@ -49,7 +49,7 @@ SOURCE_GROUP("Python" FILES ${Python_SRCS})
 
 set(FemGui_MOC_HDRS
     DlgSettingsFemImp.h
-    DlgSettingsFemThermoMechImp.h
+    DlgSettingsFemAnalysisOptImp.h
     PropertyFemMeshItem.h
     TaskObjectName.h
     TaskCreateNodeSet.h
@@ -84,7 +84,7 @@ SOURCE_GROUP("Moc" FILES ${FemGui_MOC_SRCS})
 
 set(FemGui_UIC_SRCS
     DlgSettingsFem.ui
-    DlgSettingsFemThermoMech.ui
+    DlgSettingsFemAnalysisOpt.ui
     TaskCreateNodeSet.ui
     TaskObjectName.ui
     TaskFemConstraint.ui
@@ -120,9 +120,9 @@ SET(FemGui_DLG_SRCS
     DlgSettingsFem.ui
     DlgSettingsFemImp.cpp
     DlgSettingsFemImp.h
-    DlgSettingsFemThermoMech.ui
-    DlgSettingsFemThermoMechImp.cpp
-    DlgSettingsFemThermoMechImp.h
+    DlgSettingsFemAnalysisOpt.ui
+    DlgSettingsFemAnalysisOptImp.cpp
+    DlgSettingsFemAnalysisOptImp.h
     TaskFemConstraint.ui
     TaskFemConstraint.cpp
     TaskFemConstraint.h

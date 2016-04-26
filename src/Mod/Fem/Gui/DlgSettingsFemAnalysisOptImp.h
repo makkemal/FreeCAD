@@ -23,21 +23,21 @@
  ***************************************************************************/
 
 
-#ifndef FEMGUI_DLGSETTINGSFEMTHERMOMECHIMP_H
-#define FEMGUI_DLGSETTINGSFEMTHERMOMECHIMP_H
+#ifndef FEMGUI_DLGSETTINGSFEMANALYSISOPTIMP_H
+#define FEMGUI_DLGSETTINGSFEMANALYSISOPTIMP_H
 
-#include "ui_DlgSettingsFemThermoMech.h"
+#include "ui_DlgSettingsFemAnalysisOpt.h"
 #include <Gui/PropertyPage.h>
 
 namespace FemGui {
 
-class DlgSettingsFemThermoMechImp : public Gui::Dialog::PreferencePage, public Ui_DlgSettingsFemThermoMechImp
+class DlgSettingsFemAnalysisOptImp : public Gui::Dialog::PreferencePage, public Ui_DlgSettingsFemAnalysisOptImp
 {
     Q_OBJECT
 
 public:
-    DlgSettingsFemThermoMechImp( QWidget* parent = 0 );
-    ~DlgSettingsFemThermoMechImp();
+    DlgSettingsFemAnalysisOptImp( QWidget* parent = 0 );
+    ~DlgSettingsFemAnalysisOptImp();
 
 protected:
     void saveSettings();
@@ -47,4 +47,4 @@ protected:
 
 } // namespace FemGui
 
-#endif // FEMGUI_DLGSETTINGSFEMTHERMOMECHIMP_H
+#endif // FEMGUI_DLGSETTINGSFEMANALYSISOPTIMP_H

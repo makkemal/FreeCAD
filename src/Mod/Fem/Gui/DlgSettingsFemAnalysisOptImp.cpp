@@ -26,60 +26,63 @@
 #include "PreCompiled.h"
 
 #include "Gui/Application.h"
-#include "DlgSettingsFemThermoMechImp.h"
+#include "DlgSettingsFemAnalysisOptImp.h"
 #include <Gui/PrefWidgets.h>
 
 using namespace FemGui;
 
-DlgSettingsFemThermoMechImp::DlgSettingsFemThermoMechImp( QWidget* parent )
+DlgSettingsFemAnalysisOptImp::DlgSettingsFemAnalysisOptImp( QWidget* parent )
   : PreferencePage( parent )
 {
     this->setupUi(this);
 }
 
-DlgSettingsFemThermoMechImp::~DlgSettingsFemThermoMechImp()
+DlgSettingsFemAnalysisOptImp::~DlgSettingsFemAnalysisOptImp()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-void DlgSettingsFemThermoMechImp::saveSettings()
+void DlgSettingsFemAnalysisOptImp::saveSettings()
 {
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
+        ("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt");
+    hGrp->SetInt("Solver", cmb_solver->currentIndex());
+        
+    //OvG: Solver settings
+    sb_ccx_numcpu->onSave();         //Number of CPUs
+    cmb_solver->onSave();
+    cb_ccx_non_lin_geom->onSave();
+    cb_hide_constraint->onSave();
     
-    //OvG: Solver settings for thermo mechanical analysis
-    sb_num_increments->onSave();        //Number of increments
-    
-    //OvG: Material property defaults
-    dsb_density_kgm3->onSave();         //Density
-    dsb_PR->onSave();                   //Poison Ration
-    dsb_SH_JkgK->onSave();              //Specific Heat
-    dsb_TEC_mmK->onSave();              //Thermal Expansion Coefficient
-    dsb_TC_WmK->onSave();               //Thermal Conductivity
-    dsb_YM_Pa->onSave();                //Young's modulus
+    cb_static->onSave();
+    sb_ccx_max_iterations->onSave(); //Max number of iterations
+    dsb_ccx_initial_time_step->onSave(); //Initial time step
+    dsb_ccx_analysis_time->onSave(); //Analysis time
 }
 
-void DlgSettingsFemThermoMechImp::loadSettings()
+void DlgSettingsFemAnalysisOptImp::loadSettings()
 {
-    //OvG: Solver settings for thermo mechanical analysis
-    sb_num_increments->onRestore();     //Number of increments
+    //OvG: Solver settings
+    sb_ccx_numcpu->onRestore();         //Number of CPUs
+    cmb_solver->onRestore();
+    cb_ccx_non_lin_geom->onRestore();
+    cb_hide_constraint->onRestore();
     
-    //OvG: Material property defaults
-    dsb_density_kgm3->onRestore();      //Density
-    dsb_PR->onRestore();                //Poison Ration
-    dsb_SH_JkgK->onRestore();           //Specific Heat
-    dsb_TEC_mmK->onRestore();           //Thermal Expansion Coefficient
-    dsb_TC_WmK->onRestore();            //Thermal Conductivity
-    dsb_YM_Pa->onRestore();             //Young's modulus
+    cb_static->onRestore();
+    sb_ccx_max_iterations->onRestore(); //Max number of iterations
+    dsb_ccx_initial_time_step->onRestore(); //Initial time step
+    dsb_ccx_analysis_time->onRestore(); //Analysis time
 
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath
-        ("User parameter:BaseApp/Preferences/Mod/Fem/ThermoMech");
+        ("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt");
+        int index =  hGrp->GetInt("Solver", 0);
+    if (index > -1) cmb_solver->setCurrentIndex(index);
 }
 
 /**
  * Sets the strings of the subwidgets using the current language.
  */
-void DlgSettingsFemThermoMechImp::changeEvent(QEvent *e)
+void DlgSettingsFemAnalysisOptImp::changeEvent(QEvent *e)
 {
     if (e->type() == QEvent::LanguageChange) {
     }
@@ -88,4 +91,4 @@ void DlgSettingsFemThermoMechImp::changeEvent(QEvent *e)
     }
 }
 
-#include "moc_DlgSettingsFemThermoMechImp.cpp"
+#include "moc_DlgSettingsFemAnalysisOptImp.cpp"
