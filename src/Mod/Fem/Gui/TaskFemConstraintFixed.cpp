@@ -1,9 +1,6 @@
 /***************************************************************************
- *   Copyright (c) 2015 FreeCAD Developers                                 *
- *   Authors: Michael Hindley <hindlemp@eskom.co.za>                       *
- *            Ruan Olwagen <olwager@eskom.co.za>                           *
- *            Oswald van Ginkel <vginkeo@eskom.co.za>                      *
- *   Based on Force constraint by Jan Rheinländer                          *
+ *   Copyright (c) 2013 Jan Rheinländer <jrheinlaender@users.sourceforge.net>        *
+ *                                                                         *
  *   This file is part of the FreeCAD CAx development system.              *
  *                                                                         *
  *   This library is free software; you can redistribute it and/or         *

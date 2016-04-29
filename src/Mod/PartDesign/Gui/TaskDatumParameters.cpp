@@ -29,6 +29,7 @@
 # include <QTextStream>
 # include <QMessageBox>
 # include <Precision.hxx>
+# include <boost/bind.hpp>
 #endif
 
 #include <Base/Console.h>
@@ -49,6 +50,7 @@
 #include <Mod/Part/App/PrimitiveFeature.h>
 #include <Mod/Part/App/DatumFeature.h>
 #include <Mod/PartDesign/App/Body.h>
+#include <Mod/Part/Gui/AttacherTexts.h>
 
 #include "ReferenceSelection.h"
 #include "Utils.h"
@@ -213,8 +215,8 @@ TaskDatumParameters::TaskDatumParameters(ViewProviderDatum *DatumView,QWidget *p
     updateListOfModes(eMapMode(pcDatum->MapMode.getValue()));
 
     //temporary show coordinate systems for selection
-    PartDesign::Body * body = PartDesign::Body::findBodyOf ( DatumView->getObject() );
-    if(body) {
+    PartDesign::Body * body = PartDesign::Body::findBodyOf(DatumView->getObject());
+    if (body) {
         try {
             App::Origin *origin = body->getOrigin();
             ViewProviderOrigin* vpOrigin;
@@ -224,50 +226,51 @@ TaskDatumParameters::TaskDatumParameters(ViewProviderDatum *DatumView,QWidget *p
             Base::Console().Error ("%s\n", ex.what () );
         }
     }
+
     if (pcDatum->Support.getSize() == 0)
         autoNext = true;
     else
         autoNext = false;
-    
+
     DatumView->setPickable(false);
+
+    // connect object deletion with slot
+    auto bnd = boost::bind(&TaskDatumParameters::objectDeleted, this, _1);
+    Gui::Document* document = Gui::Application::Instance->getDocument(DatumView->getObject()->getDocument());
+    connectDelObject = document->signalDeletedObject.connect(bnd);
 }
 
-QString getShTypeText(eRefType type)
+TaskDatumParameters::~TaskDatumParameters()
 {
-    //get rid of flags in type
-    type = eRefType(type & (rtFlagHasPlacement - 1));
+    connectDelObject.disconnect();
+    if (DatumView)
+        resetViewMode();
+    delete ui;
+}
 
-    const char* eRefTypeStrings[] = {
-        QT_TR_NOOP("Any"),
-        QT_TR_NOOP("Vertex"),
-        QT_TR_NOOP("Edge"),
-        QT_TR_NOOP("Face"),
+void TaskDatumParameters::resetViewMode()
+{
+    //end temporary view mode of coordinate system
+    PartDesign::Body * body = PartDesign::Body::findBodyOf(DatumView->getObject());
+    if (body) {
+        try {
+            App::Origin *origin = body->getOrigin();
+            ViewProviderOrigin* vpOrigin;
+            vpOrigin = static_cast<ViewProviderOrigin*>(Gui::Application::Instance->getViewProvider(origin));
+            vpOrigin->resetTemporaryVisibility();
+        }
+        catch (const Base::Exception &ex) {
+            Base::Console().Error("%s\n", ex.what());
+        }
+    }
 
-        QT_TR_NOOP("Line"),
-        QT_TR_NOOP("Curve"),
-        QT_TR_NOOP("Circle"),
-        QT_TR_NOOP("Conic"),
-        QT_TR_NOOP("Ellipse"),
-        QT_TR_NOOP("Parabola"),
-        QT_TR_NOOP("Hyperbola"),
+    DatumView->setPickable(true);
+}
 
-        QT_TR_NOOP("Plane"),
-        QT_TR_NOOP("Sphere"),
-        QT_TR_NOOP("Revolve"),
-        QT_TR_NOOP("Cylinder"),
-        QT_TR_NOOP("Torus"),
-        QT_TR_NOOP("Cone"),
-        //
-        QT_TR_NOOP("Object"),
-        QT_TR_NOOP("Solid"),
-        QT_TR_NOOP("Wire"),
-        NULL
-    };
-
-    if (type >= 0 && type < rtDummy_numberOfShapeTypes)
-        if (eRefTypeStrings[int(type)])
-            return QObject::tr(eRefTypeStrings[int(type)]);
-    throw Base::Exception("getShTypeText: type value is wrong, or a string is missing in the list");
+void TaskDatumParameters::objectDeleted(const Gui::ViewProviderDocumentObject& view)
+{
+    if (DatumView == &view)
+        DatumView = nullptr;
 }
 
 const QString makeHintText(std::set<eRefType> hint)
@@ -275,7 +278,7 @@ const QString makeHintText(std::set<eRefType> hint)
     QString result;
     for (std::set<eRefType>::const_iterator t = hint.begin(); t != hint.end(); t++) {
         QString tText;
-        tText = getShTypeText(*t);
+        tText = AttacherGui::getShapeTypeText(*t);
         result += QString::fromLatin1(result.size() == 0 ? "" : "/") + tText;
     }
 
@@ -691,12 +694,16 @@ void TaskDatumParameters::updateListOfModes(eMapMode curMode)
     if (modesInList.size()>0) {
         for (size_t i = 0  ;  i < modesInList.size()  ;  ++i){
             eMapMode mmode = modesInList[i];
-            ui->listOfModes->addItem(QString::fromLatin1(AttachEngine::eMapModeStrings[mmode]));
+            std::vector<QString> mstr = AttacherGui::getUIStrings(pcDatum->attacher().getTypeId(),mmode);
+            ui->listOfModes->addItem(mstr[0]);
+            QListWidgetItem* item = ui->listOfModes->item(i);
+            item->setToolTip(mstr[1] + QString::fromLatin1("\n\n") +
+                             tr("Reference combinations:\n") +
+                             AttacherGui::getRefListForMode(pcDatum->attacher(),mmode).join(QString::fromLatin1("\n")));
             if (mmode == curMode)
                 iSelect = ui->listOfModes->item(i);
             if (mmode == suggMode){
                 //make it bold
-                QListWidgetItem* item = ui->listOfModes->item(i);
                 assert (item);
                 QFont fnt = item->font();
                 fnt.setBold(true);
@@ -767,26 +774,6 @@ double TaskDatumParameters::getAngle() const
 bool   TaskDatumParameters::getFlip() const
 {
     return ui->checkBoxFlip->isChecked();
-}
-
-TaskDatumParameters::~TaskDatumParameters()
-{
-    //end temporary view mode of coordinate system
-    PartDesign::Body * body = PartDesign::Body::findBodyOf ( DatumView->getObject() );
-    if(body) {
-        try {
-            App::Origin *origin = body->getOrigin();
-            ViewProviderOrigin* vpOrigin;
-            vpOrigin = static_cast<ViewProviderOrigin*>(Gui::Application::Instance->getViewProvider(origin));
-            vpOrigin->resetTemporaryVisibility();
-        } catch (const Base::Exception &ex) {
-            Base::Console().Error ("%s\n", ex.what () );
-        }
-    }
-
-    DatumView->setPickable(true);
-    
-    delete ui;
 }
 
 void TaskDatumParameters::changeEvent(QEvent *e)
