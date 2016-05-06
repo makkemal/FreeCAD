@@ -12,6 +12,8 @@ IF(DOCDIR)
     add_definitions(-DDOCDIR="${DOCDIR}")
 ENDIF(DOCDIR)
 
+add_definitions(-DBOOST_${Boost_VERSION})
+
 #write relevant cmake variables to a file for later access with python. Exportet are all variables 
 #starting with BUILD. As the variable only exists if the user set it to ON a dict is useless, we 
 #use a python list for export. 
