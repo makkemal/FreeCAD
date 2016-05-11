@@ -13,38 +13,28 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="Gui::InputField" name="if_temperature">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>20</y>
-     <width>261</width>
-     <height>27</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>300 K</string>
-   </property>
-   <property name="unit" stdset="0">
-    <string notr="true"/>
-   </property>
-  </widget>
-  <widget class="QLabel" name="label">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>261</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Insert component's initial temperature:</string>
-   </property>
-   <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Insert component's initial temperature:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Gui::InputField" name="if_temperature">
+     <property name="text">
+      <string>300 K</string>
+     </property>
+     <property name="unit" stdset="0">
+      <string notr="true"/>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
