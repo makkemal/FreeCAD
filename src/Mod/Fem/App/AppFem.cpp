@@ -55,6 +55,7 @@
 #include "FemConstraintHeatflux.h"
 #include "FemConstraintInitialTemperature.h"
 #include "FemConstraintPlaneRotation.h"
+#include "FemConstraintContact.h"
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
@@ -154,7 +155,8 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintTemperature      ::init();
     Fem::ConstraintHeatflux         ::init();
     Fem::ConstraintInitialTemperature            ::init();
-    Fem::ConstraintPlaneRotation     ::init();    
+    Fem::ConstraintPlaneRotation     ::init();
+    Fem::ConstraintContact     ::init();    
 
     Fem::FemResultObject            ::init();
     Fem::FemSolverObject            ::init();

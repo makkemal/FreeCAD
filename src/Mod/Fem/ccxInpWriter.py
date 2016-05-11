@@ -61,6 +61,7 @@ class inp_writer:
                  heatflux_obj,
                  initialtemperature_obj, 
                  planerotation_obj,
+                 contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None): 
@@ -76,6 +77,7 @@ class inp_writer:
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
         self.planerotation_objects = planerotation_obj
+        self.contact_objects = contact_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -129,6 +131,7 @@ class inp_writer:
         self.write_node_sets_constraints_displacement(inpfile)
         progress.progressBar_1.setValue(30)
         self.write_node_sets_constraints_planerotation(inpfile,nodelist)
+        self.write_surfaces_contraints_contact(inpfile)
         inpfile.close()
         inpfile = open(self.file_name, 'a')
         inpfile.write('\n***********************************************************\n')
@@ -162,6 +165,7 @@ class inp_writer:
         progress.progressBar_1.setValue(50)       
         self.write_femelementsets(inpfile)
         self.write_constraints_planerotation(inpfile)
+        self.write_constraints_contact(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             self.write_thermomech(inpfile)
@@ -370,8 +374,6 @@ class inp_writer:
             for i in range(len(l_nodes)):
                 if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
                     node_planerotation.append(l_nodes[i])
-            
-            
             MPC_nodes = []
             for i in range(len(node_planerotation)):
                 cnt = 0
@@ -385,7 +387,24 @@ class inp_writer:
             for i in range(len(MPC_nodes)):
                 f.write(str(MPC_nodes[i]) + ',\n')
             
-        
+    def write_surfaces_contraints_contact(self, f):
+        obj = 0        
+        for fobj in self.contact_objects:
+            contact_obj = fobj['Object']
+            cnt = 0
+            obj = obj + 1
+            for o, e in contact_obj.References:
+                elem = o.Shape.getElement(e)
+                cnt = cnt +1                
+                if elem.ShapeType == 'Face':
+                    if cnt == 1:
+                        name = "IND" + str(obj)
+                    else: 
+                        name = "DEP" + str(obj)
+                    f.write('*SURFACE, NAME =' + name + '\n')                    
+                    v = self.mesh_object.FemMesh.getccxVolumesByFace(elem)
+                    for i in v:
+                        f.write("{},S{}\n".format(i[0], i[1]))        
         
 
     def write_node_sets_constraints_displacement(self, f):
@@ -628,6 +647,29 @@ class inp_writer:
             f.write('*MPC\n')
             f.write('PLANE,' + fric_obj_name  +'\n')
             f.write('\n')
+    
+    def write_constraints_contact(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Contact Constaints\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        obj = 0        
+        for contact_object in self.contact_objects:
+            obj = obj + 1            
+            ctct_obj = contact_object['Object']             
+            f.write('*CONTACT PAIR, INTERACTION=INT' + str(obj) +',TYPE=SURFACE TO SURFACE\n')
+            ind_surf = "IND" + str(obj)
+            dep_surf = "DEP" + str(obj)            
+            f.write(dep_surf+',' + ind_surf+ '\n')
+            f.write('*SURFACE INTERACTION, NAME=INT' + str(obj) +'\n')
+            f.write('*SURFACE BEHAVIOR,PRESSURE-OVERCLOSURE=LINEAR\n')
+            Slope = ctct_obj.Slope 
+            f.write(str(Slope) + ' \n')
+            F = ctct_obj.Friction
+            if F > 0:
+                f.write('*FRICTION \n')
+                F = str(F)
+                stick =(Slope/10.0)                 
+                f.write(F +', ' +str(stick)+ ' \n')
 
     def write_temperature(self,f):
         f.write('\n***********************************************************\n')

@@ -205,6 +205,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         #  set of plane rotation constraints from the analysis. Updated with update_objects
         #  Individual constraints are "Fem::ConstraintPlaneRotation" type
         self.planerotation_constraints = []
+        ## @var contact_constraints
+        #  set of contact constraints from the analysis. Updated with update_objects
+        #  Individual constraints are "Fem::ConstraintContact" type
+        self.contact_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -253,6 +257,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 planerotation_constraint_dict = {}
                 planerotation_constraint_dict['Object'] = m
                 self.planerotation_constraints.append(planerotation_constraint_dict)
+            elif m.isDerivedFrom("Fem::ConstraintContact"):
+                contact_constraint_dict = {}
+                contact_constraint_dict['Object'] = m
+                self.contact_constraints.append(contact_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == "FemBeamSection":
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m
@@ -326,6 +334,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                                        self.heatflux_constraints,
                                        self.initialtemperature_constraints,
                                        self.planerotation_constraints,
+                                       self.contact_constraints,
                                        self.beam_sections, self.shell_thicknesses,
                                        self.analysis_type, self.eigenmode_parameters,
                                        self.working_dir)
