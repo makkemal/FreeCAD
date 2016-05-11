@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Thermo-mechanical analysis</string>
+   <string>Calculix Analysis settings</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

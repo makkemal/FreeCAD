@@ -41,6 +41,7 @@ class _FemSolverCalculix():
         obj.SolverType = str(self.Type)
 
         fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
+        caluclix_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt")
 
         obj.addProperty("App::PropertyPath", "WorkingDir", "Fem", "Working directory for calculations")
         obj.WorkingDir = fem_prefs.GetString("WorkingDir", "")
