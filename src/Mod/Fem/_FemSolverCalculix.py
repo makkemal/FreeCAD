@@ -41,7 +41,7 @@ class _FemSolverCalculix():
         obj.SolverType = str(self.Type)
 
         fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
-        caluclix_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt")
+        caluclix_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt") #MPH solver preferences thremo mechanical
 
         obj.addProperty("App::PropertyPath", "WorkingDir", "Fem", "Working directory for calculations")
         obj.WorkingDir = fem_prefs.GetString("WorkingDir", "")
@@ -64,6 +64,10 @@ class _FemSolverCalculix():
         ehl = fem_prefs.GetFloat("EigenmodeHighLimit", 1000000.0)
         obj.EigenmodeHighLimit = (ehl, 0.0, 1000000.0, 10000.0)
 
+        obj.addProperty("App::PropertyIntegerConstraint", "Maxiterations", "Fem", "Number of iterations allowed before stopping jobs")
+        niter = caluclix_prefs.GetInt("AnalysisMaxIterations", 200)
+        obj.Maxiterations = (niter)
+        
     def execute(self, obj):
         return
 
