@@ -398,9 +398,9 @@ class inp_writer:
                 cnt = cnt +1                
                 if elem.ShapeType == 'Face':
                     if cnt == 1:
-                        name = "IND" + str(obj)
-                    else: 
                         name = "DEP" + str(obj)
+                    else: 
+                        name = "IND" + str(obj)
                     f.write('*SURFACE, NAME =' + name + '\n')                    
                     v = self.mesh_object.FemMesh.getccxVolumesByFace(elem)
                     for i in v:
