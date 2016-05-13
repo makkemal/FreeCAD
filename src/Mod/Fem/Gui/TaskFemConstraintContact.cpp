@@ -60,18 +60,28 @@ using namespace Gui;
 
 TaskFemConstraintContact::TaskFemConstraintContact(ViewProviderFemConstraintContact *ConstraintView,QWidget *parent)
   : TaskFemConstraint(ConstraintView, parent, "fem-constraint-contact")
-{ //Note change "Contact" in line above to new constraint name
+{ 
     proxy = new QWidget(this);
     ui = new Ui_TaskFemConstraintContact();
     ui->setupUi(proxy);
     QMetaObject::connectSlotsByName(this);
 
-    QAction* action = new QAction(tr("Delete"), ui->lw_references);
-    action->connect(action, SIGNAL(triggered()), this, SLOT(onReferenceDeleted()));
-    ui->lw_references->addAction(action);
-    ui->lw_references->setContextMenuPolicy(Qt::ActionsContextMenu);
+    QAction* actionSlave = new QAction(tr("Delete"), ui->lw_referencesSlave);
+    actionSlave->connect(actionSlave, SIGNAL(triggered()), this, SLOT(onReferenceDeletedSlave()));
+	
+    QAction* actionMaster = new QAction(tr("Delete"), ui->lw_referencesMaster);
+    actionMaster->connect(actionMaster, SIGNAL(triggered()), this, SLOT(onReferenceDeletedMaster()));
     
-    connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+    ui->lw_referencesSlave->addAction(actionSlave);
+    ui->lw_referencesSlave->setContextMenuPolicy(Qt::ActionsContextMenu);
+    
+    connect(ui->lw_referencesSlave, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
+	
+    ui->lw_referencesMaster->addAction(actionMaster);
+    ui->lw_referencesMaster->setContextMenuPolicy(Qt::ActionsContextMenu);
+    
+    connect(ui->lw_referencesMaster, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
     
     this->groupLayout()->addWidget(proxy);
@@ -92,17 +102,24 @@ TaskFemConstraintContact::TaskFemConstraintContact(ViewProviderFemConstraintCont
 
 /* */
     
-    ui->lw_references->clear();
-    for (std::size_t i = 0; i < Objects.size(); i++) {
-        ui->lw_references->addItem(makeRefText(Objects[i], SubElements[i]));
-    }
-    if (Objects.size() > 0) {
-        ui->lw_references->setCurrentRow(0, QItemSelectionModel::ClearAndSelect);
-    }
+    ui->lw_referencesMaster->clear();
+    ui->lw_referencesSlave->clear();
+    if (Objects.size() > 0){
+	for (std::size_t i = 1; i < Objects.size(); i++) {
+           ui->lw_referencesMaster->addItem(makeRefText(Objects[i], SubElements[i]));
+	}
+    
+	for (std::size_t i = 0; i < (Objects.size()-1); i++) {
+          ui->lw_referencesSlave->addItem(makeRefText(Objects[i], SubElements[i]));
+	}
+}
     
     //Selection buttons
-    connect(ui->btnAdd, SIGNAL(clicked()),  this, SLOT(addToSelection()));
-    connect(ui->btnRemove, SIGNAL(clicked()),  this, SLOT(removeFromSelection()));
+    connect(ui->btnAddSlave, SIGNAL(clicked()),  this, SLOT(addToSelectionSlave()));
+    connect(ui->btnRemoveSlave, SIGNAL(clicked()),  this, SLOT(removeFromSelectionSlave()));
+    
+    connect(ui->btnAddMaster, SIGNAL(clicked()),  this, SLOT(addToSelectionMaster()));
+    connect(ui->btnRemoveMaster, SIGNAL(clicked()),  this, SLOT(removeFromSelectionMaster()));
 
     updateUI();
 }
@@ -114,37 +131,35 @@ TaskFemConstraintContact::~TaskFemConstraintContact()
 
 void TaskFemConstraintContact::updateUI()
 {
-    if (ui->lw_references->model()->rowCount() == 0) {
+    if (ui->lw_referencesSlave->model()->rowCount() == 0) {
+        // Go into reference selection mode if no reference has been selected yet
+        onButtonReference(true);
+        return;
+    }
+    if (ui->lw_referencesMaster->model()->rowCount() == 0) {
         // Go into reference selection mode if no reference has been selected yet
         onButtonReference(true);
         return;
     }
 }
 
-void TaskFemConstraintContact::addToSelection()
+void TaskFemConstraintContact::addToSelectionSlave()
 {
-    int rows = ui->lw_references->model()->rowCount();	
+    int rows = ui->lw_referencesSlave->model()->rowCount();	
     std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx();//gets vector of selected objects of active document
-    if (rows==2){
-        QMessageBox::warning(this, tr("Selection error"), tr("Only two faces can be selected for a contact constraint!"));
-	Gui::Selection().clearSelection();
-        return;	
-    } 
-
-    if ((rows==1) && (selection.size()>=2)){
-        QMessageBox::warning(this, tr("Selection error"), tr("Only two faces can be selected for a contact constraint!"));
+    if (rows==1){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one master face and one slave face for a contact constraint!"));
 	Gui::Selection().clearSelection();
         return;	
     } 
         
-
     if (selection.size()==0){
         QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
         return;
     }
     
-    if ((rows==0) && (selection.size()>=3)){
-        QMessageBox::warning(this, tr("Selection error"), tr("Only two faces can be selected for a contact constraint!"));
+    if ((rows==0) && (selection.size()>=2)){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one slave face for a contact constraint!"));
 	Gui::Selection().clearSelection();
         return;	
     }     
@@ -161,7 +176,11 @@ void TaskFemConstraintContact::addToSelection()
         
         std::vector<std::string> subNames=it->getSubNames();
         App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
-	
+	if (subNames.size()!=1){ 
+	    QMessageBox::warning(this, tr("Selection error"), tr("Only one slave face for a contact constraint!"));
+	    Gui::Selection().clearSelection();
+	    return;
+	}
         for (unsigned int subIt=0;subIt<(subNames.size());++subIt){// for every selected sub element
             bool addMe=true;
 	    if (subNames[subIt].substr(0,4) != "Face") {
@@ -177,12 +196,12 @@ void TaskFemConstraintContact::addToSelection()
                 }
             }
             if (addMe){
-                disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                disconnect(ui->lw_referencesSlave, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
                     this, SLOT(setSelection(QListWidgetItem*)));
                 Objects.push_back(obj);
                 SubElements.push_back(subNames[subIt]);
-                ui->lw_references->addItem(makeRefText(obj, subNames[subIt]));
-                connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                ui->lw_referencesSlave->addItem(makeRefText(obj, subNames[subIt]));
+                connect(ui->lw_referencesSlave, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
                     this, SLOT(setSelection(QListWidgetItem*)));
             }
         }  
@@ -192,7 +211,7 @@ void TaskFemConstraintContact::addToSelection()
     updateUI();
 }
 
-void TaskFemConstraintContact::removeFromSelection()
+void TaskFemConstraintContact::removeFromSelectionSlave()
 {
     std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx(); //gets vector of selected objects of active document
     if (selection.size()==0){
@@ -232,14 +251,130 @@ void TaskFemConstraintContact::removeFromSelection()
         itemsToDel.pop_back();
     }
     //Update UI
-    disconnect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+    disconnect(ui->lw_referencesSlave, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
     
-    ui->lw_references->clear();
-    for (unsigned int j=0;j<Objects.size();j++){
-        ui->lw_references->addItem(makeRefText(Objects[j], SubElements[j]));
+    ui->lw_referencesSlave->clear();
+    connect(ui->lw_referencesSlave, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
+    
+    pcConstraint->References.setValues(Objects,SubElements);
+    updateUI();
+}
+
+void TaskFemConstraintContact::addToSelectionMaster()
+{
+    int rows = ui->lw_referencesMaster->model()->rowCount();	
+    std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx();//gets vector of selected objects of active document
+    if (rows==1){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one master face and one slave face for a contact constraint!"));
+	Gui::Selection().clearSelection();
+        return;	
+    } 
+        
+    if (selection.size()==0){
+        QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
+        return;
     }
-    connect(ui->lw_references, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+    
+    if ((rows==0) && (selection.size()>=2)){
+        QMessageBox::warning(this, tr("Selection error"), tr("Only one master for a contact constraint!"));
+	Gui::Selection().clearSelection();
+        return;	
+    }     
+
+    Fem::ConstraintContact* pcConstraint = static_cast<Fem::ConstraintContact*>(ConstraintView->getObject());
+    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
+    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
+    
+    for (std::vector<Gui::SelectionObject>::iterator it = selection.begin();  it != selection.end(); ++it){//for every selected object
+        if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+            QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
+            return;
+        }
+        
+        std::vector<std::string> subNames=it->getSubNames();
+        App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+	if (subNames.size()!=1){ 
+	    QMessageBox::warning(this, tr("Selection error"), tr("Only one master face for a contact constraint!"));
+	    Gui::Selection().clearSelection();
+	    return;
+	}
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){// for every selected sub element
+            bool addMe=true;
+	    if (subNames[subIt].substr(0,4) != "Face") {
+		QMessageBox::warning(this, tr("Selection error"), tr("Only faces can be picked"));
+		return;
+	    }		
+            for (std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
+                   itr!= SubElements.end();
+                   itr =  std::find(++itr,SubElements.end(),subNames[subIt]))
+            {// for every sub element in selection that matches one in old list
+                if (obj==Objects[std::distance(SubElements.begin(),itr)]){//if selected sub element's object equals the one in old list then it was added before so don't add
+                    addMe=false;
+                }
+            }
+            if (addMe){
+                disconnect(ui->lw_referencesMaster, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
+                Objects.push_back(obj);
+                SubElements.push_back(subNames[subIt]);
+                ui->lw_referencesMaster->addItem(makeRefText(obj, subNames[subIt]));
+                connect(ui->lw_referencesMaster, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+                    this, SLOT(setSelection(QListWidgetItem*)));
+            }
+        }  
+    }
+    //Update UI
+    pcConstraint->References.setValues(Objects,SubElements);
+    updateUI();
+}
+
+void TaskFemConstraintContact::removeFromSelectionMaster()
+{
+    std::vector<Gui::SelectionObject> selection = Gui::Selection().getSelectionEx(); //gets vector of selected objects of active document
+    if (selection.size()==0){
+        QMessageBox::warning(this, tr("Selection error"), tr("Nothing selected!"));
+        return;
+    }
+
+    Fem::ConstraintContact* pcConstraint = static_cast<Fem::ConstraintContact*>(ConstraintView->getObject());
+    std::vector<App::DocumentObject*> Objects = pcConstraint->References.getValues();
+    std::vector<std::string> SubElements = pcConstraint->References.getSubValues();
+    std::vector<int> itemsToDel;
+    for (std::vector<Gui::SelectionObject>::iterator it = selection.begin();  it != selection.end(); ++it){//for every selected object
+        if (static_cast<std::string>(it->getTypeName()).substr(0,4).compare(std::string("Part"))!=0){
+            QMessageBox::warning(this, tr("Selection error"),tr("Selected object is not a part!"));
+            return;
+        }
+        
+        std::vector<std::string> subNames=it->getSubNames();
+        App::DocumentObject* obj = ConstraintView->getObject()->getDocument()->getObject(it->getFeatName());
+        
+        for (unsigned int subIt=0;subIt<(subNames.size());++subIt){// for every selected sub element
+            for (std::vector<std::string>::iterator itr=std::find(SubElements.begin(),SubElements.end(),subNames[subIt]);
+                itr!= SubElements.end();
+                itr =  std::find(++itr,SubElements.end(),subNames[subIt]))
+            {// for every sub element in selection that matches one in old list
+                if (obj==Objects[std::distance(SubElements.begin(),itr)]){//if selected sub element's object equals the one in old list then it was added before so mark for deletion
+                    itemsToDel.push_back(std::distance(SubElements.begin(),itr));
+                }
+            }
+        }
+    }
+    
+    std::sort(itemsToDel.begin(),itemsToDel.end());
+    while (itemsToDel.size()>0){
+        Objects.erase(Objects.begin()+itemsToDel.back());
+        SubElements.erase(SubElements.begin()+itemsToDel.back());
+        itemsToDel.pop_back();
+    }
+    //Update UI
+    disconnect(ui->lw_referencesMaster, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
+        this, SLOT(setSelection(QListWidgetItem*)));
+    
+    ui->lw_referencesMaster->clear();
+    connect(ui->lw_referencesMaster, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)),
         this, SLOT(setSelection(QListWidgetItem*)));
     
     pcConstraint->References.setValues(Objects,SubElements);
@@ -264,16 +399,25 @@ void TaskFemConstraintContact::setSelection(QListWidgetItem* item){
     Gui::Selection().addSelection(docName.c_str(),objName.c_str(),subName.c_str(),0,0,0);
 }
 
-void TaskFemConstraintContact::onReferenceDeleted() {
-    TaskFemConstraintContact::removeFromSelection();
+void TaskFemConstraintContact::onReferenceDeletedSlave() {
+    TaskFemConstraintContact::removeFromSelectionSlave();
+}
+
+void TaskFemConstraintContact::onReferenceDeletedMaster() {
+    TaskFemConstraintContact::removeFromSelectionMaster();
 }
 
 const std::string TaskFemConstraintContact::getReferences() const
 {
-    int rows = ui->lw_references->model()->rowCount();
+    int rowsSlave = ui->lw_referencesSlave->model()->rowCount();
     std::vector<std::string> items;
-    for (int r = 0; r < rows; r++) {
-        items.push_back(ui->lw_references->item(r)->text().toStdString());
+    for (int r = 0; r < rowsSlave; r++) {
+        items.push_back(ui->lw_referencesSlave->item(r)->text().toStdString());
+    }
+    
+    int rowsMaster = ui->lw_referencesMaster->model()->rowCount();
+    for (int r = 0; r < rowsMaster; r++) {
+        items.push_back(ui->lw_referencesMaster->item(r)->text().toStdString());
     }
     return TaskFemConstraint::getReferences(items);
 }

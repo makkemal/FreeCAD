@@ -55,10 +55,12 @@ public:
     double get_Friction()const;
 
 private Q_SLOTS:
-    void onReferenceDeleted(void);
-    
-    void addToSelection();
-    void removeFromSelection();
+    void onReferenceDeletedSlave(void);
+    void onReferenceDeletedMaster(void);
+    void addToSelectionSlave();
+    void removeFromSelectionSlave();
+    void addToSelectionMaster();
+    void removeFromSelectionMaster();
     void setSelection(QListWidgetItem* item);
 
 protected:
