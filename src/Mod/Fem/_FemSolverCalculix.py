@@ -68,6 +68,10 @@ class _FemSolverCalculix():
         niter = caluclix_prefs.GetInt("AnalysisMaxIterations", 200)
         obj.Maxiterations = (niter)
         
+        obj.addProperty("App::PropertyFloatConstraint", "Initialtimestep", "Fem", "Initial time steps")
+        ini = caluclix_prefs.GetFloat("AnalysisInitialTimeStep", 0.1)
+        obj.IniTialTimeStep = (ini)
+        
     def execute(self, obj):
         return
 
