@@ -76,6 +76,15 @@ class _FemSolverCalculix():
         eni = caluclix_prefs.GetFloat("AnalysisTime", 1.0)
         obj.EndTime = (eni)
         
+        obj.addProperty("App::PropertyBool", "SteadyState", "Fem", "Run steady state or transient analysis")
+        sted = caluclix_prefs.GetBool("StaticAnalysis", True)
+        obj.SteadyState = (sted)
+        
+        obj.addProperty("App::PropertyBool", "NonLinearGeometry", "Fem", "Non Linear gemotry Flag activated")
+        geom = caluclix_prefs.GetBool("NonlinearGeometry", False)
+        obj.NonLinearGeometry = (geom) 
+        
+        
     def execute(self, obj):
         return
 

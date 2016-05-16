@@ -23,113 +23,136 @@
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_1">
         <item>
-          <layout class="QGridLayout" name="gl_ccx_solver">
-           <item row="0" column="0">
-            <widget class="QLabel" name="l_ccx_numcpu">
-              <property name="text">
-               <string>Number of CPU's to use</string>
-              </property>
-             </widget>
-           </item>
-           <item row="0" column="1">
-            <widget class="Gui::PrefSpinBox" name="sb_ccx_numcpu">
-              <property name="minimum">
-               <number>1</number>
-              </property>
-              <property name="maximum">
-               <number>40</number>
-              </property>
-              <property name="singleStep">
-               <number>1</number>
-              </property>
-              <property name="value">
-               <number>1</number>
-              </property>
-              <property name="prefEntry" stdset="0">
-               <cstring>AnalysisNumCPUs</cstring>
-              </property>
-              <property name="prefPath" stdset="0">
-               <cstring>Mod/Fem/AnalysisOpt</cstring>
-              </property>
-             </widget>
-           </item>
-           <item row="1" column="0">
-            <widget class="QLabel" name="l_solver">
-              <property name="enabled">
-               <bool>false</bool>
-              </property>
-              <property name="text">
-               <string>Solver</string>
-              </property>
-             </widget>
-           </item>
-           <item row="1" column="1">
-            <widget class="Gui::PrefComboBox" name="cmb_solver">
-              <property name="enabled">
-                <bool>false</bool>
-              </property>
-              <property name="prefEntry" stdset="0">
-               <cstring>Solver</cstring>
-              </property>
-              <property name="prefPath" stdset="0">
-               <cstring>Mod/Fem/AnalysisOpt</cstring>
-              </property>
-              <item>
-               <property name="text">
-                <string>ccx</string>
-               </property>
-              </item>
-             </widget>
-           </item>
-           <item row="2" column="0">
-            <widget class="QLabel" name="l_non_lin_geom">
-              <property name="text">
-               <string>Non-Linear Geometry</string>
-              </property>
-             </widget>
-           </item>
-           <item row="2" column="1">
-            <widget class="Gui::PrefCheckBox" name="cb_ccx_non_lin_geom">
-              <property name="text">
-                <string>Non linear geometry</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="prefEntry" stdset="0">
-               <cstring>NonlinearGeometry</cstring>
-              </property>
-              <property name="prefPath" stdset="0">
-               <cstring>Mod/Fem/AnalysisOpt</cstring>
-              </property>
-             </widget>
-           </item>
-           <item row="3" column="0">
-            <widget class="QLabel" name="l_hide_constraint">
-              <property name="text">
-               <string>Hide Constraint when plotting results</string>
-              </property>
-             </widget>
-           </item>
-           <item row="3" column="1">
-            <widget class="Gui::PrefCheckBox" name="cb_hide_constraint">
-              <property name="text">
-                <string>Hide</string>
-              </property>
-              <property name="checked">
-               <bool>false</bool>
-              </property>
-              <property name="prefEntry" stdset="0">
-               <cstring>HideConstraint</cstring>
-              </property>
-              <property name="prefPath" stdset="0">
-               <cstring>Mod/Fem/AnalysisOpt</cstring>
-              </property>
-             </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <layout class="QGridLayout" name="gl_ccx_solver">
+          <item row="0" column="0">
+           <widget class="QLabel" name="l_ccx_numcpu">
+            <property name="text">
+             <string>Number of CPU's to use</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="Gui::PrefSpinBox" name="sb_ccx_numcpu">
+            <property name="minimum">
+             <number>1</number>
+            </property>
+            <property name="maximum">
+             <number>40</number>
+            </property>
+            <property name="singleStep">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>AnalysisNumCPUs</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/Fem/AnalysisOpt</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="l_solver">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="text">
+             <string>Matrix Solver</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="Gui::PrefComboBox" name="cmb_solver">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="currentText">
+             <string>Default</string>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>Solver</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/Fem/AnalysisOpt</cstring>
+            </property>
+            <item>
+             <property name="text">
+              <string>Default</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Spoooles</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Iterative Scaling</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Iterative Cholesky</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="l_non_lin_geom">
+            <property name="text">
+             <string>Non-Linear Geometry</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="Gui::PrefCheckBox" name="cb_ccx_non_lin_geom">
+            <property name="text">
+             <string>Non linear geometry</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>NonlinearGeometry</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/Fem/AnalysisOpt</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="l_hide_constraint">
+            <property name="text">
+             <string>Hide Constraint when plotting results</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <widget class="Gui::PrefCheckBox" name="cb_hide_constraint">
+            <property name="text">
+             <string>Hide</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <property name="prefEntry" stdset="0">
+             <cstring>HideConstraint</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/Fem/AnalysisOpt</cstring>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>
@@ -156,11 +179,11 @@
              <bool>true</bool>
             </property>
             <property name="prefEntry" stdset="0">
-               <cstring>StaticAnalysis</cstring>
-              </property>
-              <property name="prefPath" stdset="0">
-               <cstring>Mod/Fem/AnalysisOpt</cstring>
-              </property>
+             <cstring>StaticAnalysis</cstring>
+            </property>
+            <property name="prefPath" stdset="0">
+             <cstring>Mod/Fem/AnalysisOpt</cstring>
+            </property>
            </widget>
           </item>
           <item row="1" column="0">
@@ -280,16 +303,6 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
-  <customwidget>
-   <class>Gui::FileChooser</class>
-   <extends>QWidget</extends>
-   <header>Gui/FileDialog.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Gui::PrefFileChooser</class>
-   <extends>Gui::FileChooser</extends>
-   <header>Gui/PrefWidgets.h</header>
-  </customwidget>
   <customwidget>
    <class>Gui::PrefSpinBox</class>
    <extends>QSpinBox</extends>
