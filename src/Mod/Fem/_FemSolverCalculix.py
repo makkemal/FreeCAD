@@ -41,7 +41,7 @@ class _FemSolverCalculix():
         obj.SolverType = str(self.Type)
 
         fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
-        caluclix_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt") #MPH solver preferences thremo mechanical
+        calculix_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt") #MPH solver preferences thremo mechanical
 
         obj.addProperty("App::PropertyPath", "WorkingDir", "Fem", "Working directory for calculations")
         obj.WorkingDir = fem_prefs.GetString("WorkingDir", "")
@@ -65,24 +65,33 @@ class _FemSolverCalculix():
         obj.EigenmodeHighLimit = (ehl, 0.0, 1000000.0, 10000.0)
 
         obj.addProperty("App::PropertyIntegerConstraint", "Maxiterations", "Fem", "Number of iterations allowed before stopping jobs")
-        niter = caluclix_prefs.GetInt("AnalysisMaxIterations", 200)
+        niter = calculix_prefs.GetInt("AnalysisMaxIterations", 200)
         obj.Maxiterations = (niter)
         
         obj.addProperty("App::PropertyFloatConstraint", "InitialTimeStep", "Fem", "Initial time steps")
-        ini = caluclix_prefs.GetFloat("AnalysisInitialTimeStep", 1.0)
+        ini = calculix_prefs.GetFloat("AnalysisInitialTimeStep", 1.0)
         obj.InitialTimeStep = (ini)
         
         obj.addProperty("App::PropertyFloatConstraint", "EndTime", "Fem", "Initial time steps")
-        eni = caluclix_prefs.GetFloat("AnalysisTime", 1.0)
+        eni = calculix_prefs.GetFloat("AnalysisTime", 1.0)
         obj.EndTime = (eni)
         
         obj.addProperty("App::PropertyBool", "SteadyState", "Fem", "Run steady state or transient analysis")
-        sted = caluclix_prefs.GetBool("StaticAnalysis", True)
+        sted = calculix_prefs.GetBool("StaticAnalysis", True)
         obj.SteadyState = (sted)
         
         obj.addProperty("App::PropertyBool", "NonLinearGeometry", "Fem", "Non Linear gemotry Flag activated")
-        geom = caluclix_prefs.GetBool("NonlinearGeometry", False)
+        geom = calculix_prefs.GetBool("NonlinearGeometry", False)
         obj.NonLinearGeometry = (geom) 
+        
+        obj.addProperty("App::PropertyEnumeration", "MatrixSolverType", "Fem", "Type of solver to use")
+        obj.MatrixSolverType = FemTools.known_solver_types
+        solver_type = calculix_prefs.GetInt("Solver", 0)
+        obj.MatrixSolverType = FemTools.known_solver_types[solver_type]
+        
+        obj.addProperty("App::PropertyIntegerConstraint", "NumCpus", "Fem", "Number of CPU to use with Spooles matrix solver")
+        ncpu = calculix_prefs.GetInt("AnalysisNumCPUs", 1)
+        obj.NumCpus = (ncpu)
         
         
     def execute(self, obj):

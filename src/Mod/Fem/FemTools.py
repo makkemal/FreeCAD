@@ -30,6 +30,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
     finished = QtCore.Signal(int)
 
     known_analysis_types = ["static", "frequency", "thermomech"]
+    known_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
 
     ## The constructor
     #  @param analysis - analysis object to be used as the core object.
