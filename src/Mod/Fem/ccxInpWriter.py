@@ -582,15 +582,22 @@ class inp_writer:
         f.write('** One step is needed to calculate the mechanical analysis of FreeCAD\n')
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*STEP\n')
-        f.write('*STATIC\n')
+        f.write('*STEP')
+        if calculixprefs.NonLinearGeometry:
+            f.write(',NLGEOM\n')
+        else:
+            f.write('\n')
+        f.write('*STATIC')    
         
     def write_step_begin_thermomech(self, f):
         f.write('\n***********************************************************\n')
         f.write('** One step is needed to calculate the mechanical analysis of FreeCAD\n')
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*STEP,INC={}\n'.format(calculixprefs.Maxiterations)) 
+        f.write('*STEP')
+        if calculixprefs.NonLinearGeometry:
+            f.write(',NLGEOM')
+        f.write(',INC={}\n'.format(calculixprefs.Maxiterations)) 
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
