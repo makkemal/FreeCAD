@@ -900,8 +900,14 @@ class inp_writer:
         f.write('\n***********************************************************\n')
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
-        f.write('calculixprefs.InitialTimeStep,1.0\n'); # OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
+        f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
+        if calculixprefs.SteadyState:
+            f.write(',STEADY STATE\n')
+            calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user imputs for steady state
+            calculixprefs.EndTime=1.0
+        else:
+            f.write('\n')     
+        f.write('{},{}\n'.format(calculixprefs.InitialTimeStep,calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
