@@ -50,6 +50,11 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
+#Get anlysis preferences from document object       
+members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
+for member in members:
+     if member.isDerivedFrom("Fem::FemSolverObject"):
+        calculixprefs=member        
         
 #Start ccx inout writer
 class inp_writer:
@@ -896,7 +901,7 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT,STEADY STATE\n')
-        f.write('1.0,1.0\n'); # OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
+        f.write('calculixprefs.InitialTimeStep,1.0\n'); # OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
