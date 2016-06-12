@@ -46,6 +46,7 @@ class FemInputWriter():
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type, eigenmode_parameters,
                  dir_name):
@@ -57,6 +58,7 @@ class FemInputWriter():
         self.force_objects = force_obj
         self.pressure_objects = pressure_obj
         self.displacement_objects = displacement_obj
+        self.contact_objects = contact_obj
         self.beamsection_objects = beamsection_obj
         self.shellthickness_objects = shellthickness_obj
         self.analysis_type = analysis_type
