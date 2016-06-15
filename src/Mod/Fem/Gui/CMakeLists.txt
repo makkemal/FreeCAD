@@ -68,6 +68,7 @@ set(FemGui_MOC_HDRS
     TaskFemConstraintTemperature.h
     TaskFemConstraintHeatflux.h
     TaskFemConstraintInitialTemperature.h
+    TaskFemConstraintPlaneRotation.h
     TaskFemConstraintContact.h    
     TaskTetParameter.h
     TaskAnalysisInfo.h
@@ -99,6 +100,7 @@ set(FemGui_UIC_SRCS
     TaskFemConstraintTemperature.ui
     TaskFemConstraintHeatflux.ui
     TaskFemConstraintInitialTemperature.ui
+    TaskFemConstraintPlaneRotation.ui
     TaskFemConstraintContact.ui
     TaskTetParameter.ui
     TaskAnalysisInfo.ui
@@ -157,6 +159,9 @@ SET(FemGui_DLG_SRCS
     TaskFemConstraintInitialTemperature.ui
     TaskFemConstraintInitialTemperature.cpp
     TaskFemConstraintInitialTemperature.h
+    TaskFemConstraintPlaneRotation.ui
+    TaskFemConstraintPlaneRotation.cpp
+    TaskFemConstraintPlaneRotation.h
     TaskFemConstraintContact.ui
     TaskFemConstraintContact.cpp
     TaskFemConstraintContact.h     
@@ -210,6 +215,8 @@ SET(FemGui_SRCS_ViewProvider
     ViewProviderFemConstraintHeatflux.h
     ViewProviderFemConstraintInitialTemperature.cpp
     ViewProviderFemConstraintInitialTemperature.h
+    ViewProviderFemConstraintPlaneRotation.cpp
+    ViewProviderFemConstraintPlaneRotation.h
     ViewProviderFemConstraintContact.cpp
     ViewProviderFemConstraintContact.h
     ViewProviderResult.cpp
