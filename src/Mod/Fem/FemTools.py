@@ -200,6 +200,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # set of initial temperatures for the analysis. Updated with update_objects
         # Individual initialTemperature_constraints are Proxy.Type "FemConstraintInitialTemperature"
         self.initialtemperature_constraints = []
+        ## @var contact_constraints
+        #  set of contact constraints from the analysis. Updated with update_objects
+        #  Individual constraints are "Fem::ConstraintContact" type
+        self.contact_constraints = []
 
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
@@ -244,6 +248,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 initialtemperature_constraint_dict = {}
                 initialtemperature_constraint_dict['Object'] = m
                 self.initialtemperature_constraints.append(initialtemperature_constraint_dict)
+            elif m.isDerivedFrom("Fem::ConstraintContact"):
+                contact_constraint_dict = {}
+                contact_constraint_dict['Object'] = m
+                self.contact_constraints.append(contact_constraint_dict)
             elif hasattr(m, "Proxy") and m.Proxy.Type == "FemBeamSection":
                 beam_section_dict = {}
                 beam_section_dict['Object'] = m

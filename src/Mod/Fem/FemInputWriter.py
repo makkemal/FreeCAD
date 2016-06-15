@@ -48,6 +48,7 @@ class FemInputWriter():
                  temperature_obj,
                  heatflux_obj,
                  initialtemperature_obj, 
+                 contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type, eigenmode_parameters,
                  dir_name):
@@ -63,6 +64,7 @@ class FemInputWriter():
         self.temperature_objects = temperature_obj
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
+        self.contact_objects = contact_obj        
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]

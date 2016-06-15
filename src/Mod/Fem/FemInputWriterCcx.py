@@ -61,6 +61,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                  temperature_obj,
                  heatflux_obj,
                  initialtemperature_obj, 
+                 contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
                  dir_name=None):
@@ -76,6 +77,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.temperature_objects = temperature_obj
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
+        self.contact_objects = contact_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
@@ -92,6 +94,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                                force_obj, pressure_obj,
                                                displacement_obj, temperature_obj,
                                                heatflux_obj, initialtemperature_obj,
+                                               contact_obj,
                                                beamsection_obj, shellthickness_obj,analysis_type,
                                                eigenmode_parameters, dir_name)
         self.file_name = self.dir_name + '/' + self.mesh_object.Name + '.inp'
@@ -114,6 +117,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_node_sets_constraints_displacement(inpfile)
+        self.write_surfaces_contraints_contact(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
             self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
@@ -123,6 +127,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
+        self.write_constraints_contact(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_step_begin_thermomech(inpfile)
             self.write_thermomech(inpfile)
@@ -223,6 +228,26 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             s_line = f.readline()  
         files.close()
     
+    def write_surfaces_contraints_contact(self, f):
+        obj = 0        
+        for femobj in self.contact_objects:
+            contact_obj = femobj['Object']
+            cnt = 0
+            obj = obj + 1
+            for o, elem_tup in contact_obj.References:
+                for elem in elem_tup:
+                    scc = o.Shape.getElement(elem)
+                    cnt = cnt +1                
+                    if scc.ShapeType == 'Face':
+                        if cnt == 1:
+                            name = "DEP" + str(obj)
+                        else: 
+                            name = "IND" + str(obj)
+                        f.write('*SURFACE, NAME =' + name + '\n')                    
+                        v = self.mesh_object.FemMesh.getccxVolumesByFace(scc)
+                        for i in v:
+                            f.write("{},S{}\n".format(i[0], i[1]))                
+        
     def write_node_sets_constraints_displacement(self, f):
         # get nodes
         self.get_constraints_displacement_nodes()
@@ -474,6 +499,29 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 elif not disp_obj.rotzFree:
                     f.write(disp_obj_name + ',6,6,' + str(disp_obj.zRotation) + '\n')
         f.write('\n')
+
+    def write_constraints_contact(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Contact Constaints\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        obj = 0        
+        for contact_object in self.contact_objects:
+            obj = obj + 1            
+            ctct_obj = contact_object['Object']             
+            f.write('*CONTACT PAIR, INTERACTION=INT' + str(obj) +',TYPE=SURFACE TO SURFACE\n')
+            ind_surf = "IND" + str(obj)
+            dep_surf = "DEP" + str(obj)            
+            f.write(dep_surf+',' + ind_surf+ '\n')
+            f.write('*SURFACE INTERACTION, NAME=INT' + str(obj) +'\n')
+            f.write('*SURFACE BEHAVIOR,PRESSURE-OVERCLOSURE=LINEAR\n')
+            Slope = ctct_obj.Slope 
+            f.write(str(Slope) + ' \n')
+            F = ctct_obj.Friction
+            if F > 0:
+                f.write('*FRICTION \n')
+                F = str(F)
+                stick =(Slope/10.0)                 
+                f.write(F +', ' +str(stick)+ ' \n')
 
     def write_temperature(self,f):
         f.write('\n***********************************************************\n')
