@@ -21,7 +21,7 @@
 #***************************************************************************
 
 import FreeCAD, FreeCADGui, os
-from PySide import QtCore, QtGui, QtUiTools, QtSvg
+from PySide import QtCore, QtGui, QtUiTools
 
 __title__="FreeCAD material editor"
 __author__ = "Yorik van Havre"
@@ -59,7 +59,6 @@ class MaterialEditor:
         QtCore.QObject.connect(self.widget.EditProperty, QtCore.SIGNAL("returnPressed()"), self.addCustomProperty)
         QtCore.QObject.connect(self.widget.ButtonDeleteProperty, QtCore.SIGNAL("clicked()"), self.deleteCustomProperty)
         QtCore.QObject.connect(self.widget.Editor, QtCore.SIGNAL("itemDoubleClicked(QTreeWidgetItem*,int)"), self.itemClicked)
-        QtCore.QObject.connect(self.widget.Editor, QtCore.SIGNAL("itemChanged(QTreeWidgetItem*,int)"), self.itemChanged)
         QtCore.QObject.connect(self.widget.Editor, QtCore.SIGNAL("currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)"), self.checkDeletable)
         QtCore.QObject.connect(self.widget.ButtonOpen, QtCore.SIGNAL("clicked()"), self.openfile)
         QtCore.QObject.connect(self.widget.ButtonSave, QtCore.SIGNAL("clicked()"), self.savefile)
@@ -69,7 +68,8 @@ class MaterialEditor:
             d = FreeCAD.ActiveDocument.getObject(self.obj).getPropertyByName(self.prop)
         elif self.material:
             d = self.material
-
+        if d:
+            self.updateContents(d)
 
     def updateCards(self):
         "updates the contents of the materials combo with existing material cards"
@@ -208,14 +208,6 @@ class MaterialEditor:
         if column > 0:
             self.widget.Editor.editItem(item, column)
             
-            
-    def itemChanged(self, item, column):
-        "Handles text changes"
-        if item.text(0) == "Section Fill Pattern":
-            if column == 1:
-                self.setTexture(item.text(1))
-
-
     def checkDeletable(self,current,previous):
         "Checks if the current item is a custom property, if yes enable the delete button"
         if str(current.text(0)) in self.customprops:
@@ -234,26 +226,6 @@ class MaterialEditor:
                 # TODO the following should be translated back to english,since text(0) could be translated
                 d[self.collapseKey(str(c.text(0)))] = unicode(c.text(1))
         return d
-
-
-        if d:
-            self.updateContents(d)
-        self.widget.Editor.topLevelItem(6).child(4).setToolTip(1,self.getPatternsList())
-
-
-    def setTexture(self,pattern):
-        "displays a texture preview if needed"
-        self.widget.PreviewVector.hide()
-        if pattern:
-            try:
-                import DrawingPatterns
-            except:
-                print "DrawingPatterns not found"
-            else:
-                pattern = DrawingPatterns.buildFileSwatch(pattern,size=96,png=True)
-                if pattern:
-                    self.widget.PreviewVector.setPixmap(QtGui.QPixmap(pattern))
-                    self.widget.PreviewVector.show()
 
 
     def openfile(self):

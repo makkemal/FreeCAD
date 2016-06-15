@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>441</width>
+    <width>450</width>
     <height>604</height>
    </rect>
   </property>
@@ -109,28 +109,34 @@
          </spacer>
         </item>
         <item>
-         <widget class="QLabel" name="PreviewRender">
+         <widget class="QGraphicsView" name="PreviewRendered">
           <property name="minimumSize">
            <size>
             <width>96</width>
             <height>96</height>
            </size>
           </property>
-          <property name="text">
-           <string/>
+          <property name="maximumSize">
+           <size>
+            <width>96</width>
+            <height>96</height>
+           </size>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QLabel" name="PreviewVector">
+         <widget class="QGraphicsView" name="PreviewVector">
           <property name="minimumSize">
            <size>
             <width>96</width>
             <height>96</height>
            </size>
           </property>
-          <property name="text">
-           <string/>
+          <property name="maximumSize">
+           <size>
+            <width>96</width>
+            <height>96</height>
+           </size>
           </property>
          </widget>
         </item>

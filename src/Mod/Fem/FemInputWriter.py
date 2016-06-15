@@ -41,30 +41,35 @@ import os
 
 
 class FemInputWriter():
-    def __init__(self, analysis_obj, solver_obj,
-                 mesh_obj, mat_obj,
+    def __init__(self, analysis_obj, solver_obj, mesh_obj, mat_obj,
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 temperature_obj,
+                 heatflux_obj,
+                 initialtemperature_obj, 
                  beamsection_obj, shellthickness_obj,
                  analysis_type, eigenmode_parameters,
                  dir_name):
+        self.dir_name = dir_name
         self.analysis = analysis_obj
-        self.solver_obj = solver_obj
+        self.solver = solver_obj
         self.mesh_object = mesh_obj
         self.material_objects = mat_obj
         self.fixed_objects = fixed_obj
         self.force_objects = force_obj
         self.pressure_objects = pressure_obj
         self.displacement_objects = displacement_obj
-        self.beamsection_objects = beamsection_obj
-        self.shellthickness_objects = shellthickness_obj
-        self.analysis_type = analysis_type
+        self.temperature_objects = temperature_obj
+        self.heatflux_objects = heatflux_obj
+        self.initialtemperature_objects = initialtemperature_obj
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
             self.eigenfrequeny_range_high = eigenmode_parameters[2]
-        self.dir_name = dir_name
+        self.analysis_type = analysis_type
+        self.beamsection_objects = beamsection_obj
+        self.shellthickness_objects = shellthickness_obj
         if not dir_name:
             print('Error: FemInputWriter has no working_dir --> we gone make a temporary one!')
             self.dir_name = FreeCAD.ActiveDocument.TransientDir.replace('\\', '/') + '/FemAnl_' + analysis_obj.Uid[-4:]
