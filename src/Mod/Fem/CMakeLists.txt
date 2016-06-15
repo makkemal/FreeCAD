@@ -20,15 +20,18 @@ INSTALL(
 
         FemSelectionObserver.py
         FemMeshTools.py
-        FemTools.py
+		FemTools.py
         FemInputWriter.py
         TestFem.py
+		
+        TestFem.py        
 
         FemCommands.py
         _CommandMeshFromShape.py
         _CommandPurgeResults.py
         _CommandRunSolver.py
         _CommandControlSolver.py
+        TaskPanelShowResult.ui
 
         _CommandShowResult.py
         _TaskPanelShowResult.py
@@ -38,28 +41,28 @@ INSTALL(
         _FemAnalysis.py
         _ViewProviderFemAnalysis.py
         _CommandAnalysis.py
-
-        FemBeamSection.py
+        
+		FemBeamSection.py
         _FemBeamSection.py
         _ViewProviderFemBeamSection.py
         _CommandBeamSection.py
         _TaskPanelFemBeamSection.py
         TaskPanelFemBeamSection.ui
 
-        FemShellThickness.py
+		FemShellThickness.py
         _FemShellThickness.py
         _ViewProviderFemShellThickness.py
         _CommandShellThickness.py
         _TaskPanelFemShellThickness.py
         TaskPanelFemShellThickness.ui
-
-        MechanicalMaterial.py
+		
+		MechanicalMaterial.py
         _MechanicalMaterial.py
         _ViewProviderMechanicalMaterial.py
         _CommandMechanicalMaterial.py
         _TaskPanelMechanicalMaterial.py
         TaskPanelMechanicalMaterial.ui
-
+		
         # solver CalculiX ccx
         ccxDatReader.py
         ccxFrdReader.py
@@ -69,9 +72,9 @@ INSTALL(
         _FemSolverCalculix.py
         _ViewProviderFemSolverCalculix.py
         _CommandSolverCalculix.py
+        _CommandControlSolver.py
         _TaskPanelFemSolverCalculix.py
         TaskPanelFemSolverCalculix.ui
-
         # solver Z88
         importZ88Mesh.py
         z88DispReader.py

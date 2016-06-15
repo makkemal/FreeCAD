@@ -74,8 +74,13 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
          << "Fem_ConstraintGear"
          << "Fem_ConstraintPulley"
          << "Separator"
+         << "Fem_ConstraintTemperature"
+         << "Fem_ConstraintHeatflux"
+	 << "Fem_ConstraintInitialTemperature"
+	 << "Separator"
          << "Fem_ControlSolver"
          << "Fem_RunSolver"
+         << "Separator"
          << "Fem_PurgeResults"
          << "Fem_ShowResult";
          
@@ -122,8 +127,13 @@ Gui::MenuItem* Workbench::setupMenuBar() const
          << "Fem_ConstraintGear"
          << "Fem_ConstraintPulley"
          << "Separator"
+         << "Fem_ConstraintTemperature"
+         << "Fem_ConstraintHeatflux"
+	 << "Fem_ConstraintInitialTemperature"
+	 << "Separator"
          << "Fem_ControlSolver"
          << "Fem_RunSolver"
+         << "Separator"
          << "Fem_PurgeResults"
          << "Fem_ShowResult";
 
