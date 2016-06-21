@@ -149,37 +149,37 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 if (s_line[i] != ",") and (s_line[i] != " "):
                     dummy = dummy + s_line[i]
                 elif s_line[i] == ",":
-                    dummy = float(dummy)                    
+                    dummy = float(dummy)
                     l_coords.append(dummy)
                     dummy = ""
             dummy = float(dummy)
             l_coords.append(dummy)
             l_table.append(l_coords)
-            s_line = f.readline()     
+            s_line = f.readline()
         return l_table
-        
+
     def write_nodes_elements(self, f,b):
         s_line = f.readline()
         files = open(b+ "_Nodes_elem.inp", 'w')
         while s_line[0] != "B":
             files.write(s_line)
-            s_line = f.readline()  
+            s_line = f.readline()
         files.close()
-    
+
     def write_node_sets_constraints_planerotation(self, f, l_table):
         g = open("conflict.txt", 'r')
         testt = g.readline()
-        conflict_nodes = []        
+        conflict_nodes = []
         while testt != "":
             testt = int(testt)
             conflict_nodes.append(testt)
             testt = g.readline()
-        g.close() 
+        g.close()
         import os
-        os.remove("conflict.txt")                
+        os.remove("conflict.txt")
         f.write('\n\n')
         for femobj in self.planerotation_objects:
-            l_nodes = []            
+            l_nodes = []
             fric_obj = femobj['Object']
             f.write('*NSET,NSET=' + fric_obj.Name + '\n')
             for o, elem_tup in fric_obj.References:
@@ -210,7 +210,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         y_2 = nodes_coords[j+1][2]
                         z_1 = nodes_coords[j][3]
                         z_2 = nodes_coords[j+1][3]
-                        node_1 = nodes_coords[j][0] 
+                        node_1 = nodes_coords[j][0]
                         node_2 = nodes_coords[j+1][0]
                         distance = ((x_1-x_2)**2 + (y_1-y_2)**2 + (z_1-z_2)**2)**0.5
                         if distance> dum_max[8]:
@@ -245,12 +245,12 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         if node_planerotation[i] == conflict_nodes[j]:
                             cnt = cnt+1
                     if cnt == 0:
-                        MPC = node_planerotation[i]                    
+                        MPC = node_planerotation[i]
                         MPC_nodes.append(MPC)
-            
+
                 for i in range(len(MPC_nodes)):
                     f.write(str(MPC_nodes[i]) + ',\n')
-                           
+
     def write_node_sets_constraints_displacement(self, f):
         # get nodes
         self.get_constraints_displacement_nodes()
@@ -423,7 +423,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('\n***********************************************************\n')
             f.write('** PlaneRotation Constaints\n')
             f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-    
+
     def write_constraints_contact(self,f):
         f.write('\n***********************************************************\n')
         f.write('** Contact Constaints\n')

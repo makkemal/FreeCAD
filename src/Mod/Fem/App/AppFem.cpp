@@ -150,12 +150,12 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintPulley           ::init();
     Fem::ConstraintDisplacement     ::init();
     Fem::ConstraintPlaneRotation    ::init();
-    Fem::ConstraintContact     ::init();
+    Fem::ConstraintContact          ::init();
 
     Fem::FemResultObject            ::init();
     Fem::FemSolverObject            ::init();
     Fem::FemSolverObjectPython      ::init();
-    
+
 #ifdef FC_USE_VTK
     Fem::FemPostObject              ::init();
     Fem::FemPostPipeline            ::init();
