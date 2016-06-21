@@ -41,6 +41,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 planerotation_obj,
                  contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
@@ -50,6 +51,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                                fixed_obj,
                                                force_obj, pressure_obj,
                                                displacement_obj,
+                                               planerotation_obj,
                                                contact_obj,
                                                beamsection_obj, shellthickness_obj,
                                                analysis_type, eigenmode_parameters,
@@ -67,9 +69,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_node_sets_constraints_displacement(inpfile)
+        self.write_node_sets_constraints_planerotation(inpfile)
         self.write_surfaces_contraints_contact(inpfile)
         self.write_materials(inpfile)
         self.write_femelementsets(inpfile)
+        self.write_constraints_planerotation(inpfile)
         self.write_constraints_contact(inpfile)
         self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
@@ -134,6 +138,119 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
 
+    def get_all_nodes(self, f):
+        s_line = f.readline()
+        s_line = f.readline()
+        l_table = []
+        while s_line[0] != "*":
+            l_coords = []
+            dummy = ""
+            for i in range(len(s_line)):
+                if (s_line[i] != ",") and (s_line[i] != " "):
+                    dummy = dummy + s_line[i]
+                elif s_line[i] == ",":
+                    dummy = float(dummy)                    
+                    l_coords.append(dummy)
+                    dummy = ""
+            dummy = float(dummy)
+            l_coords.append(dummy)
+            l_table.append(l_coords)
+            s_line = f.readline()     
+        return l_table
+        
+    def write_nodes_elements(self, f,b):
+        s_line = f.readline()
+        files = open(b+ "_Nodes_elem.inp", 'w')
+        while s_line[0] != "B":
+            files.write(s_line)
+            s_line = f.readline()  
+        files.close()
+    
+    def write_node_sets_constraints_planerotation(self, f, l_table):
+        g = open("conflict.txt", 'r')
+        testt = g.readline()
+        conflict_nodes = []        
+        while testt != "":
+            testt = int(testt)
+            conflict_nodes.append(testt)
+            testt = g.readline()
+        g.close() 
+        import os
+        os.remove("conflict.txt")                
+        f.write('\n\n')
+        for femobj in self.planerotation_objects:
+            l_nodes = []            
+            fric_obj = femobj['Object']
+            f.write('*NSET,NSET=' + fric_obj.Name + '\n')
+            for o, elem_tup in fric_obj.References:
+                for elem in elem_tup:
+                    fo = o.Shape.getElement(elem)
+                    n = []
+                    if fo.ShapeType == 'Face':
+                        n = self.mesh_object.FemMesh.getNodesByFace(fo)
+                    elif fo.ShapeType == 'Edge':
+                        n = self.mesh_object.FemMesh.getNodesByEdge(fo)
+                    elif fo.ShapeType == 'Vertex':
+                        n = self.mesh_object.FemMesh.getNodesByVertex(fo)
+                    for i in n:
+                        l_nodes.append(i)
+                #Code to extract nodes and coordinates on the PlaneRotation support face
+                nodes_coords = []
+                for i in range(len(l_table)):
+                    for j in range(len(n)):
+                        if l_table[i][0] == l_nodes[j]:
+                            nodes_coords.append(l_table[i])
+                #Code to obtain three non-colinear nodes on the PlaneRotation support face
+                dum_max = [1,2,3,4,5,6,7,8,0]
+                for i in range(len(nodes_coords)):
+                    for j in range(len(nodes_coords)-1-i):
+                        x_1 = nodes_coords[j][1]
+                        x_2 = nodes_coords[j+1][1]
+                        y_1 = nodes_coords[j][2]
+                        y_2 = nodes_coords[j+1][2]
+                        z_1 = nodes_coords[j][3]
+                        z_2 = nodes_coords[j+1][3]
+                        node_1 = nodes_coords[j][0] 
+                        node_2 = nodes_coords[j+1][0]
+                        distance = ((x_1-x_2)**2 + (y_1-y_2)**2 + (z_1-z_2)**2)**0.5
+                        if distance> dum_max[8]:
+                            dum_max = [node_1,x_1,y_1,z_1,node_2,x_2,y_2,z_2,distance]
+                node_dis = [1,0]
+                for i in range(len(nodes_coords)):
+                    x_1 = dum_max[1]
+                    x_2 = dum_max[5]
+                    x_3 = nodes_coords[i][1]
+                    y_1 = dum_max[2]
+                    y_2 = dum_max[6]
+                    y_3 = nodes_coords[i][2]
+                    z_1 = dum_max[3]
+                    z_2 = dum_max[7]
+                    z_3 = nodes_coords[i][3]
+                    node_3 = int(nodes_coords[j][0])
+                    distance_1 = ((x_1-x_3)**2 + (y_1-y_3)**2 + (z_1-z_3)**2)**0.5
+                    distance_2 = ((x_3-x_2)**2 + (y_3-y_2)**2 + (z_3-z_2)**2)**0.5
+                    tot = distance_1 + distance_2
+                    if tot>node_dis[1]:
+                        node_dis = [node_3,tot]
+                node_1 = int(dum_max[0])
+                node_2 = int(dum_max[4])
+                node_planerotation = [node_1,node_2,node_3]
+                for i in range(len(l_nodes)):
+                    if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
+                        node_planerotation.append(l_nodes[i])
+                MPC_nodes = []
+                for i in range(len(node_planerotation)):
+                    cnt = 0
+                    for j in range(len(conflict_nodes)):
+                        if node_planerotation[i] == conflict_nodes[j]:
+                            cnt = cnt+1
+                    if cnt == 0:
+                        MPC = node_planerotation[i]                    
+                        MPC_nodes.append(MPC)
+            
+                for i in range(len(MPC_nodes)):
+                    f.write(str(MPC_nodes[i]) + ',\n')
+                           
     def write_node_sets_constraints_displacement(self, f):
         # get nodes
         self.get_constraints_displacement_nodes()
@@ -294,7 +411,20 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write(disp_obj_name + ',6,6,' + str(disp_obj.zRotation) + '\n')
         f.write('\n')
 
-    def write_constraints_contact(self, f):
+    def write_constraints_planerotation(self,f):
+        dummy = 0
+        for fric_object in self.planerotation_objects:
+            dummy = dummy +1
+            fric_obj_name = fric_object['Object'].Name
+            f.write('*MPC\n')
+            f.write('PLANE,' + fric_obj_name  +'\n')
+            f.write('\n')
+        if dummy >= 1:
+            f.write('\n***********************************************************\n')
+            f.write('** PlaneRotation Constaints\n')
+            f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+    
+    def write_constraints_contact(self,f):
         f.write('\n***********************************************************\n')
         f.write('** Contact Constaints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
