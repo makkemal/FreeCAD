@@ -194,6 +194,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 f.write('**No elements found for these objects\n')
 
     def write_node_sets_constraints_fixed(self, f):
+        g = open("conflict.txt", 'w') #This file is used to check if MPC and fixed constraint share same nodes, because MPC's and fixed constriants can't share same nodes.
         # get nodes
         self.get_constraints_fixed_nodes()
         # write nodes to file
@@ -204,8 +205,12 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NSET,NSET=' + femobj['Object'].Name + '\n')
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
+                g.write(str(n) + '\n')
+        g.close()
 
-    def get_all_nodes(self, f):
+    def get_all_nodes(self):
+        #obtain all the nodes with their coordinates
+        f = open(self.file_name,'r')
         s_line = f.readline()
         s_line = f.readline()
         l_table = []
@@ -233,7 +238,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             s_line = f.readline()  
         files.close()
     
-    def write_node_sets_constraints_planerotation(self, f, l_table):
+    def get_conflict_nodes(self):
         g = open("conflict.txt", 'r')
         testt = g.readline()
         conflict_nodes = []        
@@ -243,7 +248,12 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             testt = g.readline()
         g.close() 
         import os
-        os.remove("conflict.txt")                
+        os.remove("conflict.txt")
+        return conflict_nodes
+        
+    def write_node_sets_constraints_planerotation(self, f):
+        nodes = self.get_all_nodes()
+        conflict_nodes = self.get_conflict_nodes() #conflict nodes obtained for comparison with MPC nodes               
         f.write('\n\n')
         for femobj in self.planerotation_objects:
             l_nodes = []            
@@ -255,18 +265,14 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     n = []
                     if fo.ShapeType == 'Face':
                         n = self.mesh_object.FemMesh.getNodesByFace(fo)
-                    elif fo.ShapeType == 'Edge':
-                        n = self.mesh_object.FemMesh.getNodesByEdge(fo)
-                    elif fo.ShapeType == 'Vertex':
-                        n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                     for i in n:
                         l_nodes.append(i)
                 #Code to extract nodes and coordinates on the PlaneRotation support face
                 nodes_coords = []
-                for i in range(len(l_table)):
+                for i in range(len(nodes)):
                     for j in range(len(n)):
-                        if l_table[i][0] == l_nodes[j]:
-                            nodes_coords.append(l_table[i])
+                        if nodes[i][0] == l_nodes[j]:
+                            nodes_coords.append(nodes[i])
                 #Code to obtain three non-colinear nodes on the PlaneRotation support face
                 dum_max = [1,2,3,4,5,6,7,8,0]
                 for i in range(len(nodes_coords)):
@@ -339,6 +345,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                             f.write("{},S{}\n".format(i[0], i[1]))                
         
     def write_node_sets_constraints_displacement(self, f):
+        g = open("conflict.txt", 'a')
         # get nodes
         self.get_constraints_displacement_nodes()
         # write nodes to file
@@ -349,6 +356,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NSET,NSET=' + femobj['Object'].Name + '\n')
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
+                g.write(str(n) + '\n')
+        g.close()
 
     def write_temperature_nodes(self,f): #Fixed temperature
         for ftobj in self.temperature_objects:
