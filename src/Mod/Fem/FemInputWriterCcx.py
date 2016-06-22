@@ -59,9 +59,17 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.file_name = self.dir_name + '/' + self.mesh_object.Name + '.inp'
         print('FemInputWriterCcx --> self.dir_name  -->  ' + self.dir_name)
         print('FemInputWriterCcx --> self.file_name  -->  ' + self.file_name)
+        self.conflict_file = self.dir_name + '/' + "conflict.txt"
+        print('FemInputWriterCcx --> self.conflict_file  -->  ' + self.conflict_file)
 
     def write_calculix_input_file(self):
         self.femmesh.writeABAQUS(self.file_name)
+
+        # get all nodes --> this could be done very easy with other methods, but we should leave it for now !
+        if self.planerotation_objects:  # temporary as long as Constaint plane rotations has known bugs
+            inpfile = open(self.file_name, 'r')
+            self.get_all_nodes(inpfile)
+            inpfile.close()
 
         # reopen file with "append" and add the analysis definition
         inpfile = open(self.file_name, 'a')
@@ -69,11 +77,13 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_element_sets_material_and_femelement_type(inpfile)
         self.write_node_sets_constraints_fixed(inpfile)
         self.write_node_sets_constraints_displacement(inpfile)
-        self.write_node_sets_constraints_planerotation(inpfile)
+        if self.planerotation_objects:  # temporary as long as Constaint plane rotations has known bugs
+            self.write_node_sets_constraints_planerotation(inpfile)
         self.write_surfaces_contraints_contact(inpfile)
         self.write_materials(inpfile)
         self.write_femelementsets(inpfile)
-        self.write_constraints_planerotation(inpfile)
+        if self.planerotation_objects:  # temporary as long as Constaint plane rotations has known bugs
+            self.write_constraints_planerotation(inpfile)
         self.write_constraints_contact(inpfile)
         self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
@@ -127,6 +137,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 f.write('**No elements found for these objects\n')
 
     def write_node_sets_constraints_fixed(self, f):
+        g = open(self.conflict_file, 'w')  # This file is used to check if MPC and fixed constraint share same nodes, because MPC's and fixed constriants can't share same nodes.
         # get nodes
         self.get_constraints_fixed_nodes()
         # write nodes to file
@@ -137,11 +148,15 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NSET,NSET=' + femobj['Object'].Name + '\n')
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
+                g.write(str(n) + '\n')
+        g.close()
 
     def get_all_nodes(self, f):
+        # obtain all the nodes with their coordinates
         s_line = f.readline()
         s_line = f.readline()
-        l_table = []
+        s_line = f.readline()
+        self.nodes = []
         while s_line[0] != "*":
             l_coords = []
             dummy = ""
@@ -154,30 +169,28 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     dummy = ""
             dummy = float(dummy)
             l_coords.append(dummy)
-            l_table.append(l_coords)
+            self.nodes.append(l_coords)
             s_line = f.readline()
-        return l_table
 
-    def write_nodes_elements(self, f, b):
-        s_line = f.readline()
-        files = open(b + "_Nodes_elem.inp", 'w')
-        while s_line[0] != "B":
-            files.write(s_line)
-            s_line = f.readline()
-        files.close()
-
-    def write_node_sets_constraints_planerotation(self, f, l_table):
-        g = open("conflict.txt", 'r')
+    def get_conflict_nodes(self):
+        g = open(self.conflict_file, 'r')
         testt = g.readline()
-        conflict_nodes = []
+        self.conflict_nodes = []
         while testt != "":
             testt = int(testt)
-            conflict_nodes.append(testt)
+            self.conflict_nodes.append(testt)
             testt = g.readline()
         g.close()
         import os
-        os.remove("conflict.txt")
+        os.remove(self.conflict_file)
+
+    def write_node_sets_constraints_planerotation(self, f):
+        self.get_conflict_nodes()  # conflict nodes obtained for comparison with MPC nodes
         f.write('\n\n')
+        # write nodes to file
+        f.write('\n***********************************************************\n')
+        f.write('** Node set for plane rotation constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for femobj in self.planerotation_objects:
             l_nodes = []
             fric_obj = femobj['Object']
@@ -188,18 +201,14 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     n = []
                     if fo.ShapeType == 'Face':
                         n = self.mesh_object.FemMesh.getNodesByFace(fo)
-                    elif fo.ShapeType == 'Edge':
-                        n = self.mesh_object.FemMesh.getNodesByEdge(fo)
-                    elif fo.ShapeType == 'Vertex':
-                        n = self.mesh_object.FemMesh.getNodesByVertex(fo)
                     for i in n:
                         l_nodes.append(i)
                 # Code to extract nodes and coordinates on the PlaneRotation support face
                 nodes_coords = []
-                for i in range(len(l_table)):
+                for i in range(len(self.nodes)):
                     for j in range(len(n)):
-                        if l_table[i][0] == l_nodes[j]:
-                            nodes_coords.append(l_table[i])
+                        if self.nodes[i][0] == l_nodes[j]:
+                            nodes_coords.append(self.nodes[i])
                 # Code to obtain three non-colinear nodes on the PlaneRotation support face
                 dum_max = [1, 2, 3, 4, 5, 6, 7, 8, 0]
                 for i in range(len(nodes_coords)):
@@ -241,8 +250,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 MPC_nodes = []
                 for i in range(len(node_planerotation)):
                     cnt = 0
-                    for j in range(len(conflict_nodes)):
-                        if node_planerotation[i] == conflict_nodes[j]:
+                    for j in range(len(self.conflict_nodes)):
+                        if node_planerotation[i] == self.conflict_nodes[j]:
                             cnt = cnt + 1
                     if cnt == 0:
                         MPC = node_planerotation[i]
@@ -252,6 +261,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write(str(MPC_nodes[i]) + ',\n')
 
     def write_node_sets_constraints_displacement(self, f):
+        g = open(self.conflict_file, 'a')
         # get nodes
         self.get_constraints_displacement_nodes()
         # write nodes to file
@@ -262,6 +272,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NSET,NSET=' + femobj['Object'].Name + '\n')
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
+                g.write(str(n) + '\n')
+        g.close()
 
     def write_surfaces_contraints_contact(self, f):
         # get surface nodes and write them to file

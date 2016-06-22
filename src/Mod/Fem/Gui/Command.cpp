@@ -361,8 +361,8 @@ CmdFemConstraintPlaneRotation::CmdFemConstraintPlaneRotation()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Create FEM Plane Rotation constraint");
-    sToolTipText    = QT_TR_NOOP("Create FEM constraint for Plane Rotation face");
+    sMenuText       = QT_TR_NOOP("Constraint plane rotation");
+    sToolTipText    = QT_TR_NOOP("Create a FEM constraint for plane rotation face");
     sWhatsThis      = "Fem_ConstraintPlaneRotation";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-constraint-planerotation";
