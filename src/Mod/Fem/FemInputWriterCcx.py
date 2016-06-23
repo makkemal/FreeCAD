@@ -226,7 +226,13 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('** One step is needed to calculate the mechanical analysis of FreeCAD\n')
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*STEP\n')
+        if hasattr(self.solver_obj, "GeometricalNonlinearity") and self.solver_obj.GeometricalNonlinearity == "nonlinear" and self.analysis_type == 'static':
+            f.write('*STEP, NLGEOM\n')   # https://www.comsol.com/blogs/what-is-geometric-nonlinearity/
+        elif hasattr(self.solver_obj, "GeometricalNonlinearity") and self.solver_obj.GeometricalNonlinearity == "nonlinear" and self.analysis_type == 'frequency':
+            print('Analysis type frequency and geometrical nonlinear analyis are not allowed together, linear is used instead!')
+            f.write('*STEP\n')
+        else:
+            f.write('*STEP\n')
         f.write('*STATIC\n')
 
     def write_constraints_fixed(self, f):
