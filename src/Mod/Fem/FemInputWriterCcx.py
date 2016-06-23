@@ -186,6 +186,35 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
 
     def write_node_sets_constraints_planerotation(self, f):
         self.get_conflict_nodes()  # conflict nodes obtained for comparison with MPC nodes
+
+        print len(self.conflict_nodes)
+        print sorted(self.conflict_nodes)[0]
+        print sorted(self.conflict_nodes)[1]
+        print sorted(self.conflict_nodes)[2]
+        print('\n')
+
+        print len(self.constraint_conflict_nodes)
+        print sorted(self.constraint_conflict_nodes)[0]
+        print sorted(self.constraint_conflict_nodes)[1]
+        print sorted(self.constraint_conflict_nodes)[2]
+        print('\n')
+
+        print len(self.nodes)
+        print sorted(self.nodes)[0]
+        print sorted(self.nodes)[1]
+        print sorted(self.nodes)[2]
+        print('\n')
+
+        if not self.femnodes_mesh:
+            self.femnodes_mesh = self.femmesh.Nodes
+        print len(self.femnodes_mesh)
+        print self.femnodes_mesh[1]
+        print self.femnodes_mesh[2]
+        print self.femnodes_mesh[3]
+        print self.femnodes_mesh[4]
+        # sorted returns a list of sorted keys only
+
+
         f.write('\n\n')
         # write nodes to file
         f.write('\n***********************************************************\n')

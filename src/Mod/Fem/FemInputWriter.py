@@ -80,16 +80,21 @@ class FemInputWriter():
         self.femmesh = self.mesh_object.FemMesh
         self.femnodes_mesh = {}
         self.femelement_table = {}
+        self.constraint_conflict_nodes = []
 
     def get_constraints_fixed_nodes(self):
         # get nodes
         for femobj in self.fixed_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             femobj['Nodes'] = FemMeshTools.get_femnodes_by_references(self.femmesh, femobj['Object'].References)
+            for node in femobj['Nodes']:
+                self.constraint_conflict_nodes.append(node)
 
     def get_constraints_displacement_nodes(self):
         # get nodes
         for femobj in self.displacement_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             femobj['Nodes'] = FemMeshTools.get_femnodes_by_references(self.femmesh, femobj['Object'].References)
+            for node in femobj['Nodes']:
+                self.constraint_conflict_nodes.append(node)
 
     def get_constraints_force_nodeloads(self):
         # check shape type of reference shape
