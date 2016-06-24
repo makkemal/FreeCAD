@@ -129,11 +129,14 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         inpfile = open(self.file_name, 'a')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            self.write_temperature_nodes(inpfile)
-            self.write_node_sets_constraints_force(inpfile) #SvdW: Add the node set to thermomech analysis
+            inpfileNodes = open(name+ "_Node_sets.inp", 'a')  
+            self.write_temperature_nodes(inpfileNodes)
+            self.write_node_sets_constraints_force(inpfileNodes) #SvdW: Add the node set to thermomech analysis
+            inpfileNodes.close()
         if self.analysis_type is None or self.analysis_type == "static":
-            self.write_node_sets_constraints_force(inpfile)
-        inpfile.close()
+            inpfileNodes = open(name+ "_Node_sets.inp", 'a')
+            self.write_node_sets_constraints_force(inpfileNodes)
+            inpfileNodes.close()
         inpfile = open(self.file_name, 'a')
         self.write_materials(inpfile) 
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
@@ -149,14 +152,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)        
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            inpfile.write('*INCLUDE,INPUT=' +name+ "_Temp.inp \n\n")
-            inpfileTemp = open(name + "_Temp.inp","w")
-            self.write_temperature(inpfileTemp)            
-            inpfileTemp.close()
-            inpfile.write('*INCLUDE,INPUT=' +name+ "_Heatflux.inp \n\n")
-            inpfileHeatflux = open(name + "_Heatflux.inp","w")
-            self.write_heatflux(inpfileHeatflux)
-            inpfileHeatflux.close()
+            inpfile.write('*INCLUDE,INPUT=' +name+ "_Thermal.inp \n\n")
+            inpfileThermal = open(name + "_Thermal.inp","w")
+            self.write_temperature(inpfileThermal)
+            self.write_heatflux(inpfileThermal)
+            inpfileThermal.close()
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
             inpfileForce = open(name+ "_Contraints_Force.inp","w")
             self.write_constraints_force(inpfileForce)
