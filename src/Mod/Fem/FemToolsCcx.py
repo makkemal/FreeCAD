@@ -93,6 +93,7 @@ class FemToolsCcx(FemTools.FemTools):
                                               self.fixed_constraints,
                                               self.force_constraints, self.pressure_constraints,
                                               self.displacement_constraints,
+                                              self.planerotation_constraints,
                                               self.contact_constraints,
                                               self.beam_sections, self.shell_thicknesses,
                                               self.analysis_type, self.eigenmode_parameters,
