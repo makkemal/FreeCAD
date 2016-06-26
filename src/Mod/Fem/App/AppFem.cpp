@@ -154,14 +154,14 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintDisplacement     ::init();
     Fem::ConstraintTemperature      ::init();
     Fem::ConstraintHeatflux         ::init();
-    Fem::ConstraintInitialTemperature ::init();
-    Fem::ConstraintPlaneRotation    ::init();
-    Fem::ConstraintContact          ::init();
+    Fem::ConstraintInitialTemperature            ::init();
+    Fem::ConstraintPlaneRotation     ::init();
+    Fem::ConstraintContact     ::init();    
 
     Fem::FemResultObject            ::init();
     Fem::FemSolverObject            ::init();
     Fem::FemSolverObjectPython      ::init();
-
+    
 #ifdef FC_USE_VTK
     Fem::FemPostObject              ::init();
     Fem::FemPostPipeline            ::init();
