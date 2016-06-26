@@ -783,6 +783,11 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
+#line 31 "QuantityParser.l"
+
+
+#line 790 "QuantityLexer.c"
+
 	if ( !(yy_init) )
 		{
 		(yy_init) = 1;
@@ -1362,7 +1367,7 @@ YY_RULE_SETUP
 #line 160 "QuantityParser.l"
 ECHO;
 	YY_BREAK
-#line 1366 "QuantityLexer.c"
+#line 1366 "QuantityLexer.c"	// OvG: This line indicates the line number of the next line in this file itself
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 	yyterminate();
