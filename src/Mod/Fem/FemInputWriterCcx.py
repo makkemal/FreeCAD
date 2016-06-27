@@ -127,6 +127,13 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_node_sets_constraints_planerotation(inpfile)
         self.write_surfaces_contraints_contact(inpfile)
         inpfile = open(self.file_name, 'a')
+        inpfile.write('\n***********************************************************\n')
+        inpfile.write('** Node set for fixed constraint\n')
+        inpfile.write('** Node set for PlaneRotation constraint\n')
+        inpfile.write('** Node sets for prescribed displacement constraint\n')
+        inpfile.write('** Node sets for loads\n')
+        inpfile.write('** Node sets for temperature constraint\n')
+        inpfile.write('** written by write_node_sets_constraints \n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             inpfileNodes = open(name+ "_Node_sets.inp", 'a')  
