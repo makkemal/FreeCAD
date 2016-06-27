@@ -152,24 +152,39 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_constraints_fixed(inpfile)
         self.write_constraints_displacement(inpfile)        
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
-            self.write_temperature(inpfile)            
+            self.write_temperature(inpfile)
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Convective heat transfer (heat flux)\n')
+            inpfile.write('** written by write_heatflux\n')            
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Heatflux.inp \n\n")
             inpfileHeatflux = open(name + "_Heatflux.inp","w")            
             self.write_heatflux(inpfileHeatflux)
             inpfileHeatflux.close()
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Node loads\n')
+            inpfile.write('** written by write_constraints_force\n')
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
             inpfileForce = open(name+ "_Contraints_Force.inp","w")
             self.write_constraints_force(inpfileForce)
             inpfileForce.close()
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Element + CalculiX face + load in [MPa]\n')
+            inpfile.write('** written by write_constraints_pressure\n')
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp \n\n")
             inpfilePressure = open(name+ "_Contraints_Pressure.inp","w")
             self.write_constraints_pressure(inpfilePressure)
             inpfilePressure.close()
         if self.analysis_type is None or self.analysis_type == "static":
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Node loads\n')
+            inpfile.write('** written by write_constraints_force\n')
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
             inpfileForce = open(name+ "_Contraints_Force.inp","w")
             self.write_constraints_force(inpfileForce)
             inpfileForce.close()
+            inpfile.write('\n***********************************************************\n')
+            inpfile.write('** Element + CalculiX face + load in [MPa]\n')
+            inpfile.write('** written by write_constraints_pressure\n')
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp \n\n")
             inpfilePressure = open(name+ "_Contraints_Pressure.inp","w")
             self.write_constraints_pressure(inpfilePressure)
@@ -578,7 +593,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
-        f.write('** Constaints\n')
+        f.write('** Constraints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for fixed_object in self.fixed_objects:
             fix_obj_name = fixed_object['Object'].Name
@@ -638,12 +653,12 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('\n')
         if dummy >= 1:
             f.write('\n***********************************************************\n')
-            f.write('** PlaneRotation Constaints\n')
+            f.write('** PlaneRotation Constraints\n')
             f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
     
     def write_constraints_contact(self,f):
         f.write('\n***********************************************************\n')
-        f.write('** Contact Constaints\n')
+        f.write('** Contact Constraints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         obj = 0        
         for contact_object in self.contact_objects:
