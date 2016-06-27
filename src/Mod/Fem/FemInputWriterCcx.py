@@ -130,19 +130,19 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         inpfile.write('\n***********************************************************\n')
         inpfile.write('** Node set(s) for fixed constraint\n')
         for femobj in self.fixed_objects:
-            inpfile.write(femobj['Object'].Name + '\n')        
+            inpfile.write('   **' + femobj['Object'].Name + '\n')        
         inpfile.write('** Node set(s) for PlaneRotation constraint\n')
         for femobj in self.planerotation_objects:
-            inpfile.write(femobj['Object'].Name + '\n')
+            inpfile.write('   **' + femobj['Object'].Name + '\n')
         inpfile.write('** Node set(s) for prescribed displacement constraint\n')
         for femobj in self.displacement_objects:
-            inpfile.write(femobj['Object'].Name + '\n')
+            inpfile.write('   **' + femobj['Object'].Name + '\n')
         inpfile.write('** Node set(s) for loads\n')
         for femobj in self.force_objects:
-            inpfile.write(femobj['Object'].Name + '\n')
+            inpfile.write('   **' + femobj['Object'].Name + '\n')
         inpfile.write('** Node set(s) for temperature constraint\n')
         for femobj in self.temperature_objects:
-            inpfile.write(femobj['Object'].Name + '\n')
+            inpfile.write('   **' + femobj['Object'].Name + '\n')
         inpfile.write('** written by write_node_sets_constraints \n')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
