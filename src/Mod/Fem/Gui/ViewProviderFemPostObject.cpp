@@ -320,8 +320,7 @@ void ViewProviderFemPostObject::update3D() {
 
     // write out point data if any
     WritePointData(points, normals, tcoords);
-    bool ResetColorBarRange = true;
-    WriteColorData(ResetColorBarRange);
+    WriteColorData();
     WriteTransperency();
 
     // write out polys if any
@@ -437,7 +436,7 @@ void ViewProviderFemPostObject::WritePointData(vtkPoints* points, vtkDataArray* 
     }
 }
 
-void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
+void ViewProviderFemPostObject::WriteColorData() {
 
     if(!setupPipeline())
         return;
@@ -461,11 +460,9 @@ void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
         component = 0;
 
     //build the lookuptable
-    if (ResetColorBarRange == true) {
-        double range[2];
-        data->GetRange(range, component);
-        m_colorBar->setRange(range[0], range[1]);
-    }
+    double range[2];
+    data->GetRange(range, component);
+    m_colorBar->setRange(range[0], range[1]);
 
     m_material->diffuseColor.startEditing();
 
@@ -525,14 +522,13 @@ void ViewProviderFemPostObject::onChanged(const App::Property* prop) {
     if(m_blockPropertyChanges)
         return;
 
-    bool ResetColorBarRange = true;
     if(prop == &Field && setupPipeline()) {
         updateProperties();
-        WriteColorData(ResetColorBarRange);
+        WriteColorData();
         WriteTransperency();
     } 
     else if(prop == &VectorMode && setupPipeline()) {
-        WriteColorData(ResetColorBarRange);
+        WriteColorData();
         WriteTransperency();
     }
     else if(prop == &Transperency) {
@@ -550,7 +546,7 @@ bool ViewProviderFemPostObject::doubleClicked(void) {
 
 bool ViewProviderFemPostObject::setEdit(int ModNum) {
 
-    if (ModNum == ViewProvider::Default || ModNum == 1 ) {
+     if (ModNum == ViewProvider::Default || ModNum == 1 ) {
 
         Gui::TaskView::TaskDialog *dlg = Gui::Control().activeDialog();
         TaskDlgPost *postDlg = qobject_cast<TaskDlgPost*>(dlg);
@@ -616,6 +612,5 @@ void ViewProviderFemPostObject::show(void) {
 
 
 void ViewProviderFemPostObject::OnChange(Base::Subject< int >& rCaller, int rcReason) {
-    bool ResetColorBarRange = false;
-    WriteColorData(ResetColorBarRange);
+    WriteColorData();
 }
