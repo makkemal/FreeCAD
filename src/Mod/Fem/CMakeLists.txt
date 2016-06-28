@@ -1,10 +1,8 @@
-
 if(BUILD_FEM_VTK)
+    include(${VTK_USE_FILE})
     add_definitions(-DFC_USE_VTK)
 endif(BUILD_FEM_VTK)
 
-include(${VTK_USE_FILE})
-    
 add_subdirectory(App)
 
 if(BUILD_GUI)
@@ -30,6 +28,7 @@ INSTALL(
         _CommandPurgeResults.py
         _CommandRunSolver.py
         _CommandControlSolver.py
+        TaskPanelShowResult.ui
 
         _CommandShowResult.py
         _TaskPanelShowResult.py
@@ -70,9 +69,9 @@ INSTALL(
         _FemSolverCalculix.py
         _ViewProviderFemSolverCalculix.py
         _CommandSolverCalculix.py
+        _CommandControlSolver.py
         _TaskPanelFemSolverCalculix.py
         TaskPanelFemSolverCalculix.ui
-
         # solver Z88
         importZ88Mesh.py
         z88DispReader.py
