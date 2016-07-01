@@ -26,13 +26,33 @@ import sys
 import time
 import FemMeshTools
 import FemInputWriter
+import PySide
+from PySide import QtCore, QtGui
+
+global switch ; switch = 0
+global path
+#path = your_directory_path                # your directory path
+#path = FreeCAD.ConfigGet("AppHomePath")   # path FreeCAD installation
+path = FreeCAD.ConfigGet("UserAppData")    # path FreeCAD User data
 
 #Get anlysis preferences from document object       
 members=FreeCAD.ActiveDocument.Analysis.Member
 for member in members:
      if member.isDerivedFrom("Fem::FemSolverObject"):
         calculixprefs=member
-
+try:
+    _encoding = QtGui.QApplication.UnicodeUTF8
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig, _encoding)
+except AttributeError:
+    def _translate(context, text, disambig):
+        return QtGui.QApplication.translate(context, text, disambig)
+#Get anlysis preferences from document object       
+members=FreeCAD.ActiveDocument.Analysis.Member
+for member in members:
+     if member.isDerivedFrom("Fem::FemSolverObject"):
+        calculixprefs=member  
+        
 class FemInputWriterCcx(FemInputWriter.FemInputWriter):
     def __init__(self, analysis_obj, solver_obj, mesh_obj, mat_obj,
                  fixed_obj,
@@ -106,7 +126,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         self.write_node_sets_constraints_displacement(inpfile)
         self.write_node_sets_constraints_planerotation(inpfile)
         self.write_surfaces_contraints_contact(inpfile)
-        inpfile = open(self.file_name, 'a')        
+        inpfile = open(self.file_name, 'a')
         inpfile.write('*INCLUDE,INPUT=' +name+ "_Node_sets.inp \n")
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             self.write_temperature_nodes(inpfile)
@@ -127,7 +147,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         else:
             self.write_step_begin(inpfile)
         self.write_constraints_fixed(inpfile)
-        self.write_constraints_displacement(inpfile)        
+        self.write_constraints_displacement(inpfile)
         if self.analysis_type == "thermomech": # OvG: placed under thermomech analysis
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Thermal.inp \n\n")
             inpfileThermal = open(name + "_Thermal.inp","w")
@@ -137,16 +157,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
             inpfileForce = open(name+ "_Contraints_Force.inp","w")
             self.write_constraints_force(inpfileForce)
-            inpfileForce.close()            
+            inpfileForce.close()
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp \n\n")
             inpfilePressure = open(name+ "_Contraints_Pressure.inp","w")
             self.write_constraints_pressure(inpfilePressure)
             inpfilePressure.close()
-        if self.analysis_type is None or self.analysis_type == "static":            
+        if self.analysis_type is None or self.analysis_type == "static":
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Force.inp \n\n")
             inpfileForce = open(name+ "_Contraints_Force.inp","w")
             self.write_constraints_force(inpfileForce)
-            inpfileForce.close()            
+            inpfileForce.close()
             inpfile.write('*INCLUDE,INPUT=' +name+ "_Contraints_Pressure.inp \n\n")
             inpfilePressure = open(name+ "_Contraints_Pressure.inp","w")
             self.write_constraints_pressure(inpfilePressure)
@@ -256,13 +276,13 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         import os
         os.remove("conflict.txt")
         return conflict_nodes
-        
+
     def write_node_sets_constraints_planerotation(self, f):
         nodes = self.get_all_nodes()
         conflict_nodes = self.get_conflict_nodes() #conflict nodes obtained for comparison with MPC nodes               
         f.write('\n\n')
         for femobj in self.planerotation_objects:
-            l_nodes = []            
+            l_nodes = []
             fric_obj = femobj['Object']
             f.write('*NSET,NSET=' + fric_obj.Name + '\n')
             for o, elem_tup in fric_obj.References:
@@ -324,14 +344,14 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         if node_planerotation[i] == conflict_nodes[j]:
                             cnt = cnt+1
                     if cnt == 0:
-                        MPC = node_planerotation[i]                    
+                        MPC = node_planerotation[i]
                         MPC_nodes.append(MPC)
-            
+
                 for i in range(len(MPC_nodes)):
                     f.write(str(MPC_nodes[i]) + ',\n')
-                           
+
     def write_surfaces_contraints_contact(self, f):
-        obj = 0        
+        obj = 0
         for femobj in self.contact_objects:
             contact_obj = femobj['Object']
             cnt = 0
@@ -345,11 +365,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                             name = "DEP" + str(obj)
                         else: 
                             name = "IND" + str(obj)
-                        f.write('*SURFACE, NAME =' + name + '\n')                    
+                        f.write('*SURFACE, NAME =' + name + '\n')
                         v = self.mesh_object.FemMesh.getccxVolumesByFace(scc)
                         for i in v:
-                            f.write("{},S{}\n".format(i[0], i[1]))                
-        
+                            f.write("{},S{}\n".format(i[0], i[1]))
+
     def write_node_sets_constraints_displacement(self, f):
         g = open("conflict.txt", 'a')
         # get nodes
@@ -541,8 +561,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
              f.write(',SOLVER=ITERATIVE SCALING\n')
         elif calculixprefs.MatrixSolverType== "iterativecholesky":
              f.write(',SOLVER=ITERATIVE CHOLESKY\n')
-      
-        
+
+
     def write_step_begin_thermomech(self, f):
         f.write('\n***********************************************************\n')
         f.write('** One step is needed to calculate the mechanical analysis of FreeCAD\n')
@@ -622,29 +642,29 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('\n***********************************************************\n')
         f.write('** Contact Constaints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        obj = 0        
+        obj = 0
         for contact_object in self.contact_objects:
-            obj = obj + 1            
-            ctct_obj = contact_object['Object']             
+            obj = obj + 1
+            ctct_obj = contact_object['Object']
             f.write('*CONTACT PAIR, INTERACTION=INT' + str(obj) +',TYPE=SURFACE TO SURFACE\n')
             ind_surf = "IND" + str(obj)
-            dep_surf = "DEP" + str(obj)            
+            dep_surf = "DEP" + str(obj)
             f.write(dep_surf+',' + ind_surf+ '\n')
             f.write('*SURFACE INTERACTION, NAME=INT' + str(obj) +'\n')
             f.write('*SURFACE BEHAVIOR,PRESSURE-OVERCLOSURE=LINEAR\n')
-            Slope = ctct_obj.Slope 
+            Slope = ctct_obj.Slope
             f.write(str(Slope) + ' \n')
             F = ctct_obj.Friction
             if F > 0:
                 f.write('*FRICTION \n')
                 F = str(F)
-                stick =(Slope/10.0)                 
+                stick =(Slope/10.0)
                 f.write(F +', ' +str(stick)+ ' \n')
 
     def write_temperature(self,f):
         f.write('\n***********************************************************\n')
         f.write('** Fixed temperature constraint applied\n')
-        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))        
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         for ftobj in self.temperature_objects:
             fixedtemp_obj = ftobj['Object']
             f.write('*BOUNDARY\n')
@@ -745,7 +765,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NODE FILE, OUTPUT=2d\n')
         else:
             f.write('*NODE FILE\n')
-            
+
         if self.analysis_type == "thermomech": #MPH write out nodal temperatures is thermomechanical 
             f.write('U, NT\n')
         else:
