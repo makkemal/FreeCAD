@@ -18,7 +18,6 @@ SOURCE_GROUP("Module" FILES ${Material_SRCS})
 SET (MaterialLib_Files
 StandardMaterial/None.FCMat
 StandardMaterial/ABS.FCMat
-StandardMaterial/Acrylic-Glass.FCMat
 StandardMaterial/AlMg3F24.FCMat
 StandardMaterial/AlMgSi1F31.FCMat
 StandardMaterial/Aluminum-6061-T6.FCMat
