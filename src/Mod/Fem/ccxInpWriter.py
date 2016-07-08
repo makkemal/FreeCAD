@@ -601,6 +601,9 @@ class inp_writer:
         if calculixprefs.NonLinearGeometry:
             f.write(',NLGEOM')
         f.write(',INC={}\n'.format(calculixprefs.Maxiterations)) 
+        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION')
+        f.write('4,8,9,200,10,400,,200,')
+        f.write('0.25,0.5,0.75,0.85,,,1.5,')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
