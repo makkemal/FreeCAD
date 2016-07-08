@@ -587,9 +587,9 @@ class inp_writer:
             f.write(',NLGEOM\n')
         else:
             f.write('\n')
-        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION')
-        f.write('4,8,9,200,10,400,,200,')
-        f.write('0.25,0.5,0.75,0.85,,,1.5,')
+        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
+        f.write('4,8,9,200,10,400,,200,\n')
+        f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
         f.write('*STATIC')    
         
     def write_step_begin_thermomech(self, f):
@@ -601,9 +601,9 @@ class inp_writer:
         if calculixprefs.NonLinearGeometry:
             f.write(',NLGEOM')
         f.write(',INC={}\n'.format(calculixprefs.Maxiterations)) 
-        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION')
-        f.write('4,8,9,200,10,400,,200,')
-        f.write('0.25,0.5,0.75,0.85,,,1.5,')
+        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
+        f.write('4,8,9,200,10,400,,200,\n')
+        f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
