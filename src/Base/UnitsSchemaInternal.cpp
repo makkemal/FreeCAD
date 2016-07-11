@@ -81,10 +81,10 @@ QString UnitsSchemaInternal::schemaTranslate(Base::Quantity quant,double &factor
         unitString = quant.getUnit().getString();
         factor = 1.0;
     }else if (unit == Unit::Density){
-        if(UnitValue < 0.0001){
+        if(UnitValue < 0.00001){
             unitString = QString::fromLatin1("kg/m^3");
             factor = 0.000000001;
-        }else if(UnitValue < 1.0){
+        }else if(UnitValue < 0.1){
             unitString = QString::fromLatin1("kg/cm^3");
             factor = 0.001;
         }else{
@@ -114,21 +114,21 @@ QString UnitsSchemaInternal::schemaTranslate(Base::Quantity quant,double &factor
         unitString = QString::fromLatin1("W/m^2/K");
         factor = 1.0;
     }else if ((unit == Unit::Pressure) || (unit == Unit::Stress)){
-        if(UnitValue < 10.0){// Pa is the smallest
+        if(UnitValue < 1.0){// Pa is the smallest
             unitString = QString::fromLatin1("Pa");
             factor = 0.001;
-        }else if(UnitValue < 10000.0){
+        }else if(UnitValue < 1000.0){
             unitString = QString::fromLatin1("kPa");
             factor = 1.0;
-        }else if(UnitValue < 10000000.0){
+        }else if(UnitValue < 1000000.0){
             unitString = QString::fromLatin1("MPa");
             factor = 1000.0;
-        }else if(UnitValue < 10000000000.0){
+        }else if(UnitValue < 1000000000.0){
             unitString = QString::fromLatin1("GPa");
             factor = 1000000.0;
         }else{ // bigger -> scientific notation 
             unitString = QString::fromLatin1("Pa");
-            factor = 1.0;
+            factor = 0.001;
         }
     }else{
         // default action for all cases without special treatment:
