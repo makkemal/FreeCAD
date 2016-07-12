@@ -34,9 +34,9 @@ from PySide import QtCore
 
 class FemToolsCcx(FemTools.FemTools):
 
-    known_analysis_types = ["static", "frequency"]
+    known_analysis_types = ["static", "frequency", "thermomech"]
     known_geom_nonlinear_types = ["linear", "nonlinear"]
-    known_ccx_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
+    known_ccx_solver_types = ["default", "spooles", "iterativescaling", "iterativecholesky"]
     finished = QtCore.Signal(int)
 
     ## The constructor
@@ -94,6 +94,7 @@ class FemToolsCcx(FemTools.FemTools):
                                               self.fixed_constraints,
                                               self.force_constraints, self.pressure_constraints,
                                               self.displacement_constraints,
+                                              self.temperature_constraints, self.heatflux_constraints, self.initialtemperature_constraints,
                                               self.planerotation_constraints,
                                               self.contact_constraints,
                                               self.beam_sections, self.shell_thicknesses,
@@ -159,7 +160,7 @@ class FemToolsCcx(FemTools.FemTools):
             if not ont_backup:
                 ont_backup = str(num_cpu_pref)
             if num_cpu_pref > 1:
-                _env = os.putenv('OMP_NUM_THREADS', str(num_cpu_pref)) # if user picked a number use that instead
+                _env = os.putenv('OMP_NUM_THREADS', str(num_cpu_pref))  # if user picked a number use that instead
             else:
                 _env = os.putenv('OMP_NUM_THREADS', str(multiprocessing.cpu_count()))
             # change cwd because ccx may crash if directory has no write permission
