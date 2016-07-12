@@ -34,7 +34,7 @@ from PySide import QtCore
 
 class FemToolsCcx(FemTools.FemTools):
 
-    known_analysis_types = ["static", "frequency"]
+    known_analysis_types = ["static", "frequency", "thermomech"]
     known_geom_nonlinear_types = ["linear", "nonlinear"]
     known_ccx_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
     finished = QtCore.Signal(int)
@@ -94,6 +94,7 @@ class FemToolsCcx(FemTools.FemTools):
                                               self.fixed_constraints,
                                               self.force_constraints, self.pressure_constraints,
                                               self.displacement_constraints,
+                                              self.temperature_constraints, self.heatflux_constraints, self.initialtemperature_constraints,
                                               self.planerotation_constraints,
                                               self.contact_constraints,
                                               self.beam_sections, self.shell_thicknesses,

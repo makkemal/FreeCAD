@@ -46,6 +46,9 @@ class FemInputWriter():
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 temperature_obj,
+                 heatflux_obj,
+                 initialtemperature_obj, 
                  planerotation_obj,
                  contact_obj,
                  beamsection_obj, shellthickness_obj,
@@ -59,6 +62,9 @@ class FemInputWriter():
         self.force_objects = force_obj
         self.pressure_objects = pressure_obj
         self.displacement_objects = displacement_obj
+        self.temperature_objects = temperature_obj
+        self.heatflux_objects = heatflux_obj
+        self.initialtemperature_objects = initialtemperature_obj
         self.planerotation_objects = planerotation_obj
         self.contact_objects = contact_obj
         self.beamsection_objects = beamsection_obj
