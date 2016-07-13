@@ -35,7 +35,7 @@ from PySide import QtCore
 class FemToolsCcx(FemTools.FemTools):
 
     known_analysis_types = ["static", "frequency"]
-    known_known_geom_nonlinear_types = ["linear", "nonlinear"]
+    known_geom_nonlinear_types = ["linear", "nonlinear"]
     finished = QtCore.Signal(int)
 
     ## The constructor
