@@ -370,13 +370,13 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         else:
             f.write('\n')
         f.write('*STATIC')
-        if calculixprefs.MatrixSolverType== "default":
+        if self.solver_obj.MatrixSolverType== "default":
             f.write('\n')
-        elif calculixprefs.MatrixSolverType== "spooles":
+        elif self.solver_obj.MatrixSolverType== "spooles":
              f.write(',SOLVER=SPOOLES\n')
-        elif calculixprefs.MatrixSolverType== "iterativescaling":
+        elif self.solver_obj.MatrixSolverType== "iterativescaling":
              f.write(',SOLVER=ITERATIVE SCALING\n')
-        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+        elif self.solver_obj.MatrixSolverType== "iterativecholesky":
              f.write(',SOLVER=ITERATIVE CHOLESKY\n')
 
     def write_step_begin_thermomech(self, f):
@@ -385,9 +385,9 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP')
-        if calculixprefs.NonLinearGeometry:
+        if self.solver_obj.NonLinearGeometry:
             f.write(',NLGEOM')
-        f.write(',INC={}\n'.format(calculixprefs.Maxiterations)) 
+        f.write(',INC={}\n'.format(self.solver_obj.Maxiterations)) 
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
@@ -554,21 +554,21 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('** Un-Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT')
-        if calculixprefs.MatrixSolverType== "default":
+        if self.solver_obj.MatrixSolverType== "default":
             f.write('')
-        elif calculixprefs.MatrixSolverType== "spooles":
+        elif self.solver_obj.MatrixSolverType== "spooles":
              f.write(',SOLVER=SPOOLES')
-        elif calculixprefs.MatrixSolverType== "iterativescaling":
+        elif self.solver_obj.MatrixSolverType== "iterativescaling":
              f.write(',SOLVER=ITERATIVE SCALING')
-        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+        elif self.solver_obj.MatrixSolverType== "iterativecholesky":
              f.write(',SOLVER=ITERATIVE CHOLESKY')
-        if calculixprefs.SteadyState:
+        if self.solver_obj.SteadyState:
             f.write(',STEADY STATE\n')
-            calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user imputs for steady state
-            calculixprefs.EndTime=1.0
+            self.solver_obj.InitialTimeStep=1.0  #Set time to 1 and ignore user imputs for steady state
+            self.solver_obj.EndTime=1.0
         else:
             f.write('\n')     
-        f.write('{},{}\n'.format(calculixprefs.InitialTimeStep,calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
+        f.write('{},{}\n'.format(self.solver_obj.InitialTimeStep,self.solver_obj.EndTime))# OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
