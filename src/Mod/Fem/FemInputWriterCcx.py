@@ -297,8 +297,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             print('Analysis type frequency and geometrical nonlinear analyis are not allowed together, linear is used instead!')
             f.write('*STEP\n')
         else:
-            f.write('*STEP\n')
-        f.write('*STATIC\n')
+            f.write('\n')
+        f.write('*STATIC')
+        if calculixprefs.MatrixSolverType== "default":
+            f.write('\n')
+        elif calculixprefs.MatrixSolverType== "spooles":
+             f.write(',SOLVER=SPOOLES\n')
+        elif calculixprefs.MatrixSolverType== "iterativescaling":
+             f.write(',SOLVER=ITERATIVE SCALING\n')
+        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+             f.write(',SOLVER=ITERATIVE CHOLESKY\n')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')

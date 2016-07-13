@@ -36,6 +36,7 @@ class FemToolsCcx(FemTools.FemTools):
 
     known_analysis_types = ["static", "frequency"]
     known_geom_nonlinear_types = ["linear", "nonlinear"]
+    known_ccx_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
     finished = QtCore.Signal(int)
 
     ## The constructor
