@@ -446,6 +446,7 @@ def importFrd(filename, analysis=None):
         for result_set in m['Results']:
             eigenmode_number = result_set['number']
             step_time=result_set['time']
+            step_time=round(step_time, 3)  #MPH round step time name two 3 decimal spaces 
             if eigenmode_number > 0:
                 results_name = 'Mode_' + str(eigenmode_number) + '_results'
             elif number_of_increments > 1:  
