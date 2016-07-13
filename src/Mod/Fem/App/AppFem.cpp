@@ -50,10 +50,22 @@
 #include "FemConstraintPressure.h"
 #include "FemConstraintGear.h"
 #include "FemConstraintPulley.h"
-#include "FemConstraintDisplacement.h" 
+#include "FemConstraintDisplacement.h"
+#include "FemConstraintTemperature.h"
+#include "FemConstraintHeatflux.h"
+#include "FemConstraintInitialTemperature.h"
+#include "FemConstraintPlaneRotation.h"
+#include "FemConstraintContact.h"
 
 #include "FemResultObject.h"
 #include "FemSolverObject.h"
+
+#ifdef FC_USE_VTK
+#include "FemPostPipeline.h"
+#include "FemPostFilter.h"
+#include "FemPostFunction.h"
+#include "PropertyPostDataObject.h"
+#endif
 
 namespace Fem {
 extern PyObject* initModule();
@@ -115,7 +127,7 @@ PyMODINIT_FUNC initFem()
     // NOTE: To finish the initialization of our own type objects we must
     // call PyType_Ready, otherwise we run into a segmentation fault, later on.
     // This function is responsible for adding inherited slots from a type's base class.
- 
+
     Fem::FemAnalysis                ::init();
     Fem::FemAnalysisPython          ::init();
     Fem::DocumentObject             ::init();
@@ -140,9 +152,28 @@ PyMODINIT_FUNC initFem()
     Fem::ConstraintGear             ::init();
     Fem::ConstraintPulley           ::init();
     Fem::ConstraintDisplacement     ::init();
+    Fem::ConstraintTemperature      ::init();
+    Fem::ConstraintHeatflux         ::init();
+    Fem::ConstraintInitialTemperature            ::init();
+    Fem::ConstraintPlaneRotation     ::init();
+    Fem::ConstraintContact     ::init();    
 
     Fem::FemResultObject            ::init();
-    Fem::FemResultObjectPython      ::init();
     Fem::FemSolverObject            ::init();
     Fem::FemSolverObjectPython      ::init();
+    
+#ifdef FC_USE_VTK
+    Fem::FemPostObject              ::init();
+    Fem::FemPostPipeline            ::init();
+    Fem::FemPostFilter              ::init();
+    Fem::FemPostClipFilter          ::init();
+    Fem::FemPostScalarClipFilter    ::init();
+    Fem::FemPostWarpVectorFilter    ::init();
+    Fem::FemPostCutFilter           ::init();
+    Fem::FemPostFunction            ::init();
+    Fem::FemPostFunctionProvider    ::init();
+    Fem::FemPostPlaneFunction       ::init();
+    Fem::FemPostSphereFunction      ::init();
+    Fem::PropertyPostDataObject     ::init();
+#endif
 }

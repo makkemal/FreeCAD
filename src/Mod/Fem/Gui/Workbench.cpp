@@ -65,18 +65,39 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
          << "Fem_CreateNodesSet"
          << "Separator"
          << "Fem_ConstraintFixed"
+         << "Fem_ConstraintPlaneRotation"
+	 << "Fem_ConstraintContact"
          << "Fem_ConstraintDisplacement"
          << "Separator"
          << "Fem_ConstraintForce"
          << "Fem_ConstraintPressure"
          << "Fem_ConstraintBearing"
-         << "Fem_ConstraintGear"   
+         << "Fem_ConstraintGear"
          << "Fem_ConstraintPulley"
+         << "Separator"
+         << "Fem_ConstraintTemperature"
+         << "Fem_ConstraintHeatflux"
+         << "Fem_ConstraintInitialTemperature"
          << "Separator"
          << "Fem_SolverJobControl"
          << "Fem_Quick_Analysis"
          << "Fem_PurgeResults"
          << "Fem_ShowResult";
+         
+#ifdef FC_USE_VTK
+     Gui::ToolBarItem* post = new Gui::ToolBarItem(root);
+     post->setCommand("Post Processing");
+     *post  << "Fem_PostApplyChanges"
+            << "Fem_PostPipelineFromResult"
+            << "Separator"
+            << "Fem_PostCreateClipFilter"
+            << "Fem_PostCreateScalarClipFilter"
+            << "Fem_PostCreateCutFilter"
+            << "Fem_PostCreateWarpVectorFilter"
+            << "Separator"
+            << "Fem_PostCreateFunctions";
+#endif
+            
     return root;
 }
 
@@ -97,13 +118,19 @@ Gui::MenuItem* Workbench::setupMenuBar() const
          << "Fem_CreateNodesSet"
          << "Separator"
          << "Fem_ConstraintFixed"
+         << "Fem_ConstraintPlaneRotation"
+	 << "Fem_ConstraintContact"
          << "Fem_ConstraintDisplacement"
          << "Separator"
          << "Fem_ConstraintForce"
          << "Fem_ConstraintPressure"
          << "Fem_ConstraintBearing"
-         << "Fem_ConstraintGear"   
+         << "Fem_ConstraintGear"
          << "Fem_ConstraintPulley"
+         << "Separator"
+         << "Fem_ConstraintTemperature"
+         << "Fem_ConstraintHeatflux"
+         << "Fem_ConstraintInitialTemperature"
          << "Separator"
          << "Fem_SolverJobControl"
          << "Fem_Quick_Analysis"

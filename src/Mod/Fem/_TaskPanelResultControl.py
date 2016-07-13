@@ -27,6 +27,7 @@ __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 from FemTools import FemTools
+import numpy as np
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -50,6 +51,13 @@ class _TaskPanelResultControl:
         QtCore.QObject.connect(self.form.rb_z_displacement, QtCore.SIGNAL("toggled(bool)"), self.z_displacement_selected)
         QtCore.QObject.connect(self.form.rb_abs_displacement, QtCore.SIGNAL("toggled(bool)"), self.abs_displacement_selected)
         QtCore.QObject.connect(self.form.rb_vm_stress, QtCore.SIGNAL("toggled(bool)"), self.vm_stress_selected)
+
+        QtCore.QObject.connect(self.form.rb_max_shear_stress, QtCore.SIGNAL("toggled(bool)"), self.max_shear_selected)
+        QtCore.QObject.connect(self.form.rb_maxprin, QtCore.SIGNAL("toggled(bool)"), self.max_prin_selected)
+        QtCore.QObject.connect(self.form.rb_minprin, QtCore.SIGNAL("toggled(bool)"), self.min_prin_selected)
+        QtCore.QObject.connect(self.form.rb_temperature, QtCore.SIGNAL("toggled(bool)"), self.temperature_selected)
+        QtCore.QObject.connect(self.form.user_def_eq, QtCore.SIGNAL("textchanged()"), self.user_defined_text)
+        QtCore.QObject.connect(self.form.calculate, QtCore.SIGNAL("clicked()"), self.calculate)
 
         QtCore.QObject.connect(self.form.cb_show_displacement, QtCore.SIGNAL("clicked(bool)"), self.show_displacement)
         QtCore.QObject.connect(self.form.hsb_displacement_factor, QtCore.SIGNAL("valueChanged(int)"), self.hsb_disp_factor_changed)
@@ -83,6 +91,18 @@ class _TaskPanelResultControl:
             elif rt == "Sabs":
                 self.form.rb_vm_stress.setChecked(True)
                 self.vm_stress_selected(True)
+            elif rt == "MaxShear":
+                self.form.rb_max_shear.setChecked(True)
+                self.rb_max_shear(True)
+            elif rt== "MaxPrin":
+                self.form.rb_maxprin.setChecked(True)
+                self.rb_maxprin(True)
+            elif rt== "Temp":
+                self.form.rb_temperature.setChecked(True)
+                self.rb_temperature(True)
+            elif rt== "MinPrin":
+                self.form.rb_minprin.setChecked(True)
+                self.rb_minprin(True)
 
             sd = FreeCAD.FEM_dialog["show_disp"]
             self.form.cb_show_displacement.setChecked(sd)
@@ -115,6 +135,10 @@ class _TaskPanelResultControl:
                                "U3": (Stats[6], Stats[7], Stats[8]),
                                "Uabs": (Stats[9], Stats[10], Stats[11]),
                                "Sabs": (Stats[12], Stats[13], Stats[14]),
+                               "MaxPrin": (Stats[15], Stats[16], Stats[17]),
+                               "MidPrin": (Stats[18], Stats[19], Stats[20]),
+                               "MinPrin": (Stats[21], Stats[22], Stats[23]),
+                               "MaxShear": (Stats[24], Stats[25],Stats[26]),
                                "None": (0.0, 0.0, 0.0)}
                 return match_table[type_name]
         return (0.0, 0.0, 0.0)
@@ -149,6 +173,76 @@ class _TaskPanelResultControl:
         (minm, avg, maxm) = self.get_result_stats("Sabs")
         self.set_result_stats("MPa", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
+
+    def max_shear_selected(self, state):
+        FreeCAD.FEM_dialog["results_type"] = "MaxShear"
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.MaxShear)
+        (minm, avg, maxm) = self.get_result_stats("MaxShear")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+
+    def max_prin_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "MaxPrin"
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrincipalMax)
+        (minm, avg, maxm) = self.get_result_stats("MaxPrin")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+
+    def temperature_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "Temp"
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.Temperature)
+        minm=min(self.result_object.Temperature)
+        avg=sum(self.result_object.Temperature)/len(self.result_object.Temperature)
+        maxm=max(self.result_object.Temperature)    
+        self.set_result_stats("K", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+
+    def min_prin_selected(self,  state):
+        FreeCAD.FEM_dialog["results_type"] = "MinPrin"
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, self.result_object.PrincipalMin)
+        (minm, avg, maxm) = self.get_result_stats("MinPrin")
+        self.set_result_stats("MPa", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+
+    def user_defined_text(self,  equation):
+        FreeCAD.FEM_dialog["results_type"] = "user"
+        eq=self.form.user_def_eq.toPlainText()
+
+    def calculate(self):
+        FreeCAD.FEM_dialog["results_type"] = "None"
+        self.update()
+        self.restore_result_dialog()
+        # Convert existing values to numpy array
+        P1=np.array(self.result_object.PrincipalMax)
+        P2=np.array(self.result_object.PrincipalMed)
+        P3=np.array(self.result_object.PrincipalMin)
+        Von=np.array(self.result_object.StressValues)
+        T=np.array(self.result_object.Temperature)
+        dispvectors=np.array(self.result_object.DisplacementVectors)
+        x=np.array(dispvectors[:, 0])
+        y=np.array(dispvectors[:, 1])
+        z=np.array(dispvectors[:, 2])
+
+        userdefined_eq=self.form.user_def_eq.toPlainText()  #Get equation to be used
+        UserDefinedFormula=eval(userdefined_eq).tolist()
+        minm=min(UserDefinedFormula)
+        avg=sum(UserDefinedFormula)/len(UserDefinedFormula)
+        maxm=max(UserDefinedFormula)
+
+        QApplication.setOverrideCursor(Qt.WaitCursor)
+        if self.suitable_results:
+            self.MeshObject.ViewObject.setNodeColorByScalars(self.result_object.NodeNumbers, UserDefinedFormula)
+        self.set_result_stats("", minm, avg, maxm)
+        QtGui.qApp.restoreOverrideCursor()
+
 
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -208,7 +302,10 @@ class _TaskPanelResultControl:
     def update(self):
         self.MeshObject = None
         self.result_object = get_results_object(FreeCADGui.Selection.getSelection())
-
+        #Disable temperature radio button if it does ot exist in results
+        if len(self.result_object.Temperature)==1:
+                self.form.rb_temperature.setEnabled(0)
+        
         for i in FemGui.getActiveAnalysis().Member:
             if i.isDerivedFrom("Fem::FemMeshObject"):
                 self.MeshObject = i
@@ -216,7 +313,7 @@ class _TaskPanelResultControl:
 
         self.suitable_results = False
         if self.result_object:
-            if self.MeshObject.FemMesh.NodeCount == len(self.result_object.NodeNumbers):
+            if (self.MeshObject.FemMesh.NodeCount == len(self.result_object.NodeNumbers)):
                 self.suitable_results = True
             else:
                 if not self.MeshObject.FemMesh.VolumeCount:
@@ -231,7 +328,7 @@ class _TaskPanelResultControl:
         FreeCADGui.Control.closeDialog()
 
 
-#It's code duplication that should be removes wher we migrate to FemTools.py
+#It's code duplication that should be removed when we migrate to FemTools.py
 def get_results_object(sel):
     if (len(sel) == 1):
         if sel[0].isDerivedFrom("Fem::FemResultObject"):

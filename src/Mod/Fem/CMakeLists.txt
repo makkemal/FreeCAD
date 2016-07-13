@@ -1,9 +1,14 @@
 
+if(BUILD_FEM_VTK)
+    include(${VTK_USE_FILE})
+    add_definitions(-DFC_USE_VTK)
+endif(BUILD_FEM_VTK)
+
 add_subdirectory(App)
+
 if(BUILD_GUI)
     add_subdirectory(Gui)
 endif(BUILD_GUI)
-
 
 INSTALL(
     FILES
@@ -76,6 +81,7 @@ INSTALL(
         # changes on the file list here needs to be made in App/CMakeLists.txt as well
         test_files/ccx/mesh_points.csv
         test_files/ccx/mesh_volumes.csv
+        #test_files/ccx/thermomech_analysis.inp
         test_files/ccx/cube_frequency.inp
         test_files/ccx/cube_frequency.dat
         test_files/ccx/cube_frequency.frd
@@ -85,6 +91,10 @@ INSTALL(
         test_files/ccx/cube_static.frd
         test_files/ccx/cube_static_expected_values
         test_files/ccx/cube.fcstd
+        #test_files/ccx/cube_thermomech.inp
+        #test_files/ccx/cube_thermomech.dat
+        #test_files/ccx/cube_thermomech.frd
+        #test_files/ccx/cube_thermomech_expected_values
     DESTINATION
         Mod/Fem/test_files/ccx
 )

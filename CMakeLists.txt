@@ -1,14 +1,16 @@
 project(FreeCAD_trunk)
-set(FREECAD_VERSION "0.16")
 
 set(PACKAGE_NAME "FreeCAD")
+set(PACKAGE_VERSION_NAME "Vulcan")
 set(PACKAGE_VERSION_MAJOR "0")
-set(PACKAGE_VERSION_MINOR "16")
+set(PACKAGE_VERSION_MINOR "17")
 set(PACKAGE_VERSION_PATCH "6700")
+
+set(FREECAD_VERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}")
 set(PACKAGE_VERSION "${PACKAGE_VERSION_MAJOR}.${PACKAGE_VERSION_MINOR}.${PACKAGE_VERSION_PATCH}")
 set(PACKAGE_STRING "${PACKAGE_NAME} ${PACKAGE_VERSION}")
 
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 if(COMMAND cmake_policy)
     cmake_policy(SET CMP0003 NEW)
@@ -42,24 +44,34 @@ else(WIN32)
     set(PLATFORM_MK mkdir -p)
 endif(WIN32)
 
-# ================================================================================
-
-# Issues with boost::any on older versions with C++11 enabled.
-set(BOOST_MIN_VERSION 1.55)
-
 if (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
     set(CMAKE_COMPILER_IS_CLANGXX TRUE)
-    # make this an option because for older compilers C++11 doesn't work properly.
-    OPTION(BUILD_ENABLE_CXX11 "Enable C++11 support." ON)
-    if (BUILD_ENABLE_CXX11)
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    endif(BUILD_ENABLE_CXX11)
 endif (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+
+# ================================================================================
+
+# Allow developers to use Boost < 1.48
+if(NOT ${BOOST_MIN_VERSION})
+   set(BOOST_MIN_VERSION 1.48)
+endif()
+
+# Enabled C++11 for Freecad 0.17 and later
+IF(FREECAD_VERSION VERSION_GREATER 0.16)
+    OPTION(BUILD_ENABLE_CXX11 "Enable C++11 support." ON)
+    IF(CMAKE_COMPILER_IS_GNUCXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.7)
+        MESSAGE(FATAL_ERROR "FreeCAD 0.17 and later requires C++11.  G++ must be 4.7 or later")
+    ELSEIF(CMAKE_COMPILER_IS_CLANGXX AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.3)
+        MESSAGE(FATAL_ERROR "FreeCAD 0.17 and later requires C++11.  Clang must be 3.3 or later")
+    ENDIF()
+ENDIF(FREECAD_VERSION VERSION_GREATER 0.16)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     include(cMake/ConfigureChecks.cmake)
     configure_file(config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h)
     add_definitions(-DHAVE_CONFIG_H)
+    if(BUILD_ENABLE_CXX11)
+       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+    endif(BUILD_ENABLE_CXX11)
     set(CMAKE_CXX_FLAGS "-Wall -Wno-deprecated -Wno-write-strings ${CMAKE_CXX_FLAGS}")
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
     # get linker errors as soon as possible and not at runtime e.g. for modules
@@ -67,16 +79,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
     #    SET(CMAKE_SHARED_LINKER_FLAGS "-Wl,--no-undefined")
     endif(UNIX)
 endif(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_COMPILER_IS_CLANGXX)
-
-IF(CMAKE_COMPILER_IS_GNUCXX)
-    EXECUTE_PROCESS( COMMAND ${CMAKE_C_COMPILER} -dumpversion
-                     OUTPUT_VARIABLE GCC_VERSION )
-    IF(GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-    ELSE(GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-        UNSET(BOOST_MIN_VERSION) # For Ubuntu 12.04
-    ENDIF(GCC_VERSION VERSION_GREATER 4.7 OR GCC_VERSION VERSION_EQUAL 4.7)
-ENDIF()
 
 # ================================================================================
 # Output directories for install target
@@ -163,6 +165,7 @@ if(APPLE)
 endif(APPLE)
 
 OPTION(BUILD_FEM "Build the FreeCAD FEM module, be aware, unfinished code!" ON)
+OPTION(BUILD_FEM_VTK "Build the FreeCAD VTK Postprocessing support (need VTK 6 or higher)" OFF)
 OPTION(BUILD_SANDBOX "Build the FreeCAD Sandbox module which is only for testing purposes" OFF)
 OPTION(BUILD_TEMPLATE "Build the FreeCAD template module which is only for testing purposes" OFF)
 OPTION(BUILD_ARCH "Build the FreeCAD Architecture module" ON)
@@ -750,6 +753,11 @@ endif(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 #---------------------------------------------------
 
+# -------------------------------- VTK --------------------------------
+    if(BUILD_FEM_VTK)
+        find_package(VTK REQUIRED)       
+    endif(BUILD_FEM_VTK)
+        
     if(BUILD_GUI)
 # -------------------------------- OpenGL --------------------------------
 
