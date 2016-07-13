@@ -307,7 +307,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*STEP\n')
         else:
             f.write('*STEP\n')
-        f.write('*STATIC\n')
+        f.write('*STATIC')
+        if self.solver_obj.MatrixSolverType == "default":
+            f.write('\n')
+        elif self.solver_obj.MatrixSolverType == "spooles":
+            f.write(',SOLVER=SPOOLES\n')
+        elif self.solver_obj.MatrixSolverType == "iterativescaling":
+            f.write(',SOLVER=ITERATIVE SCALING\n')
+        elif self.solver_obj.MatrixSolverType == "iterativecholesky":
+            f.write(',SOLVER=ITERATIVE CHOLESKY\n')
+
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
