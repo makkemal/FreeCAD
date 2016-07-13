@@ -41,8 +41,7 @@ import os
 
 
 class FemInputWriter():
-    def __init__(self, analysis_obj, solver_obj,
-                 mesh_obj, mat_obj,
+    def __init__(self, analysis_obj, solver_obj, mesh_obj, mat_obj,
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
@@ -54,8 +53,9 @@ class FemInputWriter():
                  beamsection_obj, shellthickness_obj,
                  analysis_type, eigenmode_parameters,
                  dir_name):
+        self.dir_name = dir_name
         self.analysis = analysis_obj
-        self.solver_obj = solver_obj
+        self.solver = solver_obj
         self.mesh_object = mesh_obj
         self.material_objects = mat_obj
         self.fixed_objects = fixed_obj
@@ -66,15 +66,14 @@ class FemInputWriter():
         self.heatflux_objects = heatflux_obj
         self.initialtemperature_objects = initialtemperature_obj
         self.planerotation_objects = planerotation_obj
-        self.contact_objects = contact_obj
-        self.beamsection_objects = beamsection_obj
-        self.shellthickness_objects = shellthickness_obj
-        self.analysis_type = analysis_type
+        self.contact_objects = contact_obj        
         if eigenmode_parameters:
             self.no_of_eigenfrequencies = eigenmode_parameters[0]
             self.eigenfrequeny_range_low = eigenmode_parameters[1]
             self.eigenfrequeny_range_high = eigenmode_parameters[2]
-        self.dir_name = dir_name
+        self.analysis_type = analysis_type
+        self.beamsection_objects = beamsection_obj
+        self.shellthickness_objects = shellthickness_obj
         if not dir_name:
             print('Error: FemInputWriter has no working_dir --> we gone make a temporary one!')
             self.dir_name = FreeCAD.ActiveDocument.TransientDir.replace('\\', '/') + '/FemAnl_' + analysis_obj.Uid[-4:]
@@ -86,21 +85,16 @@ class FemInputWriter():
         self.femmesh = self.mesh_object.FemMesh
         self.femnodes_mesh = {}
         self.femelement_table = {}
-        self.constraint_conflict_nodes = []
 
     def get_constraints_fixed_nodes(self):
         # get nodes
         for femobj in self.fixed_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             femobj['Nodes'] = FemMeshTools.get_femnodes_by_references(self.femmesh, femobj['Object'].References)
-            for node in femobj['Nodes']:
-                self.constraint_conflict_nodes.append(node)
 
     def get_constraints_displacement_nodes(self):
         # get nodes
         for femobj in self.displacement_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             femobj['Nodes'] = FemMeshTools.get_femnodes_by_references(self.femmesh, femobj['Object'].References)
-            for node in femobj['Nodes']:
-                self.constraint_conflict_nodes.append(node)
 
     def get_constraints_force_nodeloads(self):
         # check shape type of reference shape

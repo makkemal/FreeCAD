@@ -27,6 +27,7 @@ __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 import FemToolsCcx
+from FemTools import FemTools
 
 
 class _FemSolverCalculix():
@@ -50,10 +51,6 @@ class _FemSolverCalculix():
         obj.AnalysisType = FemToolsCcx.FemToolsCcx.known_analysis_types
         analysis_type = fem_prefs.GetInt("AnalysisType", 0)
         obj.AnalysisType = FemToolsCcx.FemToolsCcx.known_analysis_types[analysis_type]
-
-        obj.addProperty("App::PropertyEnumeration", "GeometricalNonlinearity", "Fem", "Type of geometrical nonlinearity")
-        obj.GeometricalNonlinearity = FemToolsCcx.FemToolsCcx.known_geom_nonlinear_types
-        obj.GeometricalNonlinearity = FemToolsCcx.FemToolsCcx.known_geom_nonlinear_types[0]  # standard is linear
 
         obj.addProperty("App::PropertyIntegerConstraint", "NumberOfEigenmodes", "Fem", "Number of modes for frequency calculations")
         noe = fem_prefs.GetInt("NumberOfEigenmodes", 10)
@@ -89,9 +86,9 @@ class _FemSolverCalculix():
         obj.NonLinearGeometry = (geom) 
         
         obj.addProperty("App::PropertyEnumeration", "MatrixSolverType", "Fem", "Type of solver to use")
-        obj.MatrixSolverType = FemToolsCcx.FemToolsCcx.known_ccx_solver_types
+        obj.MatrixSolverType = FemTools.known_ccx_solver_types
         solver_type = calculix_prefs.GetInt("Solver", 0)
-        obj.MatrixSolverType = FemToolsCcx.FemToolsCcx.known_ccx_solver_types[solver_type]
+        obj.MatrixSolverType = FemTools.known_ccx_solver_types[solver_type]
         
     def execute(self, obj):
         return

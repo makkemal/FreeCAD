@@ -35,8 +35,6 @@ from PySide import QtCore
 class FemToolsCcx(FemTools.FemTools):
 
     known_analysis_types = ["static", "frequency", "thermomech"]
-    known_geom_nonlinear_types = ["linear", "nonlinear"]
-    known_ccx_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
     finished = QtCore.Signal(int)
 
     ## The constructor
@@ -89,12 +87,11 @@ class FemToolsCcx(FemTools.FemTools):
         import sys
         self.inp_file_name = ""
         try:
-            inp_writer = iw.FemInputWriterCcx(self.analysis, self.solver,
-                                              self.mesh, self.materials,
+            inp_writer = iw.FemInputWriterCcx(self.analysis, self.solver, self.mesh, self.materials,
                                               self.fixed_constraints,
                                               self.force_constraints, self.pressure_constraints,
-                                              self.displacement_constraints,
-                                              self.temperature_constraints, self.heatflux_constraints, self.initialtemperature_constraints,
+                                              self.displacement_constraints, self.temperature_constraints,
+                                              self.heatflux_constraints, self.initialtemperature_constraints,
                                               self.planerotation_constraints,
                                               self.contact_constraints,
                                               self.beam_sections, self.shell_thicknesses,
@@ -211,11 +208,12 @@ class FemToolsCcx(FemTools.FemTools):
         import ccxFrdReader
         frd_result_file = os.path.splitext(self.inp_file_name)[0] + '.frd'
         if os.path.isfile(frd_result_file):
-            result_name_prefix = 'CalculiX_' + self.solver.AnalysisType + '_'
-            ccxFrdReader.importFrd(frd_result_file, self.analysis, result_name_prefix)
+            ccxFrdReader.importFrd(frd_result_file, self.analysis)
             for m in self.analysis.Member:
                 if m.isDerivedFrom("Fem::FemResultObject"):
-                    self.results_present = True
+                    self.result_object = m
+            if self.result_object:
+                self.results_present = True
         else:
             raise Exception('FEM: No results found at {}!'.format(frd_result_file))
 

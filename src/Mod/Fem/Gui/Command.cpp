@@ -361,8 +361,8 @@ CmdFemConstraintPlaneRotation::CmdFemConstraintPlaneRotation()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Constraint plane rotation");
-    sToolTipText    = QT_TR_NOOP("Create a FEM constraint for plane rotation face");
+    sMenuText       = QT_TR_NOOP("Create FEM Plane Rotation constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for Plane Rotation face");
     sWhatsThis      = "Fem_ConstraintPlaneRotation";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-constraint-planerotation";
@@ -402,8 +402,8 @@ CmdFemConstraintContact::CmdFemConstraintContact()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Constraint contact ");
-    sToolTipText    = QT_TR_NOOP("Creates a FEM constraint for contact between faces");
+    sMenuText       = QT_TR_NOOP("Create FEM contact constraint");
+    sToolTipText    = QT_TR_NOOP("Create FEM constraint for contact between faces");
     sWhatsThis      = "Fem_ConstraintContact";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-constraint-contact";
@@ -490,7 +490,7 @@ CmdFemConstraintForce::CmdFemConstraintForce()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Constraint force");
+    sMenuText       = QT_TR_NOOP("constraint force");
     sToolTipText    = QT_TR_NOOP("Creates a FEM constraint for a force acting on a geometric entity");
     sWhatsThis      = "Fem_ConstraintForce";
     sStatusTip      = sToolTipText;
@@ -552,7 +552,7 @@ void CmdFemConstraintPressure::activated(int iMsg)
 
     openCommand("Make FEM constraint pressure on face");
     doCommand(Doc,"App.activeDocument().addObject(\"Fem::ConstraintPressure\",\"%s\")",FeatName.c_str());
-    doCommand(Doc,"App.activeDocument().%s.Pressure = 1000.0",FeatName.c_str()); //OvG: set default not equal to 0
+    doCommand(Doc,"App.activeDocument().%s.Pressure = 1.0",FeatName.c_str()); //OvG: set default not equal to 0
     doCommand(Doc,"App.activeDocument().%s.Reversed = False",FeatName.c_str()); //OvG: set default to False
     doCommand(Doc,"App.activeDocument().%s.Scale = 1",FeatName.c_str()); //OvG: set initial scale to 1
     doCommand(Doc,"App.activeDocument().%s.Member = App.activeDocument().%s.Member + [App.activeDocument().%s]",

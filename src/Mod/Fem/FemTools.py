@@ -17,7 +17,7 @@
 # *   You should have received a copy of the GNU Library General Public     *
 # *   License along with this program; if not, write to the Free Software   *
 # *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
-# *   USA                                                                   *
+# *   USA to tst if it compiles                                                                 *
 # *                                                                         *
 # ***************************************************************************
 
@@ -32,12 +32,18 @@ from PySide import QtCore
 
 
 class FemTools(QtCore.QRunnable, QtCore.QObject):
+
+    finished = QtCore.Signal(int)
+
+    known_analysis_types = ["static", "frequency", "thermomech"]
+    known_ccx_solver_types = ["default", "spooles", "iterativescaling","iterativecholesky"]
     ## The constructor
     #  @param analysis - analysis object to be used as the core object.
     #  "__init__" tries to use current active analysis in analysis is left empty.
     #  Rises exception if analysis is not set and there is no active analysis
-    #  The constructur of FemTools is for use of analysis without solver object
-    def __init__(self, analysis=None, solver=None):
+    def __init__(self, analysis=None, test_mode=False):
+        QtCore.QRunnable.__init__(self)
+        QtCore.QObject.__init__(self)
 
         if analysis:
             ## @var analysis
@@ -47,12 +53,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         else:
             import FemGui
             self.analysis = FemGui.getActiveAnalysis()
-        if solver:
-            ## @var solver
-            #  solver of the analysis. Used to store the active solver and analysis parameters
-            self.solver = solver
-        else:
-            self.solver = None
         if self.analysis:
             self.update_objects()
             self.results_present = False
@@ -83,7 +83,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             self.mesh.ViewObject.setNodeColorByScalars()
 
     ## Resets mesh color, deformation and removes all result objects if preferences to keep them is not set
-    #  @param self The python object self
+    #  @param self The python object self        
     def reset_mesh_purge_results_checked(self):
         self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
         keep_results_on_rerun = self.fem_prefs.GetBool("KeepResultsOnReRun", False)
@@ -112,9 +112,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             self.reset_mesh_color()
             return
         if self.result_object:
-            if FreeCAD.GuiUp:
-                if self.result_object.Mesh.ViewObject.Visibility is False:
-                    self.result_object.Mesh.ViewObject.Visibility = True
             if result_type == "Sabs":
                 values = self.result_object.StressValues
             elif result_type == "Uabs":
@@ -156,8 +153,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # [{'Object':initialtemperature_constraints, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':beam_sections, 'xxxxxxxx':value}, {}, ...]
         # [{'Object':shell_thicknesses, 'xxxxxxxx':value}, {}, ...]
-        # [{'Object':contact_constraints, 'xxxxxxxx':value}, {}, ...]
 
+        ## @var solver
+        #  solver of the analysis. Used to store solver and analysis parameters
+        self.solver = None
         ## @var mesh
         #  mesh of the analysis. Used to generate .inp file and to show results
         self.mesh = None
@@ -210,22 +209,12 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         #  Individual constraints are "Fem::ConstraintContact" type
         self.contact_constraints = []
 
-        found_solver_for_use = False
         for m in self.analysis.Member:
             if m.isDerivedFrom("Fem::FemSolverObjectPython"):
-                # for some methods no solver is needed (purge_results) --> solver could be none
-                # analysis has one solver and no solver was set --> use the one solver
-                # analysis has more than one solver and no solver was set --> use solver none
-                # analysis has no solver --> use solver none
-                if not found_solver_for_use and not self.solver:
-                    # no solver was found before and no solver was set by constructor
+                if not self.solver:
                     self.solver = m
-                    found_solver_for_use = True
-                elif found_solver_for_use:
-                    self.solver = None
-                    # another solver was found --> We have more than one solver
-                    # we do not know which one to use, so we use none !
-                    # print('FEM: More than one solver in the analysis and no solver given to analys. No solver is set!')
+                else:
+                    raise Exception('FEM: Multiple solver in analysis not yet supported!')
             elif m.isDerivedFrom("Fem::FemMeshObject"):
                 if not self.mesh:
                     self.mesh = m
@@ -247,6 +236,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 PressureObjectDict = {}
                 PressureObjectDict['Object'] = m
                 self.pressure_constraints.append(PressureObjectDict)
+            elif m.isDerivedFrom("Fem::ConstraintHeatflux"):
+                heatflux_constraint_dict = {}
+                heatflux_constraint_dict['Object'] = m
+                self.heatflux_constraints.append(heatflux_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintDisplacement"):  # OvG: Replacement reference to C++ implementation of Displacement Constraint
                 displacement_constraint_dict = {}
                 displacement_constraint_dict['Object'] = m
@@ -255,10 +248,6 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 temperature_constraint_dict = {}
                 temperature_constraint_dict['Object'] = m
                 self.temperature_constraints.append(temperature_constraint_dict)
-            elif m.isDerivedFrom("Fem::ConstraintHeatflux"):
-                heatflux_constraint_dict = {}
-                heatflux_constraint_dict['Object'] = m
-                self.heatflux_constraints.append(heatflux_constraint_dict)
             elif m.isDerivedFrom("Fem::ConstraintInitialTemperature"): 
                 initialtemperature_constraint_dict = {}
                 initialtemperature_constraint_dict['Object'] = m
@@ -303,10 +292,15 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 has_no_references = True
         if self.analysis_type == "static":
             if not (self.fixed_constraints or self.displacement_constraints):
-                message += "Neither a constraint fixed nor a contraint displacement defined in the static analysis\n"
+                message += "No fixed-constraint or displacement constraint defined in the Analysis\n"
         if self.analysis_type == "static":
             if not (self.force_constraints or self.pressure_constraints):
-                message += "Neither constraint force nor constraint pressure defined in the static analysis\n"
+                message += "No force-constraint or pressure-constraint defined in the Analysis\n"
+        if self.analysis_type == "thermomech":
+            if not (self.initialtemperature_constraints):
+                message += "No initial-temperature constraint defined in the Analysis\n"
+            if not (self.heatflux_constraints or self.temperature_constraints):
+                message += "No heatflux-constraint or temperature-constraint defined in the Analysis\n"
         if self.beam_sections:
             has_no_references = False
             for b in self.beam_sections:
@@ -384,7 +378,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
 
     ## Sets analysis type.
     #  @param self The python object self
-    #  @param analysis_type type of the analysis.
+    #  @param analysis_type type of the analysis. Allowed values are:
+    #  - static
+    #  - frequency
+    #  - thermomech
     def set_analysis_type(self, analysis_type=None):
         if analysis_type is not None:
             self.analysis_type = analysis_type
@@ -430,31 +427,13 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         # Update inp file name
         self.set_inp_file_name()
 
-    ## Set the analysis result object
-    #  if no result object is provided, check if the analysis has result objects
-    #  if the analysis has exact one result object use this result object
-    #  @param self The python object self
-    #  @param result object name
     def use_results(self, results_name=None):
-        self.result_object = None
-        if results_name is not None:
-            for m in self.analysis.Member:
-                if m.isDerivedFrom("Fem::FemResultObject") and m.Name == results_name:
-                    self.result_object = m
-                    break
-            if not self.result_object:
-                raise Exception("{} doesn't exist".format(results_name))
-        else:
-            has_results = False
-            for m in self.analysis.Member:
-                if m.isDerivedFrom("Fem::FemResultObject"):
-                    self.result_object = m
-                    if has_results is True:
-                        self.result_object = None
-                        raise Exception("No result name was provided, but more than one result objects in the analysis.")
-                    has_results = True
-            if not self.result_object:
-                raise Exception("No result object found in the analysis")
+        for m in self.analysis.Member:
+            if m.isDerivedFrom("Fem::FemResultObject") and m.Name == results_name:
+                self.result_object = m
+                break
+        if not self.result_object:
+            raise Exception("{} doesn't exist".format(results_name))
 
     ## Returns minimum, average and maximum value for provided result type
     #  @param self The python object self
