@@ -913,7 +913,7 @@ class inp_writer:
         f.write('\n***********************************************************\n')
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT')
+        f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
         if calculixprefs.SteadyState:
             f.write(',STEADY STATE\n')
             calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user imputs for steady state
