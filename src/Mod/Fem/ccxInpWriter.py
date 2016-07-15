@@ -590,7 +590,15 @@ class inp_writer:
         f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
         f.write('4,8,9,200,10,400,,200,\n')
         f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
-        f.write('*STATIC')    
+        f.write('*STATIC')
+        if calculixprefs.MatrixSolverType== "default":
+            f.write('\n')
+        elif calculixprefs.MatrixSolverType== "spooles":
+             f.write(',SOLVER=SPOOLES\n')
+        elif calculixprefs.MatrixSolverType== "iterativescaling":
+             f.write(',SOLVER=ITERATIVE SCALING\n')
+        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+             f.write(',SOLVER=ITERATIVE CHOLESKY\n')
         
     def write_step_begin_thermomech(self, f):
         f.write('\n***********************************************************\n')
@@ -914,13 +922,22 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
+        if calculixprefs.MatrixSolverType== "default":
+            f.write('')
+        elif calculixprefs.MatrixSolverType== "spooles":
+             f.write(',SOLVER=SPOOLES')
+        elif calculixprefs.MatrixSolverType== "iterativescaling":
+             f.write(',SOLVER=ITERATIVE SCALING')
+        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+             f.write(',SOLVER=ITERATIVE CHOLESKY')
         if calculixprefs.SteadyState:
             f.write(',STEADY STATE\n')
-            calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user imputs for steady state
+            calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user inputs for steady state
             calculixprefs.EndTime=1.0
         else:
             f.write('\n')     
-        f.write('{},{}\n'.format(calculixprefs.InitialTimeStep,calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state wil cut back automatically
+        f.write('{},{}\n'.format(calculixprefs.InitialTimeStep,calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state will cut back automatically
+
 
     def write_initialtemperature(self, f):
         f.write('\n***********************************************************\n')
