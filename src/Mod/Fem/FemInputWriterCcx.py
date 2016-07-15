@@ -41,6 +41,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                  fixed_obj,
                  force_obj, pressure_obj,
                  displacement_obj,
+                 planerotation_obj,
                  contact_obj,
                  beamsection_obj, shellthickness_obj,
                  analysis_type=None, eigenmode_parameters=None,
@@ -50,6 +51,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                                fixed_obj,
                                                force_obj, pressure_obj,
                                                displacement_obj,
+                                               planerotation_obj,
                                                contact_obj,
                                                beamsection_obj, shellthickness_obj,
                                                analysis_type, eigenmode_parameters,
@@ -69,10 +71,14 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             self.write_node_sets_constraints_fixed(inpfile)
         if self.displacement_objects:
             self.write_node_sets_constraints_displacement(inpfile)
+        if self.planerotation_objects:
+            self.write_node_sets_constraints_planerotation(inpfile)
         if self.contact_objects:
             self.write_surfaces_contraints_contact(inpfile)
         self.write_materials(inpfile)
         self.write_femelementsets(inpfile)
+        if self.planerotation_objects:
+            self.write_constraints_planerotation(inpfile)
         if self.contact_objects:
             self.write_constraints_contact(inpfile)
         self.write_step_begin(inpfile)
@@ -141,6 +147,50 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NSET,NSET=' + femobj['Object'].Name + '\n')
             for n in femobj['Nodes']:
                 f.write(str(n) + ',\n')
+
+    def write_node_sets_constraints_planerotation(self, f):
+        # self.constraint_conflict_nodes is used to check if MPC and fixed constraint share same nodes,
+        # because MPC's and fixed constriants can't share same nodes.
+        if not self.femnodes_mesh:
+            self.femnodes_mesh = self.femmesh.Nodes
+        f.write('\n\n')
+        # get nodes and write them to file
+        f.write('\n***********************************************************\n')
+        f.write('** Node set for plane rotation constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for femobj in self.planerotation_objects:
+            l_nodes = []
+            fric_obj = femobj['Object']
+            f.write('*NSET,NSET=' + fric_obj.Name + '\n')
+            for o, elem_tup in fric_obj.References:
+                for elem in elem_tup:
+                    fo = o.Shape.getElement(elem)
+                    n = []
+                    if fo.ShapeType == 'Face':
+                        n = self.mesh_object.FemMesh.getNodesByFace(fo)
+                    for i in n:
+                        l_nodes.append(i)
+                # Code to extract nodes and coordinates on the PlaneRotation support face
+                nodes_coords = []
+                for node in l_nodes:
+                    nodes_coords.append((node, self.femnodes_mesh[node].x, self.femnodes_mesh[node].y, self.femnodes_mesh[node].z))
+                node_planerotation = FemMeshTools.get_three_non_colinear_nodes(nodes_coords)
+                for i in range(len(l_nodes)):
+                    # if (l_nodes[i] != node_1) and (l_nodes[i] != node_2) and (l_nodes[i] != node_3):
+                    if l_nodes[i] not in node_planerotation:
+                        node_planerotation.append(l_nodes[i])
+                MPC_nodes = []
+                for i in range(len(node_planerotation)):
+                    cnt = 0
+                    for j in range(len(self.constraint_conflict_nodes)):
+                        if node_planerotation[i] == self.constraint_conflict_nodes[j]:
+                            cnt = cnt + 1
+                    if cnt == 0:
+                        MPC = node_planerotation[i]
+                        MPC_nodes.append(MPC)
+
+                for i in range(len(MPC_nodes)):
+                    f.write(str(MPC_nodes[i]) + ',\n')
 
     def write_node_sets_constraints_displacement(self, f):
         # get nodes
@@ -301,6 +351,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 elif not disp_obj.rotzFree:
                     f.write(disp_obj_name + ',6,6,' + str(disp_obj.zRotation) + '\n')
         f.write('\n')
+
+    def write_constraints_planerotation(self, f):
+        f.write('\n***********************************************************\n')
+        f.write('** PlaneRotation Constraints\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for fric_object in self.planerotation_objects:
+            fric_obj_name = fric_object['Object'].Name
+            f.write('*MPC\n')
+            f.write('PLANE,' + fric_obj_name + '\n')
+            f.write('\n')
 
     def write_constraints_contact(self, f):
         f.write('\n***********************************************************\n')
