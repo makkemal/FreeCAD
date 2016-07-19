@@ -556,7 +556,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('\n***********************************************************\n')
         f.write('** Un-Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT')
+        f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
         if self.solver_obj.MatrixSolverType == "default":
             f.write('')
         elif self.solver_obj.MatrixSolverType == "spooles":
