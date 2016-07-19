@@ -18,13 +18,15 @@
 	<file>icons/fem-constraint-contact.svg</file>
         <file>icons/fem-add-fem-mesh.svg</file>
         <file>icons/fem-add-material.svg</file>
-        <file>icons/fem-add-part.svg</file>
+        <file>icons/fem-add-part.svg</file>		
         <file>icons/fem-inp-editor.svg</file>
         <file>icons/fem-material.svg</file>
         <file>icons/fem-control-solver.svg</file>
         <file>icons/fem-purge-results.svg</file>
         <file>icons/fem-run-solver.svg</file>
         <file>icons/fem-frequency-analysis.svg</file>
+		<file>icons/fem-thermomechanical-analysis.svg</file>
+		<file>icons/fem-static-analysis.svg</file>
         <file>icons/fem-result.svg</file>
         <file>icons/fem-shell-thickness.svg</file>
         <file>icons/fem-beam-section.svg</file>
