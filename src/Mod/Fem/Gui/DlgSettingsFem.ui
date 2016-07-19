@@ -14,7 +14,16 @@
    <string>FEM</string>
   </property>
   <layout class="QGridLayout" name="gridLayout1">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>9</number>
+   </property>
+   <property name="topMargin">
+    <number>9</number>
+   </property>
+   <property name="rightMargin">
+    <number>9</number>
+   </property>
+   <property name="bottomMargin">
     <number>9</number>
    </property>
    <property name="spacing">
@@ -334,11 +343,14 @@
             <property name="text">
              <string>Hide Constraints when plotting results</string>
             </property>
+            <property name="checkable">
+             <bool>true</bool>
+            </property>
             <property name="checked">
              <bool>false</bool>
             </property>
             <property name="prefEntry" stdset="0">
-             <cstring>KeepResultsOnReRun</cstring>
+             <cstring>HideConstraint</cstring>
             </property>
             <property name="prefPath" stdset="0">
              <cstring>Mod/Fem</cstring>
