@@ -50,11 +50,7 @@ try:
 except AttributeError:
     def _translate(context, text, disambig):
         return QtGui.QApplication.translate(context, text, disambig)
-#Get anlysis preferences from document object       
-members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
-for member in members:
-     if member.isDerivedFrom("Fem::FemSolverObject"):
-        calculixprefs=member        
+        
         
 #Start ccx inout writer
 class inp_writer:
@@ -99,6 +95,13 @@ class inp_writer:
         self.ccx_eall = 'Eall'
         self.ccx_elsets = []
         self.fem_mesh_nodes = {}
+        #Get anlysis preferences from document object   
+        members=[]
+        member=[]   
+        members=FreeCAD.ActiveDocument.MechanicalAnalysis.Member
+        for member in members:
+            if member.isDerivedFrom("Fem::FemSolverObject"):
+                self.calculixprefs=member        
 
     def write_calculix_input_file(self):
         MainWindow = QtGui.QMainWindow()
@@ -583,7 +586,7 @@ class inp_writer:
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP')
-        if calculixprefs.NonLinearGeometry:
+        if self.calculixprefs.NonLinearGeometry:
             f.write(',NLGEOM\n')
         else:
             f.write('\n')
@@ -591,13 +594,13 @@ class inp_writer:
         f.write('4,8,9,200,10,400,,200,\n')
         f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
         f.write('*STATIC')
-        if calculixprefs.MatrixSolverType== "default":
+        if self.calculixprefs.MatrixSolverType== "default":
             f.write('\n')
-        elif calculixprefs.MatrixSolverType== "spooles":
+        elif self.calculixprefs.MatrixSolverType== "spooles":
              f.write(',SOLVER=SPOOLES\n')
-        elif calculixprefs.MatrixSolverType== "iterativescaling":
+        elif self.calculixprefs.MatrixSolverType== "iterativescaling":
              f.write(',SOLVER=ITERATIVE SCALING\n')
-        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+        elif self.calculixprefs.MatrixSolverType== "iterativecholesky":
              f.write(',SOLVER=ITERATIVE CHOLESKY\n')
         
     def write_step_begin_thermomech(self, f):
@@ -606,9 +609,9 @@ class inp_writer:
         f.write('** loads are applied quasi-static, means without involving the time dimension\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*STEP')
-        if calculixprefs.NonLinearGeometry:
+        if self.calculixprefs.NonLinearGeometry:
             f.write(',NLGEOM')
-        f.write(',INC={}\n'.format(calculixprefs.Maxiterations)) 
+        f.write(',INC={}\n'.format(self.calculixprefs.Maxiterations)) 
         f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
         f.write('4,8,9,200,10,400,,200,\n')
         f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
@@ -922,21 +925,21 @@ class inp_writer:
         f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
-        if calculixprefs.MatrixSolverType== "default":
+        if self.calculixprefs.MatrixSolverType== "default":
             f.write('')
-        elif calculixprefs.MatrixSolverType== "spooles":
+        elif self.calculixprefs.MatrixSolverType== "spooles":
              f.write(',SOLVER=SPOOLES')
-        elif calculixprefs.MatrixSolverType== "iterativescaling":
+        elif self.calculixprefs.MatrixSolverType== "iterativescaling":
              f.write(',SOLVER=ITERATIVE SCALING')
-        elif calculixprefs.MatrixSolverType== "iterativecholesky":
+        elif self.calculixprefs.MatrixSolverType== "iterativecholesky":
              f.write(',SOLVER=ITERATIVE CHOLESKY')
-        if calculixprefs.SteadyState:
+        if self.calculixprefs.SteadyState:
             f.write(',STEADY STATE\n')
-            calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user inputs for steady state
-            calculixprefs.EndTime=1.0
+            self.calculixprefs.InitialTimeStep=1.0  #Set time to 1 and ignore user inputs for steady state
+            self.calculixprefs.EndTime=1.0
         else:
             f.write('\n')     
-        f.write('{},{}\n'.format(calculixprefs.InitialTimeStep,calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state will cut back automatically
+        f.write('{},{}\n'.format(self.calculixprefs.InitialTimeStep,self.calculixprefs.EndTime))# OvG: 1.0 increment, total time 1 for steady state will cut back automatically
 
 
     def write_initialtemperature(self, f):
