@@ -234,21 +234,41 @@ class _TaskPanelFemSolverCalculix:
                 FemGui.open(self.inp_file_name)
 
     def runCalculix(self):
+        import multiprocessing
+        import os
+        import subprocess
         print ('runCalculix')
         self.Start = time.time()
 
         self.femConsoleMessage("CalculiX binary: {}".format(self.CalculixBinary))
         self.femConsoleMessage("Run CalculiX...")
-
+        self.ccx_stdout = ""
+        self.ccx_stderr = ""
         # run Calculix
         print ('run CalculiX at: {} with: {}'.format(self.CalculixBinary, os.path.splitext(self.inp_file_name)[0]))
         # change cwd because ccx may crash if directory has no write permission
         # there is also a limit of the length of file names so jump to the document directory
+        ont_backup = os.environ.get('OMP_NUM_THREADS')
+        self.ccx_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/AnalysisOpt") #MPH solver preferences thremo mechanical
+        self.num_cpu_pref = self.ccx_prefs.GetInt("AnalysisNumCPUs", 1)  # If number of CPU's specified
+        if not ont_backup:
+            ont_backup = str(self.num_cpu_pref)
+        if self.num_cpu_pref > 1:
+            _env = os.putenv('OMP_NUM_THREADS', str(self.num_cpu_pref)) # if user picked a number use that instead
+        else:
+            _env = os.putenv('OMP_NUM_THREADS', str(multiprocessing.cpu_count()))
+            
         self.cwd = QtCore.QDir.currentPath()
         fi = QtCore.QFileInfo(self.inp_file_name)
         QtCore.QDir.setCurrent(fi.path())
+        #self.Calculix.start(self.CalculixBinary, ['-i', fi.baseName()])
+        #p = subprocess.Popen([self.CalculixBinary, "-i ", fi.baseName()],
+        #                         stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        #                         shell=False, env=_env)
+        #self.ccx_stdout, self.ccx_stderr = p.communicate()
+        os.putenv('OMP_NUM_THREADS', ont_backup)
+        QtCore.QDir.setCurrent(fi.path())
         self.Calculix.start(self.CalculixBinary, ['-i', fi.baseName()])
-
         QApplication.restoreOverrideCursor()
 
     def select_analysis_type(self, analysis_type):
