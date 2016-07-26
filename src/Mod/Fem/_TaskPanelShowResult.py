@@ -230,7 +230,7 @@ class _TaskPanelShowResult:
         x = np.array(dispvectors[:, 0])
         y = np.array(dispvectors[:, 1])
         z = np.array(dispvectors[:, 2])
-
+        userdefined_eq = x+y+z+T+Von+P1+P2+P3 #Dummy equation to prevent error of varibles not being used
         userdefined_eq = self.form.user_def_eq.toPlainText()  # Get equation to be used
         UserDefinedFormula = eval(userdefined_eq).tolist()
         minm = min(UserDefinedFormula)
