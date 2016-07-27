@@ -367,6 +367,9 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*STEP\n')
         else:
             f.write('*STEP\n')
+        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
+        f.write('4,8,9,200,10,400,,200,\n')
+        f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
         f.write('*STATIC')
         if self.solver_obj.MatrixSolverType == "default":
             f.write('\n')
@@ -388,6 +391,9 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         else:
             step = '*STEP' + ',INC=' + str(self.solver_obj.Maxiterations) + '\n'
         f.write(step)
+        f.write('*CONTROLS,PARAMETERS=TIME INCREMENTATION\n')
+        f.write('4,8,9,200,10,400,,200,\n')
+        f.write('0.25,0.5,0.75,0.85,,,1.5,\n')
 
     def write_constraints_fixed(self, f):
         f.write('\n***********************************************************\n')
@@ -565,9 +571,9 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
 
     def write_analysis_thermomech(self, f):
         f.write('\n***********************************************************\n')
-        f.write('** Un-Coupled temperature displacement analysis\n')
+        f.write('** Coupled temperature displacement analysis\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        f.write('*UNCOUPLED TEMPERATURE-DISPLACEMENT')
+        f.write('*COUPLED TEMPERATURE-DISPLACEMENT')
         if self.solver_obj.MatrixSolverType == "default":
             f.write('')
         elif self.solver_obj.MatrixSolverType == "spooles":
