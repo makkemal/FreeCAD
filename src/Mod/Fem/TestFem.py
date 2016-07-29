@@ -514,6 +514,15 @@ class TherMechFemTest(unittest.TestCase):
         self.assertTrue(True if fea.inp_file_name == thermomech_analysis_inp_file else False,
                         "Setting inp file name to {} failed".format(thermomech_analysis_inp_file))
 
+        fcc_print('Checking FEM frd file read from thermo-mechanical analysis...')
+        fea.load_results_ccxfrd()
+        fcc_print('Result object created as \"{}\"'.format(fea.result_object.Name))
+        self.assertTrue(fea.results_present, "Cannot read results from {}.frd frd file".format(fea.base_name))
+
+        fcc_print('Reading stats from result object for thermo-mechanical analysis...')
+        ret = self.compare_stats(fea, thermomech_expected_values)
+        self.assertFalse(ret, "Invalid results read from .frd file")
+
     def tearDown(self):
         FreeCAD.closeDocument("TherMechFemTest")
         pass
