@@ -40,6 +40,8 @@ if FreeCAD.GuiUp:
 
 class _TaskPanelFemSolverCalculix:
     def __init__(self, solver_object):
+        import subprocess
+        from platform import system
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/TaskPanelFemSolverCalculix.ui")
         self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
         ccx_binary = self.fem_prefs.GetString("ccxBinaryPath", "")
@@ -47,14 +49,31 @@ class _TaskPanelFemSolverCalculix:
             self.CalculixBinary = ccx_binary
             print ("Using CalculiX binary path from FEM preferences: {}".format(ccx_binary))
         else:
-            from platform import system
             if system() == 'Linux':
                 self.CalculixBinary = 'ccx'
             elif system() == 'Windows':
                 self.CalculixBinary = FreeCAD.getHomePath() + 'bin/ccx.exe'
             else:
                 self.CalculixBinary = 'ccx'
-        self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
+        #self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
+        startup_info = None     
+        ccx_binary_sig = None  
+        try:
+            p = subprocess.Popen([self.ccx_binary], stdout=subprocess.PIPE,
+                                 stderr=subprocess.PIPE, shell=False,
+                                 startupinfo=startup_info)
+            ccx_stdout, ccx_stderr = p.communicate()
+            if ccx_binary_sig in ccx_stdout:
+                self.ccx_binary_present = True
+        except OSError as e:
+            FreeCAD.Console.PrintError(e.message)
+            if e.errno == 2:
+                raise Exception("FEM: CalculiX binary ccx \'{}\' not found. Please set it in FEM preferences.".format(ccx_binary))
+        except Exception as e:
+            FreeCAD.Console.PrintError(e.message)
+            raise Exception("FEM: CalculiX ccx \'{}\' output \'{}\' doesn't contain expected phrase \'{}\'. Please use ccx 2.6 or newer".
+                            format(ccx_binary, ccx_stdout, ccx_binary_sig))
+        
 
         self.solver_object = solver_object
 
