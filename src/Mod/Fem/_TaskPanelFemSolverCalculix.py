@@ -58,8 +58,10 @@ class _TaskPanelFemSolverCalculix:
         #self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem")
         startup_info = None     
         ccx_binary_sig = None  
+        ccx_stdout = None
+        ccx_stderr = None
         try:
-            p = subprocess.Popen([self.ccx_binary], stdout=subprocess.PIPE,
+            p = subprocess.Popen([self.CalculixBinary], stdout=subprocess.PIPE,
                                  stderr=subprocess.PIPE, shell=False,
                                  startupinfo=startup_info)
             ccx_stdout, ccx_stderr = p.communicate()
@@ -73,7 +75,7 @@ class _TaskPanelFemSolverCalculix:
             FreeCAD.Console.PrintError(e.message)
             raise Exception("FEM: CalculiX ccx \'{}\' output \'{}\' doesn't contain expected phrase \'{}\'. Please use ccx 2.6 or newer".
                             format(ccx_binary, ccx_stdout, ccx_binary_sig))
-        
+
 
         self.solver_object = solver_object
 
