@@ -40,7 +40,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                  analysis_obj, solver_obj,
                  mesh_obj, mat_obj,
                  fixed_obj, displacement_obj,
-                 contact_obj, planerotation_obj,
+                 contact_obj, planerotation_obj, transform_obj,
                  selfweight_obj, force_obj, pressure_obj,
                  temperature_obj, heatflux_obj, initialtemperature_obj,
                  beamsection_obj, shellthickness_obj,
@@ -52,7 +52,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             analysis_obj, solver_obj,
             mesh_obj, mat_obj,
             fixed_obj, displacement_obj,
-            contact_obj, planerotation_obj,
+            contact_obj, planerotation_obj, transform_obj,
             selfweight_obj, force_obj, pressure_obj,
             temperature_obj, heatflux_obj, initialtemperature_obj,
             beamsection_obj, shellthickness_obj,
@@ -78,6 +78,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             self.write_node_sets_constraints_planerotation(inpfile)
         if self.contact_objects:
             self.write_surfaces_contraints_contact(inpfile)
+        if self.transform_objects:
+            self.write_node_sets_constraints_transform(inpfile)
         if self.analysis_type == "thermomech" and self.temperature_objects:
             self.write_node_sets_constraints_temperature(inpfile)
 
@@ -92,6 +94,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             self.write_constraints_planerotation(inpfile)
         if self.contact_objects:
             self.write_constraints_contact(inpfile)
+        if self.transform_objects:
+            self.write_constraints_transform(inpfile)
 
         # step begin
         if self.analysis_type == "frequency":
@@ -261,6 +265,22 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         v = self.mesh_object.FemMesh.getccxVolumesByFace(ref_shape)
                         for i in v:
                             f.write("{},S{}\n".format(i[0], i[1]))
+
+    def write_node_sets_constraints_transform(self, f):
+        # get nodes
+        self.get_constraints_transform_nodes()
+        # write nodes to file
+        f.write('\n***********************************************************\n')
+        f.write('** Node sets for transform constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for femobj in self.transform_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
+            trans_obj = femobj['Object']
+            if trans_obj.Rectangular:
+                f.write('*NSET,NSET=Rect' + trans_obj.Name + '\n')
+            else:
+                f.write('*NSET,NSET=Cylin' + trans_obj.Name + '\n')
+            for n in femobj['Nodes']:
+                f.write(str(n) + ',\n')
 
     def write_node_sets_constraints_temperature(self, f):
         # get nodes
@@ -511,6 +531,21 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             fric_obj_name = femobj['Object'].Name
             f.write('*MPC\n')
             f.write('PLANE,' + fric_obj_name + '\n')
+
+    def write_constraints_transform(self,f):
+        f.write('\n***********************************************************\n')
+        f.write('** Transform Constaints\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for trans_object in self.transform_objects:
+            trans_obj = trans_object['Object']
+            if trans_obj.Rectangular:
+                f.write('*TRANSFORM, NSET=Rect' + trans_obj.Name + ', TYPE=R\n')
+                coords = rectangular_coords(trans_obj)
+                f.write(coords +'\n')
+            else:
+                f.write('*TRANSFORM, NSET=Cylin' + trans_obj.Name + ', TYPE=C\n')
+                coords = cylindrical_coords(trans_obj)
+                f.write(coords +'\n')
 
     def write_constraints_selfweight(self, f):
         f.write('\n***********************************************************\n')
@@ -828,3 +863,65 @@ def get_ccx_elset_solid_name(mat_name, solid_name=None, mat_short_name=None):
         return mat_short_name + solid_name
     else:
         return mat_name + solid_name
+
+def rectangular_coords(obj):
+    from math import cos, sin, radians
+    A = [1,0,0]
+    B = [0,1,0]
+    a_x = A[0]
+    a_y = A[1]
+    a_z = A[2]
+    b_x = A[0]
+    b_y = A[1]
+    b_z = A[2]
+    x_rot = radians(obj.X_rot)
+    y_rot = radians(obj.Y_rot)
+    z_rot = radians(obj.Z_rot)
+    if obj.X_rot!=0:
+        a_x = A[0]
+        a_y = A[1]*cos(x_rot) + A[2]*sin(x_rot)
+        a_z = A[2]*cos(x_rot) - A[1]*sin(x_rot)
+        b_x = B[0]
+        b_y = B[1]*cos(x_rot) + B[2]*sin(x_rot)
+        b_z = B[2]*cos(x_rot) - B[1]*sin(x_rot)
+        A = [a_x,a_y,a_z]
+        B = [b_x,b_y,b_z]
+    if obj.Y_rot!=0:
+        a_x = A[0]*cos(y_rot) - A[2]*sin(y_rot)
+        a_y = A[1]
+        a_z = A[2]*cos(y_rot) + A[0]*sin(y_rot)
+        b_x = B[0]*cos(y_rot) - B[2]*sin(y_rot)
+        b_y = B[1]
+        b_z = B[2]*cos(y_rot) + B[0]*sin(z_rot)
+        A = [a_x,a_y,a_z]
+        B = [b_x,b_y,b_z]
+    if obj.Z_rot!=0:
+        a_x = A[0]*cos(z_rot) + A[1]*sin(z_rot)
+        a_y = A[1]*cos(z_rot) - A[0]*sin(z_rot)
+        a_z = A[2]
+        b_x = B[0]*cos(z_rot) + B[1]*sin(z_rot)
+        b_y = B[1]*cos(z_rot) - B[0]*sin(z_rot)
+        b_z = B[2]
+        A = [a_x,a_y,a_z]
+        B = [b_x,b_y,b_z]
+
+    A_coords = str(round(A[0],4)) + ',' + str(round(A[1],4)) + ',' + str(round(A[2],4))
+    B_coords = str(round(B[0],4)) + ',' + str(round(B[1],4)) + ',' + str(round(B[2],4))
+    coords = A_coords + ',' + B_coords
+    return coords
+
+def cylindrical_coords(obj):
+    vec = obj.Axis
+    base = obj.BasePoint
+    Ax = base[0] + 10*vec[0]
+    Ay = base[1] +10*vec[1]
+    Az = base[2] + 10*vec[2]
+    Bx = base[0] - 10*vec[0]
+    By = base[1] -10*vec[1]
+    Bz = base[2] - 10*vec[2]
+    A = [Ax, Ay, Az]
+    B = [Bx, By, Bz]
+    A_coords = str(A[0]) + ',' + str(A[1]) +',' + str(A[2])
+    B_coords = str(B[0]) + ',' + str(B[1]) +',' + str(B[2])
+    coords = A_coords + ',' + B_coords
+    return coords
