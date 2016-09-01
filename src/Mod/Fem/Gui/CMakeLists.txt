@@ -71,6 +71,7 @@ set(FemGui_MOC_HDRS
     TaskFemConstraintInitialTemperature.h
     TaskFemConstraintPlaneRotation.h
     TaskFemConstraintContact.h
+    TaskFemConstraintTransform.h
     TaskTetParameter.h
     TaskAnalysisInfo.h
     TaskDriver.h
@@ -104,6 +105,7 @@ set(FemGui_UIC_SRCS
     TaskFemConstraintInitialTemperature.ui
     TaskFemConstraintPlaneRotation.ui
     TaskFemConstraintContact.ui
+    TaskFemConstraintTransform.ui
     TaskTetParameter.ui
     TaskAnalysisInfo.ui
     TaskDriver.ui
@@ -170,6 +172,9 @@ SET(FemGui_DLG_SRCS
     TaskFemConstraintContact.ui
     TaskFemConstraintContact.cpp
     TaskFemConstraintContact.h
+    TaskFemConstraintTransform.ui
+    TaskFemConstraintTransform.cpp
+    TaskFemConstraintTransform.h
 )
 SOURCE_GROUP("Constraint-Dialogs" FILES ${FemGui_DLG_SRCS})
 
@@ -226,6 +231,8 @@ SET(FemGui_SRCS_ViewProvider
     ViewProviderFemConstraintPlaneRotation.h
     ViewProviderFemConstraintContact.cpp
     ViewProviderFemConstraintContact.h
+    ViewProviderFemConstraintTransform.cpp
+    ViewProviderFemConstraintTransform.h
     ViewProviderResult.cpp
     ViewProviderResult.h
 )
