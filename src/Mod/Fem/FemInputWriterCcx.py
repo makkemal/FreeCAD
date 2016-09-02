@@ -532,7 +532,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*MPC\n')
             f.write('PLANE,' + fric_obj_name + '\n')
 
-    def write_constraints_transform(self,f):
+    def write_constraints_transform(self, f):
         f.write('\n***********************************************************\n')
         f.write('** Transform Constaints\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
@@ -541,11 +541,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             if trans_obj.Rectangular:
                 f.write('*TRANSFORM, NSET=Rect' + trans_obj.Name + ', TYPE=R\n')
                 coords = FemMeshTools.get_rectangular_coords(trans_obj)
-                f.write(coords +'\n')
+                f.write(coords + '\n')
             else:
                 f.write('*TRANSFORM, NSET=Cylin' + trans_obj.Name + ', TYPE=C\n')
                 coords = FemMeshTools.get_cylindrical_coords(trans_obj)
-                f.write(coords +'\n')
+                f.write(coords + '\n')
 
     def write_constraints_selfweight(self, f):
         f.write('\n***********************************************************\n')

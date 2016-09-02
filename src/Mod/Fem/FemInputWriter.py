@@ -45,7 +45,7 @@ class FemInputWriter():
                  analysis_obj, solver_obj,
                  mesh_obj, mat_obj,
                  fixed_obj, displacement_obj,
-                 contact_obj, planerotation_obj,transform_obj,
+                 contact_obj, planerotation_obj, transform_obj,
                  selfweight_obj, force_obj, pressure_obj,
                  temperature_obj, heatflux_obj, initialtemperature_obj,
                  beamsection_obj, shellthickness_obj,
