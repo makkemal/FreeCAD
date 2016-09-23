@@ -117,6 +117,7 @@ if(BUILD_FEM_VTK)
         ${FemGui_UIC_SRCS}
         TaskPostDisplay.ui
         TaskPostClip.ui
+        TaskPostLinearizedStresses.ui
         TaskPostScalarClip.ui
         TaskPostWarpVector.ui
         TaskPostCut.ui
@@ -268,6 +269,7 @@ if(BUILD_FEM_VTK)
         SphereWidget.ui
         LineWidget.ui
         TaskPostClip.ui
+        TaskPostLinearizedStresses.ui
         TaskPostScalarClip.ui
         TaskPostDisplay.ui
         TaskPostWarpVector.ui

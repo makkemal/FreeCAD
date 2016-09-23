@@ -51,6 +51,27 @@ void ViewProviderFemPostClip::setupTaskDialog(TaskDlgPost* dlg) {
     FemGui::ViewProviderFemPostObject::setupTaskDialog(dlg);
 }
 
+PROPERTY_SOURCE(FemGui::ViewProviderFemPostLinearizedStresses, FemGui::ViewProviderFemPostObject)
+
+ViewProviderFemPostLinearizedStresses::ViewProviderFemPostLinearizedStresses() {
+
+    sPixmap = "fem-linearizedstresses";
+}
+
+ViewProviderFemPostLinearizedStresses::~ViewProviderFemPostLinearizedStresses() {
+
+}
+
+void ViewProviderFemPostLinearizedStresses::setupTaskDialog(TaskDlgPost* dlg) {
+
+    //add the function box
+    dlg->appendBox(new TaskPostLinearizedStresses(dlg->getView(),
+                                    &static_cast<Fem::FemPostLinearizedStressesFilter*>(dlg->getView()->getObject())->Function));
+
+    //add the display options
+    FemGui::ViewProviderFemPostObject::setupTaskDialog(dlg);
+}
+
 
 PROPERTY_SOURCE(FemGui::ViewProviderFemPostScalarClip, FemGui::ViewProviderFemPostObject)
 

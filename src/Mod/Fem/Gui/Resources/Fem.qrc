@@ -40,6 +40,7 @@
         <file>icons/fem-clip.png</file>
         <file>icons/fem-clip-scalar.png</file>
         <file>icons/fem-cut.png</file>
+        <file>icons/fem-linearizedstresses.png</file>
         <file>icons/fem-isosurface.png</file>
         <file>icons/fem-warp.png</file>
         <file>icons/fem-data.png</file>

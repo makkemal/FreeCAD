@@ -97,6 +97,32 @@ private:
     vtkSmartPointer<vtkExtractGeometry>         m_extractor;
 };
 
+class AppFemExport FemPostLinearizedStressesFilter : public FemPostFilter {
+
+    PROPERTY_HEADER(Fem::FemPostLinearizedStressesFilter);
+
+public:
+    FemPostLinearizedStressesFilter(void);
+    virtual ~FemPostLinearizedStressesFilter();
+
+    App::PropertyLink           Function;
+    App::PropertyBool           InsideOut;
+    App::PropertyBool           CutCells;
+
+    virtual const char* getViewProviderName(void) const {
+        return "FemGui::ViewProviderFemPostLinearizedStresses";
+    }
+    virtual short int mustExecute(void) const;
+    virtual App::DocumentObjectExecReturn* execute(void);
+
+protected:
+    virtual void onChanged(const App::Property* prop);
+
+private:
+    vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
+    vtkSmartPointer<vtkExtractGeometry>         m_extractor;
+};
+
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {
 
     PROPERTY_HEADER(Fem::FemPostScalarClipFilter);

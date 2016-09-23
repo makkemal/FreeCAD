@@ -34,6 +34,7 @@
 class QComboBox;
 class Ui_TaskPostDisplay;
 class Ui_TaskPostClip;
+class Ui_TaskPostLinearizedStresses;
 class Ui_TaskPostScalarClip;
 class Ui_TaskPostWarpVector;
 class Ui_TaskPostCut;
@@ -161,6 +162,31 @@ private:
     App::PropertyLink* m_functionProperty;
     QWidget* proxy;
     Ui_TaskPostClip* ui;
+    FunctionWidget* fwidget;
+};
+
+class TaskPostLinearizedStresses: public TaskPostBox {
+
+    Q_OBJECT
+
+public:
+    TaskPostLinearizedStresses(Gui::ViewProviderDocumentObject* view, App::PropertyLink* function, QWidget* parent = 0);
+    virtual ~TaskPostLinearizedStresses();
+
+    virtual void applyPythonCode();
+
+private Q_SLOTS:
+    void on_CreateButton_triggered(QAction* a);
+    void on_FunctionBox_currentIndexChanged(int idx);
+    void on_InsideOut_toggled(bool val);
+    void on_CutCells_toggled(bool val);
+
+private:
+    void collectImplicitFunctions();
+
+    App::PropertyLink* m_functionProperty;
+    QWidget* proxy;
+    Ui_TaskPostLinearizedStresses* ui;
     FunctionWidget* fwidget;
 };
 
