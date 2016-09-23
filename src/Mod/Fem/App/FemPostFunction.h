@@ -31,6 +31,7 @@
 #include <vtkImplicitFunction.h>
 #include <vtkPlane.h>
 #include <vtkSphere.h>
+#include <vtkCylinder.h>
 #include <vtkBoundingBox.h>
 
 namespace Fem
@@ -127,6 +128,33 @@ protected:
     virtual void onChanged(const App::Property* prop);
 
     vtkSmartPointer<vtkSphere> m_sphere;
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////
+
+class AppFemExport FemPostLineFunction : public FemPostFunction
+{
+    PROPERTY_HEADER(Fem::FemPostLineFunction);
+
+public:
+
+    FemPostLineFunction(void);
+    virtual ~FemPostLineFunction();
+
+    App::PropertyVector           Axis;
+    App::PropertyVectorDistance   Center;
+    App::PropertyDistance         Radius;
+    App::PropertyFloatList        StressValues;
+    App::PropertyVectorList       StressPoints;
+
+    virtual const char* getViewProviderName(void) const {
+        return "FemGui::ViewProviderFemPostLineFunction";
+    }
+
+protected:
+    virtual void onChanged(const App::Property* prop);
+
+    vtkSmartPointer<vtkCylinder> m_cylinder;
 };
 
 } //namespace Fem

@@ -38,6 +38,7 @@
 #include <vtkGeometryFilter.h>
 #include <vtkVertexGlyphFilter.h>
 
+
 class SoIndexedPointSet;
 class vtkUnsignedCharArray;
 class vtkDataArray;

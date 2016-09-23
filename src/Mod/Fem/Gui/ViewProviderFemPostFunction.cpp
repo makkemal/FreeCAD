@@ -65,6 +65,7 @@
 
 #include "ui_PlaneWidget.h"
 #include "ui_SphereWidget.h"
+#include "ui_LineWidget.h"
 
 using namespace FemGui;
 
@@ -606,6 +607,144 @@ void SphereWidget::radiusChanged(double val) {
 
     if(!blockObjectUpdates()) {
         static_cast<Fem::FemPostSphereFunction*>(getObject())->Radius.setValue(ui->radius->value());
+    }
+}
+
+
+//#################################################################################################
+
+PROPERTY_SOURCE(FemGui::ViewProviderFemPostLineFunction, FemGui::ViewProviderFemPostFunction)
+
+ViewProviderFemPostLineFunction::ViewProviderFemPostLineFunction() {
+
+    sPixmap = "fem-cylinder";
+
+    setAutoScale(true);
+
+    //setup the visualisation geometry
+    SoCoordinate3* points = new SoCoordinate3();
+    points->point.setNum(4);
+    points->point.set1Value(0, -0.5, -0.5, 0);
+    points->point.set1Value(1, -0.5,  0.5, 0);
+    points->point.set1Value(2,  0.5,  0.5, 0);
+    points->point.set1Value(3,  0.5, -0.5, 0);
+    points->point.set1Value(4, -0.5, -0.5, 0);
+    SoLineSet* line = new SoLineSet();
+    getGeometryNode()->addChild(points);
+    getGeometryNode()->addChild(line);
+}
+
+ViewProviderFemPostLineFunction::~ViewProviderFemPostLineFunction() {
+
+}
+
+void ViewProviderFemPostLineFunction::draggerUpdate(SoDragger* m) {
+
+    Fem::FemPostLineFunction* func = static_cast<Fem::FemPostLineFunction*>(getObject());
+    SoCenterballDragger* dragger = static_cast<SoCenterballDragger*>(m);
+
+    // the new axis of the plane
+    SbRotation rot, scaleDir;
+    const SbVec3f& center = dragger->center.getValue();
+
+    SbVec3f norm(0,0,1);
+    dragger->rotation.getValue().multVec(norm,norm);
+    func->Center.setValue(center[0], center[1], center[2]);
+    func->Axis.setValue(norm[0],norm[1],norm[2]);
+
+    SbVec3f t = static_cast<SoCenterballManip*>(getManipulator())->translation.getValue();
+    SbVec3f rt, irt;
+    dragger->rotation.getValue().multVec(t,rt);
+    dragger->rotation.getValue().inverse().multVec(t,irt);
+}
+
+void ViewProviderFemPostLineFunction::updateData(const App::Property* p) {
+
+    Fem::FemPostLineFunction* func = static_cast<Fem::FemPostLineFunction*>(getObject());
+
+    if(!isDragging() && (p == &func->Center || p == &func->Axis)) {
+
+        Base::Vector3d trans = func->Center.getValue();
+        Base::Vector3d norm = func->Axis.getValue();
+
+        norm = norm / norm.Length();
+        SbRotation rot(SbVec3f(0.,0.,1.), SbVec3f(norm.x, norm.y, norm.z));
+
+        SbMatrix t, translate;
+        t.setRotate(rot);
+        translate.setTranslate(SbVec3f(trans.x, trans.y, trans.z));
+        t.multRight(translate);
+        getManipulator()->setMatrix(t);
+    }
+    Gui::ViewProviderDocumentObject::updateData(p);
+}
+
+
+FunctionWidget* ViewProviderFemPostLineFunction::createControlWidget() {
+    return new LineWidget();
+}
+
+
+LineWidget::LineWidget() {
+
+    ui = new Ui_LineWidget();
+    ui->setupUi(this);
+
+    connect(ui->centerX, SIGNAL(valueChanged(double)), this, SLOT(centerChanged(double)));
+    connect(ui->centerY, SIGNAL(valueChanged(double)), this, SLOT(centerChanged(double)));
+    connect(ui->centerZ, SIGNAL(valueChanged(double)), this, SLOT(centerChanged(double)));
+    connect(ui->axisX, SIGNAL(valueChanged(double)), this, SLOT(axisChanged(double)));
+    connect(ui->axisY, SIGNAL(valueChanged(double)), this, SLOT(axisChanged(double)));
+    connect(ui->axisZ, SIGNAL(valueChanged(double)), this, SLOT(axisChanged(double)));
+
+}
+
+LineWidget::~LineWidget() {
+
+}
+
+void LineWidget::applyPythonCode() {
+
+}
+
+void LineWidget::setViewProvider(ViewProviderFemPostFunction* view) {
+
+    FemGui::FunctionWidget::setViewProvider(view);
+    onChange(static_cast<Fem::FemPostLineFunction*>(getObject())->Axis);
+    onChange(static_cast<Fem::FemPostLineFunction*>(getObject())->Center);
+}
+
+void LineWidget::onChange(const App::Property& p) {
+
+    setBlockObjectUpdates(false);
+    if(strcmp(p.getName(), "Axis") == 0) {
+        const Base::Vector3d& vec = static_cast<const App::PropertyVector*>(&p)->getValue();
+        ui->axisX->setValue(vec.x);
+        ui->axisY->setValue(vec.y);
+        ui->axisZ->setValue(vec.z);
+    }
+    else if(strcmp(p.getName(), "Center") == 0) {
+        const Base::Vector3d& vec = static_cast<const App::PropertyVectorDistance*>(&p)->getValue();
+        ui->centerX->setValue(vec.x);
+        ui->centerY->setValue(vec.y);
+        ui->centerZ->setValue(vec.z);
+    }
+    setBlockObjectUpdates(false);
+}
+
+void LineWidget::axisChanged(double val) {
+
+     if(!blockObjectUpdates()) {
+        Base::Vector3d vec(ui->axisX->value(), ui->axisY->value(), ui->axisZ->value());
+        static_cast<Fem::FemPostLineFunction*>(getObject())->Axis.setValue(vec);
+     }
+}
+
+void LineWidget::centerChanged(double val) {
+
+    if(!blockObjectUpdates()) {
+        Base::Vector3d vec(ui->centerX->value(), ui->centerY->value(), ui->centerZ->value());
+        static_cast<Fem::FemPostLineFunction*>(getObject())->Center.setValue(vec);
     }
 }
 

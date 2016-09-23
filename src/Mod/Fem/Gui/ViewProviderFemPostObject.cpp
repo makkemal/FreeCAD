@@ -1,3 +1,4 @@
+
 /***************************************************************************
  *   Copyright (c) 2015 Stefan Tröger <stefantroeger@gmx.net>              *
  *                                                                         *
@@ -41,12 +42,15 @@
 #include "ViewProviderFemPostObject.h"
 #include "TaskPostBoxes.h"
 #include <Mod/Fem/App/FemPostObject.h>
+#include <Mod/Fem/App/FemPostFunction.h>
 #include <Base/Console.h>
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/Control.h>
 #include <Gui/Application.h>
 #include <Gui/Document.h>
 #include <Gui/SoFCColorBar.h>
+#include <Gui/Command.h>
+
 
 #include <vtkPointData.h>
 #include <vtkCellArray.h>
@@ -127,7 +131,7 @@ ViewProviderFemPostObject::~ViewProviderFemPostObject()
 {
     m_shapeHints->unref();
     m_coordinates->unref();
-    m_materialBinding->unref();
+    m_materialBinding->unref();    
     m_drawStyle->unref();
     m_normalBinding->unref();
     m_normals->unref();
@@ -175,7 +179,7 @@ void ViewProviderFemPostObject::attach(App::DocumentObject *pcObj)
 
     m_colorRoot->addChild(m_colorBar);
 
-    //all
+    //all 
     addDisplayMaskMode(m_seperator, "Default");
     setDisplayMaskMode("Default");
 
@@ -215,7 +219,7 @@ std::vector<std::string> ViewProviderFemPostObject::getDisplayModes(void) const
     std::vector<std::string> StrList;
     StrList.push_back("Outline");
     StrList.push_back("Nodes");
-    //StrList.push_back("Nodes (surface only)"); somehow this filter does not work
+    //StrList.push_back("Nodes (surface only)");somehow this filter does not work
     StrList.push_back("Surface");
     StrList.push_back("Surface with Edges");
     StrList.push_back("Wireframe");
@@ -270,11 +274,11 @@ void ViewProviderFemPostObject::updateProperties() {
         val = VectorMode.getValueAsString();
 
     colorArrays.clear();
-    if(Field.getValue() == 0)
+    if(Field.getValue() == 0)         
         colorArrays.push_back("Not a vector");
     else {
-        int array = Field.getValue() - 1; //0 is none
-        vtkPolyData*  pd = m_currentAlgorithm->GetOutput();
+        int array = Field.getValue() - 1; //0 is none   
+        vtkPolyData*  pd = m_currentAlgorithm->GetOutput();         
         vtkDataArray* data = pd->GetPointData()->GetArray(array);
 
         if(data->GetNumberOfComponents() == 1)
@@ -359,7 +363,7 @@ void ViewProviderFemPostObject::update3D() {
               ++soidx;
           }
           m_triangleStrips->coordIndex.set1Value(soidx, -1);
-          ++soidx;
+          ++soidx;   
       }
       m_triangleStrips->coordIndex.setNum(soidx);
       m_triangleStrips->coordIndex.finishEditing();
@@ -379,12 +383,12 @@ void ViewProviderFemPostObject::update3D() {
                 ++soidx;
             }
             m_lines->coordIndex.set1Value(soidx, -1);
-            ++soidx;
+            ++soidx;  
         }
         m_lines->coordIndex.setNum(soidx);
         m_lines->coordIndex.finishEditing();
   }
-  else
+  else 
       m_lines->coordIndex.setNum(0);
 
   // write out verts if any
@@ -469,7 +473,7 @@ void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
 
     m_material->diffuseColor.startEditing();
 
-    for (int i = 0; i < pd->GetNumberOfPoints(); i++) {
+    for (int i = 0; i < pd->GetNumberOfPoints(); i++){
 
         double value = 0;
         if(component >= 0)
@@ -494,8 +498,6 @@ void ViewProviderFemPostObject::WriteTransperency() {
     m_material->transparency.setValue(trans);
 }
 
-
-
 void ViewProviderFemPostObject::updateData(const App::Property* p) {
 
     if( strcmp(p->getName(), "Data") == 0 ) {
@@ -510,7 +512,6 @@ bool ViewProviderFemPostObject::setupPipeline() {
     if(!data)
         return false;
 
-
     m_outline->SetInputData(data);
     m_surface->SetInputData(data);
     m_wireframe->SetInputData(data);
@@ -518,7 +519,6 @@ bool ViewProviderFemPostObject::setupPipeline() {
 
     return true;
 }
-
 
 void ViewProviderFemPostObject::onChanged(const App::Property* prop) {
 
@@ -530,7 +530,7 @@ void ViewProviderFemPostObject::onChanged(const App::Property* prop) {
         updateProperties();
         WriteColorData(ResetColorBarRange);
         WriteTransperency();
-    }
+    } 
     else if(prop == &VectorMode && setupPipeline()) {
         WriteColorData(ResetColorBarRange);
         WriteTransperency();

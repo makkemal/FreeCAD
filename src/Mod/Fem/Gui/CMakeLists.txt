@@ -117,11 +117,13 @@ if(BUILD_FEM_VTK)
         ${FemGui_UIC_SRCS}
         TaskPostDisplay.ui
         TaskPostClip.ui
+        TaskPostLinearizedStresses.ui
         TaskPostScalarClip.ui
         TaskPostWarpVector.ui
         TaskPostCut.ui
         PlaneWidget.ui
         SphereWidget.ui
+        LineWidget.ui
     )
 endif(BUILD_FEM_VTK)
 qt4_wrap_ui(FemGui_UIC_HDRS ${FemGui_UIC_SRCS})
@@ -265,7 +267,9 @@ if(BUILD_FEM_VTK)
         ${FemGui_SRCS_TaskBoxes}
         PlaneWidget.ui
         SphereWidget.ui
+        LineWidget.ui
         TaskPostClip.ui
+        TaskPostLinearizedStresses.ui
         TaskPostScalarClip.ui
         TaskPostDisplay.ui
         TaskPostWarpVector.ui

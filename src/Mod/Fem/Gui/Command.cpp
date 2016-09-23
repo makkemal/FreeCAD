@@ -1122,6 +1122,29 @@ bool CmdFemPostCreateClipFilter::isActive(void)
 {
     return hasActiveDocument();
 }
+DEF_STD_CMD_A(CmdFemPostLinearizedStressesFilter);
+
+CmdFemPostLinearizedStressesFilter::CmdFemPostLinearizedStressesFilter()
+  : Command("Fem_PostCreateLinearizedStressesFilter")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("LinearizedStresses the data along an implicit function");
+    sToolTipText    = QT_TR_NOOP("LinearizedStresses the data along an implicit function");
+    sWhatsThis      = "Fem_PostCreateLinearizedStressesFilter";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-linearizedstresses";
+}
+
+void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
+{
+    setupFilter(this, "LinearizedStresses");
+}
+
+bool CmdFemPostLinearizedStressesFilter::isActive(void)
+{
+    return hasActiveDocument();
+}
 
 DEF_STD_CMD_A(CmdFemPostCreateScalarClipFilter);
 
@@ -1200,6 +1223,125 @@ bool CmdFemPostCutFilter::isActive(void)
 // #####################################################################################################
 
 
+DEF_STD_CMD_ACL(CmdFemPostLineFunctions);
+
+CmdFemPostLineFunctions::CmdFemPostLineFunctions()
+  : Command("Fem_PostCreateLineFunction")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Functions for use in postprocessing filter...");
+    sToolTipText    = QT_TR_NOOP("Functions for use in postprocessing filter...");
+    sWhatsThis      = "Fem_PostCreateLineFunction";
+    sStatusTip      = sToolTipText;
+    eType           = eType|ForEdit;
+}
+
+void CmdFemPostLineFunctions::activated(int iMsg)
+{
+
+    std::string name;
+    name = "Line";
+
+    //create the object
+    std::vector<Fem::FemPostPipeline*> pipelines = App::GetApplication().getActiveDocument()->getObjectsOfType<Fem::FemPostPipeline>();
+    if (!pipelines.empty()) {
+        Fem::FemPostPipeline *pipeline = pipelines.front();
+
+        openCommand("Create function");
+
+        //check if the pipeline has a filter provider and add one if needed
+        Fem::FemPostFunctionProvider* provider;
+        if(!pipeline->Functions.getValue() || pipeline->Functions.getValue()->getTypeId() != Fem::FemPostFunctionProvider::getClassTypeId()) {
+            std::string FuncName = getUniqueObjectName("Functions");
+            doCommand(Doc,"App.ActiveDocument.addObject('Fem::FemPostFunctionProvider','%s')", FuncName.c_str());
+            doCommand(Doc,"App.ActiveDocument.%s.Functions = App.ActiveDocument.%s", pipeline->getNameInDocument(), FuncName.c_str());
+            provider = static_cast<Fem::FemPostFunctionProvider*>(getDocument()->getObject(FuncName.c_str()));
+        }
+        else
+            provider = static_cast<Fem::FemPostFunctionProvider*>(pipeline->Functions.getValue());
+
+        //build the object
+        std::string FeatName = getUniqueObjectName(name.c_str());
+        doCommand(Doc,"App.activeDocument().addObject('Fem::FemPost%sFunction','%s')", name.c_str(), FeatName.c_str());
+        doCommand(Doc,"__list__ = App.ActiveDocument.%s.Functions", provider->getNameInDocument());
+        doCommand(Doc,"__list__.append(App.ActiveDocument.%s)", FeatName.c_str());
+        doCommand(Doc,"App.ActiveDocument.%s.Functions = __list__", provider->getNameInDocument());
+        doCommand(Doc,"del __list__");
+
+        //set the default values, for this get the bounding box
+        vtkBoundingBox box = pipeline->getBoundingBox();
+
+        double center[3];
+        box.GetCenter(center);
+
+        doCommand(Doc,"App.ActiveDocument.%s.Center = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
+                                    center[1], center[2]);
+
+        this->updateActive();
+        //most of the times functions are added inside of a filter, make sure this still works
+        if(Gui::Application::Instance->activeDocument()->getInEdit() == NULL)
+            doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());
+    }
+    else {
+        QMessageBox::warning(Gui::getMainWindow(),
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Wrong selection"),
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Select a pipeline, please."));
+    }
+
+    // Since the default icon is reset when enabing/disabling the command we have
+    // to explicitly set the icon of the used command.
+    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
+    QList<QAction*> a = pcAction->actions();
+
+    assert(iMsg < a.size());
+    pcAction->setIcon(a[iMsg]->icon());
+}
+
+Gui::Action * CmdFemPostLineFunctions::createAction(void)
+{
+    Gui::ActionGroup* pcAction = new Gui::ActionGroup(this, Gui::getMainWindow());
+    pcAction->setDropDownMenu(true);
+    applyCommandData(this->className(), pcAction);
+
+    QAction* cmd0 = pcAction->addAction(QString());
+    cmd0->setIcon(Gui::BitmapFactory().pixmap("fem-cylinder"));
+
+    _pcAction = pcAction;
+    languageChange();
+
+    int defaultId = 0;
+    pcAction->setProperty("defaultAction", QVariant(defaultId));
+
+    return pcAction;
+}
+
+void CmdFemPostLineFunctions::languageChange()
+{
+    Command::languageChange();
+
+    if (!_pcAction)
+        return;
+    Gui::ActionGroup* pcAction = qobject_cast<Gui::ActionGroup*>(_pcAction);
+    QList<QAction*> a = pcAction->actions();
+
+    QAction* cmd = a[0];
+    cmd->setText(QApplication::translate("CmdFemPostLineFunctions","Line"));
+    cmd->setToolTip(QApplication::translate("Fem_PostCreateLineFunction","Create a Line function, defined by its center and axis"));
+    cmd->setStatusTip(cmd->toolTip());
+}
+
+bool CmdFemPostLineFunctions::isActive(void)
+{
+    if (getActiveGuiDocument())
+        return true;
+    else
+        return false;
+}
+
+// #####################################################################################################
+
+
 DEF_STD_CMD_ACL(CmdFemPostFunctions);
 
 CmdFemPostFunctions::CmdFemPostFunctions()
@@ -1266,7 +1408,6 @@ void CmdFemPostFunctions::activated(int iMsg)
             doCommand(Doc,"App.ActiveDocument.%s.Radius = %f", FeatName.c_str(), box.GetDiagonalLength()/2);
         }
 
-
         this->updateActive();
         //most of the times functions are added inside of a filter, make sure this still works
         if(Gui::Application::Instance->activeDocument()->getInEdit() == NULL)
@@ -1325,9 +1466,8 @@ void CmdFemPostFunctions::languageChange()
 
     cmd = a[1];
     cmd->setText(QApplication::translate("CmdFemPostFunctions","Sphere"));
-    cmd->setToolTip(QApplication::translate("Fem_PostCreateFunctions","Create a phere function, defined by its center and radius"));
+    cmd->setToolTip(QApplication::translate("Fem_PostCreateFunctions","Create a sphere function, defined by its center and radius"));
     cmd->setStatusTip(cmd->toolTip());
-
 }
 
 bool CmdFemPostFunctions::isActive(void)
@@ -1456,9 +1596,11 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintTransform());
 #ifdef FC_USE_VTK
     rcCmdMgr.addCommand(new CmdFemPostCreateClipFilter);
+    rcCmdMgr.addCommand(new CmdFemPostLinearizedStressesFilter);
     rcCmdMgr.addCommand(new CmdFemPostCreateScalarClipFilter);
     rcCmdMgr.addCommand(new CmdFemPostWarpVectorFilter);
     rcCmdMgr.addCommand(new CmdFemPostFunctions);
+    rcCmdMgr.addCommand(new CmdFemPostLineFunctions);
     rcCmdMgr.addCommand(new CmdFemPostApllyChanges);
     rcCmdMgr.addCommand(new CmdFemPostPipelineFromResult);
     rcCmdMgr.addCommand(new CmdFemPostCutFilter);

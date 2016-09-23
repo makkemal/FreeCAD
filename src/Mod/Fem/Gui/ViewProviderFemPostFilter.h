@@ -42,6 +42,19 @@ protected:
     virtual void setupTaskDialog(TaskDlgPost* dlg);
 };
 
+class FemGuiExport ViewProviderFemPostLinearizedStresses : public ViewProviderFemPostObject {
+
+    PROPERTY_HEADER(FemGui::ViewProviderFemPostLinearizedStresses);
+
+public:
+    /// constructor.
+    ViewProviderFemPostLinearizedStresses();
+    ~ViewProviderFemPostLinearizedStresses();
+
+protected:
+    virtual void setupTaskDialog(TaskDlgPost* dlg);
+};
+
 class FemGuiExport ViewProviderFemPostScalarClip : public ViewProviderFemPostObject {
 
     PROPERTY_HEADER(FemGui::ViewProviderFemPostScalarClip);
