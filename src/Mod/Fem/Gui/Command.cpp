@@ -1222,6 +1222,8 @@ void CmdFemPostFunctions::activated(int iMsg)
         name = "Plane";
     else if (iMsg==1)
         name = "Sphere";
+    else if (iMsg==2)
+        name = "Line";
     else
         return;
 
@@ -1265,6 +1267,9 @@ void CmdFemPostFunctions::activated(int iMsg)
                       center[1] + box.GetLength(1)/2, center[2] + box.GetLength(2)/2);
             doCommand(Doc,"App.ActiveDocument.%s.Radius = %f", FeatName.c_str(), box.GetDiagonalLength()/2);
         }
+        else if (iMsg==2)
+            doCommand(Doc,"App.ActiveDocument.%s.Center = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
+                                    center[1], center[2]);
 
 
         this->updateActive();
@@ -1299,10 +1304,14 @@ Gui::Action * CmdFemPostFunctions::createAction(void)
     QAction* cmd1 = pcAction->addAction(QString());
     cmd1->setIcon(Gui::BitmapFactory().pixmap("fem-sphere"));
 
+    QAction* cmd2 = pcAction->addAction(QString());
+    cmd2->setIcon(Gui::BitmapFactory().pixmap("fem-cylinder"));
+
     _pcAction = pcAction;
     languageChange();
 
     pcAction->setIcon(cmd1->icon());
+    pcAction->setIcon(cmd2->icon());
     int defaultId = 0;
     pcAction->setProperty("defaultAction", QVariant(defaultId));
 
@@ -1325,9 +1334,13 @@ void CmdFemPostFunctions::languageChange()
 
     cmd = a[1];
     cmd->setText(QApplication::translate("CmdFemPostFunctions","Sphere"));
-    cmd->setToolTip(QApplication::translate("Fem_PostCreateFunctions","Create a phere function, defined by its center and radius"));
+    cmd->setToolTip(QApplication::translate("Fem_PostCreateFunctions","Create a sphere function, defined by its center and radius"));
     cmd->setStatusTip(cmd->toolTip());
 
+    cmd = a[2];
+    cmd->setText(QApplication::translate("CmdFemPostFunctions","Line"));
+    cmd->setToolTip(QApplication::translate("Fem_PostCreateFunctions","Create a Line function, defined by its center and axis"));
+    cmd->setStatusTip(cmd->toolTip());
 }
 
 bool CmdFemPostFunctions::isActive(void)
@@ -1359,6 +1372,10 @@ void CmdFemPostApllyChanges::activated(int iMsg)
     ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Fem");
 
     if (iMsg == 1)
+        hGrp->SetBool("PostAutoRecompute", true);
+    else
+        hGrp->SetBool("PostAutoRecompute", false);
+    if (iMsg == 2)
         hGrp->SetBool("PostAutoRecompute", true);
     else
         hGrp->SetBool("PostAutoRecompute", false);

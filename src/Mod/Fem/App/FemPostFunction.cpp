@@ -129,3 +129,42 @@ void FemPostSphereFunction::onChanged(const Property* prop) {
 
     Fem::FemPostFunction::onChanged(prop);
 }
+
+
+PROPERTY_SOURCE(Fem::FemPostLineFunction, Fem::FemPostFunction)
+
+FemPostLineFunction::FemPostLineFunction(void): FemPostFunction() {
+
+    ADD_PROPERTY(Radius,(0.1));
+    ADD_PROPERTY(Center,(Base::Vector3d(0.0,0.0,0.0)));
+    ADD_PROPERTY(Axis,(Base::Vector3d(0.0,0.0,1.0)));
+    ADD_PROPERTY_TYPE(StressValues,(0), "Fem",Prop_None,"List of stress values");
+
+    m_cylinder = vtkSmartPointer<vtkCylinder>::New();
+    m_implicit = m_cylinder;
+
+    m_cylinder->SetCenter(0., 0., 0.);
+    m_cylinder->SetAxis(0., 0., 1.);
+    m_cylinder->SetRadius(0.1);
+}
+
+FemPostLineFunction::~FemPostLineFunction() {
+
+}
+
+void FemPostLineFunction::onChanged(const Property* prop) {
+
+    if(prop == &Center) {
+        const Base::Vector3d& vec = Center.getValue();
+        m_cylinder->SetCenter(vec[0], vec[1], vec[2]);
+    }
+    else if(prop == &Axis) {
+        const Base::Vector3d& vec = Axis.getValue();
+        m_cylinder->SetAxis(vec[0], vec[1], vec[2]);
+    }
+    else if(prop == &Radius) {
+        m_cylinder->SetRadius(Radius.getValue());
+    }
+
+    Fem::FemPostFunction::onChanged(prop);
+}

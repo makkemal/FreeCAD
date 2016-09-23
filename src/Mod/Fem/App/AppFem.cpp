@@ -179,6 +179,7 @@ PyMODINIT_FUNC initFem()
     Fem::FemPostFunctionProvider    ::init();
     Fem::FemPostPlaneFunction       ::init();
     Fem::FemPostSphereFunction      ::init();
+    Fem::FemPostLineFunction        ::init();
     Fem::PropertyPostDataObject     ::init();
 #endif
 }

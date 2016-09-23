@@ -44,9 +44,9 @@
         <file>icons/fem-warp.png</file>
         <file>icons/fem-data.png</file>
         <file>icons/fem-plane.svg</file>
+        <file>icons/fem-cylinder.svg</file>
         <file>icons/fem-box.svg</file>
         <file>icons/fem-sphere.svg</file>
-        <file>icons/fem-cylinder.svg</file>
         <file>translations/Fem_af.qm</file>
         <file>translations/Fem_de.qm</file>
         <file>translations/Fem_fi.qm</file> 

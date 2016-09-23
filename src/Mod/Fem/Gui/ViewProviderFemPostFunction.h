@@ -60,6 +60,7 @@ class SoDragger;
 class SoSphere;
 class Ui_PlaneWidget;
 class Ui_SphereWidget;
+class Ui_LineWidget;
 
 namespace FemGui
 {
@@ -230,6 +231,41 @@ public:
     virtual ~ViewProviderFemPostSphereFunction();
 
     virtual SoTransformManip* setupManipulator();
+    virtual FunctionWidget* createControlWidget();
+
+protected:
+    virtual void draggerUpdate(SoDragger* mat);
+    virtual void updateData(const App::Property*);
+};
+//###############################################################################################
+
+class FemGuiExport LineWidget : public FunctionWidget {
+
+    Q_OBJECT
+public:
+    LineWidget();
+    virtual ~LineWidget();
+
+    virtual void applyPythonCode();
+    virtual void onChange(const App::Property& p);
+    virtual void setViewProvider(ViewProviderFemPostFunction* view);
+
+private Q_SLOTS:
+    void centerChanged(double val);
+    void axisChanged(double val);
+
+private:
+    Ui_LineWidget* ui;
+};
+
+class FemGuiExport ViewProviderFemPostLineFunction : public ViewProviderFemPostFunction {
+
+    PROPERTY_HEADER(FemGui::ViewProviderFemPostLineFunction);
+
+public:
+    ViewProviderFemPostLineFunction();
+    virtual ~ViewProviderFemPostLineFunction();
+
     virtual FunctionWidget* createControlWidget();
 
 protected:

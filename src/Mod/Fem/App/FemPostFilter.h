@@ -33,6 +33,7 @@
 #include <vtkGeometryFilter.h>
 #include <vtkPassThrough.h>
 #include <vtkPlane.h>
+#include <vtkCylinder.h>
 #include <vtkWarpVector.h>
 #include <vtkCutter.h>
 
@@ -95,7 +96,6 @@ private:
     vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
     vtkSmartPointer<vtkExtractGeometry>         m_extractor;
 };
-
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {
 
