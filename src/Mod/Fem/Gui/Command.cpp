@@ -1122,26 +1122,26 @@ bool CmdFemPostCreateClipFilter::isActive(void)
 {
     return hasActiveDocument();
 }
-DEF_STD_CMD_A(CmdFemPostCreateLinearizedStressesFilter);
+DEF_STD_CMD_A(CmdFemPostLinearizedStressesFilter);
 
-CmdFemPostCreateLinearizedStressesFilter::CmdFemPostCreateLinearizedStressesFilter()
+CmdFemPostLinearizedStressesFilter::CmdFemPostLinearizedStressesFilter()
   : Command("Fem_PostCreateLinearizedStressesFilter")
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Define/create a linearizedstresses filter which uses functions to define the linearizedstresses region");
-    sToolTipText    = QT_TR_NOOP("Define/create a linearizedstresses filter which uses functions to define the linearizedstresses region");
+    sMenuText       = QT_TR_NOOP("LinearizedStresses the data along an implicit function");
+    sToolTipText    = QT_TR_NOOP("LinearizedStresses the data along an implicit function");
     sWhatsThis      = "Fem_PostCreateLinearizedStressesFilter";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-linearizedstresses";
 }
 
-void CmdFemPostCreateLinearizedStressesFilter::activated(int iMsg)
+void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
 {
     setupFilter(this, "LinearizedStresses");
 }
 
-bool CmdFemPostCreateLinearizedStressesFilter::isActive(void)
+bool CmdFemPostLinearizedStressesFilter::isActive(void)
 {
     return hasActiveDocument();
 }
@@ -1275,10 +1275,8 @@ void CmdFemPostLineFunctions::activated(int iMsg)
         double center[3];
         box.GetCenter(center);
 
-        if (iMsg==0)
-            doCommand(Doc,"App.ActiveDocument.%s.Center = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
+        doCommand(Doc,"App.ActiveDocument.%s.Center = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
                                     center[1], center[2]);
-
 
         this->updateActive();
         //most of the times functions are added inside of a filter, make sure this still works
@@ -1287,8 +1285,8 @@ void CmdFemPostLineFunctions::activated(int iMsg)
     }
     else {
         QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("CmdFemPostCreateLinearizedStressesFilter", "Wrong selection"),
-            qApp->translate("CmdFemPostCreateLinearizedStressesFilter", "Select a pipeline, please."));
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Wrong selection"),
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Select a pipeline, please."));
     }
 
     // Since the default icon is reset when enabing/disabling the command we have
@@ -1421,8 +1419,8 @@ void CmdFemPostLinePipelineFromResult::activated(int iMsg)
     }
     else {
         QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("CmdFemPostCreateLinearizedStressesFilter", "Wrong selection"),
-            qApp->translate("CmdFemPostCreateLinearizedStressesFilter", "Select a result, please."));
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Wrong selection"),
+            qApp->translate("CmdFemPostLinearizedStressesFilter", "Select a result, please."));
     }
 }
 
@@ -1688,7 +1686,7 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintTransform());
 #ifdef FC_USE_VTK
     rcCmdMgr.addCommand(new CmdFemPostCreateClipFilter);
-    rcCmdMgr.addCommand(new CmdFemPostCreateLinearizedStressesFilter);
+    rcCmdMgr.addCommand(new CmdFemPostLinearizedStressesFilter);
     rcCmdMgr.addCommand(new CmdFemPostCreateScalarClipFilter);
     rcCmdMgr.addCommand(new CmdFemPostWarpVectorFilter);
     rcCmdMgr.addCommand(new CmdFemPostFunctions);

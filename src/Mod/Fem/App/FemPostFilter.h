@@ -106,8 +106,6 @@ public:
     virtual ~FemPostLinearizedStressesFilter();
 
     App::PropertyLink           Function;
-    App::PropertyBool           InsideOut;
-    App::PropertyBool           CutCells;
 
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostLinearizedStresses";
@@ -119,8 +117,7 @@ protected:
     virtual void onChanged(const App::Property* prop);
 
 private:
-    vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
-    vtkSmartPointer<vtkExtractGeometry>         m_extractor;
+    vtkSmartPointer<vtkCutter>   m_cutter;
 };
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {

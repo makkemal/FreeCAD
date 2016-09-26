@@ -72,7 +72,6 @@ void ViewProviderFemPostLinearizedStresses::setupTaskDialog(TaskDlgPost* dlg) {
     FemGui::ViewProviderFemPostObject::setupTaskDialog(dlg);
 }
 
-
 PROPERTY_SOURCE(FemGui::ViewProviderFemPostScalarClip, FemGui::ViewProviderFemPostObject)
 
 ViewProviderFemPostScalarClip::ViewProviderFemPostScalarClip() {
