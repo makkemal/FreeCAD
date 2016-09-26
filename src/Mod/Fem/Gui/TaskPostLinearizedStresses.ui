@@ -68,6 +68,20 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
+      <widget class="QCheckBox" name="InsideOut">
+       <property name="text">
+        <string>Inside Out</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="CutCells">
+       <property name="text">
+        <string>Cut Cells</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QToolButton" name="PlotValues">
        <property name="text">
         <string>Plot Values</string>

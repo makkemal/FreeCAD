@@ -388,6 +388,10 @@ TaskPostLinearizedStresses::TaskPostLinearizedStresses(ViewProviderDocumentObjec
     Gui::CommandManager &rcCmdMgr = Gui::Application::Instance->commandManager();
     rcCmdMgr.getCommandByName("Fem_PostCreateLineFunction")->getAction()->addTo(ui->CreateButton);
     ui->CreateButton->setPopupMode(QToolButton::InstantPopup);
+
+    //load the default values
+    ui->CutCells->setChecked(static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.getValue());
+    ui->InsideOut->setChecked(static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.getValue());
 }
 
 TaskPostLinearizedStresses::~TaskPostLinearizedStresses() {
@@ -460,6 +464,18 @@ void TaskPostLinearizedStresses::on_FunctionBox_currentIndexChanged(int idx) {
         fwidget->setViewProvider(static_cast<FemGui::ViewProviderFemPostFunction*>(view));
         ui->Container->layout()->addWidget(fwidget);
     }
+    recompute();
+}
+
+void TaskPostLinearizedStresses::on_CutCells_toggled(bool val) {
+
+    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.setValue(val);
+    recompute();
+}
+
+void TaskPostLinearizedStresses::on_InsideOut_toggled(bool val) {
+
+    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.setValue(val);
     recompute();
 }
 

@@ -178,6 +178,8 @@ public:
 private Q_SLOTS:
     void on_CreateButton_triggered(QAction* a);
     void on_FunctionBox_currentIndexChanged(int idx);
+    void on_InsideOut_toggled(bool val);
+    void on_CutCells_toggled(bool val);
 
 private:
     void collectImplicitFunctions();

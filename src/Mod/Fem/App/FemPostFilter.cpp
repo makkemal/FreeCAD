@@ -175,14 +175,24 @@ PROPERTY_SOURCE(Fem::FemPostLinearizedStressesFilter, Fem::FemPostFilter)
 
 FemPostLinearizedStressesFilter::FemPostLinearizedStressesFilter(void) : FemPostFilter() {
 
-    ADD_PROPERTY_TYPE(Function, (0), "LinearizedStresses", App::Prop_None, "The function object which defines the clip cut function");
+    ADD_PROPERTY_TYPE(Function, (0), "LinearizedStresses", App::Prop_None, "The function object which defines the clip regions");
+    ADD_PROPERTY_TYPE(InsideOut, (true), "LinearizedStresses", App::Prop_None, "Invert the clip direction");
+    ADD_PROPERTY_TYPE(CutCells, (true), "LinearizedStresses", App::Prop_None, "Decides if cells are cuttet and interpolated or if the cells are kept as a whole");
 
     FilterPipeline clip;
-    m_cutter            = vtkSmartPointer<vtkCutter>::New();
-    clip.source         = m_cutter;
-    clip.target         = m_cutter;
-    addFilterPipeline(clip, "cut");
-    setActiveFilterPipeline("cut");
+    m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
+    clip.source         = m_clipper;
+    clip.target         = m_clipper;
+    addFilterPipeline(clip, "clip");
+
+    FilterPipeline extr;
+    m_extractor         = vtkSmartPointer<vtkExtractGeometry>::New();
+    extr.source         = m_extractor;
+    extr.target         = m_extractor;
+    addFilterPipeline(extr, "extract");
+
+    m_extractor->SetExtractInside(0);
+    setActiveFilterPipeline("extract");
 }
 
 FemPostLinearizedStressesFilter::~FemPostLinearizedStressesFilter() {
@@ -194,16 +204,31 @@ void FemPostLinearizedStressesFilter::onChanged(const Property* prop) {
     if(prop == &Function) {
 
         if(Function.getValue() && Function.getValue()->isDerivedFrom(FemPostFunction::getClassTypeId())) {
-            m_cutter->SetCutFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
-         }
+            m_clipper->SetClipFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
+            m_extractor->SetImplicitFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
+        }
     }
+    else if(prop == &InsideOut) {
+
+        m_clipper->SetInsideOut(InsideOut.getValue());
+        m_extractor->SetExtractInside( (InsideOut.getValue()) ? 1 : 0 );
+    }
+    else if(prop == &CutCells) {
+
+        if(!CutCells.getValue())
+            setActiveFilterPipeline("extract");
+        else
+            setActiveFilterPipeline("clip");
+    };
 
     Fem::FemPostFilter::onChanged(prop);
 }
 
 short int FemPostLinearizedStressesFilter::mustExecute(void) const {
 
-    if(Function.isTouched()) {
+    if(Function.isTouched() ||
+       InsideOut.isTouched() ||
+       CutCells.isTouched()) {
 
         return 1;
     }
@@ -212,7 +237,7 @@ short int FemPostLinearizedStressesFilter::mustExecute(void) const {
 
 DocumentObjectExecReturn* FemPostLinearizedStressesFilter::execute(void) {
 
-    if(!m_cutter->GetCutFunction())
+    if(!m_extractor->GetImplicitFunction())
         return StdReturn;
 
     return Fem::FemPostFilter::execute();
