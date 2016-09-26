@@ -145,6 +145,7 @@ public:
     App::PropertyVectorDistance   Center;
     App::PropertyDistance         Radius;
     App::PropertyFloatList        StressValues;
+    App::PropertyVectorList       StressPoints;
 
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostLineFunction";

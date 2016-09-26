@@ -176,8 +176,8 @@ PROPERTY_SOURCE(Fem::FemPostLinearizedStressesFilter, Fem::FemPostFilter)
 FemPostLinearizedStressesFilter::FemPostLinearizedStressesFilter(void) : FemPostFilter() {
 
     ADD_PROPERTY_TYPE(Function, (0), "LinearizedStresses", App::Prop_None, "The function object which defines the clip regions");
-    ADD_PROPERTY_TYPE(InsideOut, (false), "LinearizedStresses", App::Prop_None, "Invert the clip direction");
-    ADD_PROPERTY_TYPE(CutCells, (false), "LinearizedStresses", App::Prop_None, "Decides if cells are cuttet and interpolated or if the cells are kept as a whole");
+    ADD_PROPERTY_TYPE(InsideOut, (true), "LinearizedStresses", App::Prop_None, "Invert the clip direction");
+    ADD_PROPERTY_TYPE(CutCells, (true), "LinearizedStresses", App::Prop_None, "Decides if cells are cuttet and interpolated or if the cells are kept as a whole");
 
     FilterPipeline linearizedstresses;
     m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();

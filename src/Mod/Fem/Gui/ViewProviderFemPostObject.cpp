@@ -326,7 +326,6 @@ void ViewProviderFemPostObject::update3D() {
     WritePointData(points, normals, tcoords);
     bool ResetColorBarRange = true;
     WriteColorData(ResetColorBarRange);
-    WriteColorData1(ResetColorBarRange);
     WriteTransperency();
 
     // write out polys if any
@@ -492,68 +491,7 @@ void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
     m_materialBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
     m_materialBinding->touch();
 }
-void ViewProviderFemPostObject::WriteColorData1(bool ResetColorBarRange) {
 
-    if(!setupPipeline())
-        return;
-
-    if(Field.getEnumVector().empty() || Field.getValue() == 0) {
-
-        m_material->diffuseColor.setValue(SbColor(0.8,0.8,0.8));
-        m_material->transparency.setValue(0.);
-        m_materialBinding->value = SoMaterialBinding::OVERALL;
-        m_materialBinding->touch();  
-        return;
-    };
-
-
-    int array = Field.getValue() - 1; //0 is none
-    vtkPolyData*  pd = m_currentAlgorithm->GetOutput();
-    vtkDataArray* data = pd->GetPointData()->GetArray(array);
-
-    int component = VectorMode.getValue() - 1; //0 is either "Not a vector" or magnitude, for -1 is correct for magnitude. x y and z are one number too high
-    if(strcmp(VectorMode.getValueAsString(), "Not a vector")==0)
-        component = 0;
-
-    //build the lookuptable
-    if (ResetColorBarRange == true) {
-        double range[2];
-        data->GetRange(range, component);
-        m_colorBar->setRange(range[0], range[1]);
-    }
-
-    m_material->diffuseColor.startEditing();
-    double tot = 0;
-
-    std::vector<double> mylist;
-
-    Gui::Command::doCommand(Gui::Command::Doc,"m = []");    
-
-    for (int i = 0; i < pd->GetNumberOfPoints(); i++){
-
-        double value = 0;
-        if(component >= 0)
-            value = data->GetComponent(i, component);
-        else {
-            for(int j=0; j<data->GetNumberOfComponents(); ++j)
-                value += std::pow(data->GetComponent(i, j),2);
-
-            value = std::sqrt(value);
-        }
-        App::Color c = m_colorBar->getColor(value);
-        m_material->diffuseColor.set1Value(i, c.r, c.g, c.b);
-        Gui::Command::doCommand(Gui::Command::Doc,"m.append(%f)",value);
-        tot = tot +1;
-        mylist.push_back(value);
-        
-        
-    }
-    Gui::Command::doCommand(Gui::Command::Doc,"len = %f",tot);
-    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.Line.StressValues = m");
-    m_material->diffuseColor.finishEditing();
-    m_materialBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
-    m_materialBinding->touch();
-}
 void ViewProviderFemPostObject::WriteTransperency() {
 
     float trans = float(Transperency.getValue()) / 100.;
@@ -591,12 +529,10 @@ void ViewProviderFemPostObject::onChanged(const App::Property* prop) {
     if(prop == &Field && setupPipeline()) {
         updateProperties();
         WriteColorData(ResetColorBarRange);
-        WriteColorData1(ResetColorBarRange);
         WriteTransperency();
     } 
     else if(prop == &VectorMode && setupPipeline()) {
         WriteColorData(ResetColorBarRange);
-        WriteColorData1(ResetColorBarRange);
         WriteTransperency();
     }
     else if(prop == &Transperency) {
@@ -682,5 +618,4 @@ void ViewProviderFemPostObject::show(void) {
 void ViewProviderFemPostObject::OnChange(Base::Subject< int >& rCaller, int rcReason) {
     bool ResetColorBarRange = false;
     WriteColorData(ResetColorBarRange);
-    WriteColorData1(ResetColorBarRange);
 }

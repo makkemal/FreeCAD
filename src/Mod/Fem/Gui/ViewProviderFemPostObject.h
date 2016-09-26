@@ -151,7 +151,6 @@ private:
     void WritePointData(vtkPoints *points, vtkDataArray *normals,
                         vtkDataArray *tcoords);
     void WriteColorData(bool ResetColorBarRange);
-    void WriteColorData1(bool ResetColorBarRange);
     void WriteTransperency();
     
     App::Enumeration m_coloringEnum, m_vectorEnum;   
