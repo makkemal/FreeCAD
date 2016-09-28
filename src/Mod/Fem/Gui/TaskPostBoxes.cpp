@@ -390,8 +390,9 @@ TaskPostLinearizedStresses::TaskPostLinearizedStresses(ViewProviderDocumentObjec
     ui->CreateButton->setPopupMode(QToolButton::InstantPopup);
 
     //load the default values
-    ui->CutCells->setChecked(static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.getValue());
-    ui->InsideOut->setChecked(static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.getValue());
+    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.setValue(1);
+    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.setValue(1);
+    recompute();
 }
 
 TaskPostLinearizedStresses::~TaskPostLinearizedStresses() {
@@ -466,19 +467,6 @@ void TaskPostLinearizedStresses::on_FunctionBox_currentIndexChanged(int idx) {
     }
     recompute();
 }
-
-void TaskPostLinearizedStresses::on_CutCells_toggled(bool val) {
-
-    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.setValue(val);
-    recompute();
-}
-
-void TaskPostLinearizedStresses::on_InsideOut_toggled(bool val) {
-
-    static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.setValue(val);
-    recompute();
-}
-
 //############################################################################################
 
 TaskPostScalarClip::TaskPostScalarClip(ViewProviderDocumentObject* view, QWidget* parent) :
