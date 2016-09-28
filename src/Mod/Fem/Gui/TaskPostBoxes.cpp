@@ -467,6 +467,79 @@ void TaskPostLinearizedStresses::on_FunctionBox_currentIndexChanged(int idx) {
     }
     recompute();
 }
+void TaskPostLinearizedStresses::on_PlotValues_clicked() {
+
+    Gui::Command::doCommand(Gui::Command::Doc,LinearCalcs().c_str());
+    recompute();
+}
+
+std::string TaskPostLinearizedStresses::LinearCalcs() {
+
+    return "t=0\n\
+for i in range(len(StressPoints)):\n\
+        for j in range(len(StressPoints)):\n\
+                if i != j:\n\
+                        d = ((StressPoints[i][0]-StressPoints[j][0])**2 + (StressPoints[i][1]-StressPoints[j][1])**2 + (StressPoints[i][2]-StressPoints[j][2])**2)**0.5\n\
+                        if d>t:\n\
+                                t = d\n\
+                                x = StressPoints[i][0]\n\
+                                y = StressPoints[i][1]\n\
+                                z = StressPoints[i][2]\n\
+                                first = [i,x,y,z]\n\
+coords = [first]\n\
+for i in range(len(StressPoints)):\n\
+        p = 0\n\
+        for j in range(len(coords)):\n\
+                if ((coords[j][1]-StressPoints[i][0])**2 + (coords[j][2]-StressPoints[i][1])**2 + (coords[j][3]-StressPoints[i][2])**2)**0.5 > 0.2:\n\
+                        p = p+1\n\
+                if p == len(coords):\n\
+                        x = StressPoints[i][0]\n\
+                        y = StressPoints[i][1]\n\
+                        z = StressPoints[i][2]\n\
+                        entry = [i,x,y,z]\n\
+                        coords.append(entry)\n\
+c_order = [0]*(len(coords))\n\
+c_order[0] = coords[0]\n\
+d = t\n\
+for i in range(len(coords)-1):\n\
+        for j in range(i+1, len(coords)):\n\
+                if ((c_order[i][1]-coords[j][1])**2 + (c_order[i][2]-coords[j][2])**2 + (c_order[i][3]-coords[j][3])**2)**0.5 < d:\n\
+                        d = ((c_order[i][1]-coords[j][1])**2 + (c_order[i][2]-coords[j][2])**2 + (c_order[i][3]-coords[j][3])**2)**0.5\n\
+                        c_order[i+1] = coords[j]\n\
+st = []\n\
+for i in range(len(StressValues)): \n\
+        for j in range(len(coords)):\n\
+                if i == coords[j][0]:\n\
+                        value = StressValues[i]\n\
+                        entry = [i , value]\n\
+                        st.append(entry)\n\
+sValues = []\n\
+for i in range(len(coords)):\n\
+        for j in range(len(coords)):\n\
+               if coords[i][0] == st[j][0]:\n\
+                        sValues.append(st[j][1])\n\
+t_coords = [0]\n\
+x = 0\n\
+membrane = []\n\
+for i in range(len(coords)): \n\
+        if i != len(coords)-1:\n\
+                d = ((coords[i][1]-coords[i+1][1])**2 + (coords[i][2]-coords[i+1][2])**2 + (coords[i][3]-coords[i+1][3])**2)**0.5\n\
+                print d\n\
+                x = x +d\n\
+                t_coords.append(x)\n\
+m = (sValues[0] + sValues[len(sValues)-1])*d*0.5*(1/t)\n\
+for i in range(len(sValues)):\n\
+        m = m + (1/t)*sValues[i]*d\n\
+for i in range(len(sValues)):\n\
+        membrane.append(m)\n\
+import FreeCAD\n\
+import numpy as np\n\
+from matplotlib import pyplot as plt\n\
+plt.figure(1)\n\
+plt.plot(t_coords, membrane)\n\
+plt.show()\n";
+
+}
 //############################################################################################
 
 TaskPostScalarClip::TaskPostScalarClip(ViewProviderDocumentObject* view, QWidget* parent) :

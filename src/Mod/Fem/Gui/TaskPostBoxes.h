@@ -178,9 +178,11 @@ public:
 private Q_SLOTS:
     void on_CreateButton_triggered(QAction* a);
     void on_FunctionBox_currentIndexChanged(int idx);
+    void on_PlotValues_clicked();
 
 private:
     void collectImplicitFunctions();
+    std::string LinearCalcs();
 
     App::PropertyLink* m_functionProperty;
     QWidget* proxy;

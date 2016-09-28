@@ -68,7 +68,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QToolButton" name="PlotValues">
+      <widget class="QPushButton" name="PlotValues">
        <property name="text">
         <string>Plot Values</string>
        </property>
