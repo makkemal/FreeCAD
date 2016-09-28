@@ -1339,96 +1339,6 @@ bool CmdFemPostLineFunctions::isActive(void)
         return false;
 }
 
-
-DEF_STD_CMD_AC(CmdFemPostLineApllyChanges);
-
-CmdFemPostLineApllyChanges::CmdFemPostLineApllyChanges()
-  : Command("Fem_PostApplyChanges")
-{
-    sAppModule      = "Fem";
-    sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Apply changes to parameters directly and not on recompute only...");
-    sToolTipText    = QT_TR_NOOP("Apply changes to parameters directly and not on recompute only...");
-    sWhatsThis      = "Fem_PostApplyChanges";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "view-refresh";
-    eType           = eType|ForEdit;
-}
-
-void CmdFemPostLineApllyChanges::activated(int iMsg)
-{
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Fem");
-
-    if (iMsg == 0)
-        hGrp->SetBool("PostAutoRecompute", true);
-    else
-        hGrp->SetBool("PostAutoRecompute", false);
-
-}
-
-bool CmdFemPostLineApllyChanges::isActive(void)
-{
-    if (getActiveGuiDocument())
-        return true;
-    else
-        return false;
-}
-
-Gui::Action * CmdFemPostLineApllyChanges::createAction(void)
-{
-    Gui::Action *pcAction = Command::createAction();
-    pcAction->setCheckable(true);
-    ParameterGrp::handle hGrp = App::GetApplication().GetParameterGroupByPath("User parameter:BaseApp/Preferences/Mod/Fem");
-    pcAction->setChecked(hGrp->GetBool("PostAutoRecompute", false));
-
-    return pcAction;
-}
-
-
-DEF_STD_CMD_A(CmdFemPostLinePipelineFromResult);
-
-CmdFemPostLinePipelineFromResult::CmdFemPostLinePipelineFromResult()
-  : Command("Fem_PostPipelineFromResult")
-{
-    sAppModule      = "Fem";
-    sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Creates a post processing pipeline from a result object");
-    sToolTipText    = QT_TR_NOOP("Creates a post processing pipeline from a result object");
-    sWhatsThis      = "Fem_PostPipelineFromResult";
-    sStatusTip      = sToolTipText;
-    sPixmap         = "fem-data";
-}
-
-void CmdFemPostLinePipelineFromResult::activated(int iMsg)
-{
-    Gui::SelectionFilter ResultFilter("SELECT Fem::FemResultObject COUNT 1");
-
-    if (ResultFilter.match()) {
-
-        Fem::FemResultObject* result = static_cast<Fem::FemResultObject*>(ResultFilter.Result[0][0].getObject());
-        std::string FeatName = getUniqueObjectName("Pipeline");
-
-        openCommand("Create pipeline from result");
-        doCommand(Doc,"App.activeDocument().addObject('Fem::FemPostPipeline','%s')",FeatName.c_str());
-
-        //TODO: use python function call for this
-        static_cast<Fem::FemPostPipeline*>(getDocument()->getObject(FeatName.c_str()))->load(result);
-
-        this->updateActive();
-
-    }
-    else {
-        QMessageBox::warning(Gui::getMainWindow(),
-            qApp->translate("CmdFemPostLinearizedStressesFilter", "Wrong selection"),
-            qApp->translate("CmdFemPostLinearizedStressesFilter", "Select a result, please."));
-    }
-}
-
-bool CmdFemPostLinePipelineFromResult::isActive(void)
-{
-    return hasActiveDocument();
-}
-
 // #####################################################################################################
 
 
@@ -1692,9 +1602,7 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemPostFunctions);
     rcCmdMgr.addCommand(new CmdFemPostLineFunctions);
     rcCmdMgr.addCommand(new CmdFemPostApllyChanges);
-    rcCmdMgr.addCommand(new CmdFemPostLineApllyChanges);
     rcCmdMgr.addCommand(new CmdFemPostPipelineFromResult);
-    rcCmdMgr.addCommand(new CmdFemPostLinePipelineFromResult);
     rcCmdMgr.addCommand(new CmdFemPostCutFilter);
 #endif
 }
