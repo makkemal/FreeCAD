@@ -416,12 +416,14 @@ void ViewProviderFemPostObject::WritePointData(vtkPoints* points, vtkDataArray* 
 
     if(!points)
         return;
-
+    Gui::Command::doCommand(Gui::Command::Doc,"StressPoints = []");
     m_coordinates->point.startEditing();
     m_coordinates->point.setNum(points->GetNumberOfPoints());
     for (i = 0; i < points->GetNumberOfPoints(); i++) {
         p = points->GetPoint(i);
         m_coordinates->point.set1Value(i, p[0], p[1], p[2]);
+        Gui::Command::doCommand(Gui::Command::Doc,"Point = (%f, %f, %f ,%f);", i, p[0], p[1], p[2]);
+        Gui::Command::doCommand(Gui::Command::Doc,"StressPoints.append(Point)");
     }
     m_coordinates->point.finishEditing();
 
@@ -433,6 +435,7 @@ void ViewProviderFemPostObject::WritePointData(vtkPoints* points, vtkDataArray* 
         for (i = 0; i < normals->GetNumberOfTuples(); i++) {
             p = normals->GetTuple(i);
             m_normals->vector.set1Value(i, SbVec3f(p[0], p[1], p[2]));
+
         }
         m_normals->vector.finishEditing();
 
@@ -473,6 +476,7 @@ void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
 
     m_material->diffuseColor.startEditing();
 
+    Gui::Command::doCommand(Gui::Command::Doc,"StressValues = []");
     for (int i = 0; i < pd->GetNumberOfPoints(); i++){
 
         double value = 0;
@@ -486,6 +490,7 @@ void ViewProviderFemPostObject::WriteColorData(bool ResetColorBarRange) {
         }
         App::Color c = m_colorBar->getColor(value);
         m_material->diffuseColor.set1Value(i, c.r, c.g, c.b);
+        Gui::Command::doCommand(Gui::Command::Doc,"StressValues.append(%f)",value);
     }
     m_material->diffuseColor.finishEditing();
     m_materialBinding->value = SoMaterialBinding::PER_VERTEX_INDEXED;
