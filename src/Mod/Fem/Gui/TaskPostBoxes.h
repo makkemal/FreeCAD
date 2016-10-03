@@ -65,6 +65,7 @@ protected:
     void recompute();
 
     static void updateEnumerationList(App::PropertyEnumeration&, QComboBox* box);
+    static void updateLinearizedEnumerationList(App::PropertyEnumeration&, QComboBox* box);
 
 private:
     App::DocumentObject*              m_object;
@@ -105,7 +106,6 @@ protected:
     Gui::ViewProviderDocumentObject*  m_view;
     std::vector<TaskPostBox*>   m_boxes;
 };
-
 
 class TaskPostDisplay : public TaskPostBox
 {
@@ -179,6 +179,8 @@ private Q_SLOTS:
     void on_CreateButton_triggered(QAction* a);
     void on_FunctionBox_currentIndexChanged(int idx);
     void on_PlotValues_clicked();
+    void on_Representation_activated(int i);
+    void on_Field_activated(int i);
 
 private:
     void collectImplicitFunctions();

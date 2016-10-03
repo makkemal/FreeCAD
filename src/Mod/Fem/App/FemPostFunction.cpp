@@ -138,9 +138,6 @@ FemPostLineFunction::FemPostLineFunction(void): FemPostFunction() {
     ADD_PROPERTY(Radius,(0.1));
     ADD_PROPERTY(Center,(Base::Vector3d(0.0,0.0,0.0)));
     ADD_PROPERTY(Axis,(Base::Vector3d(0.0,0.0,1.0)));
-    ADD_PROPERTY_TYPE(StressValues,(0), "FEM",Prop_None,"List of stress values");
-    ADD_PROPERTY_TYPE(StressPoints,(Base::Vector3d()),"FEM", Prop_None,"Points where stresses are drawn");
-    StressPoints.setValues(std::vector<Base::Vector3d>());
 
     m_cylinder = vtkSmartPointer<vtkCylinder>::New();
     m_implicit = m_cylinder;

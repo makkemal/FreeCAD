@@ -130,8 +130,6 @@ void TaskDlgPost::modifyStandardButtons(QDialogButtonBox* box) {
     if(box->button(QDialogButtonBox::Apply))
         box->button(QDialogButtonBox::Apply)->setDefault(true);
 }
-
-
 //############################################################################################
 
 TaskPostBox::TaskPostBox(Gui::ViewProviderDocumentObject* view, const QPixmap &icon, const QString &title, QWidget* parent)
@@ -162,8 +160,22 @@ void TaskPostBox::updateEnumerationList(App::PropertyEnumeration& prop, QComboBo
     box->clear();
     QStringList list;
     std::vector<std::string> vec = prop.getEnumVector();
-    for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it )
-        list.push_back(QString::fromStdString(*it));
+    for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it ) {
+            list.push_back(QString::fromStdString(*it));
+    }
+
+    box->insertItems(0, list);
+    box->setCurrentIndex(prop.getValue());
+}
+
+void TaskPostBox::updateLinearizedEnumerationList(App::PropertyEnumeration& prop, QComboBox* box) {
+
+    box->clear();
+    QStringList list;
+    std::vector<std::string> vec = prop.getEnumVector();
+    for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it ) {
+            list.push_back(QString::fromStdString(*it));
+    }
 
     box->insertItems(0, list);
     box->setCurrentIndex(prop.getValue());
@@ -393,6 +405,10 @@ TaskPostLinearizedStresses::TaskPostLinearizedStresses(ViewProviderDocumentObjec
     static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->CutCells.setValue(1);
     static_cast<Fem::FemPostLinearizedStressesFilter*>(getObject())->InsideOut.setValue(1);
     recompute();
+
+    //update all fields
+    updateLinearizedEnumerationList(getTypedView<ViewProviderFemPostObject>()->DisplayMode, ui->Representation);
+    updateLinearizedEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
 }
 
 TaskPostLinearizedStresses::~TaskPostLinearizedStresses() {
@@ -471,6 +487,17 @@ void TaskPostLinearizedStresses::on_PlotValues_clicked() {
 
     Gui::Command::doCommand(Gui::Command::Doc,LinearCalcs().c_str());
     recompute();
+}
+
+void TaskPostLinearizedStresses::on_Representation_activated(int i) {
+
+    getTypedView<ViewProviderFemPostObject>()->DisplayMode.setValue(i);
+    updateLinearizedEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
+}
+
+void TaskPostLinearizedStresses::on_Field_activated(int i) {
+
+    getTypedView<ViewProviderFemPostObject>()->Field.setValue(i);
 }
 
 std::string TaskPostLinearizedStresses::LinearCalcs() {

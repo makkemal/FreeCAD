@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>413</width>
-    <height>184</height>
+    <height>408</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -31,8 +31,8 @@
         <string>Create</string>
        </property>
        <property name="icon">
-        <iconset resource="../../../Gui/Icons/resource.qrc">
-         <normaloff>:/icons/list-add.svg</normaloff>:/icons/list-add.svg</iconset>
+        <iconset>
+         <normaloff>:/icons/fem-cylinder.svg</normaloff>:/icons/fem-cylinder.svg</iconset>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>
@@ -66,20 +66,111 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QPushButton" name="PlotValues">
+      <widget class="QLabel" name="label">
        <property name="text">
-        <string>Plot Values</string>
+        <string>Mode</string>
        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="Representation">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <item>
+        <property name="text">
+         <string>Outline</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Surface</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Surface with Edges</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Wireframe</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="title">
+      <string>Coloring</string>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Field</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="Field">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <item>
+           <property name="text">
+            <string>Outline</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Surface</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Surface with Edges</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Wireframe</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="PlotValues">
+     <property name="text">
+      <string>Create Stress Linearization Graphs</string>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
- <resources>
-  <include location="../../../Gui/Icons/resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

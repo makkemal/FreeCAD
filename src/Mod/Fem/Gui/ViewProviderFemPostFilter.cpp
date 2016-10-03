@@ -68,8 +68,6 @@ void ViewProviderFemPostLinearizedStresses::setupTaskDialog(TaskDlgPost* dlg) {
     dlg->appendBox(new TaskPostLinearizedStresses(dlg->getView(),
                                     &static_cast<Fem::FemPostLinearizedStressesFilter*>(dlg->getView()->getObject())->Function));
 
-    //add the display options
-    FemGui::ViewProviderFemPostObject::setupTaskDialog(dlg);
 }
 
 PROPERTY_SOURCE(FemGui::ViewProviderFemPostScalarClip, FemGui::ViewProviderFemPostObject)

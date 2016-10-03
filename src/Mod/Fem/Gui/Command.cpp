@@ -1310,6 +1310,7 @@ Gui::Action * CmdFemPostLineFunctions::createAction(void)
     _pcAction = pcAction;
     languageChange();
 
+    pcAction->setIcon(cmd0->icon());
     int defaultId = 0;
     pcAction->setProperty("defaultAction", QVariant(defaultId));
 

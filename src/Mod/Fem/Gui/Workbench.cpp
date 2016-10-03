@@ -99,10 +99,10 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
             << "Fem_PostPipelineFromResult"
             << "Separator"
             << "Fem_PostCreateClipFilter"
-            << "Fem_PostCreateLinearizedStressesFilter"
             << "Fem_PostCreateScalarClipFilter"
             << "Fem_PostCreateCutFilter"
             << "Fem_PostCreateWarpVectorFilter"
+            << "Fem_PostCreateLinearizedStressesFilter"
             << "Separator"
             << "Fem_PostCreateFunctions"
             << "Fem_PostCreateLineFunction";
