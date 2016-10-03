@@ -498,14 +498,17 @@ for i in range(len(StressPoints)):\n\
                         z = StressPoints[i][2]\n\
                         entry = [i,x,y,z]\n\
                         coords.append(entry)\n\
-c_order = [0]*(len(coords))\n\
-c_order[0] = coords[0]\n\
-d = t\n\
 for i in range(len(coords)-1):\n\
+        d = t\n\
+        pos = 0\n\
         for j in range(i+1, len(coords)):\n\
-                if ((c_order[i][1]-coords[j][1])**2 + (c_order[i][2]-coords[j][2])**2 + (c_order[i][3]-coords[j][3])**2)**0.5 < d:\n\
-                        d = ((c_order[i][1]-coords[j][1])**2 + (c_order[i][2]-coords[j][2])**2 + (c_order[i][3]-coords[j][3])**2)**0.5\n\
-                        c_order[i+1] = coords[j]\n\
+                dn = ((coords[i][1]-coords[j][1])**2 + (coords[i][2]-coords[j][2])**2 + (coords[i][3]-coords[j][3])**2)**0.5 \n\
+                if dn < d:\n\
+                        d = dn\n\
+                        pos = j\n\
+        temp = coords[i+1]\n\
+        coords[i+1] =coords[pos]\n\
+        coords[pos] = temp\n\
 st = []\n\
 for i in range(len(StressValues)): \n\
         for j in range(len(coords)):\n\
@@ -518,25 +521,46 @@ for i in range(len(coords)):\n\
         for j in range(len(coords)):\n\
                if coords[i][0] == st[j][0]:\n\
                         sValues.append(st[j][1])\n\
-t_coords = [0]\n\
+t_coords = [-t/2]\n\
 x = 0\n\
 membrane = []\n\
 for i in range(len(coords)): \n\
         if i != len(coords)-1:\n\
                 d = ((coords[i][1]-coords[i+1][1])**2 + (coords[i][2]-coords[i+1][2])**2 + (coords[i][3]-coords[i+1][3])**2)**0.5\n\
-                print d\n\
                 x = x +d\n\
-                t_coords.append(x)\n\
-m = (sValues[0] + sValues[len(sValues)-1])*d*0.5*(1/t)\n\
-for i in range(len(sValues)):\n\
-        m = m + (1/t)*sValues[i]*d\n\
+                t_coords.append(x-(t/2))\n\
+m = 0\n\
+for i in range(len(sValues)-1):\n\
+        m = m +(t_coords[i+1] - t_coords[i])*(sValues[i+1]+sValues[i])\n\
+m = (1/t)*0.5*m\n\
 for i in range(len(sValues)):\n\
         membrane.append(m)\n\
+b = 0\n\
+for i in range(len(sValues)-1):\n\
+        d = (t_coords[i+1] - t_coords[i])\n\
+        b = b + d*(-3/t**2)*(sValues[i+1]*t_coords[i+1] + sValues[i]*t_coords[i])\n\
+b2 = -b\n\
+bending =[]\n\
+for i in range(len(t_coords)):\n\
+        func = ((b2-b)/t)*t_coords[i]\n\
+        bending.append(func)\n\
+peak = []\n\
+mb = []\n\
+for i in range(len(sValues)):\n\
+        peak.append(sValues[i])\n\
+        mb.append(bending[i] + membrane[0])\n\
 import FreeCAD\n\
 import numpy as np\n\
 from matplotlib import pyplot as plt\n\
 plt.figure(1)\n\
-plt.plot(t_coords, membrane)\n\
+plt.plot(t_coords, membrane, \"k--\")\n\
+plt.plot(t_coords, mb, \"b*-\")\n\
+plt.plot(t_coords, peak, \"r-x\")\n\
+plt.legend([\"Membrane Stress\", \"Membrane and Bending\", \"Total Stress\"], loc = 4)\n\
+plt.xlabel(\"Thickness [mm] \")\n\
+plt.ylabel(\"Stress [MPa]\")\n\
+plt.title(\"Linearized Stresses\")\n\
+plt.grid()\n\
 plt.show()\n";
 
 }
