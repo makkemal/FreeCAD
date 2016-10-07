@@ -225,6 +225,8 @@ SET(FemConstraints_SRCS
     FemConstraintContact.h
     FemConstraintTransform.cpp
     FemConstraintTransform.h
+    FemConstraint1dpipeflow.cpp
+    FemConstraint1dpipeflow.h
     )
 SOURCE_GROUP("Constraints" FILES ${FemConstraints_SRCS})
 
