@@ -32,7 +32,7 @@
        </property>
        <property name="icon">
         <iconset>
-         <normaloff>:/icons/fem-cylinder.svg</normaloff>:/icons/fem-cylinder.svg</iconset>
+         <normaloff>:/icons/fem-line.svg</normaloff>:/icons/fem-line.svg</iconset>
        </property>
        <property name="toolButtonStyle">
         <enum>Qt::ToolButtonTextBesideIcon</enum>

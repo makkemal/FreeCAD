@@ -617,18 +617,31 @@ PROPERTY_SOURCE(FemGui::ViewProviderFemPostLineFunction, FemGui::ViewProviderFem
 
 ViewProviderFemPostLineFunction::ViewProviderFemPostLineFunction() {
 
-    sPixmap = "fem-cylinder";
+    sPixmap = "fem-line";
 
-    setAutoScale(true);
+    setAutoScale(false);
 
     //setup the visualisation geometry
     SoCoordinate3* points = new SoCoordinate3();
-    points->point.setNum(4);
-    points->point.set1Value(0, -0.5, -0.5, 0);
-    points->point.set1Value(1, -0.5,  0.5, 0);
-    points->point.set1Value(2,  0.5,  0.5, 0);
-    points->point.set1Value(3,  0.5, -0.5, 0);
-    points->point.set1Value(4, -0.5, -0.5, 0);
+    points->point.setNum(1);
+    int idx = 0;
+    for(int i=0; i<4; i++) {
+        for(int j=0; j<21; j++) {
+            points->point.set1Value(idx, SbVec3f(std::cos(2/20*j) * std::sin(2*i),
+                                                 std::cos(2/20*j) * std::sin(2*i),
+                                                 std::cos(2/20*j) ));
+            ++idx;
+        }
+    }
+    for(int i=0; i<4; i++) {
+        for(int j=0; j<21; j++) {
+            points->point.set1Value(idx, SbVec3f(std::cos(2/20*j) * std::cos(2*i),
+                                                 std::cos(2/20*j) * std::cos(2*i),
+                                                 std::cos(2/20*j) ));
+            ++idx;
+        }
+    }
+
     SoLineSet* line = new SoLineSet();
     getGeometryNode()->addChild(points);
     getGeometryNode()->addChild(line);

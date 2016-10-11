@@ -1305,7 +1305,7 @@ Gui::Action * CmdFemPostLineFunctions::createAction(void)
     applyCommandData(this->className(), pcAction);
 
     QAction* cmd0 = pcAction->addAction(QString());
-    cmd0->setIcon(Gui::BitmapFactory().pixmap("fem-cylinder"));
+    cmd0->setIcon(Gui::BitmapFactory().pixmap("fem-line"));
 
     _pcAction = pcAction;
     languageChange();
