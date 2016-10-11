@@ -161,7 +161,7 @@ void TaskPostBox::updateEnumerationList(App::PropertyEnumeration& prop, QComboBo
     QStringList list;
     std::vector<std::string> vec = prop.getEnumVector();
     for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it ) {
-            list.push_back(QString::fromStdString(*it));
+        list.push_back(QString::fromStdString(*it));
     }
 
     box->insertItems(0, list);
@@ -173,12 +173,20 @@ void TaskPostBox::updateLinearizedEnumerationList(App::PropertyEnumeration& prop
     box->clear();
     QStringList list;
     std::vector<std::string> vec = prop.getEnumVector();
+    int counter = 0;
+    std::vector<int> disabledItems;
     for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it ) {
-            list.push_back(QString::fromStdString(*it));
+        if ((*it == "Temperature") || (*it == "Displacement") || (*it == "User Defined Results"))
+            disabledItems.push_back(counter);
+        list.push_back(QString::fromStdString(*it));
+        ++counter;
     }
 
     box->insertItems(0, list);
     box->setCurrentIndex(prop.getValue());
+    QVariant v(0);
+    for (std::size_t i = 0; i < disabledItems.size(); i++)
+        box->setItemData(disabledItems[i], v, Qt::UserRole -1);
 }
 
 //###########################################################################################################
