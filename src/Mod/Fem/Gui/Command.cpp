@@ -1136,7 +1136,7 @@ CmdFemPostLinearizedStressesFilter::CmdFemPostLinearizedStressesFilter()
     sPixmap         = "fem-linearizedstresses";
 }
 
-void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
+void CmdFemPostLinearizedStressesFilter::activated(int)
 {
     setupFilter(this, "LinearizedStresses");
 }
@@ -1275,10 +1275,13 @@ void CmdFemPostLineFunctions::activated(int iMsg)
         double center[3];
         box.GetCenter(center);
 
-        doCommand(Doc,"App.ActiveDocument.%s.Center = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
+        doCommand(Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
                                     center[1], center[2]);
+        doCommand(Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", FeatName.c_str(), center[0],
+                      center[1] + box.GetLength(1)/2, center[2] + box.GetLength(2)/2);
 
         this->updateActive();
+
         //most of the times functions are added inside of a filter, make sure this still works
         if(Gui::Application::Instance->activeDocument()->getInEdit() == NULL)
             doCommand(Gui,"Gui.activeDocument().setEdit('%s')",FeatName.c_str());

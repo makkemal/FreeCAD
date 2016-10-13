@@ -51,6 +51,7 @@ namespace boost
 #endif
 
 
+class View3DInventorViewer;
 class SoScale;
 class SoSurroundScale;
 class SoTransformManip;
@@ -251,8 +252,8 @@ public:
     virtual void setViewProvider(ViewProviderFemPostFunction* view);
 
 private Q_SLOTS:
-    void centerChanged(double val);
-    void axisChanged(double val);
+    void point1Changed(double val);
+    void point2Changed(double val);
 
 private:
     Ui_LineWidget* ui;

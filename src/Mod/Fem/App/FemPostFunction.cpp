@@ -135,16 +135,34 @@ PROPERTY_SOURCE(Fem::FemPostLineFunction, Fem::FemPostFunction)
 
 FemPostLineFunction::FemPostLineFunction(void): FemPostFunction() {
 
-    ADD_PROPERTY(Radius,(0.1));
-    ADD_PROPERTY(Center,(Base::Vector3d(0.0,0.0,0.0)));
-    ADD_PROPERTY(Axis,(Base::Vector3d(0.0,0.0,1.0)));
+    ADD_PROPERTY(Point1,(Base::Vector3d(0.0,0.0,0.0)));
+    ADD_PROPERTY(Point2,(Base::Vector3d(0.0,0.0,1.0)));
 
     m_cylinder = vtkSmartPointer<vtkCylinder>::New();
-    m_implicit = m_cylinder;
+    m_clippingplane2 = vtkSmartPointer<vtkPlane>::New();
+    m_clippingplane1 = vtkSmartPointer<vtkPlane>::New();
+
+    m_boolean = vtkSmartPointer<vtkImplicitBoolean>::New();
+    m_boolean->SetOperationTypeToIntersection();
+    m_boolean->AddFunction(m_cylinder);
+    m_boolean->AddFunction(m_clippingplane1);
+    m_boolean->AddFunction(m_clippingplane2);
+
+
+    m_implicit = m_boolean;
 
     m_cylinder->SetCenter(0., 0., 0.);
     m_cylinder->SetAxis(0., 0., 1.);
     m_cylinder->SetRadius(0.1);
+
+    m_clippingplane1->SetOrigin(0,0, 0);
+    m_clippingplane1->SetNormal(0., 0., 1);
+
+    m_clippingplane2->SetOrigin(0,0, 1);
+    m_clippingplane2->SetNormal(0., 0., 1);
+ 
+
+    
 }
 
 FemPostLineFunction::~FemPostLineFunction() {
@@ -153,16 +171,18 @@ FemPostLineFunction::~FemPostLineFunction() {
 
 void FemPostLineFunction::onChanged(const Property* prop) {
 
-    if(prop == &Center) {
-        const Base::Vector3d& vec = Center.getValue();
-        m_cylinder->SetCenter(vec[0], vec[1], vec[2]);
-    }
-    else if(prop == &Axis) {
-        const Base::Vector3d& vec = Axis.getValue();
-        m_cylinder->SetAxis(vec[0], vec[1], vec[2]);
-    }
-    else if(prop == &Radius) {
-        m_cylinder->SetRadius(Radius.getValue());
+    if ((prop == &Point1) || (prop == &Point2)) {
+        const Base::Vector3d& vec1 = Point1.getValue();
+        const Base::Vector3d& vec2 = Point2.getValue();
+
+        m_cylinder->SetCenter((vec1[0] + vec2[0])/2, (vec1[1] + vec2[1])/2, (vec1[2] + vec2[2])/2);
+        m_cylinder->SetAxis(vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]);
+
+        m_clippingplane1->SetOrigin(vec1[0], vec1[1], vec1[2]);
+        m_clippingplane1->SetNormal(vec1[0] - vec2[0], vec1[1] - vec2[1], vec1[2] - vec2[2]);
+
+        m_clippingplane2->SetOrigin(vec2[0], vec2[1], vec2[2]);
+        m_clippingplane2->SetNormal(vec2[0] - vec1[0], vec2[1] - vec1[1], vec2[2] - vec1[2]);
     }
 
     Fem::FemPostFunction::onChanged(prop);

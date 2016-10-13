@@ -29,6 +29,7 @@
 
 #include <vtkSmartPointer.h>
 #include <vtkImplicitFunction.h>
+#include <vtkImplicitBoolean.h>
 #include <vtkPlane.h>
 #include <vtkSphere.h>
 #include <vtkCylinder.h>
@@ -141,9 +142,8 @@ public:
     FemPostLineFunction(void);
     virtual ~FemPostLineFunction();
 
-    App::PropertyVector           Axis;
-    App::PropertyVectorDistance   Center;
-    App::PropertyDistance         Radius;
+    App::PropertyVectorDistance   Point2;
+    App::PropertyVectorDistance   Point1;
 
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostLineFunction";
@@ -153,6 +153,9 @@ protected:
     virtual void onChanged(const App::Property* prop);
 
     vtkSmartPointer<vtkCylinder> m_cylinder;
+    vtkSmartPointer<vtkPlane> m_clippingplane2;
+    vtkSmartPointer<vtkPlane> m_clippingplane1;
+    vtkSmartPointer<vtkImplicitBoolean> m_boolean;    
 };
 
 } //namespace Fem
