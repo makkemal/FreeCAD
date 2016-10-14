@@ -45,11 +45,27 @@
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/draggers/SoHandleBoxDragger.h>
 #include <QMessageBox>
+
+# include <sstream>
+# include <QApplication>
+# include <Inventor/SoPickedPoint.h>
+# include <Inventor/events/SoMouseButtonEvent.h>
+# include <Inventor/nodes/SoAnnotation.h>
+# include <Inventor/nodes/SoBaseColor.h>
+# include <Inventor/nodes/SoFontStyle.h>
+# include <Inventor/nodes/SoPickStyle.h>
+# include <Inventor/nodes/SoText2.h>
+# include <Inventor/nodes/SoTranslation.h>
+# include <Inventor/nodes/SoCoordinate3.h>
+# include <Inventor/nodes/SoIndexedLineSet.h>
+# include <Inventor/nodes/SoMarkerSet.h>
+# include <Inventor/nodes/SoDrawStyle.h>
 #endif
 
 #include "ViewProviderFemPostFunction.h"
 #include "TaskPostBoxes.h"
 #include <Mod/Fem/App/FemPostFunction.h>
+#include <Gui/View3DInventorViewer.h>
 #include <Base/Console.h>
 #include <Base/Interpreter.h>
 #include <Gui/Application.h>
@@ -60,6 +76,10 @@
 #include <Gui/Control.h>
 #include <App/PropertyUnits.h>
 
+#include <App/PropertyGeo.h>
+#include <App/PropertyStandard.h>
+#include <Base/Quantity.h>
+
 #include <boost/bind.hpp>
 #include <math.h>
 
@@ -68,6 +88,73 @@
 #include "ui_LineWidget.h"
 
 using namespace FemGui;
+
+// ----------------------------------------------------------------------------
+
+PointMarker::PointMarker(Gui::View3DInventorViewer* iv) : view(iv),
+    vp(new ViewProviderPointMarker)
+{
+    view->addViewProvider(vp);
+}
+
+PointMarker::~PointMarker()
+{
+    view->removeViewProvider(vp);
+    delete vp;
+}
+
+void PointMarker::addPoint(const SbVec3f& pt)
+{
+    int ct = countPoints();
+    vp->pCoords->point.set1Value(ct, pt);
+    vp->pMarker->numPoints=ct+1;
+}
+
+int PointMarker::countPoints() const
+{
+    return vp->pCoords->point.getNum();
+}
+
+void PointMarker::customEvent(QEvent*)
+{
+    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    doc->openCommand("Measure distance");
+    App::DocumentObject* obj = doc->getDocument()->addObject
+        (App::MeasureDistance::getClassTypeId().getName(),"Distance");
+
+    App::MeasureDistance* md = static_cast<App::MeasureDistance*>(obj);
+    const SbVec3f& pt1 = vp->pCoords->point[0];
+    const SbVec3f& pt2 = vp->pCoords->point[1];
+    md->Point1.setValue(Base::Vector3d(pt1[0],pt1[1],pt1[2]));
+    md->Point2.setValue(Base::Vector3d(pt2[0],pt2[1],pt2[2]));
+
+    this->deleteLater();
+}
+
+PROPERTY_SOURCE(FemGui::ViewProviderPointMarker, Gui::ViewProviderDocumentObject)
+
+ViewProviderPointMarker::ViewProviderPointMarker()
+{
+    pCoords = new SoCoordinate3();
+    pCoords->ref();
+    pCoords->point.setNum(0);
+    pMarker = new SoMarkerSet();
+    pMarker->markerIndex = SoMarkerSet::CROSS_9_9;
+    pMarker->numPoints=0;
+    pMarker->ref();
+
+    SoGroup* grp = new SoGroup();
+    grp->addChild(pCoords);
+    grp->addChild(pMarker);
+    addDisplayMaskMode(grp, "Base");
+    setDisplayMaskMode("Base");
+}
+
+ViewProviderPointMarker::~ViewProviderPointMarker()
+{
+    pCoords->unref();
+    pMarker->unref();
+}
 
 void FunctionWidget::setViewProvider(ViewProviderFemPostFunction* view) {
 

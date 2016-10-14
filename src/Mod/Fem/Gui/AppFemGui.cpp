@@ -146,6 +146,7 @@ PyMODINIT_FUNC initFemGui()
     FemGui::ViewProviderFemPostSphereFunction  ::init();
     FemGui::ViewProviderFemPostClip            ::init();
     FemGui::ViewProviderFemPostLinearizedStresses            ::init();
+    FemGui::ViewProviderPointMarker            ::init();
     FemGui::ViewProviderFemPostScalarClip      ::init();
     FemGui::ViewProviderFemPostWarpVector      ::init();
     FemGui::ViewProviderFemPostCut             ::init();

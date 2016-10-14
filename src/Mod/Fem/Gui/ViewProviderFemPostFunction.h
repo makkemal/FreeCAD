@@ -28,6 +28,8 @@
 #include <Mod/Fem/App/FemPostFunction.h>
 #include <Inventor/SbMatrix.h>
 #include <QWidget>
+#include <QObject>
+#include <Gui/View3DInventorViewer.h>
 
 
 #if defined(signals) && defined(QOBJECTDEFS_H) && \
@@ -51,7 +53,7 @@ namespace boost
 #endif
 
 
-class View3DInventorViewer;
+
 class SoScale;
 class SoSurroundScale;
 class SoTransformManip;
@@ -63,11 +65,51 @@ class Ui_PlaneWidget;
 class Ui_SphereWidget;
 class Ui_LineWidget;
 
+class SoFontStyle;
+class SoText2;
+class SoBaseColor;
+class SoTranslation;
+class SoCoordinate3;
+class SoIndexedLineSet;
+class SoEventCallback;
+class SoMarkerSet;
+
 namespace FemGui
 {
 
-class ViewProviderFemPostFunction;
+class ViewProviderPointMarker;
+class PointMarker : public QObject
+{
+public:
+    PointMarker(Gui::View3DInventorViewer* view);
+    ~PointMarker();
 
+    void addPoint(const SbVec3f&);
+    int countPoints() const;
+
+protected:
+    void customEvent(QEvent* e);
+
+private:
+    Gui::View3DInventorViewer *view;
+    ViewProviderPointMarker *vp;
+};
+
+class FemGuiExport ViewProviderPointMarker : public Gui::ViewProviderDocumentObject
+{
+    PROPERTY_HEADER(FemGui::ViewProviderPointMarker);
+
+public:
+    ViewProviderPointMarker();
+    virtual ~ViewProviderPointMarker();
+
+protected:
+    SoCoordinate3    * pCoords;
+    SoMarkerSet      * pMarker;
+    friend class PointMarker;
+};
+
+class ViewProviderFemPostFunction;
 class FemGuiExport FunctionWidget : public QWidget {
 
     Q_OBJECT
