@@ -88,7 +88,6 @@
 #include "ui_LineWidget.h"
 
 using namespace FemGui;
-
 // ----------------------------------------------------------------------------
 
 PointMarker::PointMarker(Gui::View3DInventorViewer* iv) : view(iv),
@@ -118,16 +117,17 @@ int PointMarker::countPoints() const
 void PointMarker::customEvent(QEvent*)
 {
     Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    doc->openCommand("Measure distance");
+    doc->openCommand("fem-line");
     App::DocumentObject* obj = doc->getDocument()->addObject
-        (App::MeasureDistance::getClassTypeId().getName(),"Distance");
+        (Fem::FemPostLineFunction::getClassTypeId().getName(),"Line");
 
-    App::MeasureDistance* md = static_cast<App::MeasureDistance*>(obj);
+    Fem::FemPostLineFunction* md = static_cast<Fem::FemPostLineFunction*>(obj);
     const SbVec3f& pt1 = vp->pCoords->point[0];
     const SbVec3f& pt2 = vp->pCoords->point[1];
     md->Point1.setValue(Base::Vector3d(pt1[0],pt1[1],pt1[2]));
     md->Point2.setValue(Base::Vector3d(pt2[0],pt2[1],pt2[2]));
 
+    doc->commitCommand();
     this->deleteLater();
 }
 
@@ -846,5 +846,40 @@ void LineWidget::point1Changed(double val) {
         static_cast<Fem::FemPostLineFunction*>(getObject())->Point1.setValue(vec);
     }
 }
+
+void ViewProviderFemPostLineFunction::pointCallback(void * ud, SoEventCallback * n)
+{
+    const SoMouseButtonEvent * mbe = static_cast<const SoMouseButtonEvent*>(n->getEvent());
+    Gui::View3DInventorViewer* view  = reinterpret_cast<Gui::View3DInventorViewer*>(n->getUserData());
+    PointMarker *pm = reinterpret_cast<PointMarker*>(ud);
+
+    // Mark all incoming mouse button events as handled, especially, to deactivate the selection node
+    n->getAction()->setHandled();
+    
+    if (mbe->getButton() == SoMouseButtonEvent::BUTTON1 && mbe->getState() == SoButtonEvent::DOWN) {
+        const SoPickedPoint * point = n->getPickedPoint();
+        if (point == NULL) {
+            Base::Console().Message("No point picked.\n");
+            return;
+        }
+
+        n->setHandled();
+        pm->addPoint(point->getPoint());
+        if (pm->countPoints() == 2) {
+            QEvent *e = new QEvent(QEvent::User);
+            QApplication::postEvent(pm, e);
+            // leave mode
+            view->setEditing(false);
+            view->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), pointCallback, ud);
+        }
+    }
+    else if (mbe->getButton() != SoMouseButtonEvent::BUTTON1 && mbe->getState() == SoButtonEvent::UP) {
+        n->setHandled();
+        view->setEditing(false);
+        view->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), pointCallback, ud);
+        pm->deleteLater();
+    }
+}
+
 
 #include "moc_ViewProviderFemPostFunction.cpp"

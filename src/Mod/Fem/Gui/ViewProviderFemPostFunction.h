@@ -310,6 +310,7 @@ public:
     virtual ~ViewProviderFemPostLineFunction();
 
     virtual FunctionWidget* createControlWidget();
+    static void pointCallback(void * ud, SoEventCallback * n);
 
 protected:
     virtual void draggerUpdate(SoDragger* mat);

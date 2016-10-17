@@ -70,7 +70,6 @@
 
 using namespace std;
 
-
 bool getConstraintPrerequisits(Fem::FemAnalysis **Analysis)
 {
     Fem::FemAnalysis* ActiveAnalysis = FemGui::ActiveAnalysisObserver::instance()->getActiveObject();
@@ -1140,7 +1139,7 @@ CmdFemPostLinearizedStressesFilter::CmdFemPostLinearizedStressesFilter()
 
 // Yay for cheezy drawings!
 /* XPM */
-static const char * cursor_ruler[] = {
+static const char * cursor_triangle[] = {
 "32 32 3 1",
 " 	c None",
 ".	c #FFFFFF",
@@ -1157,26 +1156,11 @@ static const char * cursor_ruler[] = {
 "      .                         ",
 "      .        ++               ",
 "      .       +  +              ",
-"      .      +   ++             ",
-"            +   +  +            ",
-"           +   +    +           ",
-"          +   +     ++          ",
-"          +        +  +         ",
-"           +           +        ",
-"            +         + +       ",
-"             +       +   +      ",
-"              +           +     ",
-"               +         + +    ",
-"                +       +   +   ",
-"                 +           +  ",
-"                  +         + + ",
-"                   +       +  ++",
-"                    +     +   + ",
-"                     +       +  ",
-"                      +     +   ",
-"                       +   +    ",
-"                        + +     ",
-"                         +      "};
+"      .      + ++ +             ",
+"            + ++++ +            ",
+"           +  ++ ++ +           ",
+"          + ++++++++ +          ",
+"         ++  ++  ++  ++         "};
 void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
 {
     Q_UNUSED(iMsg); 
@@ -1185,13 +1169,13 @@ void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
     if (view) {
         Gui::View3DInventorViewer* viewer = view->getViewer();
         viewer->setEditing(true);
-        viewer->setEditingCursor(QCursor(QPixmap(cursor_ruler), 7, 7));
+        viewer->setEditingCursor(QCursor(QPixmap(cursor_triangle), 7, 7));
 
         // Derives from QObject and we have a parent object, so we don't
         // require a delete.
         FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
         viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
-            ViewProviderFemPostLineFunction::pointCallback, marker);
+            FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
      }
     setupFilter(this, "LinearizedStresses");
 }
