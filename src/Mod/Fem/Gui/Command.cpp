@@ -1136,63 +1136,13 @@ CmdFemPostLinearizedStressesFilter::CmdFemPostLinearizedStressesFilter()
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-linearizedstresses";
 }
-
-// Yay for cheezy drawings!
-/* XPM */
-static const char * cursor_triangle[] = {
-"32 32 3 1",
-" 	c None",
-".	c #FFFFFF",
-"+	c #FF0000",
-"      .                         ",
-"      .                         ",
-"      .                         ",
-"      .                         ",
-"      .                         ",
-"                                ",
-".....   .....                   ",
-"                                ",
-"      .                         ",
-"      .                         ",
-"      .        ++               ",
-"      .       +  +              ",
-"      .      + ++ +             ",
-"            + ++++ +            ",
-"           +  ++ ++ +           ",
-"          + ++++++++ +          ",
-"         ++  ++  ++  ++         "};
-void CmdFemPostLinearizedStressesFilter::activated(int iMsg)
+void CmdFemPostLinearizedStressesFilter::activated(int)
 {
-    Q_UNUSED(iMsg); 
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    Gui::View3DInventor* view = static_cast<Gui::View3DInventor*>(doc->getActiveView());
-    if (view) {
-        Gui::View3DInventorViewer* viewer = view->getViewer();
-        viewer->setEditing(true);
-        viewer->setEditingCursor(QCursor(QPixmap(cursor_triangle), 7, 7));
-
-        // Derives from QObject and we have a parent object, so we don't
-        // require a delete.
-        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
-        viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
-            FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
-     }
     setupFilter(this, "LinearizedStresses");
 }
 
 bool CmdFemPostLinearizedStressesFilter::isActive(void)
 {
-    App::Document* doc = App::GetApplication().getActiveDocument();
-    if (!doc || doc->countObjectsOfType(App::GeoFeature::getClassTypeId()) == 0)
-        return false;
-
-    Gui::MDIView* view = Gui::getMainWindow()->activeWindow();
-    if (view && view->isDerivedFrom(Gui::View3DInventor::getClassTypeId())) {
-        Gui::View3DInventorViewer* viewer = static_cast<Gui::View3DInventor*>(view)->getViewer();
-        return !viewer->isEditing();
-    }
-
-    return false;
     return hasActiveDocument();
 }
 
@@ -1286,9 +1236,47 @@ CmdFemPostLineFunctions::CmdFemPostLineFunctions()
     sStatusTip      = sToolTipText;
     eType           = eType|ForEdit;
 }
-
+// Yay for cheezy drawings!
+/* XPM */
+static const char * cursor_triangle[] = {
+"32 32 3 1",
+" 	c None",
+".	c #FFFFFF",
+"+	c #FF0000",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"                                ",
+".....   .....                   ",
+"                                ",
+"      .                         ",
+"      .                         ",
+"      .        ++               ",
+"      .       +  +              ",
+"      .      + ++ +             ",
+"            + ++++ +            ",
+"           +  ++ ++ +           ",
+"          + ++++++++ +          ",
+"         ++  ++  ++  ++         "};
 void CmdFemPostLineFunctions::activated(int iMsg)
 {
+
+    Q_UNUSED(iMsg); 
+    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::View3DInventor* view = static_cast<Gui::View3DInventor*>(doc->getActiveView());
+    if (view) {
+        Gui::View3DInventorViewer* viewer = view->getViewer();
+        viewer->setEditing(true);
+        viewer->setEditingCursor(QCursor(QPixmap(cursor_triangle), 7, 7));
+
+        // Derives from QObject and we have a parent object, so we don't
+        // require a delete.
+        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
+        viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
+            FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
+     }
 
     std::string name;
     name = "Line";
@@ -1387,6 +1375,17 @@ void CmdFemPostLineFunctions::languageChange()
 
 bool CmdFemPostLineFunctions::isActive(void)
 {
+    App::Document* doc = App::GetApplication().getActiveDocument();
+    if (!doc || doc->countObjectsOfType(App::GeoFeature::getClassTypeId()) == 0)
+        return false;
+
+    Gui::MDIView* view = Gui::getMainWindow()->activeWindow();
+    if (view && view->isDerivedFrom(Gui::View3DInventor::getClassTypeId())) {
+        Gui::View3DInventorViewer* viewer = static_cast<Gui::View3DInventor*>(view)->getViewer();
+        return !viewer->isEditing();
+    }
+
+    return false;
     if (getActiveGuiDocument())
         return true;
     else
