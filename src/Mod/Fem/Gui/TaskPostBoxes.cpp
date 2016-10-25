@@ -46,6 +46,9 @@
 #include <Gui/Action.h>
 #include <QMessageBox>
 #include <QPushButton>
+#include <Gui/View3DInventor.h>
+#include <Gui/View3DInventorViewer.h>
+# include <Inventor/events/SoMouseButtonEvent.h>
 
 using namespace FemGui;
 using namespace Gui;
@@ -491,6 +494,49 @@ void TaskPostLinearizedStresses::on_FunctionBox_currentIndexChanged(int idx) {
     }
     recompute();
 }
+// Yay for cheezy drawings!
+/* XPM */
+static const char * cursor_triangle[] = {
+"32 32 3 1",
+" 	c None",
+".	c #FFFFFF",
+"+	c #FF0000",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"                                ",
+".....   .....                   ",
+"                                ",
+"      .                         ",
+"      .                         ",
+"      .        ++               ",
+"      .       +  +              ",
+"      .      + ++ +             ",
+"            + ++++ +            ",
+"           +  ++ ++ +           ",
+"          + ++++++++ +          ",
+"         ++  ++  ++  ++         "};
+void TaskPostLinearizedStresses::on_SelectPoints_clicked() {
+
+    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::View3DInventor* view = static_cast<Gui::View3DInventor*>(doc->getActiveView());
+    if (view) {
+        Gui::View3DInventorViewer* viewer = view->getViewer();
+        viewer->setEditing(true);
+        viewer->setEditingCursor(QCursor(QPixmap(cursor_triangle), 7, 7));
+
+        // Derives from QObject and we have a parent object, so we don't
+        // require a delete.
+        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
+        viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
+            FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
+     }
+    Gui::Command::doCommand(Gui::Command::Doc,"ss = 24");
+    recompute(); 
+}
+
 void TaskPostLinearizedStresses::on_PlotValues_clicked() {
 
     Gui::Command::doCommand(Gui::Command::Doc,LinearCalcs().c_str());

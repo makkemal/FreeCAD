@@ -179,6 +179,7 @@ private Q_SLOTS:
     void on_CreateButton_triggered(QAction* a);
     void on_FunctionBox_currentIndexChanged(int idx);
     void on_PlotValues_clicked();
+    void on_SelectPoints_clicked();
     void on_Representation_activated(int i);
     void on_Field_activated(int i);
 
