@@ -533,8 +533,6 @@ void TaskPostLinearizedStresses::on_SelectPoints_clicked() {
         viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
             FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
      }
-    Gui::Command::doCommand(Gui::Command::Doc,"ss = 24");
-    recompute(); 
 }
 
 void TaskPostLinearizedStresses::on_PlotValues_clicked() {

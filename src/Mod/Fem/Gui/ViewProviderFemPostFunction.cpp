@@ -75,6 +75,7 @@
 #include <Gui/TaskView/TaskDialog.h>
 #include <Gui/Control.h>
 #include <App/PropertyUnits.h>
+#include <Gui/Command.h>
 
 #include <App/PropertyGeo.h>
 #include <App/PropertyStandard.h>
@@ -116,19 +117,17 @@ int PointMarker::countPoints() const
 
 void PointMarker::customEvent(QEvent*)
 {
-    Gui::Document* doc = Gui::Application::Instance->activeDocument();
-    doc->openCommand("fem-line");
-    App::DocumentObject* obj = doc->getDocument()->addObject
-        (Fem::FemPostLineFunction::getClassTypeId().getName(),"Line");
+    std::string name;
+    name = "Line";
 
-    Fem::FemPostLineFunction* md = static_cast<Fem::FemPostLineFunction*>(obj);
+    std::string FeatName = name.c_str();;
+
     const SbVec3f& pt1 = vp->pCoords->point[0];
     const SbVec3f& pt2 = vp->pCoords->point[1];
-    md->Point1.setValue(Base::Vector3d(pt1[0],pt1[1],pt1[2]));
-    md->Point2.setValue(Base::Vector3d(pt2[0],pt2[1],pt2[2]));
 
-    doc->commitCommand();
-    this->deleteLater();
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)", FeatName.c_str(), pt1[0],pt1[1], pt1[2]);
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", FeatName.c_str(), pt2[0],pt2[1], pt2[2]);
+
 }
 
 PROPERTY_SOURCE(FemGui::ViewProviderPointMarker, Gui::ViewProviderDocumentObject)
@@ -736,25 +735,6 @@ ViewProviderFemPostLineFunction::ViewProviderFemPostLineFunction() {
 
 ViewProviderFemPostLineFunction::~ViewProviderFemPostLineFunction() {
 
-}
-void ViewProviderFemPostLineFunction::draggerUpdate(SoDragger* m) {
-
-    Fem::FemPostLineFunction* func = static_cast<Fem::FemPostLineFunction*>(getObject());
-    SoCenterballDragger* dragger = static_cast<SoCenterballDragger*>(m);
-
-    // the new axis of the plane
-    SbRotation rot, scaleDir;
-    const SbVec3f& center = dragger->center.getValue();
-
-    SbVec3f norm(0,0,1);
-    dragger->rotation.getValue().multVec(norm,norm);
-    func->Point1.setValue(center[0], center[1], center[2]);
-    func->Point2.setValue(norm[0],norm[1],norm[2]);
-
-    SbVec3f t = static_cast<SoCenterballManip*>(getManipulator())->translation.getValue();
-    SbVec3f rt, irt;
-    dragger->rotation.getValue().multVec(t,rt);
-    dragger->rotation.getValue().inverse().multVec(t,irt);
 }
 
 void ViewProviderFemPostLineFunction::updateData(const App::Property* p) {

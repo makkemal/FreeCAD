@@ -313,7 +313,6 @@ public:
     static void pointCallback(void * ud, SoEventCallback * n);
 
 protected:
-    virtual void draggerUpdate(SoDragger* mat);
     virtual void updateData(const App::Property*);
 };
 
