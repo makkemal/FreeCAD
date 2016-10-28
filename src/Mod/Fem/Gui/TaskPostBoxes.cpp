@@ -74,11 +74,10 @@ using namespace Gui;
 
 // ----------------------------------------------------------------------------
 
-PointMarker::PointMarker(Gui::View3DInventorViewer* iv, const QString &text) : view(iv),
+PointMarker::PointMarker(Gui::View3DInventorViewer* iv) : view(iv),
     vp(new ViewProviderPointMarker)
 {
     view->addViewProvider(vp);
-    m_name = text;
 }
 
 PointMarker::~PointMarker()
@@ -575,8 +574,8 @@ void TaskPostLinearizedStresses::on_FunctionBox_currentIndexChanged(int idx) {
     }
     recompute();
 }
-// Yay for cheezy drawings!
-/* XPM */
+
+
 static const char * cursor_triangle[] = {
 "32 32 3 1",
 " 	c None",
@@ -610,9 +609,10 @@ void TaskPostLinearizedStresses::on_SelectPoints_clicked() {
 
         // Derives from QObject and we have a parent object, so we don't
         // require a delete.
-        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer, ui->FunctionBox->currentText());
+        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
         viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
             FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
+	marker->setName(ui->FunctionBox->currentText());
      }
 }
 

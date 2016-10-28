@@ -55,11 +55,12 @@ class ViewProviderPointMarker;
 class PointMarker : public QObject
 {
 public:
-    PointMarker(Gui::View3DInventorViewer* view, const QString &text);
+    PointMarker(Gui::View3DInventorViewer* view);
     ~PointMarker();
 
     void addPoint(const SbVec3f&);
     int countPoints() const;
+    void setName(const QString text) { m_name = text.toStdString();}
 
 protected:
     void customEvent(QEvent* e);
