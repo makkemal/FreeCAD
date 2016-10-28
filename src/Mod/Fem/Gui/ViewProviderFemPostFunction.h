@@ -65,50 +65,8 @@ class Ui_PlaneWidget;
 class Ui_SphereWidget;
 class Ui_LineWidget;
 
-class SoFontStyle;
-class SoText2;
-class SoBaseColor;
-class SoTranslation;
-class SoCoordinate3;
-class SoIndexedLineSet;
-class SoEventCallback;
-class SoMarkerSet;
-
 namespace FemGui
 {
-
-class ViewProviderPointMarker;
-class PointMarker : public QObject
-{
-public:
-    PointMarker(Gui::View3DInventorViewer* view);
-    ~PointMarker();
-
-    void addPoint(const SbVec3f&);
-    int countPoints() const;
-
-protected:
-    void customEvent(QEvent* e);
-
-private:
-    Gui::View3DInventorViewer *view;
-    ViewProviderPointMarker *vp;
-};
-
-class FemGuiExport ViewProviderPointMarker : public Gui::ViewProviderDocumentObject
-{
-    PROPERTY_HEADER(FemGui::ViewProviderPointMarker);
-
-public:
-    ViewProviderPointMarker();
-    virtual ~ViewProviderPointMarker();
-
-protected:
-    SoCoordinate3    * pCoords;
-    SoMarkerSet      * pMarker;
-    friend class PointMarker;
-};
-
 class ViewProviderFemPostFunction;
 class FemGuiExport FunctionWidget : public QWidget {
 

@@ -39,8 +39,50 @@ class Ui_TaskPostScalarClip;
 class Ui_TaskPostWarpVector;
 class Ui_TaskPostCut;
 
+class SoFontStyle;
+class SoText2;
+class SoBaseColor;
+class SoTranslation;
+class SoCoordinate3;
+class SoIndexedLineSet;
+class SoEventCallback;
+class SoMarkerSet;
+
 
 namespace FemGui {
+
+class ViewProviderPointMarker;
+class PointMarker : public QObject
+{
+public:
+    PointMarker(Gui::View3DInventorViewer* view, const QString &text);
+    ~PointMarker();
+
+    void addPoint(const SbVec3f&);
+    int countPoints() const;
+
+protected:
+    void customEvent(QEvent* e);
+
+private:
+    Gui::View3DInventorViewer *view;
+    ViewProviderPointMarker *vp;
+    std::string m_name;
+};
+
+class FemGuiExport ViewProviderPointMarker : public Gui::ViewProviderDocumentObject
+{
+    PROPERTY_HEADER(FemGui::ViewProviderPointMarker);
+
+public:
+    ViewProviderPointMarker();
+    virtual ~ViewProviderPointMarker();
+
+protected:
+    SoCoordinate3    * pCoords;
+    SoMarkerSet      * pMarker;
+    friend class PointMarker;
+};
 
 class TaskPostBox : public Gui::TaskView::TaskBox {
 

@@ -50,8 +50,89 @@
 #include <Gui/View3DInventorViewer.h>
 # include <Inventor/events/SoMouseButtonEvent.h>
 
+# include <sstream>
+# include <QApplication>
+# include <Inventor/SoPickedPoint.h>
+# include <Inventor/nodes/SoAnnotation.h>
+# include <Inventor/nodes/SoBaseColor.h>
+# include <Inventor/nodes/SoFontStyle.h>
+# include <Inventor/nodes/SoPickStyle.h>
+# include <Inventor/nodes/SoText2.h>
+# include <Inventor/nodes/SoTranslation.h>
+# include <Inventor/nodes/SoCoordinate3.h>
+# include <Inventor/nodes/SoIndexedLineSet.h>
+# include <Inventor/nodes/SoMarkerSet.h>
+# include <Inventor/nodes/SoDrawStyle.h>
+#include <Gui/View3DInventorViewer.h>
+
+#include <App/PropertyGeo.h>
+#include <App/PropertyStandard.h>
+#include <Base/Quantity.h>
+
 using namespace FemGui;
 using namespace Gui;
+
+// ----------------------------------------------------------------------------
+
+PointMarker::PointMarker(Gui::View3DInventorViewer* iv, const QString &text) : view(iv),
+    vp(new ViewProviderPointMarker)
+{
+    view->addViewProvider(vp);
+    m_name = text;
+}
+
+PointMarker::~PointMarker()
+{
+    view->removeViewProvider(vp);
+    delete vp;
+}
+
+void PointMarker::addPoint(const SbVec3f& pt)
+{
+    int ct = countPoints();
+    vp->pCoords->point.set1Value(ct, pt);
+    vp->pMarker->numPoints=ct+1;
+}
+
+int PointMarker::countPoints() const
+{
+    return vp->pCoords->point.getNum();
+}
+
+void PointMarker::customEvent(QEvent*)
+{
+    const SbVec3f& pt1 = vp->pCoords->point[0];
+    const SbVec3f& pt2 = vp->pCoords->point[1];
+
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)", m_name.c_str(), pt1[0],pt1[1], pt1[2]);
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", m_name.c_str(), pt2[0],pt2[1], pt2[2]);
+
+}
+
+PROPERTY_SOURCE(FemGui::ViewProviderPointMarker, Gui::ViewProviderDocumentObject)
+
+ViewProviderPointMarker::ViewProviderPointMarker()
+{
+    pCoords = new SoCoordinate3();
+    pCoords->ref();
+    pCoords->point.setNum(0);
+    pMarker = new SoMarkerSet();
+    pMarker->markerIndex = SoMarkerSet::CROSS_9_9;
+    pMarker->numPoints=0;
+    pMarker->ref();
+
+    SoGroup* grp = new SoGroup();
+    grp->addChild(pCoords);
+    grp->addChild(pMarker);
+    addDisplayMaskMode(grp, "Base");
+    setDisplayMaskMode("Base");
+}
+
+ViewProviderPointMarker::~ViewProviderPointMarker()
+{
+    pCoords->unref();
+    pMarker->unref();
+}
 
 //**************************************************************************
 //**************************************************************************
@@ -529,7 +610,7 @@ void TaskPostLinearizedStresses::on_SelectPoints_clicked() {
 
         // Derives from QObject and we have a parent object, so we don't
         // require a delete.
-        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer);
+        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer, ui->FunctionBox->currentText());
         viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
             FemGui::ViewProviderFemPostLineFunction::pointCallback, marker);
      }
