@@ -481,6 +481,11 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, A
 
     onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2);
     onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1);
+
+    //update all fields
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->DisplayMode, ui->Representation);
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
     
 }
 
@@ -598,6 +603,23 @@ void TaskPostDataAlongLine::pointCallback(void * ud, SoEventCallback * n)
         pm->deleteLater();
     }
 }
+void TaskPostDataAlongLine::on_Representation_activated(int i) {
+
+    getTypedView<ViewProviderFemPostObject>()->DisplayMode.setValue(i);
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
+}
+
+void TaskPostDataAlongLine::on_Field_activated(int i) {
+
+    getTypedView<ViewProviderFemPostObject>()->Field.setValue(i);
+}
+
+void TaskPostDataAlongLine::on_VectorMode_activated(int i) {
+
+    getTypedView<ViewProviderFemPostObject>()->VectorMode.setValue(i);
+}
+
 
 //############################################################################################
 

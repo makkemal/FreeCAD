@@ -220,6 +220,9 @@ public:
 
 private Q_SLOTS:
     void on_SelectPoints_clicked();
+    void on_Representation_activated(int i);
+    void on_Field_activated(int i);
+    void on_VectorMode_activated(int i);
     void point2Changed(double val);
     void point1Changed(double val);
 
