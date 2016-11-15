@@ -30,6 +30,7 @@
 #include <Base/Parameter.h>
 #include <App/PropertyLinks.h>
 #include "ViewProviderFemPostFunction.h"
+#include <boost/signals.hpp>
 
 class QComboBox;
 class Ui_TaskPostDisplay;
@@ -54,12 +55,17 @@ namespace FemGui {
 class ViewProviderPointMarker;
 class PointMarker : public QObject
 {
+    Q_OBJECT
+
 public:
     PointMarker(Gui::View3DInventorViewer* view, std::string ObjName);
     ~PointMarker();
 
     void addPoint(const SbVec3f&);
     int countPoints() const;
+
+Q_SIGNALS:
+    void PointsChanged(double x1, double y1, double z1, double x2, double y2, double z2);
 
 protected:
     void customEvent(QEvent* e);
@@ -216,7 +222,6 @@ public:
 
     virtual void applyPythonCode();
     static void pointCallback(void * ud, SoEventCallback * n);
-    virtual void onChange(const App::Property& p);
 
 private Q_SLOTS:
     void on_SelectPoints_clicked();
@@ -225,8 +230,9 @@ private Q_SLOTS:
     void on_VectorMode_activated(int i);
     void point2Changed();
     void point1Changed();
-    void resolutionChanged();
+    void resolutionChanged(int val);
     void on_Scalar_currentIndexChanged(int idx);
+    void onChange(double x1, double y1, double z1, double x2, double y2, double z2);
 
 
 private:

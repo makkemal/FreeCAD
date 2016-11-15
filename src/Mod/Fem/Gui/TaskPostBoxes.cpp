@@ -107,7 +107,7 @@ void PointMarker::customEvent(QEvent*)
 
     Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)", m_name.c_str(), pt1[0],pt1[1], pt1[2]);
     Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", m_name.c_str(), pt2[0],pt2[1], pt2[2]);
-
+    PointsChanged(pt1[0],pt1[1], pt1[2], pt2[0],pt2[1], pt2[2]);
 }
 
 PROPERTY_SOURCE(FemGui::ViewProviderPointMarker, Gui::ViewProviderDocumentObject)
@@ -451,9 +451,6 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, Q
 
     assert(view->isDerivedFrom(ViewProviderFemPostDataAlongLine::getClassTypeId()));
 
-
-
-
     //we load the views widget
     proxy = new QWidget(this);
     ui = new Ui_TaskPostDataAlongLine();
@@ -472,23 +469,21 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, Q
     ui->point2Y->setValue(vec2.y);
     ui->point2Z->setValue(vec2.z);
 
+    int res = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Resolution.getValue();
+    ui->resolution->setValue(res);
+
     connect(ui->point1X, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
     connect(ui->point1Y, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
     connect(ui->point1Z, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
     connect(ui->point2X, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
     connect(ui->point2Y, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
     connect(ui->point2Z, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
-    connect(ui->resolution, SIGNAL(valueChanged()), this, SLOT(resolutionChanged()));
-
-    onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2);
-    onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1);
+    connect(ui->resolution, SIGNAL(valueChanged(int)), this, SLOT(resolutionChanged(int)));
 
     //update all fields
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->DisplayMode, ui->Representation);
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
-    
-    //load the default values
     updateEnumerationList(getTypedObject<Fem::FemPostDataAlongLineFilter>()->Scalars, ui->Scalar);
 }
 
@@ -500,12 +495,11 @@ void TaskPostDataAlongLine::applyPythonCode() {
 
 }
 
-
 static const char * cursor_triangle[] = {
 "32 32 3 1",
-" 	c None",
-".	c #FFFFFF",
-"+	c #FF0000",
+"       c None",
+".      c #FFFFFF",
+"+      c #FF0000",
 "      .                         ",
 "      .                         ",
 "      .                         ",
@@ -523,6 +517,7 @@ static const char * cursor_triangle[] = {
 "           +  ++ ++ +           ",
 "          + ++++++++ +          ",
 "         ++  ++  ++  ++         "};
+
 void TaskPostDataAlongLine::on_SelectPoints_clicked() {
 
     Gui::Document* doc = Gui::Application::Instance->activeDocument();
@@ -539,42 +534,40 @@ void TaskPostDataAlongLine::on_SelectPoints_clicked() {
         FemGui::PointMarker* marker = new FemGui::PointMarker(viewer, ObjName);
         viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
             FemGui::TaskPostDataAlongLine::pointCallback, marker);
+        connect(marker, SIGNAL(PointsChanged(double, double, double, double, double, double)), this, SLOT(onChange(double, double, double, double, double, double)));
      }
 
 }
 
-void TaskPostDataAlongLine::onChange(const App::Property& p) {
+void TaskPostDataAlongLine::onChange(double x1, double y1, double z1, double x2, double y2, double z2) {
 
-    if(strcmp(p.getName(), "Point2") == 0) {
-        const Base::Vector3d& vec = static_cast<const App::PropertyVector*>(&p)->getValue();
-        ui->point2X->setValue(vec.x);
-        ui->point2Y->setValue(vec.y);
-        ui->point2Z->setValue(vec.z);
-    }
-    else if(strcmp(p.getName(), "Point1") == 0) {
-        const Base::Vector3d& vec = static_cast<const App::PropertyVector*>(&p)->getValue();
-        ui->point1X->setValue(vec.x);
-        ui->point1Y->setValue(vec.y);
-        ui->point1Z->setValue(vec.z);
-    }
+    ui->point2X->setValue(x2);
+    ui->point2Y->setValue(y2);
+    ui->point2Z->setValue(z2);
+
+    ui->point1X->setValue(x1);
+    ui->point1Y->setValue(y1);
+    ui->point1Z->setValue(z1);
+
 }
 
 void TaskPostDataAlongLine::point1Changed() {
 
-        Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
-        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
+    Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
+    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
 
 }
 
 void TaskPostDataAlongLine::point2Changed() {
 
-        Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
-        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
+    Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
+    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
 
 }
-void TaskPostDataAlongLine::resolutionChanged() {
 
-        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Resolution.setValue(ui->resolution->value());
+void TaskPostDataAlongLine::resolutionChanged(int val) {
+    
+    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Resolution.setValue(val);
 
 }
 
@@ -611,6 +604,7 @@ void TaskPostDataAlongLine::pointCallback(void * ud, SoEventCallback * n)
         pm->deleteLater();
     }
 }
+
 void TaskPostDataAlongLine::on_Representation_activated(int i) {
 
     getTypedView<ViewProviderFemPostObject>()->DisplayMode.setValue(i);
