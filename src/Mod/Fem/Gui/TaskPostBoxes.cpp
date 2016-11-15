@@ -28,6 +28,7 @@
 
 #include "ui_TaskPostDisplay.h"
 #include "ui_TaskPostClip.h"
+#include "ui_TaskPostDataAlongLine.h"
 #include "ui_TaskPostScalarClip.h"
 #include "ui_TaskPostWarpVector.h"
 #include "ui_TaskPostCut.h"
@@ -45,9 +46,94 @@
 #include <Gui/Action.h>
 #include <QMessageBox>
 #include <QPushButton>
+#include <Gui/View3DInventor.h>
+#include <Gui/View3DInventorViewer.h>
+# include <Inventor/events/SoMouseButtonEvent.h>
+
+# include <sstream>
+# include <QApplication>
+# include <Inventor/SoPickedPoint.h>
+# include <Inventor/nodes/SoAnnotation.h>
+# include <Inventor/nodes/SoBaseColor.h>
+# include <Inventor/nodes/SoFontStyle.h>
+# include <Inventor/nodes/SoPickStyle.h>
+# include <Inventor/nodes/SoText2.h>
+# include <Inventor/nodes/SoTranslation.h>
+# include <Inventor/nodes/SoCoordinate3.h>
+# include <Inventor/nodes/SoIndexedLineSet.h>
+# include <Inventor/nodes/SoMarkerSet.h>
+# include <Inventor/nodes/SoDrawStyle.h>
+#include <Gui/View3DInventorViewer.h>
+#include <Base/Console.h>
+
+#include <App/PropertyGeo.h>
+#include <App/PropertyStandard.h>
+#include <Base/Quantity.h>
 
 using namespace FemGui;
 using namespace Gui;
+
+// ----------------------------------------------------------------------------
+
+PointMarker::PointMarker(Gui::View3DInventorViewer* iv, std::string ObjName) : view(iv),
+    vp(new ViewProviderPointMarker)
+{
+    view->addViewProvider(vp);
+    m_name = ObjName;
+}
+
+PointMarker::~PointMarker()
+{
+    view->removeViewProvider(vp);
+    delete vp;
+}
+
+void PointMarker::addPoint(const SbVec3f& pt)
+{
+    int ct = countPoints();
+    vp->pCoords->point.set1Value(ct, pt);
+    vp->pMarker->numPoints=ct+1;
+}
+
+int PointMarker::countPoints() const
+{
+    return vp->pCoords->point.getNum();
+}
+
+void PointMarker::customEvent(QEvent*)
+{
+    const SbVec3f& pt1 = vp->pCoords->point[0];
+    const SbVec3f& pt2 = vp->pCoords->point[1];
+
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)", m_name.c_str(), pt1[0],pt1[1], pt1[2]);
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", m_name.c_str(), pt2[0],pt2[1], pt2[2]);
+
+}
+
+PROPERTY_SOURCE(FemGui::ViewProviderPointMarker, Gui::ViewProviderDocumentObject)
+
+ViewProviderPointMarker::ViewProviderPointMarker()
+{
+    pCoords = new SoCoordinate3();
+    pCoords->ref();
+    pCoords->point.setNum(0);
+    pMarker = new SoMarkerSet();
+    pMarker->markerIndex = SoMarkerSet::CROSS_9_9;
+    pMarker->numPoints=0;
+    pMarker->ref();
+
+    SoGroup* grp = new SoGroup();
+    grp->addChild(pCoords);
+    grp->addChild(pMarker);
+    addDisplayMaskMode(grp, "Base");
+    setDisplayMaskMode("Base");
+}
+
+ViewProviderPointMarker::~ViewProviderPointMarker()
+{
+    pCoords->unref();
+    pMarker->unref();
+}
 
 //**************************************************************************
 //**************************************************************************
@@ -129,8 +215,6 @@ void TaskDlgPost::modifyStandardButtons(QDialogButtonBox* box) {
     if(box->button(QDialogButtonBox::Apply))
         box->button(QDialogButtonBox::Apply)->setDefault(true);
 }
-
-
 //############################################################################################
 
 TaskPostBox::TaskPostBox(Gui::ViewProviderDocumentObject* view, const QPixmap &icon, const QString &title, QWidget* parent)
@@ -161,8 +245,9 @@ void TaskPostBox::updateEnumerationList(App::PropertyEnumeration& prop, QComboBo
     box->clear();
     QStringList list;
     std::vector<std::string> vec = prop.getEnumVector();
-    for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it )
+    for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it ) {
         list.push_back(QString::fromStdString(*it));
+    }
 
     box->insertItems(0, list);
     box->setCurrentIndex(prop.getValue());
@@ -358,6 +443,160 @@ void TaskPostClip::on_InsideOut_toggled(bool val) {
 
     static_cast<Fem::FemPostClipFilter*>(getObject())->InsideOut.setValue(val);
     recompute();
+}
+//############################################################################################
+
+TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, App::PropertyLink* function, QWidget* parent)
+    : TaskPostBox(view,Gui::BitmapFactory().pixmap("fem-fem-mesh-create-node-by-poly"), tr("Data Along Line"), parent) {
+
+    assert(view->isDerivedFrom(ViewProviderFemPostDataAlongLine::getClassTypeId()));
+    assert(function);
+
+    fwidget = NULL;
+
+    //we load the views widget
+    proxy = new QWidget(this);
+    ui = new Ui_TaskPostDataAlongLine();
+    ui->setupUi(proxy);
+
+    QMetaObject::connectSlotsByName(this);
+    this->groupLayout()->addWidget(proxy);
+
+    const Base::Vector3d& vec1 = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.getValue();
+    ui->point1X->setValue(vec1.x);
+    ui->point1Y->setValue(vec1.y);
+    ui->point1Z->setValue(vec1.z);
+
+    const Base::Vector3d& vec2 = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.getValue();
+    ui->point2X->setValue(vec2.x);
+    ui->point2Y->setValue(vec2.y);
+    ui->point2Z->setValue(vec2.z);
+
+    connect(ui->point1X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point1Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point1Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point2X, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+    connect(ui->point2Y, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+    connect(ui->point2Z, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+
+    onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2);
+    onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1);
+    
+}
+
+TaskPostDataAlongLine::~TaskPostDataAlongLine() {
+
+}
+
+void TaskPostDataAlongLine::applyPythonCode() {
+
+}
+
+
+static const char * cursor_triangle[] = {
+"32 32 3 1",
+" 	c None",
+".	c #FFFFFF",
+"+	c #FF0000",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"      .                         ",
+"                                ",
+".....   .....                   ",
+"                                ",
+"      .                         ",
+"      .                         ",
+"      .        ++               ",
+"      .       +  +              ",
+"      .      + ++ +             ",
+"            + ++++ +            ",
+"           +  ++ ++ +           ",
+"          + ++++++++ +          ",
+"         ++  ++  ++  ++         "};
+void TaskPostDataAlongLine::on_SelectPoints_clicked() {
+
+    Gui::Document* doc = Gui::Application::Instance->activeDocument();
+    Gui::View3DInventor* view = static_cast<Gui::View3DInventor*>(doc->getActiveView());
+    if (view) {
+        Gui::View3DInventorViewer* viewer = view->getViewer();
+        viewer->setEditing(true);
+        viewer->setEditingCursor(QCursor(QPixmap(cursor_triangle), 7, 7));
+
+        // Derives from QObject and we have a parent object, so we don't
+        // require a delete.
+        std::string ObjName = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Label.getValue();
+
+        FemGui::PointMarker* marker = new FemGui::PointMarker(viewer, ObjName);
+        viewer->addEventCallback(SoMouseButtonEvent::getClassTypeId(),
+            FemGui::TaskPostDataAlongLine::pointCallback, marker);
+     }
+
+}
+
+void TaskPostDataAlongLine::onChange(const App::Property& p) {
+
+    if(strcmp(p.getName(), "Point2") == 0) {
+        const Base::Vector3d& vec = static_cast<const App::PropertyVector*>(&p)->getValue();
+        ui->point2X->setValue(vec.x);
+        ui->point2Y->setValue(vec.y);
+        ui->point2Z->setValue(vec.z);
+    }
+    else if(strcmp(p.getName(), "Point1") == 0) {
+        const Base::Vector3d& vec = static_cast<const App::PropertyVector*>(&p)->getValue();
+        ui->point1X->setValue(vec.x);
+        ui->point1Y->setValue(vec.y);
+        ui->point1Z->setValue(vec.z);
+    }
+}
+
+void TaskPostDataAlongLine::point1Changed(double val) {
+
+        Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
+        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
+
+}
+
+void TaskPostDataAlongLine::point2Changed(double val) {
+
+        Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
+        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
+
+}
+
+void TaskPostDataAlongLine::pointCallback(void * ud, SoEventCallback * n)
+{
+    const SoMouseButtonEvent * mbe = static_cast<const SoMouseButtonEvent*>(n->getEvent());
+    Gui::View3DInventorViewer* view  = reinterpret_cast<Gui::View3DInventorViewer*>(n->getUserData());
+    PointMarker *pm = reinterpret_cast<PointMarker*>(ud);
+
+    // Mark all incoming mouse button events as handled, especially, to deactivate the selection node
+    n->getAction()->setHandled();
+    
+    if (mbe->getButton() == SoMouseButtonEvent::BUTTON1 && mbe->getState() == SoButtonEvent::DOWN) {
+        const SoPickedPoint * point = n->getPickedPoint();
+        if (point == NULL) {
+            Base::Console().Message("No point picked.\n");
+            return;
+        }
+
+        n->setHandled();
+        pm->addPoint(point->getPoint());
+        if (pm->countPoints() == 2) {
+            QEvent *e = new QEvent(QEvent::User);
+            QApplication::postEvent(pm, e);
+            // leave mode
+            view->setEditing(false);
+            view->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), pointCallback, ud);
+        }
+    }
+    else if (mbe->getButton() != SoMouseButtonEvent::BUTTON1 && mbe->getState() == SoButtonEvent::UP) {
+        n->setHandled();
+        view->setEditing(false);
+        view->removeEventCallback(SoMouseButtonEvent::getClassTypeId(), pointCallback, ud);
+        pm->deleteLater();
+    }
 }
 
 //############################################################################################

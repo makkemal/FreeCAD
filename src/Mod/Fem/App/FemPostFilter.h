@@ -96,6 +96,32 @@ private:
     vtkSmartPointer<vtkExtractGeometry>         m_extractor;
 };
 
+class AppFemExport FemPostDataAlongLineFilter : public FemPostFilter {
+
+    PROPERTY_HEADER(Fem::FemPostDataAlongLineFilter);
+
+public:
+    FemPostDataAlongLineFilter(void);
+    virtual ~FemPostDataAlongLineFilter();
+
+    App::PropertyLink           Function;
+
+    App::PropertyVector   Point2;
+    App::PropertyVector   Point1;
+
+    virtual const char* getViewProviderName(void) const {
+        return "FemGui::ViewProviderFemPostDataAlongLine";
+    }
+    virtual App::DocumentObjectExecReturn* execute(void);
+
+protected:
+    virtual void onChanged(const App::Property* prop);
+
+private:
+    vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
+    vtkSmartPointer<vtkExtractGeometry>         m_extractor;
+};
+
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {
 

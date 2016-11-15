@@ -38,6 +38,7 @@
         <file>icons/preferences-fem.svg</file>
         <file>icons/FemWorkbench.svg</file>
         <file>icons/fem-clip.png</file>
+        <file>icons/fem-DataAlongLine.png</file>
         <file>icons/fem-clip-scalar.png</file>
         <file>icons/fem-cut.png</file>
         <file>icons/fem-isosurface.png</file>

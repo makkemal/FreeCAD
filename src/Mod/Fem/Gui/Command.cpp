@@ -1123,6 +1123,30 @@ bool CmdFemPostCreateClipFilter::isActive(void)
     return hasActiveDocument();
 }
 
+DEF_STD_CMD_A(CmdFemPostCreateDataAlongLineFilter);
+
+CmdFemPostCreateDataAlongLineFilter::CmdFemPostCreateDataAlongLineFilter()
+  : Command("Fem_PostCreateDataAlongLineFilter")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Define/create a clip filter which uses functions to define the cliped region");
+    sToolTipText    = QT_TR_NOOP("Define/create a clip filter which uses functions to define the cliped region");
+    sWhatsThis      = "Fem_PostCreateDataAlongLineFilter";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-DataAlongLine";
+}
+
+void CmdFemPostCreateDataAlongLineFilter::activated(int)
+{
+    setupFilter(this, "DataAlongLine");
+}
+
+bool CmdFemPostCreateDataAlongLineFilter::isActive(void)
+{
+    return hasActiveDocument();
+}
+
 DEF_STD_CMD_A(CmdFemPostCreateScalarClipFilter);
 
 CmdFemPostCreateScalarClipFilter::CmdFemPostCreateScalarClipFilter()
@@ -1456,6 +1480,7 @@ void CreateFemCommands(void)
     rcCmdMgr.addCommand(new CmdFemConstraintTransform());
 #ifdef FC_USE_VTK
     rcCmdMgr.addCommand(new CmdFemPostCreateClipFilter);
+    rcCmdMgr.addCommand(new CmdFemPostCreateDataAlongLineFilter);
     rcCmdMgr.addCommand(new CmdFemPostCreateScalarClipFilter);
     rcCmdMgr.addCommand(new CmdFemPostWarpVectorFilter);
     rcCmdMgr.addCommand(new CmdFemPostFunctions);

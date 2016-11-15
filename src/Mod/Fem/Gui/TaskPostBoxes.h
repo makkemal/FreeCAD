@@ -34,12 +34,55 @@
 class QComboBox;
 class Ui_TaskPostDisplay;
 class Ui_TaskPostClip;
+class Ui_TaskPostDataAlongLine;
 class Ui_TaskPostScalarClip;
 class Ui_TaskPostWarpVector;
 class Ui_TaskPostCut;
 
+class SoFontStyle;
+class SoText2;
+class SoBaseColor;
+class SoTranslation;
+class SoCoordinate3;
+class SoIndexedLineSet;
+class SoEventCallback;
+class SoMarkerSet;
+
 
 namespace FemGui {
+
+class ViewProviderPointMarker;
+class PointMarker : public QObject
+{
+public:
+    PointMarker(Gui::View3DInventorViewer* view, std::string ObjName);
+    ~PointMarker();
+
+    void addPoint(const SbVec3f&);
+    int countPoints() const;
+
+protected:
+    void customEvent(QEvent* e);
+
+private:
+    Gui::View3DInventorViewer *view;
+    ViewProviderPointMarker *vp;
+    std::string m_name;
+};
+
+class FemGuiExport ViewProviderPointMarker : public Gui::ViewProviderDocumentObject
+{
+    PROPERTY_HEADER(FemGui::ViewProviderPointMarker);
+
+public:
+    ViewProviderPointMarker();
+    virtual ~ViewProviderPointMarker();
+
+protected:
+    SoCoordinate3    * pCoords;
+    SoMarkerSet      * pMarker;
+    friend class PointMarker;
+};
 
 class TaskPostBox : public Gui::TaskView::TaskBox {
 
@@ -105,7 +148,6 @@ protected:
     std::vector<TaskPostBox*>   m_boxes;
 };
 
-
 class TaskPostDisplay : public TaskPostBox
 {
     Q_OBJECT
@@ -161,6 +203,32 @@ private:
     App::PropertyLink* m_functionProperty;
     QWidget* proxy;
     Ui_TaskPostClip* ui;
+    FunctionWidget* fwidget;
+};
+
+class TaskPostDataAlongLine: public TaskPostBox {
+
+    Q_OBJECT
+
+public:
+    TaskPostDataAlongLine(Gui::ViewProviderDocumentObject* view, App::PropertyLink* function, QWidget* parent = 0);
+    virtual ~TaskPostDataAlongLine();
+
+    virtual void applyPythonCode();
+    static void pointCallback(void * ud, SoEventCallback * n);
+    virtual void onChange(const App::Property& p);
+
+private Q_SLOTS:
+    void on_SelectPoints_clicked();
+    void point2Changed(double val);
+    void point1Changed(double val);
+
+
+private:
+
+    App::PropertyLink* m_functionProperty;
+    QWidget* proxy;
+    Ui_TaskPostDataAlongLine* ui;
     FunctionWidget* fwidget;
 };
 

@@ -171,7 +171,54 @@ DocumentObjectExecReturn* FemPostClipFilter::execute(void) {
     return Fem::FemPostFilter::execute();
 }
 
+PROPERTY_SOURCE(Fem::FemPostDataAlongLineFilter, Fem::FemPostFilter)
 
+FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
+
+    ADD_PROPERTY(Point1,(Base::Vector3d(0.0,0.0,0.0)));
+    ADD_PROPERTY(Point2,(Base::Vector3d(0.0,0.0,1.0)));
+
+    ADD_PROPERTY_TYPE(Function, (0), "DataAlongLine", App::Prop_None, "The function object which defines the clip regions");
+   
+    FilterPipeline clip;
+    m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
+    clip.source         = m_clipper;
+    clip.target         = m_clipper;
+    addFilterPipeline(clip, "DataAlongLine");
+
+    FilterPipeline extr;
+    m_extractor         = vtkSmartPointer<vtkExtractGeometry>::New();
+    extr.source         = m_extractor;
+    extr.target         = m_extractor;
+    addFilterPipeline(extr, "extract");
+
+    m_extractor->SetExtractInside(0);
+    setActiveFilterPipeline("extract");
+}
+
+FemPostDataAlongLineFilter::~FemPostDataAlongLineFilter() {
+
+}
+
+void FemPostDataAlongLineFilter::onChanged(const Property* prop) {
+
+    if(prop == &Function) {
+
+        if(Function.getValue() && Function.getValue()->isDerivedFrom(FemPostFunction::getClassTypeId())) {
+            m_clipper->SetClipFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
+            m_extractor->SetImplicitFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
+        }
+    }
+    Fem::FemPostFilter::onChanged(prop);
+}
+
+DocumentObjectExecReturn* FemPostDataAlongLineFilter::execute(void) {
+
+    if(!m_extractor->GetImplicitFunction())
+        return StdReturn;
+
+    return Fem::FemPostFilter::execute();
+}
 
 PROPERTY_SOURCE(Fem::FemPostScalarClipFilter, Fem::FemPostFilter)
 
