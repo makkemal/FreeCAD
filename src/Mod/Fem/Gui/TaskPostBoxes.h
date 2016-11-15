@@ -226,13 +226,12 @@ private Q_SLOTS:
     void point2Changed();
     void point1Changed();
     void resolutionChanged();
+    void on_Scalar_currentIndexChanged(int idx);
 
 
 private:
-
     QWidget* proxy;
     Ui_TaskPostDataAlongLine* ui;
-
 };
 
 class TaskPostScalarClip : public TaskPostBox {

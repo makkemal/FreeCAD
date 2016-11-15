@@ -108,16 +108,23 @@ public:
     App::PropertyVector   Point1;
     App::PropertyInteger  Resolution;
 
+    App::PropertyEnumeration     Scalars;
+
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostDataAlongLine";
     }
+    virtual short int mustExecute(void) const;
+
+protected:
     virtual App::DocumentObjectExecReturn* execute(void);
+    virtual void onChanged(const App::Property* prop);
+    void setConstraintForField();
 
 private:
     vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
-    vtkSmartPointer<vtkExtractGeometry>         m_extractor;
+    App::Enumeration                            m_scalarFields;
+    App::PropertyFloatConstraint::Constraints   m_constraints;
 };
-
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {
 

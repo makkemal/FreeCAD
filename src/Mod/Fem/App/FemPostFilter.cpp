@@ -179,20 +179,14 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
     ADD_PROPERTY(Point2,(Base::Vector3d(0.0,0.0,1.0)));
     ADD_PROPERTY(Resolution,(30));
 
+    ADD_PROPERTY_TYPE(Scalars, (long(0)), "DataAlongLine", App::Prop_None, "The field used to clip");
+
     FilterPipeline clip;
     m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
     clip.source         = m_clipper;
     clip.target         = m_clipper;
     addFilterPipeline(clip, "DataAlongLine");
-
-    FilterPipeline extr;
-    m_extractor         = vtkSmartPointer<vtkExtractGeometry>::New();
-    extr.source         = m_extractor;
-    extr.target         = m_extractor;
-    addFilterPipeline(extr, "extract");
-
-    m_extractor->SetExtractInside(0);
-    setActiveFilterPipeline("extract");
+    setActiveFilterPipeline("DataAlongLine");
 }
 
 FemPostDataAlongLineFilter::~FemPostDataAlongLineFilter() {
@@ -201,10 +195,72 @@ FemPostDataAlongLineFilter::~FemPostDataAlongLineFilter() {
 
 DocumentObjectExecReturn* FemPostDataAlongLineFilter::execute(void) {
 
-    if(!m_extractor->GetImplicitFunction())
+    std::string val;
+    if(m_scalarFields.getEnums() && Scalars.getValue() >= 0)
+        val = Scalars.getValueAsString();
+
+    std::vector<std::string> array;
+
+    vtkSmartPointer<vtkDataObject> data = getInputData();
+    if(!data || !data->IsA("vtkDataSet"))
         return StdReturn;
 
+    vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
+    vtkPointData* pd = dset->GetPointData();
+
+    for(int i=0; i<pd->GetNumberOfArrays(); ++i) {
+        if(pd->GetArray(i)->GetNumberOfComponents()==1)
+            array.push_back(pd->GetArrayName(i));
+    }
+
+    App::Enumeration empty;
+    Scalars.setValue(empty);
+    m_scalarFields.setEnums(array);
+    Scalars.setValue(m_scalarFields);
+
+    std::vector<std::string>::iterator it = std::find(array.begin(), array.end(), val);
+    if(!val.empty() && it != array.end())
+        Scalars.setValue(val.c_str());
+
+    //recalculate the filter
     return Fem::FemPostFilter::execute();
+}
+
+
+void FemPostDataAlongLineFilter::onChanged(const Property* prop) {
+
+   if(prop == &Scalars && (Scalars.getValue() >= 0)) {
+        m_clipper->SetInputArrayToProcess(0, 0, 0,
+                                          vtkDataObject::FIELD_ASSOCIATION_POINTS, Scalars.getValueAsString() );
+        setConstraintForField();
+    }
+
+    Fem::FemPostFilter::onChanged(prop);
+}
+
+short int FemPostDataAlongLineFilter::mustExecute(void) const {
+
+    if(Scalars.isTouched()) {
+
+        return 1;
+    }
+    else return App::DocumentObject::mustExecute();
+}
+
+void FemPostDataAlongLineFilter::setConstraintForField() {
+
+    vtkSmartPointer<vtkDataObject> data = getInputData();
+    if(!data || !data->IsA("vtkDataSet"))
+        return;
+
+    vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
+
+    vtkDataArray* pdata = dset->GetPointData()->GetArray(Scalars.getValueAsString());
+    double p[2];
+    pdata->GetRange(p);
+    m_constraints.LowerBound = p[0];
+    m_constraints.UpperBound = p[1];
+    m_constraints.StepSize = (p[1]-p[0])/100.;
 }
 
 PROPERTY_SOURCE(Fem::FemPostScalarClipFilter, Fem::FemPostFilter)

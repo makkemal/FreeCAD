@@ -488,6 +488,8 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, Q
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
     
+    //load the default values
+    updateEnumerationList(getTypedObject<Fem::FemPostDataAlongLineFilter>()->Scalars, ui->Scalar);
 }
 
 TaskPostDataAlongLine::~TaskPostDataAlongLine() {
@@ -626,6 +628,11 @@ void TaskPostDataAlongLine::on_VectorMode_activated(int i) {
     getTypedView<ViewProviderFemPostObject>()->VectorMode.setValue(i);
 }
 
+void TaskPostDataAlongLine::on_Scalar_currentIndexChanged(int idx) {
+
+    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Scalars.setValue(idx);
+    recompute();
+}
 
 //############################################################################################
 
