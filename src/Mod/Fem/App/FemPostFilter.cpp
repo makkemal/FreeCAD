@@ -177,9 +177,8 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
 
     ADD_PROPERTY(Point1,(Base::Vector3d(0.0,0.0,0.0)));
     ADD_PROPERTY(Point2,(Base::Vector3d(0.0,0.0,1.0)));
+    ADD_PROPERTY(Resolution,(30));
 
-    ADD_PROPERTY_TYPE(Function, (0), "DataAlongLine", App::Prop_None, "The function object which defines the clip regions");
-   
     FilterPipeline clip;
     m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
     clip.source         = m_clipper;
@@ -198,18 +197,6 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
 
 FemPostDataAlongLineFilter::~FemPostDataAlongLineFilter() {
 
-}
-
-void FemPostDataAlongLineFilter::onChanged(const Property* prop) {
-
-    if(prop == &Function) {
-
-        if(Function.getValue() && Function.getValue()->isDerivedFrom(FemPostFunction::getClassTypeId())) {
-            m_clipper->SetClipFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
-            m_extractor->SetImplicitFunction(static_cast<FemPostFunction*>(Function.getValue())->getImplicitFunction());
-        }
-    }
-    Fem::FemPostFilter::onChanged(prop);
 }
 
 DocumentObjectExecReturn* FemPostDataAlongLineFilter::execute(void) {

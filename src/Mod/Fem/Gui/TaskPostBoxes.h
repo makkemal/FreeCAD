@@ -211,7 +211,7 @@ class TaskPostDataAlongLine: public TaskPostBox {
     Q_OBJECT
 
 public:
-    TaskPostDataAlongLine(Gui::ViewProviderDocumentObject* view, App::PropertyLink* function, QWidget* parent = 0);
+    TaskPostDataAlongLine(Gui::ViewProviderDocumentObject* view, QWidget* parent = 0);
     virtual ~TaskPostDataAlongLine();
 
     virtual void applyPythonCode();
@@ -223,16 +223,16 @@ private Q_SLOTS:
     void on_Representation_activated(int i);
     void on_Field_activated(int i);
     void on_VectorMode_activated(int i);
-    void point2Changed(double val);
-    void point1Changed(double val);
+    void point2Changed();
+    void point1Changed();
+    void resolutionChanged();
 
 
 private:
 
-    App::PropertyLink* m_functionProperty;
     QWidget* proxy;
     Ui_TaskPostDataAlongLine* ui;
-    FunctionWidget* fwidget;
+
 };
 
 class TaskPostScalarClip : public TaskPostBox {

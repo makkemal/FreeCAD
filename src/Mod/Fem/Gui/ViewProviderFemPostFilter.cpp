@@ -65,9 +65,8 @@ ViewProviderFemPostDataAlongLine::~ViewProviderFemPostDataAlongLine() {
 void ViewProviderFemPostDataAlongLine::setupTaskDialog(TaskDlgPost* dlg) {
 
     //add the function box
-    dlg->appendBox(new TaskPostDataAlongLine(dlg->getView(),
-                                    &static_cast<Fem::FemPostDataAlongLineFilter*>(dlg->getView()->getObject())->Function));
-
+    dlg->appendBox(new TaskPostDataAlongLine(dlg->getView()));
+                                   
 }
 
 

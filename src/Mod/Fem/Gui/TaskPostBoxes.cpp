@@ -446,13 +446,13 @@ void TaskPostClip::on_InsideOut_toggled(bool val) {
 }
 //############################################################################################
 
-TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, App::PropertyLink* function, QWidget* parent)
+TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, QWidget* parent)
     : TaskPostBox(view,Gui::BitmapFactory().pixmap("fem-fem-mesh-create-node-by-poly"), tr("Data Along Line"), parent) {
 
     assert(view->isDerivedFrom(ViewProviderFemPostDataAlongLine::getClassTypeId()));
-    assert(function);
 
-    fwidget = NULL;
+
+
 
     //we load the views widget
     proxy = new QWidget(this);
@@ -472,12 +472,13 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, A
     ui->point2Y->setValue(vec2.y);
     ui->point2Z->setValue(vec2.z);
 
-    connect(ui->point1X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point1Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point1Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point2X, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
-    connect(ui->point2Y, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
-    connect(ui->point2Z, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+    connect(ui->point1X, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
+    connect(ui->point1Y, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
+    connect(ui->point1Z, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
+    connect(ui->point2X, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
+    connect(ui->point2Y, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
+    connect(ui->point2Z, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
+    connect(ui->resolution, SIGNAL(valueChanged()), this, SLOT(resolutionChanged()));
 
     onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2);
     onChange(static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1);
@@ -556,17 +557,22 @@ void TaskPostDataAlongLine::onChange(const App::Property& p) {
     }
 }
 
-void TaskPostDataAlongLine::point1Changed(double val) {
+void TaskPostDataAlongLine::point1Changed() {
 
         Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
         static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
 
 }
 
-void TaskPostDataAlongLine::point2Changed(double val) {
+void TaskPostDataAlongLine::point2Changed() {
 
         Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
         static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
+
+}
+void TaskPostDataAlongLine::resolutionChanged() {
+
+        static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Resolution.setValue(ui->resolution->value());
 
 }
 
