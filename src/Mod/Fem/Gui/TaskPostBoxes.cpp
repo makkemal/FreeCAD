@@ -472,19 +472,18 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, Q
     int res = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Resolution.getValue();
     ui->resolution->setValue(res);
 
-    connect(ui->point1X, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
-    connect(ui->point1Y, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
-    connect(ui->point1Z, SIGNAL(valueChanged()), this, SLOT(point1Changed()));
-    connect(ui->point2X, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
-    connect(ui->point2Y, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
-    connect(ui->point2Z, SIGNAL(valueChanged()), this, SLOT(point2Changed()));
+    connect(ui->point1X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point1Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point1Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point2X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point2Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point2Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
     connect(ui->resolution, SIGNAL(valueChanged(int)), this, SLOT(resolutionChanged(int)));
 
     //update all fields
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->DisplayMode, ui->Representation);
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->Field, ui->Field);
     updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
-    updateEnumerationList(getTypedObject<Fem::FemPostDataAlongLineFilter>()->Scalars, ui->Scalar);
 }
 
 TaskPostDataAlongLine::~TaskPostDataAlongLine() {
@@ -551,14 +550,14 @@ void TaskPostDataAlongLine::onChange(double x1, double y1, double z1, double x2,
 
 }
 
-void TaskPostDataAlongLine::point1Changed() {
+void TaskPostDataAlongLine::point1Changed(double) {
 
     Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
     static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
 
 }
 
-void TaskPostDataAlongLine::point2Changed() {
+void TaskPostDataAlongLine::point2Changed(double) {
 
     Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
     static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
@@ -620,12 +619,6 @@ void TaskPostDataAlongLine::on_Field_activated(int i) {
 void TaskPostDataAlongLine::on_VectorMode_activated(int i) {
 
     getTypedView<ViewProviderFemPostObject>()->VectorMode.setValue(i);
-}
-
-void TaskPostDataAlongLine::on_Scalar_currentIndexChanged(int idx) {
-
-    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Scalars.setValue(idx);
-    recompute();
 }
 
 //############################################################################################

@@ -37,7 +37,6 @@
 #include <vtkCutter.h>
 #include <vtkLineSource.h>
 #include <vtkProbeFilter.h>
-#include <vtkAppendPolyData.h>
 
 namespace Fem
 {
@@ -112,8 +111,6 @@ public:
     App::PropertyVector   Point1;
     App::PropertyInteger  Resolution;
 
-    App::PropertyEnumeration     Scalars;
-
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostDataAlongLine";
     }
@@ -129,7 +126,6 @@ private:
     App::PropertyFloatConstraint::Constraints   m_constraints;
     vtkSmartPointer<vtkLineSource>              m_line;
     vtkSmartPointer<vtkProbeFilter>             m_probe;
-    vtkSmartPointer<vtkAppendPolyData>          m_dline;
 };
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {

@@ -228,10 +228,9 @@ private Q_SLOTS:
     void on_Representation_activated(int i);
     void on_Field_activated(int i);
     void on_VectorMode_activated(int i);
-    void point2Changed();
-    void point1Changed();
+    void point2Changed(double);
+    void point1Changed(double);
     void resolutionChanged(int val);
-    void on_Scalar_currentIndexChanged(int idx);
     void onChange(double x1, double y1, double z1, double x2, double y2, double z2);
 
 
