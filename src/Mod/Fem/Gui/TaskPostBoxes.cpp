@@ -475,9 +475,9 @@ TaskPostDataAlongLine::TaskPostDataAlongLine(ViewProviderDocumentObject* view, Q
     connect(ui->point1X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
     connect(ui->point1Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
     connect(ui->point1Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point2X, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point2Y, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
-    connect(ui->point2Z, SIGNAL(valueChanged(double)), this, SLOT(point1Changed(double)));
+    connect(ui->point2X, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+    connect(ui->point2Y, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
+    connect(ui->point2Z, SIGNAL(valueChanged(double)), this, SLOT(point2Changed(double)));
     connect(ui->resolution, SIGNAL(valueChanged(int)), this, SLOT(resolutionChanged(int)));
 
     //update all fields
@@ -553,14 +553,17 @@ void TaskPostDataAlongLine::onChange(double x1, double y1, double z1, double x2,
 void TaskPostDataAlongLine::point1Changed(double) {
 
     Base::Vector3d vec(ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
-    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point1.setValue(vec);
+    std::string ObjName = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Label.getValue();
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point1 = App.Vector(%f, %f, %f)",ObjName.c_str(), ui->point1X->value(), ui->point1Y->value(), ui->point1Z->value());
+
 
 }
 
 void TaskPostDataAlongLine::point2Changed(double) {
 
     Base::Vector3d vec(ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
-    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Point2.setValue(vec);
+    std::string ObjName = static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->Label.getValue();
+    Gui::Command::doCommand(Gui::Command::Doc,"App.ActiveDocument.%s.Point2 = App.Vector(%f, %f, %f)", ObjName.c_str(), ui->point2X->value(), ui->point2Y->value(), ui->point2Z->value());
 
 }
 
