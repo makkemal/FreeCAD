@@ -68,12 +68,20 @@ void FemPostFilter::setActiveFilterPipeline(std::string name) {
 DocumentObjectExecReturn* FemPostFilter::execute(void) {
 
     if(!m_pipelines.empty() && !m_activePipeline.empty()) {
-
         FemPostFilter::FilterPipeline& pipe = m_pipelines[m_activePipeline];
-        pipe.source->SetInputDataObject(getInputData());
-        pipe.target->Update();
+        if (m_activePipeline.length() >= 13) {
+            std::string LineClip = m_activePipeline.substr(0,13);
+            if (LineClip == "DataAlongLine") {
+                pipe.filterSource->SetSourceData(getInputData());
+                pipe.filterTarget->Update();
+                Data.setValue(pipe.filterTarget->GetOutputDataObject(0));
+            }
+        } else {
+            pipe.source->SetInputDataObject(getInputData());
+            pipe.target->Update();
+            Data.setValue(pipe.target->GetOutputDataObject(0));
+        }
 
-        Data.setValue(pipe.target->GetOutputDataObject(0));
     }
     return StdReturn;
 }
@@ -182,9 +190,23 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
     ADD_PROPERTY_TYPE(Scalars, (long(0)), "DataAlongLine", App::Prop_None, "The field used to clip");
 
     FilterPipeline clip;
-    m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
-    clip.source         = m_clipper;
-    clip.target         = m_clipper;
+
+    m_line = vtkSmartPointer<vtkLineSource>::New();
+    const Base::Vector3d& vec1 = Point1.getValue();
+    m_line->SetPoint1(vec1.x, vec1.y, vec1.z);
+    const Base::Vector3d& vec2 = Point2.getValue();
+    m_line->SetPoint1(vec2.x, vec2.y, vec2.z);
+    m_line->SetResolution(Resolution.getValue());
+
+
+    m_probe = vtkSmartPointer<vtkProbeFilter>::New();
+    m_probe->SetInputConnection(m_line->GetOutputPort());
+
+    m_dline = vtkSmartPointer<vtkAppendPolyData>::New();
+    m_dline->AddInputConnection(m_probe->GetOutputPort());
+
+    clip.filterSource   = m_probe;
+    clip.filterTarget   = m_probe;
     addFilterPipeline(clip, "DataAlongLine");
     setActiveFilterPipeline("DataAlongLine");
 }
@@ -228,40 +250,33 @@ DocumentObjectExecReturn* FemPostDataAlongLineFilter::execute(void) {
 
 
 void FemPostDataAlongLineFilter::onChanged(const Property* prop) {
-
-   if(prop == &Scalars && (Scalars.getValue() >= 0)) {
-        m_clipper->SetInputArrayToProcess(0, 0, 0,
-                                          vtkDataObject::FIELD_ASSOCIATION_POINTS, Scalars.getValueAsString() );
-        setConstraintForField();
+    if(prop == &Point1) {
+        const Base::Vector3d& vec1 = Point1.getValue();
+        m_line->SetPoint1(vec1.x, vec1.y, vec1.z);
     }
-
+    else if(prop == &Point2) {
+        const Base::Vector3d& vec2 = Point2.getValue();
+        m_line->SetPoint2(vec2.x, vec2.y, vec2.z);
+    }
+    else if(prop == &Resolution) {
+        m_line->SetResolution(Resolution.getValue());
+    }
     Fem::FemPostFilter::onChanged(prop);
 }
 
 short int FemPostDataAlongLineFilter::mustExecute(void) const {
 
-    if(Scalars.isTouched()) {
+    if(Point1.isTouched() ||
+       Point2.isTouched() ||
+       Resolution.isTouched()||
+       Scalars.isTouched()) {
 
         return 1;
     }
     else return App::DocumentObject::mustExecute();
 }
 
-void FemPostDataAlongLineFilter::setConstraintForField() {
 
-    vtkSmartPointer<vtkDataObject> data = getInputData();
-    if(!data || !data->IsA("vtkDataSet"))
-        return;
-
-    vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
-
-    vtkDataArray* pdata = dset->GetPointData()->GetArray(Scalars.getValueAsString());
-    double p[2];
-    pdata->GetRange(p);
-    m_constraints.LowerBound = p[0];
-    m_constraints.UpperBound = p[1];
-    m_constraints.StepSize = (p[1]-p[0])/100.;
-}
 
 PROPERTY_SOURCE(Fem::FemPostScalarClipFilter, Fem::FemPostFilter)
 

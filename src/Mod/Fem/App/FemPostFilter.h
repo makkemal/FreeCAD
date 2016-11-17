@@ -35,6 +35,9 @@
 #include <vtkPlane.h>
 #include <vtkWarpVector.h>
 #include <vtkCutter.h>
+#include <vtkLineSource.h>
+#include <vtkProbeFilter.h>
+#include <vtkAppendPolyData.h>
 
 namespace Fem
 {
@@ -58,6 +61,7 @@ protected:
     //pipeline handling for derived filter
     struct FilterPipeline {
        vtkSmartPointer<vtkAlgorithm>                    source, target;
+       vtkSmartPointer<vtkProbeFilter>                  filterSource, filterTarget;
        std::vector<vtkSmartPointer<vtkAlgorithm> >      algorithmStorage;
     };
 
@@ -118,12 +122,14 @@ public:
 protected:
     virtual App::DocumentObjectExecReturn* execute(void);
     virtual void onChanged(const App::Property* prop);
-    void setConstraintForField();
 
 private:
-    vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
+
     App::Enumeration                            m_scalarFields;
     App::PropertyFloatConstraint::Constraints   m_constraints;
+    vtkSmartPointer<vtkLineSource>              m_line;
+    vtkSmartPointer<vtkProbeFilter>             m_probe;
+    vtkSmartPointer<vtkAppendPolyData>          m_dline;
 };
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {
