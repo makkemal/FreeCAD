@@ -1130,8 +1130,8 @@ CmdFemPostCreateDataAlongLineFilter::CmdFemPostCreateDataAlongLineFilter()
 {
     sAppModule      = "Fem";
     sGroup          = QT_TR_NOOP("Fem");
-    sMenuText       = QT_TR_NOOP("Define/create a clip filter which uses functions to define the cliped region");
-    sToolTipText    = QT_TR_NOOP("Define/create a clip filter which uses functions to define the cliped region");
+    sMenuText       = QT_TR_NOOP("Define/create a clip filter which clips a field along a line");
+    sToolTipText    = QT_TR_NOOP("Define/create a clip filter which clips a field along a line");
     sWhatsThis      = "Fem_PostCreateDataAlongLineFilter";
     sStatusTip      = sToolTipText;
     sPixmap         = "fem-DataAlongLine";
