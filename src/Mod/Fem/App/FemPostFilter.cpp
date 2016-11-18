@@ -190,6 +190,13 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
     ADD_PROPERTY_TYPE(Point1,(Base::Vector3d(0.0,0.0,0.0)), "DataAlongLine", App::Prop_None, "The point 1 used to define end point of line");
     ADD_PROPERTY_TYPE(Point2,(Base::Vector3d(0.0,0.0,1.0)), "DataAlongLine", App::Prop_None, "The point 2 used to define end point of line");
     ADD_PROPERTY_TYPE(Resolution,(100), "DataAlongLine", App::Prop_None, "The number of intervals between the 2 end points of line");
+    ADD_PROPERTY_TYPE(XAxisData,(0), "DataAlongLine",App::Prop_None,"X axis data values used for plotting");
+    ADD_PROPERTY_TYPE(YAxisData,(0), "DataAlongLine",App::Prop_None,"Y axis data values used for plotting");
+    ADD_PROPERTY_TYPE(PlotData ,(""),"DataAlongLine",App::Prop_None,"Field used for plotting");
+
+    PlotData.setStatus(App::Property::ReadOnly, true);
+    XAxisData.setStatus(App::Property::ReadOnly, true);
+    YAxisData.setStatus(App::Property::ReadOnly, true);
 
     FilterPipeline clip;
 

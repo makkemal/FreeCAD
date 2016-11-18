@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>482</width>
-    <height>498</height>
+    <height>527</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -184,7 +184,7 @@
    <item>
     <widget class="QPushButton" name="SelectPoints">
      <property name="text">
-      <string>SelectPoints</string>
+      <string>Select Points</string>
      </property>
     </widget>
    </item>

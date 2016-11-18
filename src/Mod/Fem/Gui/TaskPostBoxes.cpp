@@ -615,8 +615,11 @@ void TaskPostDataAlongLine::on_Representation_activated(int i) {
 }
 
 void TaskPostDataAlongLine::on_Field_activated(int i) {
-
+  
     getTypedView<ViewProviderFemPostObject>()->Field.setValue(i);
+    std::string FieldName = ui->Field->currentText().toStdString();
+    static_cast<Fem::FemPostDataAlongLineFilter*>(getObject())->PlotData.setValue(FieldName);
+    updateEnumerationList(getTypedView<ViewProviderFemPostObject>()->VectorMode, ui->VectorMode);
 }
 
 void TaskPostDataAlongLine::on_VectorMode_activated(int i) {

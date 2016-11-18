@@ -111,6 +111,9 @@ public:
     App::PropertyVector   Point2;
     App::PropertyVector   Point1;
     App::PropertyInteger  Resolution;
+    App::PropertyFloatList XAxisData;
+    App::PropertyFloatList YAxisData;
+    App::PropertyString    PlotData;
 
     virtual const char* getViewProviderName(void) const {
         return "FemGui::ViewProviderFemPostDataAlongLine";
