@@ -254,6 +254,9 @@ void FemPostDataAlongLineFilter::onChanged(const Property* prop) {
     else if(prop == &Resolution) {
         m_line->SetResolution(Resolution.getValue());
     }
+    else if(prop == &PlotData) {
+        GetAxisData();         
+    }
     Fem::FemPostFilter::onChanged(prop);
 }
 
@@ -268,6 +271,33 @@ short int FemPostDataAlongLineFilter::mustExecute(void) const {
     else return App::DocumentObject::mustExecute();
 }
 
+void FemPostDataAlongLineFilter::GetAxisData() {
+    
+    double coords[3];
+    std::vector<double> values;
+
+    vtkSmartPointer<vtkDataObject> data = m_clipper->GetOutputDataObject(0);
+    vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
+    vtkDataArray* pdata = dset->GetPointData()->GetArray(PlotData.getValue());
+
+    int component = 0;
+    
+    for(int i=0; i<dset->GetNumberOfPoints(); ++i) {
+        dset->GetPoint(i, coords);
+
+        double value = 0;
+        if(pdata->GetNumberOfComponents() == 1)
+            value = pdata->GetComponent(i, component);
+        else {
+            for(int j=0; j<pdata->GetNumberOfComponents(); ++j)
+                value += std::pow(pdata->GetComponent(i, j),2);
+
+            value = std::sqrt(value);
+        }
+        values.push_back(value);
+    }
+    YAxisData.setValues(values);
+}
 
 
 PROPERTY_SOURCE(Fem::FemPostScalarClipFilter, Fem::FemPostFilter)

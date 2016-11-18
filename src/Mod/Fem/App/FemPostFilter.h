@@ -123,6 +123,7 @@ public:
 protected:
     virtual App::DocumentObjectExecReturn* execute(void);
     virtual void onChanged(const App::Property* prop);
+    void GetAxisData();
 
 private:
 
