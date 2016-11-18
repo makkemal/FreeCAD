@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>482</width>
-    <height>446</height>
+    <height>498</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -201,7 +201,11 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QSpinBox" name="resolution"/>
+      <widget class="QSpinBox" name="resolution">
+       <property name="maximum">
+        <number>999999999</number>
+       </property>
+      </widget>
      </item>
      <item row="0" column="0">
       <layout class="QHBoxLayout" name="horizontalLayout_5"/>

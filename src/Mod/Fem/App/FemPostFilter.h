@@ -37,6 +37,7 @@
 #include <vtkCutter.h>
 #include <vtkLineSource.h>
 #include <vtkProbeFilter.h>
+#include <vtkThreshold.h>
 
 namespace Fem
 {
@@ -122,10 +123,10 @@ protected:
 
 private:
 
-    App::Enumeration                            m_scalarFields;
-    App::PropertyFloatConstraint::Constraints   m_constraints;
     vtkSmartPointer<vtkLineSource>              m_line;
     vtkSmartPointer<vtkProbeFilter>             m_probe;
+    vtkSmartPointer<vtkTableBasedClipDataSet>   m_clipper;
+
 };
 
 class AppFemExport FemPostScalarClipFilter : public FemPostFilter {

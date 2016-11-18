@@ -74,7 +74,11 @@ DocumentObjectExecReturn* FemPostFilter::execute(void) {
             if (LineClip == "DataAlongLine") {
                 pipe.filterSource->SetSourceData(getInputData());
                 pipe.filterTarget->Update();
-                Data.setValue(pipe.filterTarget->GetOutputDataObject(0));
+
+                pipe.source->SetInputDataObject(pipe.filterTarget->GetOutputDataObject(0));
+                pipe.target->Update();
+
+                Data.setValue(pipe.target->GetOutputDataObject(0));
             }
         } else {
             pipe.source->SetInputDataObject(getInputData());
@@ -185,7 +189,7 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
 
     ADD_PROPERTY_TYPE(Point1,(Base::Vector3d(0.0,0.0,0.0)), "DataAlongLine", App::Prop_None, "The point 1 used to define end point of line");
     ADD_PROPERTY_TYPE(Point2,(Base::Vector3d(0.0,0.0,1.0)), "DataAlongLine", App::Prop_None, "The point 2 used to define end point of line");
-    ADD_PROPERTY_TYPE(Resolution,(30), "DataAlongLine", App::Prop_None, "The number of intervals between the 2 end points of line");
+    ADD_PROPERTY_TYPE(Resolution,(100), "DataAlongLine", App::Prop_None, "The number of intervals between the 2 end points of line");
 
     FilterPipeline clip;
 
@@ -199,9 +203,19 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter(void) : FemPostFilter() {
 
     m_probe = vtkSmartPointer<vtkProbeFilter>::New();
     m_probe->SetInputConnection(m_line->GetOutputPort());
+    m_probe->SetValidPointMaskArrayName("vtkValidPointMaskArray");
+    m_probe->SetPassPointArrays(1);
+    m_probe->SetPassCellArrays(1);
+    m_probe->ComputeToleranceOff();
+    m_probe->SetTolerance(0.01);
+
+    m_clipper           = vtkSmartPointer<vtkTableBasedClipDataSet>::New();
 
     clip.filterSource   = m_probe;
     clip.filterTarget   = m_probe;
+    clip.source         = m_clipper;
+    clip.target         = m_clipper;
+
     addFilterPipeline(clip, "DataAlongLine");
     setActiveFilterPipeline("DataAlongLine");
 }
@@ -211,6 +225,10 @@ FemPostDataAlongLineFilter::~FemPostDataAlongLineFilter() {
 }
 
 DocumentObjectExecReturn* FemPostDataAlongLineFilter::execute(void) {
+
+    m_clipper->SetInputArrayToProcess(0, 0, 0, 
+                                        vtkDataObject::FIELD_ASSOCIATION_POINTS, "vtkValidPointMaskArray");
+    m_clipper->SetValue(0.5);
 
     //recalculate the filter
     return Fem::FemPostFilter::execute();
