@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>482</width>
-    <height>527</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -239,38 +239,47 @@
       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
      <item row="0" column="0">
-      <widget class="QGroupBox" name="groupBox">
-       <property name="title">
-        <string>Coloring</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Field</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
+     <item row="0" column="1">
       <widget class="QComboBox" name="Field"/>
      </item>
-     <item row="2" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Vector</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
+     <item row="1" column="1">
       <widget class="QComboBox" name="VectorMode"/>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QPushButton" name="CreatePlot">
+     <property name="text">
+      <string>Create Plot</string>
+     </property>
+    </widget>
    </item>
   </layout>
   <zorder>SelectPoints</zorder>
   <zorder>line</zorder>
   <zorder>line_2</zorder>
+  <zorder>line_3</zorder>
+  <zorder>CreatePlot</zorder>
  </widget>
  <resources/>
  <connections/>
