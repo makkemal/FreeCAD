@@ -538,6 +538,12 @@ void TaskPostDataAlongLine::on_SelectPoints_clicked() {
 
 }
 
+
+void TaskPostDataAlongLine::on_CreatePlot_clicked() {
+    Gui::Command::doCommand(Gui::Command::Doc, Plot().c_str());
+    recompute();
+}
+
 void TaskPostDataAlongLine::onChange(double x1, double y1, double z1, double x2, double y2, double z2) {
 
     ui->point2X->setValue(x2);
@@ -625,6 +631,10 @@ void TaskPostDataAlongLine::on_Field_activated(int i) {
 void TaskPostDataAlongLine::on_VectorMode_activated(int i) {
 
     getTypedView<ViewProviderFemPostObject>()->VectorMode.setValue(i);
+}
+
+std::string TaskPostDataAlongLine::Plot() {
+
 }
 
 //############################################################################################

@@ -225,6 +225,7 @@ public:
 
 private Q_SLOTS:
     void on_SelectPoints_clicked();
+    void on_CreatePlot_clicked();
     void on_Representation_activated(int i);
     void on_Field_activated(int i);
     void on_VectorMode_activated(int i);
@@ -235,6 +236,7 @@ private Q_SLOTS:
 
 
 private:
+    std::string Plot();
     QWidget* proxy;
     Ui_TaskPostDataAlongLine* ui;
 };
