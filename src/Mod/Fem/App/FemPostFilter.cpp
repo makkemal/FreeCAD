@@ -273,17 +273,17 @@ short int FemPostDataAlongLineFilter::mustExecute(void) const {
 
 void FemPostDataAlongLineFilter::GetAxisData() {
     
-    double coords[3];
+    std::vector<double> coords;
     std::vector<double> values;
 
     vtkSmartPointer<vtkDataObject> data = m_clipper->GetOutputDataObject(0);
     vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
     vtkDataArray* pdata = dset->GetPointData()->GetArray(PlotData.getValue());
+    vtkDataArray *tcoords = dset->GetPointData()->GetTCoords(PlotData.getValue());
 
     int component = 0;
     
     for(int i=0; i<dset->GetNumberOfPoints(); ++i) {
-        dset->GetPoint(i, coords);
 
         double value = 0;
         if(pdata->GetNumberOfComponents() == 1)
@@ -295,8 +295,10 @@ void FemPostDataAlongLineFilter::GetAxisData() {
             value = std::sqrt(value);
         }
         values.push_back(value);
+        coords.push_back(tcoords->GetComponent(i, component));
     }
     YAxisData.setValues(values);
+    XAxisData.setValues(coords);
 }
 
 

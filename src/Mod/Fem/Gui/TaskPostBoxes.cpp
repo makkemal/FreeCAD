@@ -635,6 +635,17 @@ void TaskPostDataAlongLine::on_VectorMode_activated(int i) {
 
 std::string TaskPostDataAlongLine::Plot() {
 
+    return "t=0\n\
+import FreeCAD\n\
+import numpy as np\n\
+from matplotlib import pyplot as plt\n\
+plt.figure(1)\n\
+plt.xlabel(\"XAxisData\")\n\
+plt.ylabel(\"YAxisData\")\n\
+plt.title(\"Plot Data\")\n\
+plt.grid()\n\
+plt.show()\n";
+
 }
 
 //############################################################################################

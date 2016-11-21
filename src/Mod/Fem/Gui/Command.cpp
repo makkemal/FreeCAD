@@ -1147,6 +1147,31 @@ bool CmdFemPostCreateDataAlongLineFilter::isActive(void)
     return hasActiveDocument();
 }
 
+DEF_STD_CMD_A(CmdFemPostCreateLinearizedStressesFilter);
+
+CmdFemPostCreateLinearizedStressesFilter::CmdFemPostCreateLinearizedStressesFilter()
+  : Command("Fem_PostCreateLinearizedStressesFilter")
+{
+    sAppModule      = "Fem";
+    sGroup          = QT_TR_NOOP("Fem");
+    sMenuText       = QT_TR_NOOP("Define/create a clip filter which clips a field along a line");
+    sToolTipText    = QT_TR_NOOP("Define/create a clip filter which clips a field along a line");
+    sWhatsThis      = "Fem_PostCreateLinearizedStressesFilter";
+    sStatusTip      = sToolTipText;
+    sPixmap         = "fem-linearizedstresses";
+}
+
+void CmdFemPostCreateLinearizedStressesFilter::activated(int)
+{
+    setupFilter(this, "linearizedstresses");
+}
+
+bool CmdFemPostCreateLinearizedStressesFilter::isActive(void)
+{
+    return hasActiveDocument();
+}
+
+
 DEF_STD_CMD_A(CmdFemPostCreateScalarClipFilter);
 
 CmdFemPostCreateScalarClipFilter::CmdFemPostCreateScalarClipFilter()
@@ -1481,6 +1506,7 @@ void CreateFemCommands(void)
 #ifdef FC_USE_VTK
     rcCmdMgr.addCommand(new CmdFemPostCreateClipFilter);
     rcCmdMgr.addCommand(new CmdFemPostCreateDataAlongLineFilter);
+    rcCmdMgr.addCommand(new CmdFemPostCreateLinearizedStressesFilter);
     rcCmdMgr.addCommand(new CmdFemPostCreateScalarClipFilter);
     rcCmdMgr.addCommand(new CmdFemPostWarpVectorFilter);
     rcCmdMgr.addCommand(new CmdFemPostFunctions);
