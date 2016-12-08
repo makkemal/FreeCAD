@@ -23,36 +23,53 @@
 #***************************************************************************/
 
 
-class CfdWorkbench(Workbench):
-    "CFD workbench object"
-    def __init__(self):
-        self.__class__.Icon = FreeCAD.getResourceDir() + "Mod/Fem/Resources/icons/FemWorkbench.svg"
-        self.__class__.MenuText = "CFD"
-        self.__class__.ToolTip = "CFD workbench"
 
-    def Initialize(self):
-        from PySide import QtCore  # must import in this function, not at the beginning of this file
-        import Fem
-        import FemGui
+import FreeCAD
+import FreeCADGui
 
-        import _CommandCfdAnalysis
-        import _CommandCfdSolverFoam
-        import _CommandCfdSolverControl
-        import _CommandMeshNetgenFromShape
-        import _CommandCfdMeshGmshFromShape
-        #import _CommandCfdResult  # error in import vtk
-        import _CommandCfdFluidMaterial
+class _ViewProvideCfdFluidMaterial:
+    """A View Provider for the FemResultObject dervied CfdResult class
+    """
 
+    def __init__(self, vobj):
+        vobj.Proxy = self
 
-        # Post Processing commands are located in FemWorkbench
-        cmdlst = ['Cfd_Analysis', 'Cfd_SolverFoam', 'Fem_MeshNetgenFromShape', 'Cfd_MeshGmshFromShape', 'Separator',
-                  'Fem_ConstraintFluidBoundary', 'Cfd_SolverControl', 'setFluidProperties',
-                  "Separator", "Fem_PostPipelineFromResult", "Fem_PostCreateClipFilter",
-                  "Fem_PostCreateScalarClipFilter", "Fem_PostCreateCutFilter"]
-        self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
-        self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
+    def getIcon(self):
+        """after load from FCStd file, self.icon does not exist, return constant path instead"""
+        return ":/icons/fem-material.svg"
 
-    def GetClassName(self):
-        return "Gui::PythonWorkbench"
+    def attach(self, vobj):
+        self.ViewObject = vobj
+        self.Object = vobj.Object
 
-Gui.addWorkbench(CfdWorkbench())
+    def updateData(self, obj, prop):
+        return
+
+    def onChanged(self, vobj, prop):
+        return
+
+    def doubleClicked(self, vobj):
+        doc = FreeCADGui.getDocument(vobj.Object.Document)
+        if not doc.getInEdit():
+            doc.setEdit(vobj.Object.Name)
+        else:
+            FreeCAD.Console.PrintError('Active Task Dialog found! Please close this one first!\n')
+        return True
+        #return
+
+    def setEdit(self, vobj, mode):
+        import _TaskPanelFluidMaterial
+        taskd = _TaskPanelFluidMaterial.TaskPanelFluidProperties(self.Object)
+        taskd.obj = vobj.Object
+        FreeCADGui.Control.showDialog(taskd)
+        return True
+
+    def unsetEdit(self, vobj, mode):
+        FreeCADGui.Control.closeDialog()
+        return
+
+    def __getstate__(self):
+        return None
+
+    def __setstate__(self, state):
+        return None
