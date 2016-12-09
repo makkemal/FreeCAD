@@ -52,18 +52,22 @@ class CfdCaseWriterFoam:
         self.bc_group = CfdTools.getConstraintGroup(analysis_obj)
         self.mesh_generated = False
 
-        self.case_folder = self.solver_obj.WorkingDir + os.path.sep + self.solver_obj.InputCaseName
-        self.mesh_file_name = self.case_folder + os.path.sep + self.solver_obj.InputCaseName + u".unv"
-        if self.solver_obj.HeatTransfering:
-            self.builder = fcb.BasicBuilder(self.case_folder, CfdTools.getSolverSettings(self.solver_obj))
-        else:
-            self.builder = fcb.BasicBuilder(self.case_folder, CfdTools.getSolverSettings(self.solver_obj))
-        self.builder.createCase()
-
     def write_case(self, updating=False):
         """ Write_case() will collect case setings, and finally build a runnable case
         """
         FreeCAD.Console.PrintMessage("Start to write case to folder {}\n".format(self.solver_obj.WorkingDir))
+
+        # Perform initialisation here rather than __init__ in case of path changes
+        self.case_folder = os.path.join(self.solver_obj.WorkingDir, self.solver_obj.InputCaseName)
+        self.mesh_file_name = os.path.join(self.case_folder, self.solver_obj.InputCaseName, u".unv")
+
+        # Create initial case from defaults
+        if self.solver_obj.HeatTransfering:
+            self.builder = fcb.BasicBuilder(self.case_folder, CfdTools.getSolverSettings(self.solver_obj), os.path.join(FreeCAD.getResourceDir(), "Mod", "Cfd", "defaults", "chtMultiRegionSimpleFoam"))
+        else:
+            self.builder = fcb.BasicBuilder(self.case_folder, CfdTools.getSolverSettings(self.solver_obj), os.path.join(FreeCAD.getResourceDir(), "Mod", "Cfd", "defaults", "simpleFoam"))
+        self.builder.createCase()
+
         self.write_mesh()
 
         self.write_material()
@@ -83,10 +87,11 @@ class CfdCaseWriterFoam:
         """ This is FreeCAD specific code, convert from UNV to OpenFoam
         """
         caseFolder = self.solver_obj.WorkingDir + os.path.sep + self.solver_obj.InputCaseName
+        
         unvMeshFile = caseFolder + os.path.sep + self.solver_obj.InputCaseName + u".unv"
-
+        
         self.mesh_generated = CfdTools.write_unv_mesh(self.mesh_obj, self.bc_group, unvMeshFile)
-
+        
         # FreecAD (internal standard length) mm; while in CFD, it is metre, so mesh needs scaling
         # mesh generated from FreeCAD nees to be scaled by 0.001
         # `transformPoints -scale "(1e-3 1e-3 1e-3)"`
@@ -127,7 +132,7 @@ class CfdCaseWriterFoam:
                                                 }
 
             bc_settings.append(bc_dict)
-        self.builder.internalFields = {'p': 0.0, 'U': (0, 0, 0.001)}  # must set a nonzero for velocity field
+        self.builder.internalFields = {'p': 0.0, 'U': (0, 0, 0)}
         self.builder.boundaryConditions = bc_settings
 
     def write_solver_control(self):
