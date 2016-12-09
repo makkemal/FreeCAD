@@ -428,11 +428,11 @@ def runFoamCommand(cmd):
     #cmdline = """bash -i -c  '{} && {}' """.format(env_setup_script, ' '.join(cmd))
     cmdline = ' '.join(cmd)
     print("Run command: ", cmdline)
-    out = subprocess.check_output(['bash', '-i', '-c', cmdline], stderr=subprocess.PIPE)
+    out = subprocess.check_output(['bash', '-l', '-c', cmdline], stderr=subprocess.PIPE)
     if _debug: print(out)
     '''
     cmdline = ' '.join(cmd)
-    cmdline = """bash -c -i '{}'""".format(cmdline)
+    #cmdline = """bash -c -l '{}'""".format(cmdline)
     print("Run command: ", cmdline)
     process = subprocess.Popen(cmdline, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     stdout, stderr = process.communicate()
