@@ -47,4 +47,4 @@ class _CommandSolverFoam(FemCommands):
         FreeCADGui.doCommand("FemGui.getActiveAnalysis().Member = FemGui.getActiveAnalysis().Member + [CfdSolverFoam.makeCfdSolverFoam()]")
 
 if FreeCAD.GuiUp:
-    FreeCADGui.addCommand('Fem_SolverFoam', _CommandSolverFoam())
+    FreeCADGui.addCommand('Cfd_SolverFoam', _CommandSolverFoam())

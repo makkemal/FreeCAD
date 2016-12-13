@@ -43,6 +43,7 @@ class _CommandCfdAnalysis(FemCommands):
         self.is_active = 'with_document'
 
     def Activated(self):
+        FreeCAD.Console.PrintMessage('Activated called')
         FreeCAD.ActiveDocument.openTransaction("Create CFD Analysis")
         FreeCADGui.addModule("FemGui")
         FreeCADGui.addModule("CfdAnalysis")
@@ -60,6 +61,7 @@ class _CommandCfdAnalysis(FemCommands):
                 FreeCADGui.doCommand("FemGui.getActiveAnalysis().Member = FemGui.getActiveAnalysis().Member + [App.activeDocument().ActiveObject]")
                 FreeCADGui.doCommand("Gui.activeDocument().setEdit(App.ActiveDocument.ActiveObject.Name)")
         FreeCADGui.Selection.clearSelection()
+        FreeCADGui.activateWorkbench('CfdWorkbench')
 
 if FreeCAD.GuiUp:
     FreeCADGui.addCommand('Cfd_Analysis', _CommandCfdAnalysis())
