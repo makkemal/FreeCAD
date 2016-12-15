@@ -76,6 +76,13 @@ INSTALL(
         _TaskPanelFemBeamSection.py
         TaskPanelFemBeamSection.ui
 
+        FemFluidSection.py
+        _FemFluidSection.py
+        _ViewProviderFemFluidSection.py
+        _CommandFluidSection.py
+        _TaskPanelFemFluidSection.py
+        TaskPanelFemFluidSection.ui
+
         FemShellThickness.py
         _FemShellThickness.py
         _ViewProviderFemShellThickness.py
