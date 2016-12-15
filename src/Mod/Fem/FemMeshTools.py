@@ -406,6 +406,8 @@ def get_elset_short_name(obj, i):
         return 'Mat' + str(i)
     elif hasattr(obj, "Proxy") and obj.Proxy.Type == 'FemBeamSection':
         return 'Beam' + str(i)
+    elif hasattr(obj, "Proxy") and obj.Proxy.Type == 'FemFluidSection':
+        return 'Fluid' + str(i)
     elif hasattr(obj, "Proxy") and obj.Proxy.Type == 'FemShellThickness':
         return 'Shell' + str(i)
     else:
@@ -1028,7 +1030,7 @@ def get_analysis_group_elements(aAnalysis, aPart):
         else:
             FreeCAD.Console.PrintError('Problem: more than one object with empty references.\n')
             print('We gone try to get the empty material references anyway.\n')
-            # ShellThickness and BeamSection could have empty references, but on solid meshes only materials should have empty references
+            # ShellThickness, BeamSection and FluidSection could have empty references, but on solid meshes only materials should have empty references
             for er in empty_references:
                 print(er.Name)
             group_elements = get_anlysis_empty_references_group_elements(group_elements, aAnalysis, aPart.Shape)
@@ -1075,7 +1077,7 @@ def get_anlysis_empty_references_group_elements(group_elements, aAnalysis, aShap
     '''get the elementIDs if the Reference shape is empty
     see get_analysis_group_elements() for more informatations
     on solid meshes only material objects could have an empty reference without beeing something wrong!
-    face meshes could have empty ShellThickness and edge meshes could have empty BeamSection
+    face meshes could have empty ShellThickness and edge meshes could have empty BeamSection/FluidSection
     '''
     # print(group_elements)
     material_ref_shapes = []
