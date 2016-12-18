@@ -37,9 +37,8 @@ import FreeCAD
 import CfdTools
 import FoamCaseBuilder as fcb  # independent module, not depending on FreeCAD
 
-
 ## write CFD analysis setup into OpenFOAM case
-#  write_case() is the only public API
+#  write_case() and init_fields() are the only public APIs
 class CfdCaseWriterFoam:
     def __init__(self, analysis_obj):
         """ analysis_obj should contains all the information needed,
@@ -82,6 +81,12 @@ class CfdCaseWriterFoam:
         FreeCAD.Console.PrintMessage("{} Sucessfully write {} case to folder \n".format(
                                                         self.solver_obj.SolverName, self.solver_obj.WorkingDir))
         return True
+
+    def init_fields(self):
+        """ init_fields() runs potentialFoam to initialise fields
+        """
+        FreeCAD.Console.PrintMessage("Initialising flow with potentialFoam\n")
+        fcb.runFoamCommand(['potentialFoam', '-case', self.case_folder])
 
     def write_mesh(self):
         """ This is FreeCAD specific code, convert from UNV to OpenFoam

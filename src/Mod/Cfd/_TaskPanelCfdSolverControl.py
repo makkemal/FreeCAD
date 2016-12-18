@@ -61,6 +61,7 @@ class _TaskPanelCfdSolverControl:
         self.solver_object = solver_runner_obj.solver
         # test if Proxy instance is not None and correct type, or create a new python instance
         #self.solver_python_object = CfdTools.getSolverPythonFromAnalysis(self.analysis_object)
+        self.firstSolveSinceWriteCase = True
 
         self.SolverProcess = QtCore.QProcess()
         self.Timer = QtCore.QTimer()
@@ -196,6 +197,7 @@ class _TaskPanelCfdSolverControl:
                 self.femConsoleMessage("Write {} case is completed.".format(self.solver_object.SolverName))
                 self.form.pb_edit_inp.setEnabled(True)
                 self.form.pb_run_solver.setEnabled(True)
+                self.firstSolveSinceWriteCase = True
             else:
                 self.femConsoleMessage("Write case setup file failed!", "#FF0000")
         else:
@@ -228,34 +230,23 @@ class _TaskPanelCfdSolverControl:
     
     
     def runSolverProcess(self):
+        #Re-starting a simulation from the last time step has currently been de-actived
+        #by using an AllRun script. Therefore just re-setting the residuals here for plotting
+        self.UxResiduals = [1]
+        self.UyResiduals = [1]
+        self.UzResiduals = [1]
+        self.pResiduals = [1]
+        self.niter = 0
         self.Start = time.time()
-        #self.femConsoleMessage("Run {} at {} with command:".format(self.solver_object.SolverName, self.solver_object.WorkingDir))
-        cmd = self.solver_runner.get_solver_cmd()
-        #self.femConsoleMessage(cmd)
-        #self.cwd = QtCore.QDir.currentPath()
-        #QtCore.QDir.setCurrent(self.solver_object.WorkingDir)
-        #QtCore.QDir.setCurrent(self.solver_object.WorkingDir )
-        
-        splitCmd = cmd.split()
         
         solverDirectory = self.solver_object.WorkingDir + os.path.sep +self.solver_object.InputCaseName
-        #NOTE TODO currently splitCmd[0] is the solver name. Should handle retrieving solver name more elegantly
-        self.femConsoleMessage(splitCmd[0])
-        FreeCAD.Console.PrintMessage(solverDirectory +"\n")
-        self.solver_run_process.start(splitCmd[0],['-case',solverDirectory])
-        #FreeCAD.Console.PrintMessage("bbbbbbbbbbbbbbbbbbbbbbbb: \n")
-       
+        runScript = solverDirectory + os.path.sep + "Allrun"
+        self.solver_run_process.start(runScript)
+        
         #NOTE: setting solve button to inactive to ensure that two instances of the same simulation aren's started simulataneously
         self.form.pb_run_solver.setEnabled(False)
         self.form.terminateOFsolver.setEnabled(True)
         self.femConsoleMessage("OpenFOAM solver started")
-        
-        
-        
-        #if self.solver_object.SolverName == "OpenFOAM":
-            ## CFD solver takes very long time to finish, therefore, return to GUI without blocking
-            #self.SolverProcess.start("echo 'start the solver externally'")
-            ##self.SolverProcess.start(["bash", "-i", "-c", "'"+cmd+"'"])  # cmd needs a single quote to enclose after -c option
             
         QApplication.restoreOverrideCursor()
         # all the UI update will done after solver process finished signal

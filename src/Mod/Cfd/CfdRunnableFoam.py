@@ -88,6 +88,9 @@ class CfdRunnableFoam(CfdRunnable):
     def write_case(self):
         return self.writer.write_case()
 
+    def init_fields(self):
+        return self.writer.init_fields()
+
     def get_solver_cmd(self):
         cmd = self.writer.builder.getSolverCmd()
         FreeCAD.Console.PrintMessage("Please run the command in new terminal: \n" + cmd)

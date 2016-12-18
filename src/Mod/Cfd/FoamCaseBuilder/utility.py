@@ -278,6 +278,9 @@ def createCaseFromTemplate(output_path, source_path, backup_path=None):
     mesh_dir = os.path.join(output_path, "constant", "polyMesh")
     if os.path.isdir(mesh_dir):
         shutil.rmtree(mesh_dir)
+    meshOrg_dir = os.path.join(output_path, "constant", "polyMesh.org")
+    if os.path.isdir(meshOrg_dir):
+        shutil.rmtree(meshOrg_dir)
     #clean history result data, etc. is not necessary as they are excluded from zipped template
     if os.path.isfile(output_path + os.path.sep +"system/blockMeshDict"):
         os.remove(output_path + os.path.sep +"system/blockMeshDict")
@@ -305,7 +308,46 @@ def createCaseFromScratch(output_path, solver_name):
     createRawFoamFile(output_path, 'system', 'fvSchemes', getFvSchemesTemplate())
     # turbulence properties and fuid properties will be setup later in base builder
 
+def createRunScript(case, init_potential, run_parallel, solver_name, num_proc):
+    print("Create Allrun script ")
 
+    fname = case + os.path.sep + "Allrun"
+    meshOrg_dir = case + os.path.sep + "constant/polyMesh.org"
+    mesh_dir = case + os.path.sep + "constant/polyMesh"
+        
+    if os.path.exists(fname):
+        if _debug: print("Warning: Overwrite existing Allrun script ")
+    with open(fname, 'w+') as f:
+        f.write("#!/bin/sh \n\n")
+        # NOTE: Although RunFunctions seem to be sourced, the functions `getApplication`  
+        # and `getNumberOfProcessors` are not available. solver_name and num_proc do not have   
+        # to be passed if they can be read using these bash functions 
+        #f.write("# Source tutorial run functions \n")
+        #f.write(". $WM_PROJECT_DIR/bin/tools/RunFunctions \n\n")
+    
+        f.write("# Create symbolic links to polyMesh.org \n")
+        f.write("mkdir {} \n".format(mesh_dir))
+        f.write("ln -s {}/boundary {} \n".format(meshOrg_dir, mesh_dir))
+        f.write("ln -s {}/faces {} \n".format(meshOrg_dir, mesh_dir))
+        f.write("ln -s {}/neighbour {} \n".format(meshOrg_dir, mesh_dir))
+        f.write("ln -s {}/owner {} \n".format(meshOrg_dir, mesh_dir))
+        f.write("ln -s {}/points {} \n".format(meshOrg_dir, mesh_dir))
+        
+        if (init_potential):
+            f.write ("# Initialise flow \n")
+            f.write ("potentialFoam -case "+case+" | tee "+case+"/log.potentialFoam \n\n")
+        
+        if (run_parallel):
+            f.write ("# Run application in parallel \n")
+            f.write ("decomposePar | tee log.decomposePar \n")
+            f.write ("mpirun -np {} {} -parallel -case {} | tee {}/log.{} \n\n".format(str(num_proc), solver_name, case, case,solver_name))
+        else:
+            f.write ("# Run application \n")
+            f.write ("{} -case {} | tee {}/log.{} \n\n".format(solver_name,case,case,solver_name))
+
+    cmdline = ("chmod a+x "+fname) # Update Allrun permission
+    out = subprocess.check_output(['bash', '-l', '-c', cmdline], stderr=subprocess.PIPE)
+    
 def copySettingsFromExistentCase(output_path, source_path):
     """build case structure from string template, both folder paths must existent
     """
@@ -335,7 +377,7 @@ def copySettingsFromExistentCase(output_path, source_path):
 #################################################################################
 
 _foamFileHeader_part1 = '''/*--------------------------------*- C++ -*----------------------------------*\\
-| =========                 |                                                 |
+| ===========                 |                                                 |
 | \\\\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
 |  \\\\    /   O peration     | Version:  {}.{}                                   |
 |   \\\\  /    A nd           | Web:      www.OpenFOAM.org                      |
@@ -449,6 +491,33 @@ def runFoamCommand(cmd):
     return exitCode
     '''
 
+def runFoamApplication(cmd,case):
+    """ run OpenFOAM command in Shell mode
+    wait until finish, caller is not interested on output but whether succeeded
+    source foam_dir/etc/bashrc before run foam related program
+    `shell=True` does not work if freeCAD is not started in shell terminal
+    Bash on Ubuntu on Windows, may need case path translation done in Builder
+    """
+
+    if isinstance(cmd, list):
+        cmd = _translateFoamCasePath(cmd)
+        logFile = "{}/log.{}".format(case,cmd[0])
+    else:
+        print("Warning: runFoamCommand() command and options must be specified in a list")
+
+
+    if logFile.find(cmd[0])>0:
+        print ("Warning: "+cmd[0]+" already run on "+case)
+
+    cmdline = cmd[0]+' -case "'+case+'" '+' '.join(cmd[1:])
+    
+    print("Running ", cmdline)
+    #cmdline += (" | tee "+logFile) # Pipe to screen and log file
+    cmdline += (" > "+logFile) # Pipe to log file
+    out = subprocess.check_output(['bash', '-l', '-c', cmdline], stderr=subprocess.PIPE)
+    if _debug: print(out)
+
+
 ###########################################################################
 
 def convertMesh(case, mesh_file, scale):
@@ -459,8 +528,10 @@ def convertMesh(case, mesh_file, scale):
     mesh_file = translatePath(mesh_file)
 
     if mesh_file.find(".unv")>0:
-        cmdline = ['ideasUnvToFoam', '-case', case, mesh_file]  # mesh_file path may also need translate
-        runFoamCommand(cmdline)
+        #cmdline = ['ideasUnvToFoam', '-case', case, mesh_file]  # mesh_file path may also need translate
+        #runFoamCommand(cmdline)
+        cmdline = ['ideasUnvToFoam', mesh_file]  # mesh_file path may also need translate
+        runFoamApplication(cmdline,case)
         changeBoundaryType(case, 'defaultFaces', 'wall')  # rename default boundary type to wall
     if mesh_file[-4:] == ".geo":  # GMSH mesh
         print('Error:GMSH exported *.geo mesh is not support yet')
@@ -473,6 +544,7 @@ def convertMesh(case, mesh_file, scale):
         cmdline = ['transformPoints', '-case', case, '-scale', '"({} {} {})"'.format(scale, scale, scale)]
     else:
         print("Error: mesh scaling ratio is must be a float or integer\n")
+        
 
 def listBoundaryNames(case):
     return BoundaryDict(case).patches()
@@ -486,6 +558,17 @@ def changeBoundaryType(case, bc_name, bc_type):
     else:
         print("boundary `{}` not found, so boundary type is not changed".format(bc_name))
     f.writeFile()
+
+def movePolyMesh(case):
+    """ Move polyMesh to polyMesh.org 
+    """
+    meshOrg_dir = case + os.path.sep + "constant/polyMesh.org"
+    mesh_dir = case + os.path.sep + "constant/polyMesh"
+    if os.path.isdir(meshOrg_dir):
+        shutil.rmtree(meshOrg_dir)
+    shutil.copytree(mesh_dir, meshOrg_dir)
+    shutil.rmtree(mesh_dir)
+
 
 ############################### dict set and getter ###########################################
 def formatValue(v):
