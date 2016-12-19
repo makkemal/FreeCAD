@@ -845,7 +845,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                             v = self.mesh_object.FemMesh.getccxVolumesByFace(ho)
                             f.write("** Heat flux on face {}\n".format(elem))
                             for i in v:
-                                f.write("{},S{},{}\n".format(i[0], i[1], heatflux_obj.DFlux))
+                                f.write("{},S{},{}\n".format(i[0], i[1], heatflux_obj.DFlux * 0.001))
 
     def write_outputs_types(self, f):
         f.write('\n***********************************************************\n')
