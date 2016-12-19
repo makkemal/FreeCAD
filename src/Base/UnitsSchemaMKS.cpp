@@ -161,6 +161,16 @@ QString UnitsSchemaMKS::schemaTranslate(const Quantity &quant, double &factor, Q
         unitString = quant.getUnit().getString();
         factor = 1.0;
     }
+    else if (unit == Unit::DynamicViscosity) {
+        if (UnitValue < 0.01) {
+            unitString = QString::fromUtf8("cP");
+            factor = 0.000001;
+        }
+        else {
+            unitString = QString::fromLatin1("P");
+            factor = 0.0001;
+        }
+    }
 
     return toLocale(quant, factor, unitString);
 }

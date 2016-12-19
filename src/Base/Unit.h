@@ -121,6 +121,8 @@ public:
     static Unit SpecificHeat;
     static Unit ThermalTransferCoefficient;
 
+	static Unit DynamicViscosity;
+
     //@}
 protected:
     UnitSignature Sig;
