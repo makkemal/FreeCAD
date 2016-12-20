@@ -1244,135 +1244,125 @@ yylval = Quantity::Gon;                 return UNIT; // gon
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 136 "QuantityParser.l"
+#line 133 "QuantityParser.l"
 {  yylval = Quantity(num_change(yytext,'.',','));return NUM;  }
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 137 "QuantityParser.l"
+#line 134 "QuantityParser.l"
 {  yylval = Quantity(num_change(yytext,'.',','));return NUM;  }
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 138 "QuantityParser.l"
+#line 135 "QuantityParser.l"
 {  yylval = Quantity(num_change(yytext,',','.'));return NUM;  }
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 139 "QuantityParser.l"
+#line 136 "QuantityParser.l"
 {  yylval = Quantity(num_change(yytext,',','.'));return NUM;  }
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 142 "QuantityParser.l"
+#line 139 "QuantityParser.l"
 {yylval = Quantity(M_PI)          ; return NUM;} // constant pi
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 143 "QuantityParser.l"
+#line 140 "QuantityParser.l"
 {yylval = Quantity(M_E)           ; return NUM;} // constant e
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 145 "QuantityParser.l"
+#line 142 "QuantityParser.l"
 return ACOS;
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 146 "QuantityParser.l"
+#line 143 "QuantityParser.l"
 return ASIN;
 	YY_BREAK
 case 84:
 YY_RULE_SETUP
-#line 147 "QuantityParser.l"
+#line 144 "QuantityParser.l"
 return ATAN;
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 148 "QuantityParser.l"
+#line 145 "QuantityParser.l"
 return ATAN2;
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 149 "QuantityParser.l"
+#line 146 "QuantityParser.l"
 return COS;
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 150 "QuantityParser.l"
+#line 147 "QuantityParser.l"
 return EXP;
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 151 "QuantityParser.l"
+#line 148 "QuantityParser.l"
 return ABS;
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 152 "QuantityParser.l"
+#line 149 "QuantityParser.l"
 return MOD;
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 153 "QuantityParser.l"
+#line 150 "QuantityParser.l"
 return LOG;
 	YY_BREAK
 case 91:
 YY_RULE_SETUP
-#line 154 "QuantityParser.l"
+#line 151 "QuantityParser.l"
 return LOG10;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 155 "QuantityParser.l"
+#line 152 "QuantityParser.l"
 return POW;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 156 "QuantityParser.l"
+#line 153 "QuantityParser.l"
 return SIN;
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 157 "QuantityParser.l"
+#line 154 "QuantityParser.l"
 return SINH;
 	YY_BREAK
 case 95:
 YY_RULE_SETUP
-#line 158 "QuantityParser.l"
+#line 155 "QuantityParser.l"
 return TAN;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 159 "QuantityParser.l"
+#line 156 "QuantityParser.l"
 return TANH;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 160 "QuantityParser.l"
+#line 157 "QuantityParser.l"
 return SQRT;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 133 "QuantityParser.l"
-yylval = Quantity::Poise;          return UNIT;
-	YY_BREAK
-case 99:
-YY_RULE_SETUP
-#line 134 "QuantityParser.l"
-yylval = Quantity::CentiPoise;          return UNIT;
-	YY_BREAK
-case 100:
-YY_RULE_SETUP
 #line 159 "QuantityParser.l"
 return *yytext;
 	YY_BREAK
-case 101:
+case 99:
 YY_RULE_SETUP
 #line 160 "QuantityParser.l"
 ECHO;
 	YY_BREAK
-#line 1376 "QuantityLexer.c"
+#line 1366 "QuantityLexer.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(C_COMMENT):
 	yyterminate();

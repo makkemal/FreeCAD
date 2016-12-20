@@ -299,9 +299,6 @@ Quantity Quantity::Degree           (1.0           ,Unit(0,0,0,0,0,0,0,1)); // d
 Quantity Quantity::Radian           (180/M_PI      ,Unit(0,0,0,0,0,0,0,1)); // radian
 Quantity Quantity::Gon              (360.0/400.0   ,Unit(0,0,0,0,0,0,0,1)); // gon
 
-Quantity Quantity::Poise			(0.0001         ,Unit(-1,1,-1));
-Quantity Quantity::CentiPoise		(0.000001         ,Unit(-1,1,-1));
-
 // === Parser & Scanner stuff ===============================================
 
 // include the Scanner and the Parser for the Quantitys

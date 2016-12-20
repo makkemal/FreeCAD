@@ -218,9 +218,6 @@ public:
     static Quantity Degree;
     static Quantity Radian;
     static Quantity Gon;
-    
-    static Quantity Poise;
-    static Quantity CentiPoise;
     //@}
 
 
