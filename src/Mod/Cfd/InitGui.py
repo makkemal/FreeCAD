@@ -38,13 +38,15 @@ class CfdWorkbench(Workbench):
         import _CommandCfdAnalysis
         import _CommandCfdSolverFoam
         import _CommandCfdSolverControl
+        import _CommandMeshNetgenFromShape
+        import _CommandCfdMeshGmshFromShape
         #import _CommandCfdResult  # error in import vtk
 
         # Post Processing commands are located in FemWorkbench
-        cmdlst = ['Cfd_Analysis', 'Cfd_SolverFoam', "Separator", 
-                        'Fem_ConstraintFluidBoundary', 'Cfd_SolverControl',
-                        "Separator", "Fem_PostPipelineFromResult", "Fem_PostCreateClipFilter", 
-                        "Fem_PostCreateScalarClipFilter", "Fem_PostCreateCutFilter"]
+        cmdlst = ['Cfd_Analysis', 'Cfd_SolverFoam', 'Fem_MeshNetgenFromShape', 'Cfd_MeshGmshFromShape', 'Separator',
+                  'Fem_ConstraintFluidBoundary', 'Cfd_SolverControl',
+                  "Separator", "Fem_PostPipelineFromResult", "Fem_PostCreateClipFilter",
+                  "Fem_PostCreateScalarClipFilter", "Fem_PostCreateCutFilter"]
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
 

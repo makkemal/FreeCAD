@@ -1,6 +1,6 @@
 # ***************************************************************************
 # *                                                                         *
-# *   Copyright (c) 2013-2015 - Juergen Riegel <FreeCAD@juergen-riegel.net> *
+# *   Copyright (c) 2016 - Bernd Hahnebach <bernd@bimstatik.org>            *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -20,43 +20,42 @@
 # *                                                                         *
 # ***************************************************************************
 
-__title__ = "Command New Analysis"
-__author__ = "Juergen Riegel"
+__title__ = "Command CFD GMSH Mesh From Shape"
+__author__ = "Bernd Hahnebach"
 __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 from FemCommands import FemCommands
+import FreeCADGui
+import FemGui
+from PySide import QtCore
 
-if FreeCAD.GuiUp:
-    import FreeCADGui
-    from PySide import QtCore
 
-
-class _CommandCfdAnalysis(FemCommands):
-    "the Cfd_Analysis command definition"
+class _CommandCfdMeshGmshFromShape(FemCommands):
+    # the Cfd_MeshGmshFromShape command definition
     def __init__(self):
-        super(_CommandCfdAnalysis, self).__init__()
-        self.resources = {'Pixmap': 'fem-cfd-analysis',
-                          'MenuText': QtCore.QT_TRANSLATE_NOOP("Cfd_Analysis", "Analysis container"),
-                          'Accel': "N, C",
-                          'ToolTip': QtCore.QT_TRANSLATE_NOOP("Cfd_Analysis", "Creates a analysis container with a Cfd solver")}
-        self.is_active = 'with_document'
+        super(_CommandCfdMeshGmshFromShape, self).__init__()
+        self.resources = {'Pixmap': 'fem-femmesh-gmsh-from-shape',
+                          'MenuText': QtCore.QT_TRANSLATE_NOOP("Cfd_MeshGmshFromShape", "CFD mesh from shape by GMSH"),
+                          'ToolTip': QtCore.QT_TRANSLATE_NOOP("Cfd_MeshGmshFromShape", "Create a CFD mesh from a shape by GMSH mesher")}
+        self.is_active = 'with_part_feature'
 
     def Activated(self):
-        FreeCAD.Console.PrintMessage('Activated called')
-        FreeCAD.ActiveDocument.openTransaction("Create CFD Analysis")
+        FreeCAD.ActiveDocument.openTransaction("Create CFD mesh by GMSH")
         FreeCADGui.addModule("FemGui")
-        FreeCADGui.addModule("CfdAnalysis")
-        FreeCADGui.doCommand("CfdAnalysis.makeCfdAnalysis('CfdAnalysis')")
-        FreeCADGui.doCommand("FemGui.setActiveAnalysis(App.activeDocument().ActiveObject)")
-        FreeCADGui.addModule("CfdSolverFoam")
-        FreeCADGui.doCommand("FemGui.getActiveAnalysis().Member = FemGui.getActiveAnalysis().Member + [CfdSolverFoam.makeCfdSolverFoam()]")
         sel = FreeCADGui.Selection.getSelection()
         if (len(sel) == 1):
-            if(sel[0].isDerivedFrom("Fem::FemMeshObject")):
-                FreeCADGui.doCommand("FemGui.getActiveAnalysis().Member = FemGui.getActiveAnalysis().Member + [App.activeDocument()." + sel[0].Name + "]")
-        FreeCADGui.Selection.clearSelection()
-        FreeCADGui.activateWorkbench('CfdWorkbench')
+            if(sel[0].isDerivedFrom("Part::Feature")):
+                mesh_obj_name = sel[0].Name + "_Mesh"
+                FreeCADGui.addModule("CfdMeshGmsh")
+                FreeCADGui.doCommand("CfdMeshGmsh.makeCfdMeshGmsh('" + mesh_obj_name + "')")
+                FreeCADGui.doCommand("App.ActiveDocument.ActiveObject.Part = App.ActiveDocument." + sel[0].Name)
+                if FemGui.getActiveAnalysis():
+                    FreeCADGui.addModule("FemGui")
+                    FreeCADGui.doCommand("FemGui.getActiveAnalysis().Member = FemGui.getActiveAnalysis().Member + [App.ActiveDocument.ActiveObject]")
+                FreeCADGui.doCommand("Gui.ActiveDocument.setEdit(App.ActiveDocument.ActiveObject.Name)")
 
-if FreeCAD.GuiUp:
-    FreeCADGui.addCommand('Cfd_Analysis', _CommandCfdAnalysis())
+        FreeCADGui.Selection.clearSelection()
+
+
+FreeCADGui.addCommand('Cfd_MeshGmshFromShape', _CommandCfdMeshGmshFromShape())
