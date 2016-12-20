@@ -62,16 +62,6 @@ QString UnitsSchemaCentimeters::schemaTranslate(const Base::Quantity& quant, dou
         unitString = QString::fromLatin1("W/m^2");
         factor = 1.0;
     }
-    else if (unit == Unit::DynamicViscosity) {
-        if (UnitValue < 0.01) {
-            unitString = QString::fromUtf8("cP");
-            factor = 0.000001;
-        }
-        else {
-            unitString = QString::fromLatin1("P");
-            factor = 0.0001;
-        }
-    }
     else {
         // default action for all cases without special treatment:
         unitString = quant.getUnit().getString();

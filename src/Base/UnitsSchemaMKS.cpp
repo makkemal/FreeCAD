@@ -164,20 +164,14 @@ QString UnitsSchemaMKS::schemaTranslate(const Quantity &quant, double &factor, Q
         unitString = QString::fromLatin1("W/m^2");
         factor = 1.0;
     }
+    else if (unit == Unit::DynamicViscosity) {
+        unitString = QString::fromUtf8("Pa*s");
+        factor = 0.000001;
+    }
     else {
         // default action for all cases without special treatment:
         unitString = quant.getUnit().getString();
         factor = 1.0;
-    }
-    else if (unit == Unit::DynamicViscosity) {
-        if (UnitValue < 0.01) {
-            unitString = QString::fromUtf8("cP");
-            factor = 0.000001;
-        }
-        else {
-            unitString = QString::fromLatin1("P");
-            factor = 0.0001;
-        }
     }
 
     return toLocale(quant, factor, unitString);
