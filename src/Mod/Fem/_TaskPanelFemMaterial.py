@@ -51,6 +51,9 @@ class _TaskPanelFemMaterial:
         self.references_shape_type = None
 
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/TaskPanelFemMaterial.ui")
+        QtCore.QObject.connect(self.form.rb_solid, QtCore.SIGNAL("clicked()"), self.select_solid)
+        QtCore.QObject.connect(self.form.rb_fluid, QtCore.SIGNAL("clicked()"), self.select_fluid)
+        QtCore.QObject.connect(self.form.rb_gas, QtCore.SIGNAL("clicked()"), self.select_gas)
         QtCore.QObject.connect(self.form.pushButton_MatWeb, QtCore.SIGNAL("clicked()"), self.goMatWeb)
         QtCore.QObject.connect(self.form.cb_materials, QtCore.SIGNAL("activated(int)"), self.choose_material)
         QtCore.QObject.connect(self.form.input_fd_young_modulus, QtCore.SIGNAL("valueChanged(double)"), self.ym_changed)
@@ -62,6 +65,15 @@ class _TaskPanelFemMaterial:
         QtCore.QObject.connect(self.form.input_fd_thermal_conductivity, QtCore.SIGNAL("valueChanged(double)"), self.tc_changed)
         QtCore.QObject.connect(self.form.input_fd_expansion_coefficient, QtCore.SIGNAL("valueChanged(double)"), self.tec_changed)
         QtCore.QObject.connect(self.form.input_fd_specific_heat, QtCore.SIGNAL("valueChanged(double)"), self.sh_changed)
+        QtCore.QObject.connect(self.form.input_fd_specific_heat_fluid, QtCore.SIGNAL("valueChanged(double)"), self.shf_changed)
+        QtCore.QObject.connect(self.form.input_fd_specific_heat_gas, QtCore.SIGNAL("valueChanged(double)"), self.shg_changed)
+        QtCore.QObject.connect(self.form.input_fd_viscosity_fluid, QtCore.SIGNAL("valueChanged(double)"), self.vf_changed)
+        QtCore.QObject.connect(self.form.input_fd_viscosity_gas, QtCore.SIGNAL("valueChanged(double)"), self.vg_changed)
+        QtCore.QObject.connect(self.form.input_fd_temp_fluid, QtCore.SIGNAL("valueChanged(double)"), self.temp_fluid_changed)
+        QtCore.QObject.connect(self.form.input_fd_temp_gas, QtCore.SIGNAL("valueChanged(double)"), self.temp_gas_changed)
+        QtCore.QObject.connect(self.form.input_fd_density_fluid, QtCore.SIGNAL("valueChanged(double)"), self.density_fluid_changed)
+        QtCore.QObject.connect(self.form.input_fd_density_gas, QtCore.SIGNAL("valueChanged(double)"), self.density_gas_changed)
+        QtCore.QObject.connect(self.form.input_fd_specific_gas_const, QtCore.SIGNAL("valueChanged(double)"), self.sgc_changed)
 
         self.form.list_References.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         self.form.list_References.connect(self.form.list_References, QtCore.SIGNAL("customContextMenuRequested(QPoint)"), self.references_list_right_clicked)
@@ -160,6 +172,15 @@ class _TaskPanelFemMaterial:
             print('SpecificHeat not found in material data of: ' + self.material['Name'])
             self.material['SpecificHeat'] = '0 J/kg/K'
 
+    def select_solid(self):
+        self.form.sw_material_type.setCurrentIndex(0)
+
+    def select_fluid(self):
+        self.form.sw_material_type.setCurrentIndex(1)
+
+    def select_gas(self):
+        self.form.sw_material_type.setCurrentIndex(2)
+
     def ym_changed(self, value):
         # FreeCADs standard unit for stress is kPa
         old_ym = Units.Quantity(self.material['YoungsModulus']).getValueAs("kPa")
@@ -226,6 +247,107 @@ class _TaskPanelFemMaterial:
                 material['SpecificHeat'] = unicode(value_in_J_per_kgK) + " J/kg/K"
                 self.material = material
 
+    def shf_changed(self, value):
+        old_shf = Units.Quantity(self.material['SpecificHeat']).getValueAs("J/kg/K")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_shf) / value < 1 + variation):
+                # SpecificHeat has changed
+                material = self.material
+                value_in_J_per_kgK = value * 1e-6  # To compensate for use of SI units
+                material['SpecificHeat'] = unicode(value_in_J_per_kgK) + " J/kg/K"
+                self.material = material
+
+    def shg_changed(self, value):
+        old_shg = Units.Quantity(self.material['SpecificHeat']).getValueAs("J/kg/K")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_shg) / value < 1 + variation):
+                # SpecificHeat has changed
+                material = self.material
+                value_in_J_per_kgK = value * 1e-6  # To compensate for use of SI units
+                material['SpecificHeat'] = unicode(value_in_J_per_kgK) + " J/kg/K"
+                self.material = material
+
+    def vf_changed(self, value):
+        old_vf = Units.Quantity(self.material['DynamicViscosity']).getValueAs("Pa*s")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_vf) / value < 1 + variation):
+                # DynamicViscosity has changed
+                material = self.material
+                value_in_Pa_s = value * 1e-6  # To compensate for use of SI units
+                material['DynamicViscosity'] = unicode(value_in_Pa_s) + " Pa*s"
+                self.material = material
+
+    def vg_changed(self, value):
+        old_vg = Units.Quantity(self.material['DynamicViscosity']).getValueAs("Pa*s")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_vg) / value < 1 + variation):
+                # DynamicViscosity has changed
+                material = self.material
+                value_in_Pa_s = value * 1e-6  # To compensate for use of SI units
+                material['DynamicViscosity'] = unicode(value_in_Pa_s) + " Pa*s"
+                self.material = material
+
+    def temp_fluid_changed(self, value):
+        old_tf = Units.Quantity(self.material['Temperature']).getValueAs("K")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_tf) / value < 1 + variation):
+                # Temperature has changed
+                material = self.material
+                value_in_Kelvin = value
+                material['Temperature'] = unicode(value_in_Kelvin) + " K"
+                self.material = material
+
+    def temp_gas_changed(self, value):
+        old_tg = Units.Quantity(self.material['Temperature']).getValueAs("K")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_tg) / value < 1 + variation):
+                # Temperature has changed
+                material = self.material
+                value_in_Kelvin = value
+                material['Temperature'] = unicode(value_in_Kelvin) + " K"
+                self.material = material
+
+    def density_fluid_changed(self, value):
+        # FreeCADs standard unit for density is kg/mm^3
+        old_df = Units.Quantity(self.material['Density']).getValueAs("kg/m^3")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_df) / value < 1 + variation):
+                # density has changed
+                material = self.material
+                value_in_kg_per_m3 = value * 1e9
+                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3"  # SvdW:Keep density in SI units for easier readability
+                self.material = material
+
+    def density_gas_changed(self, value):
+        # FreeCADs standard unit for density is kg/mm^3
+        old_dg = Units.Quantity(self.material['Density']).getValueAs("kg/m^3")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_dg) / value < 1 + variation):
+                # density has changed
+                material = self.material
+                value_in_kg_per_m3 = value * 1e9
+                material['Density'] = unicode(value_in_kg_per_m3) + " kg/m^3"  # SvdW:Keep density in SI units for easier readability
+                self.material = material
+
+    def sgc_changed(self, value):
+        old_sgc = Units.Quantity(self.material['SpecificGasConstant']).getValueAs("J/kg/K")
+        variation = 0.001
+        if value:
+            if not (1 - variation < float(old_sgc) / value < 1 + variation):
+                # SpecificGasConstant has changed
+                material = self.material
+                value_in_J_per_kgK = value * 1e-6  # To compensate for use of SI units
+                material['SpecificGasConstant'] = unicode(value_in_J_per_kgK) + " J/kg/K"
+                self.material = material
+
     def choose_material(self, index):
         if index < 0:
             return
@@ -253,33 +375,81 @@ class _TaskPanelFemMaterial:
         return ""
 
     def set_mat_params_in_combo_box(self, matmap):
-        if 'YoungsModulus' in matmap:
-            ym_new_unit = "MPa"
-            ym = FreeCAD.Units.Quantity(matmap['YoungsModulus'])
-            ym_with_new_unit = ym.getValueAs(ym_new_unit)
-            self.form.input_fd_young_modulus.setText("{} {}".format(ym_with_new_unit, ym_new_unit))
-        if 'PoissonRatio' in matmap:
-            self.form.spinBox_poisson_ratio.setValue(float(matmap['PoissonRatio']))
-        if 'Density' in matmap:
-            density_new_unit = "kg/m^3"
-            density = FreeCAD.Units.Quantity(matmap['Density'])
-            density_with_new_unit = density.getValueAs(density_new_unit)
-            self.form.input_fd_density.setText("{} {}".format(density_with_new_unit, density_new_unit))
-        if 'ThermalConductivity' in matmap:
-            tc_new_unit = "W/m/K"
-            tc = FreeCAD.Units.Quantity(matmap['ThermalConductivity'])
-            tc_with_new_unit = tc.getValueAs(tc_new_unit)
-            self.form.input_fd_thermal_conductivity.setText("{} {}".format(tc_with_new_unit, tc_new_unit))
-        if 'ThermalExpansionCoefficient' in matmap:
-            tec_new_unit = "um/m/K"
-            tec = FreeCAD.Units.Quantity(matmap['ThermalExpansionCoefficient'])
-            tec_with_new_unit = tec.getValueAs(tec_new_unit)
-            self.form.input_fd_expansion_coefficient.setText("{} {}".format(tec_with_new_unit, tec_new_unit))
-        if 'SpecificHeat' in matmap:
-            sh_new_unit = "J/kg/K"
-            sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
-            sh_with_new_unit = sh.getValueAs(sh_new_unit)
-            self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))
+        if self.form.sw_material_type.setCurrentIndex(0):
+            if 'YoungsModulus' in matmap:
+                ym_new_unit = "MPa"
+                ym = FreeCAD.Units.Quantity(matmap['YoungsModulus'])
+                ym_with_new_unit = ym.getValueAs(ym_new_unit)
+                self.form.input_fd_young_modulus.setText("{} {}".format(ym_with_new_unit, ym_new_unit))
+            if 'PoissonRatio' in matmap:
+                self.form.spinBox_poisson_ratio.setValue(float(matmap['PoissonRatio']))
+            if 'Density' in matmap:
+                density_new_unit = "kg/m^3"
+                density = FreeCAD.Units.Quantity(matmap['Density'])
+                density_with_new_unit = density.getValueAs(density_new_unit)
+                self.form.input_fd_density.setText("{} {}".format(density_with_new_unit, density_new_unit))
+            if 'ThermalConductivity' in matmap:
+                tc_new_unit = "W/m/K"
+                tc = FreeCAD.Units.Quantity(matmap['ThermalConductivity'])
+                tc_with_new_unit = tc.getValueAs(tc_new_unit)
+                self.form.input_fd_thermal_conductivity.setText("{} {}".format(tc_with_new_unit, tc_new_unit))
+            if 'ThermalExpansionCoefficient' in matmap:
+                tec_new_unit = "um/m/K"
+                tec = FreeCAD.Units.Quantity(matmap['ThermalExpansionCoefficient'])
+                tec_with_new_unit = tec.getValueAs(tec_new_unit)
+                self.form.input_fd_expansion_coefficient.setText("{} {}".format(tec_with_new_unit, tec_new_unit))
+            if 'SpecificHeat' in matmap:
+                sh_new_unit = "J/kg/K"
+                sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
+                sh_with_new_unit = sh.getValueAs(sh_new_unit)
+                self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))
+        elif self.form.sw_material_type.setCurrentIndex(1):
+            if 'SpecificHeat' in matmap:
+                shf_new_unit = "J/kg/K"
+                shf = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
+                shf_with_new_unit = shf.getValueAs(shf_new_unit)
+                self.form.input_fd_specific_heat_fluid.setText("{} {}".format(shf_with_new_unit, shf_new_unit))
+            if 'DynamicViscosity' in matmap:
+                vf_new_unit = "Pa*s"
+                vf = FreeCAD.Units.Quantity(matmap['DynamicViscosity'])
+                vf_with_new_unit = vf.getValueAs(vf_new_unit)
+                self.form.input_fd_viscosity_fluid.setText("{} {}".format(vf_with_new_unit, vf_new_unit))
+            if 'Temperature' in matmap:
+                temp_fluid_new_unit = "K"
+                temp_fluid = FreeCAD.Units.Quantity(matmap['Temperature'])
+                temp_fluid_with_new_unit = temp_fluid.getValueAs(temp_fluid_new_unit)
+                self.form.input_fd_temp_fluid.setText("{} {}".format(temp_fluid_with_new_unit, temp_fluid_new_unit))
+            if 'Density' in matmap:
+                density_fluid_new_unit = "kg/m^3"
+                density_fluid = FreeCAD.Units.Quantity(matmap['Density'])
+                density_fluid_with_new_unit = density_fluid.getValueAs(density_fluid_new_unit)
+                self.form.input_fd_density_fluid.setText("{} {}".format(density_fluid_with_new_unit, density_fluid_new_unit))  
+        elif self.form.sw_material_type.setCurrentIndex(2):
+            if 'SpecificHeat' in matmap:
+                shg_new_unit = "J/kg/K"
+                shg = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
+                shg_with_new_unit = shg.getValueAs(shg_new_unit)
+                self.form.input_fd_specific_heat_gas.setText("{} {}".format(shg_with_new_unit, shg_new_unit))
+            if 'DynamicViscosity' in matmap:
+                vg_new_unit = "Pa*s"
+                vg = FreeCAD.Units.Quantity(matmap['DynamicViscosity'])
+                vg_with_new_unit = vg.getValueAs(vg_new_unit)
+                self.form.input_fd_viscosity_gas.setText("{} {}".format(vg_with_new_unit, vg_new_unit))
+            if 'Temperature' in matmap:
+                temp_gas_new_unit = "K"
+                temp_gas = FreeCAD.Units.Quantity(matmap['Temperature'])
+                temp_gas_with_new_unit = temp_gas.getValueAs(temp_gas_new_unit)
+                self.form.input_fd_temp_gas.setText("{} {}".format(temp_gas_with_new_unit, temp_gas_new_unit))
+            if 'Density' in matmap:
+                density_gas_new_unit = "kg/m^3"
+                density_gas = FreeCAD.Units.Quantity(matmap['Density'])
+                density_gas_with_new_unit = density_gas.getValueAs(density_gas_new_unit)
+                self.form.input_fd_density_gas.setText("{} {}".format(density_gas_with_new_unit, density_gas_new_unit))
+            if 'SpecificGasConstant' in matmap:
+                sgc_new_unit = "J/kg/K"
+                sgc = FreeCAD.Units.Quantity(matmap['SpecificGasConstant'])
+                sgc_with_new_unit = sgc.getValueAs(sgc_new_unit)
+                self.form.input_fd_specific_gas_const.setText("{} {}".format(sgc_with_new_unit, sgc_new_unit))
 
     def add_transient_material(self, material):
         material_name = self.get_material_name(material)
