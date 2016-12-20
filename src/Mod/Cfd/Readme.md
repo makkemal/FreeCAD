@@ -7,6 +7,8 @@ by Qingfeng Xia
 Use only with FreeCAD version > 0.17
 Currently, only OpenFOAM (official 3.0 +) solver is implemented, tested on Ubuntu 16.04
 
+Presently, the OpenFOAM environment must be sourced before running FreeCAD (`source <OpenFOAM_directory>/etc/bashrc`)
+
 This module aims to accelerate CFD case build up. Limited by the long solving time and mesh quality sensitivity of CFD problem, this module will not as good as FEM module. For engineering application, please seek support from other commercial CFD software.
 
 ## FoamCaseBuilder
@@ -20,7 +22,8 @@ FoamCaseBuilder is an independent python module to build up case, working with a
 > see more OpenFOAM official installation guide
 
 - PyFoam (0.6.6+) `sudo pip install PyFoam`
- 
+
+- gnuplot.py/gnuplot-py
 
 Debian/Ubuntu: see more details of Prerequisites installation in *Readme.md* in *FoamCaseBuilder* folder
 
@@ -29,6 +32,8 @@ RHEL/SL/Centos/Fedora: Installation tutorial/guide is welcomed from testers
 ## Platform support status
 - install on Linux:
         Ubuntu 16.04 as a baseline implementation
+        
+        This version has been tested on Fedora 23 and Ubuntu ...
 
 - install on Windows 10 with Bash on Windows support:
         Official OpenFOAM  (Ubuntu deb) can be installed and run on windows via Bash on Windows,
@@ -40,13 +45,8 @@ RHEL/SL/Centos/Fedora: Installation tutorial/guide is welcomed from testers
 ## Installation guide
         
 ### install from github
-`git clone https://github.com/qingfengxia/Cfd.git`
-        
-symbolic link or copy the folder into `<freecad installation folder>/Mod`, 
-e.g, on POSIX system: 
+`git clone https://github.com/jaheyns/FreeCAD.git`
 
-`sudo ln -s (path_to_CFD)  (path_to_freecad)/Mod`
-        
 ### install from FreeCAD
 
 ALTERNATIVELY, use FreeCAD-Addon-Installer macro from <https://github.com/FreeCAD/FreeCAD-addons>

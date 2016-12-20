@@ -29,7 +29,6 @@ import os.path
 import FreeCAD
 import FemTools
 import CfdTools
-import numpy as np
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -276,7 +275,6 @@ class _TaskPanelCfdResult:
         self.form.le_avg.setText("{:.6} {}".format(avg, unit))
         self.form.le_max.setProperty("unit", unit)
         self.form.le_max.setText("{:.6} {}".format(maxm, unit))
-
 
     def update(self):
         self.MeshObject = None

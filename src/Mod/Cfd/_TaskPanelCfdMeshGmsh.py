@@ -1,6 +1,7 @@
 # ***************************************************************************
 # *                                                                         *
 # *   Copyright (c) 2016 - Bernd Hahnebach <bernd@bimstatik.org>            *
+# *   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -20,15 +21,15 @@
 # *                                                                         *
 # ***************************************************************************
 
+__title__ = "_TaskPanelCfdMeshGmsh"
+__author__ = "Bernd Hahnebach"
+__url__ = "http://www.freecadweb.org"
+
 """
 Gmsh meshing UI for CFD analysis object. Adapted from equivalent classes
 in FEM module but removes the option to generate second-order
 mesh cells.
 """
-
-__title__ = "_TaskPanelCfdMeshGmsh"
-__author__ = "Bernd Hahnebach"
-__url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 import time

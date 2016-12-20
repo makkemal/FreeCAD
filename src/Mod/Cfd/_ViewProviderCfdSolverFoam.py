@@ -28,6 +28,7 @@ import FreeCAD
 import FreeCADGui
 import FemGui
 
+
 class _ViewProviderCfdSolverFoam:
     """A View Provider for the Solver object, base class for all derived solver
     derived solver should implement  a specific TaskPanel and set up solver and override setEdit()"""
@@ -48,7 +49,7 @@ class _ViewProviderCfdSolverFoam:
 
     def onChanged(self, vobj, prop):
         return
-        
+
     def doubleClicked(self, vobj):
         if FreeCADGui.activeWorkbench().name() != 'CfdWorkbench':
             FreeCADGui.activateWorkbench("CfdWorkbench")
@@ -68,7 +69,7 @@ class _ViewProviderCfdSolverFoam:
         else:
             FreeCAD.Console.PrintError('Active Task Dialog found! Please close this one first!\n')
         return True
-        
+
     def setEdit(self, vobj, mode):
         if FemGui.getActiveAnalysis():
             from CfdRunnableFoam import CfdRunnableFoam
@@ -76,7 +77,7 @@ class _ViewProviderCfdSolverFoam:
             from _TaskPanelCfdSolverControl import _TaskPanelCfdSolverControl
             taskd = _TaskPanelCfdSolverControl(foamRunnable)
             taskd.obj = vobj.Object
-            
+
             FreeCADGui.Control.showDialog(taskd)
         return True
 

@@ -1,6 +1,7 @@
 #***************************************************************************
 #*                                                                         *
 #*   Copyright (c) 2013-2015 - Juergen Riegel <FreeCAD@juergen-riegel.net> *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -29,16 +30,13 @@ Naming is not consistent in this file
 solver specific setting is removed from ui
 """
 
-from FemTools import FemTools
 import FreeCAD
 
 import os
-import sys
 import os.path
 import time
-import subprocess
 import Gnuplot
-from numpy import *
+import numpy
 
 if FreeCAD.GuiUp:
     import FreeCADGui
@@ -69,23 +67,20 @@ class _TaskPanelCfdSolverControl:
 
         # update UI
         self.fem_console_message = ''
-        
-        
-        
-        
+
         #======================================================================================================
         #
         # Code associated with running Openfoam from GUI
         #
         #======================================================================================================
         self.solver_run_process = QtCore.QProcess()
-        
+
         #self.solver_run_process.readyReadStandardOutput.connect(self.stdoutReady)
         QtCore.QObject.connect(self.solver_run_process, QtCore.SIGNAL("finished(int)"), self.solverFinished)
         QtCore.QObject.connect(self.solver_run_process, QtCore.SIGNAL("readyReadStandardOutput()"), self.plotResiduals)
         QtCore.QObject.connect(self.form.terminateOFsolver, QtCore.SIGNAL("clicked()"), self.killSolverProcess)
         self.form.terminateOFsolver.setEnabled(False)
-        
+
         self.g = Gnuplot.Gnuplot()
         self.g('set style data lines')
         self.g.title("Simulation residuals")
@@ -96,7 +91,6 @@ class _TaskPanelCfdSolverControl:
         self.g("set logscale y")
         self.g("set yrange [0.95:1.05]")
         self.g("set xrange [0:1]")
-        
 
         self.UxResiduals = [1]
         self.UyResiduals = [1]
@@ -104,17 +98,14 @@ class _TaskPanelCfdSolverControl:
         self.pResiduals = [1]
         self.niter = 0
         #======================================================================================================
-        
-        
-        
+
         # Connect Signals and Slots
         QtCore.QObject.connect(self.form.tb_choose_working_dir, QtCore.SIGNAL("clicked()"), self.choose_working_dir)
         QtCore.QObject.connect(self.form.pb_write_inp, QtCore.SIGNAL("clicked()"), self.write_input_file_handler)
         QtCore.QObject.connect(self.form.pb_edit_inp, QtCore.SIGNAL("clicked()"), self.editSolverInputFile)
         QtCore.QObject.connect(self.form.pb_run_solver, QtCore.SIGNAL("clicked()"), self.runSolverProcess)
         QtCore.QObject.connect(self.form.pb_show_result, QtCore.SIGNAL("clicked()"), self.showResult)
-        
-        
+
         #
         QtCore.QObject.connect(self.SolverProcess, QtCore.SIGNAL("started()"), self.solverProcessStarted)
         QtCore.QObject.connect(self.SolverProcess, QtCore.SIGNAL("stateChanged(QProcess::ProcessState)"), self.solverProcessStateChanged)
@@ -123,7 +114,7 @@ class _TaskPanelCfdSolverControl:
 
         QtCore.QObject.connect(self.Timer, QtCore.SIGNAL("timeout()"), self.updateText)
         self.form.pb_show_result.setEnabled(True)
-        self.Start = time.time() #debug tobe removed
+        self.Start = time.time()  # debug to be removed
         self.update()
 
     def femConsoleMessage(self, message="", color="#000000"):
@@ -178,7 +169,7 @@ class _TaskPanelCfdSolverControl:
         self.form.le_working_dir.setText(info_obj.WorkingDir)
 
     def write_input_file_handler(self):
-               
+
         QApplication.restoreOverrideCursor()
         if self.check_prerequisites_helper():
             # self.solver_object.SolverName == "OpenFOAM":
@@ -225,32 +216,28 @@ class _TaskPanelCfdSolverControl:
         self.femConsoleMessage("Edit case input file in FreeCAD is not implemented!")
         self.solver_runner.edit_case()
 
-    
-        
-    
-    
     def runSolverProcess(self):
-        #Re-starting a simulation from the last time step has currently been de-actived
-        #by using an AllRun script. Therefore just re-setting the residuals here for plotting
+        # Re-starting a simulation from the last time step has currently been de-actived
+        # by using an AllRun script. Therefore just re-setting the residuals here for plotting
         self.UxResiduals = [1]
         self.UyResiduals = [1]
         self.UzResiduals = [1]
         self.pResiduals = [1]
         self.niter = 0
         self.Start = time.time()
-        
-        solverDirectory = self.solver_object.WorkingDir + os.path.sep +self.solver_object.InputCaseName
+
+        solverDirectory = self.solver_object.WorkingDir + os.path.sep + self.solver_object.InputCaseName
         runScript = solverDirectory + os.path.sep + "Allrun"
         self.solver_run_process.start(runScript)
-        
-        #NOTE: setting solve button to inactive to ensure that two instances of the same simulation aren's started simulataneously
+
+        # NOTE: setting solve button to inactive to ensure that two instances of the same simulation aren's started simulataneously
         self.form.pb_run_solver.setEnabled(False)
         self.form.terminateOFsolver.setEnabled(True)
         self.femConsoleMessage("OpenFOAM solver started")
-            
+
         QApplication.restoreOverrideCursor()
         # all the UI update will done after solver process finished signal
-        
+
     def killSolverProcess(self):
         self.femConsoleMessage("OpenFOAM solver manually stopped")
         self.solver_run_process.terminate()
@@ -264,47 +251,45 @@ class _TaskPanelCfdSolverControl:
         self.femConsoleMessage("OpenFOAM simulation finished!")
         self.form.pb_run_solver.setEnabled(True)
         self.form.terminateOFsolver.setEnabled(False)
-    
+
     def plotResiduals(self):
         text = str(self.solver_run_process.readAllStandardOutput())
-        
+
         loglines = text.split('\n')
-        printlines = []
         for line in loglines:
-            #print line,
+            # print line,
             split = line.split()
-            
+
             # Only store the first residual per timestep
             if line.startswith(u"Time = "):
                 self.niter += 1
 
-            #print split
+            # print split
             if "Ux," in split and self.niter > len(self.UxResiduals):
                 self.UxResiduals.append(float(split[7].split(',')[0]))
             if "Uy," in split and self.niter > len(self.UyResiduals):
                 self.UyResiduals.append(float(split[7].split(',')[0]))
             if "Uz," in split and self.niter > len(self.UzResiduals):
                 self.UzResiduals.append(float(split[7].split(',')[0]))
-            if "p," in split  and self.niter > len(self.pResiduals):
+            if "p," in split and self.niter > len(self.pResiduals):
                 self.pResiduals.append(float(split[7].split(',')[0]))
-                
-                
-        #NOTE: the mod checker is in place for the possibility plotting takes longer
-        #NOTE: than a small test case to solve
-        if mod(self.niter,1)==0:
+
+        # NOTE: the mod checker is in place for the possibility plotting takes longer
+        # NOTE: than a small test case to solve
+        if numpy.mod(self.niter, 1) == 0:
             self.g.plot(Gnuplot.Data(self.UxResiduals, with_='line', title="Ux", inline=1),
-            Gnuplot.Data(self.UyResiduals, with_='line', title="Uy", inline=1),
-            Gnuplot.Data(self.UzResiduals, with_='line', title="Uz", inline=1),
-            Gnuplot.Data(self.pResiduals, with_='line', title="p"))
-        
-        if self.niter>=2:
-            self.g("set autoscale") #NOTE: this is just to supress the empty yrange error when GNUplot autscales
-        
-        #NOTE: can print the output from the OF solver to the console via the following command
+                        Gnuplot.Data(self.UyResiduals, with_='line', title="Uy", inline=1),
+                        Gnuplot.Data(self.UzResiduals, with_='line', title="Uz", inline=1),
+                        Gnuplot.Data(self.pResiduals, with_='line', title="p"))
+
+        if self.niter >= 2:
+            self.g("set autoscale")  # NOTE: this is just to supress the empty yrange error when GNUplot autscales
+
+        # NOTE: can print the output from the OF solver to the console via the following command
         #self.femConsoleMessage(text)
-        
+
         FreeCAD.Console.PrintMessage(text)
-    
+
     def solverProcessStarted(self):
         #print("solver Started()")
         #print(self.SolverProcess.state())
@@ -341,7 +326,7 @@ class _TaskPanelCfdSolverControl:
             try:
                 out = str(out)  # python3 has no unicode type, utf-8 is the default encoding, this is a portable way to deal with bytes
                 # solver specific error dection code has been deleted here
-                self.femConsoleMessage(out = '<br>'.join([s for s in out.splitlines() if s]))
+                self.femConsoleMessage(out='<br>'.join([s for s in out.splitlines() if s]))
             except UnicodeDecodeError:
                 self.femConsoleMessage("Error converting stdout from Solver", "#FF0000")
 
@@ -356,4 +341,3 @@ class _TaskPanelCfdSolverControl:
         self.solver_runner.view_result()
         QApplication.restoreOverrideCursor()
         self.form.l_time.setText('Time: {0:4.1f}: '.format(time.time() - self.Start))
-

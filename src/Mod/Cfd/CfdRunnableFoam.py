@@ -1,6 +1,7 @@
 #***************************************************************************
 #*                                                                         *
 #*   Copyright (c) 2015 - Qingfeng Xia <qingfeng.xia()eng.ox.ac.uk> *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -57,7 +58,7 @@ class CfdRunnable(object):
         else:
             if analysis:
                 self.solver = CfdTools.getSolver(self.analysis)
-            if self.solver == None:
+            if self.solver is None:
                 FreeCAD.Console.printMessage("FemSolver object is missing from Analysis Object")
 
         if self.analysis:
@@ -105,4 +106,3 @@ class CfdRunnableFoam(CfdRunnable):
         result = "/home/qingfeng/Documents/TestCase/VTK/TestCase_345.vtk"
         from CfdResultFoamVTK import importVTK
         importVTK(result, self.analysis)
-

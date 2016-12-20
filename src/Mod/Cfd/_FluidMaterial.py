@@ -20,6 +20,9 @@
 # *                                                                         *
 # ***************************************************************************
 
+__title__ = "The fluid material object"
+__author__ = "Alfred Bogaers"
+__url__ = "http://www.freecadweb.org"
 
 
 class _FluidMaterial:

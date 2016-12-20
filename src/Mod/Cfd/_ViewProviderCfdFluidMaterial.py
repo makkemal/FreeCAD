@@ -1,6 +1,7 @@
 #***************************************************************************
 #*   (c) Bernd Hahnebach (bernd@bimstatik.org) 2014                    *
 #*   (c) Qingfeng Xia @ iesensor.com 2016                    *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This file is part of the FreeCAD CAx development system.              *
 #*                                                                         *
@@ -23,11 +24,11 @@
 #***************************************************************************/
 
 
-
 import FreeCAD
 import FreeCADGui
 
-class _ViewProvideCfdFluidMaterial:
+
+class _ViewProviderCfdFluidMaterial:
     """A View Provider for the FemResultObject dervied CfdResult class
     """
 

@@ -1,6 +1,7 @@
 #***************************************************************************
 #*   (c) Bernd Hahnebach (bernd@bimstatik.org) 2014                    *
 #*   (c) Qingfeng Xia @ iesensor.com 2016                    *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This file is part of the FreeCAD CAx development system.              *
 #*                                                                         *
@@ -43,12 +44,12 @@ class CfdWorkbench(Workbench):
         #import _CommandCfdResult  # error in import vtk
         import _CommandCfdFluidMaterial
 
-
         # Post Processing commands are located in FemWorkbench
         cmdlst = ['Cfd_Analysis', 'Cfd_SolverFoam', 'Fem_MeshNetgenFromShape', 'Cfd_MeshGmshFromShape', 'Separator',
                   'Fem_ConstraintFluidBoundary', 'Cfd_SolverControl', 'setFluidProperties',
                   "Separator", "Fem_PostPipelineFromResult", "Fem_PostCreateClipFilter",
                   "Fem_PostCreateScalarClipFilter", "Fem_PostCreateCutFilter"]
+
         self.appendToolbar(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
         self.appendMenu(str(QtCore.QT_TRANSLATE_NOOP("Cfd", "CFD")), cmdlst)
 

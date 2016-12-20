@@ -1,6 +1,7 @@
 #***************************************************************************
 #*   (c) Bernd Hahnebach (bernd@bimstatik.org) 2014                    *
 #*   (c) Qingfeng Xia @ iesensor.com 2016                    *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This file is part of the FreeCAD CAx development system.              *
 #*                                                                         *
@@ -22,31 +23,30 @@
 #*                                                                         *
 #***************************************************************************/
 
+__title__ = "TaskPanelFluidMaterial"
+__author__ = "Juergen Riegel, Bernd Hahnebach, Qingfeng Xia"
+__url__ = "http://www.freecadweb.org"
+
 import FreeCAD
 import os
-import sys
 import os.path
 
 if FreeCAD.GuiUp:
     import FreeCADGui
     from PySide import QtCore
-    from PySide import QtCore
     from PySide import QtGui
-    from PySide.QtCore import Qt
-    from PySide.QtGui import QApplication
-    import FemGui
 
 
 class TaskPanelFluidProperties:
     #def __init__(self, solver_runner_obj):
-    def __init__(self,obj):
+    def __init__(self, obj):
         self.obj = obj
         self.material = self.obj.Material
 
         self.form = FreeCADGui.PySideUic.loadUi(os.path.dirname(__file__) + os.path.sep + "TaskPanelFluidPropertiesWIthUnits.ui")
         #self.form = FreeCADGui.PySideUic.loadUi(os.path.dirname(__file__) + os.path.sep + "TaskPanelFluidPropertiesNoUnits.ui")
 
-        #A little different from FEMMaterial. Here the predefined library is not linked back to on re-load (ie check which predefined library was used previosuly. 
+        #A little different from FEMMaterial. Here the predefined library is not linked back to on re-load (ie check which predefined library was used previosuly.
         # Only the qunatities that were saved are of interest, since in fluid flow the properties will mostly be user input
         #Therefore always initialising to None with the previous quantities for density etc reloaded in the input fields.
         self.import_materials()
@@ -55,7 +55,7 @@ class TaskPanelFluidProperties:
 
         QtCore.QObject.connect(self.form.PredefinedMaterialLibraryComboBox, QtCore.SIGNAL("currentIndexChanged(int)"), self.selectPredefine)
         #NOTE Using different connect here because we would like access
-        #NOTE to the full text, where QtCore.QObject.connect, does not recognize textChanged signal, 
+        #NOTE to the full text, where QtCore.QObject.connect, does not recognize textChanged signal,
         #NOTE We do so to allow the units to be pulled along with the values
         #NOTE to ensure unit consistency, unlike FEMWB where units are assumed upon change/save
         self.form.fDens.textChanged.connect(self.DensityChanged)
@@ -69,11 +69,11 @@ class TaskPanelFluidProperties:
     def selectPredefine(self):
         index = self.form.PredefinedMaterialLibraryComboBox.currentIndex()
 
-        mat_file_path = self.form.PredefinedMaterialLibraryComboBox.itemData(index) 
+        mat_file_path = self.form.PredefinedMaterialLibraryComboBox.itemData(index)
         self.form.fluidDescriptor.setText(self.materials[mat_file_path]["Description"])
         self.setTextFields(self.materials[mat_file_path])
 
-    def setTextFields(self,matmap):
+    def setTextFields(self, matmap):
         if 'Density' in matmap:
             density_new_unit = "kg/m^3"
             density = FreeCAD.Units.Quantity(matmap['Density'])
@@ -84,16 +84,14 @@ class TaskPanelFluidProperties:
             new_unit = "kg/s/m"
             visc = FreeCAD.Units.Quantity(matmap['DynamicViscosity'])
             visc_with_new_unit = float(visc.getValueAs(new_unit))
-            self.form.fViscosity.setText("{} {}".format(visc_with_new_unit,new_unit))
+            self.form.fViscosity.setText("{} {}".format(visc_with_new_unit, new_unit))
 
-
-
-    def DensityChanged(self,value):
+    def DensityChanged(self, value):
         import Units
         density = Units.Quantity(value).getValueAs("kg/m^3")
         self.material['Density'] = unicode(density) + "kg/m^3"
 
-    def ViscosityChanged(self,value):
+    def ViscosityChanged(self, value):
         import Units
         viscosity = Units.Quantity(value).getValueAs("kg/m/s")
         self.material['DynamicViscosity'] = unicode(viscosity) + "kg/m/s"
@@ -140,4 +138,3 @@ class TaskPanelFluidProperties:
 
         system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/FluidMaterialProperties"
         self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")
-

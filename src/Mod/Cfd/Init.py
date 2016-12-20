@@ -28,4 +28,3 @@ import FreeCAD
 
 if("BUILD_FEM_VTK" in FreeCAD.__cmake__):
     FreeCAD.addImportType("CFD result formats (*.vtk)", "CfdResultFoamVTK")
-

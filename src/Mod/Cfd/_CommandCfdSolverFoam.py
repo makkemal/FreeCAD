@@ -1,6 +1,7 @@
 #***************************************************************************
 #*                                                                         *
 #*   Copyright (c) 2015 - Qingfeng Xia <qingfeng.xia()eng.ox.ac.uk> *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -29,7 +30,8 @@ import FreeCAD
 from FemCommands import FemCommands
 if FreeCAD.GuiUp:
     import FreeCADGui
-    from PySide import QtCore, QtGui
+    from PySide import QtCore
+
 
 class _CommandSolverFoam(FemCommands):
     "Command to create OpenFOAM solver for CFD anlysis"

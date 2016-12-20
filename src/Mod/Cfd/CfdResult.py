@@ -25,15 +25,16 @@ __author__ = "Qingfeng Xia"
 __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
-import Fem
+
 
 def makeCfdResult(result_obj_name):
-    obj= FreeCAD.ActiveDocument.addObject('Fem::FemResultObjectPython', result_obj_name)
+    obj = FreeCAD.ActiveDocument.addObject('Fem::FemResultObjectPython', result_obj_name)
     _CfdResult(obj)
     if FreeCAD.GuiUp:
         from _ViewProviderCfdResult import _ViewProviderCfdResult
         _ViewProviderCfdResult(obj.ViewObject)
     return obj
+
 
 class _CfdResult(object):
     def __init__(self, obj):
@@ -42,21 +43,22 @@ class _CfdResult(object):
         obj.Proxy = self  # link between App::DocumentObject to  this object
 
         obj.addProperty("App::PropertyVectorList", "Velocity", "CFD",
-                            "fluid velocity", True)
+                        "fluid velocity", True)
         obj.addProperty("App::PropertyFloatList", "Pressure", "CFD",
-                            "fluid pressure", True)  # readonly in propertyEditor of combiView
+                        "fluid pressure", True)  # readonly in propertyEditor of combiView
         # Temperature, Time has been defined in base cpp class
         obj.addProperty("App::PropertyFloatList", "TurbulenceViscosity", "CFD",
-                            "turbulence visocisity for any turblulent flow", True)
+                        "turbulence visocisity for any turblulent flow", True)
         obj.addProperty("App::PropertyFloatList", "TurbulenceThermalDiffusivity", "CFD",
-                            "turbulence thermal diffusivity (alphat) for any turblulent flow", True)
+                        "turbulence thermal diffusivity (alphat) for any turblulent flow", True)
         obj.addProperty("App::PropertyFloatList", "TurbulenceEnergy", "CFD",
-                            "k for k-epsilon or k-omega model for the fluid", True)
+                        "k for k-epsilon or k-omega model for the fluid", True)
         obj.addProperty("App::PropertyFloatList", "TurbulenceDissipationRate", "CFD",
-                            "epsilon for k-epsilon model for the fluid", True)
+                        "epsilon for k-epsilon model for the fluid", True)
         obj.addProperty("App::PropertyFloatList", "TurbulenceSpecificDissipation", "CFD",
-                            "omega for k-omega model for the fluid", True)
+                        "omega for k-omega model for the fluid", True)
         # multiphase flow will not support by GUI
+
     ############ standard FeutureT methods ##########
     def execute(self, obj):
         """"this method is executed on object creation and whenever the document is recomputed"

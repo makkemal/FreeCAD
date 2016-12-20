@@ -217,17 +217,17 @@ class ThermalBuilder(BasicBuilder):
                 createRawFoamFile(casePath, '0', v, lines, 'volScalarField')
             fname = casePath + os.path.sep + "0" + os.path.sep + v
             f = ParsedParameterFile(fname)
-            
+
             if v == 'T':
                 f['dimensions'] = "[0 0 0 1 0 0 0]"
                 f['internalField'] = "uniform 300"
-  
+
             elif v == 'alphat': # thermal turbulence viscosity/diffusivity for heat transfer cases
                 f['dimensions'] = "[0 2 -1 0 0 0 0]"
                 f['internalField'] = 'uniform 0' #
             else:
                 print("variable {} is not recognized and dimension is left unchanged".format(v))
-                
+
             f.writeFile()
     '''
 
@@ -248,7 +248,7 @@ class ThermalBuilder(BasicBuilder):
             f["boundaryField"][bc]={}
             f["boundaryField"][bc]["type"]="zeroGradient"
         f.writeFile()
-            
+
         if 'alphat' in self._solverCreatedVariables:
             self.initThermalTurbulenceBoundaryAsWall(bc_names)
 
@@ -368,7 +368,7 @@ class ThermalBuilder(BasicBuilder):
     def setupBoundaryConditions(self):
         super(ThermalBuilder, self).setupBoundaryConditions()
         self.setupThermalBoundary()
-    
+
     def setupInletBoundary(self, bcDict):
         """ there are four kinds of inlet dependes on: compressible,  transonic
         p and U velocity may need reset for compressible flow

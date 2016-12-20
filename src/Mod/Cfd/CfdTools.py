@@ -2,6 +2,7 @@
 #*                                                                         *
 #*   Copyright (c) 2015 - FreeCAD Developers                               *
 #*   Author (c) 2015 - Qingfeng Xia <qingfeng xia eng.ox.ac.uk>                    *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -93,7 +94,7 @@ def isSolidMesh(fem_mesh):
     if fem_mesh.VolumeCount > 0:  # solid mesh
         return True
 
-            
+
 def getResult(analysis_object):
     for i in analysis_object.Member:
         if(i.isDerivedFrom("Fem::FemResultObject")):
@@ -143,7 +144,7 @@ def _write_unv_bc_faces(mesh_obj, f, bc_id, bc_object):
             elem = o.Shape.getElement(e[ii])  # from 0.16 -> 0.17: e is a tuple of string, instead of a string
             #FreeCAD.Console.PrintMessage('Write face_set on face: {} for boundary\n'.format(e[0]))
             if elem.ShapeType == 'Face':  # OpenFOAM needs only 2D face boundary for 3D model, normally
-                ret = mesh_obj.FemMesh.getFacesByFace(elem) # FemMeshPyImp.cpp
+                ret = mesh_obj.FemMesh.getFacesByFace(elem)  # FemMeshPyImp.cpp
                 facet_list.extend(i for i in ret)
     nr_facets = len(facet_list)
     f.write("{:>10d}         0         0         0         0         0         0{:>10d}\n".format(bc_id, nr_facets))

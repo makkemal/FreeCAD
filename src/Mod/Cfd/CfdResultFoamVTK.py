@@ -25,13 +25,13 @@ python-vtk6, which is built with Qt5, does not work with FreeCAD with Qt4
 
 Adapted from ccxFrdReader.py (Calculix result file *.frd reader)
 However, readResult() return: list of {'Time': time_step, "Mesh": mesh_data, "Result": result_set}
-Python object  Fem::FemResultObjectPython consists of property to hold result data 
+Python object  Fem::FemResultObjectPython consists of property to hold result data
 like Temperature, NodeNumbers, Time, Mesh, also CFD specific fields:
 Pressure (StressValues), Velocity(DisplacementVectors), etc
 
     /// Von Mises Stress values of analysis
     App::PropertyFloatList StressValues;
-    
+
     FemPipelineObject,  load() all XML vtk files are supported,
 """
 
@@ -48,6 +48,7 @@ import FreeCAD
 
 if open.__module__ == '__builtin__':
     pyopen = open  # because we'll redefine open below
+
 
 def insert(filename, docname):
     "called when freecad wants to import a file"
@@ -68,10 +69,11 @@ def open(filename):
 
 def importCfdResult(filename, analysis=None, result_name_prefix=None):
     from CfdResult import makeCfdResult
-    if not result_name_prefix: result_name_prefix = "CfdResult"
+    if not result_name_prefix:
+        result_name_prefix = "CfdResult"
     result_obj = makeCfdResult(result_name_prefix)
     import Fem
-    Fem.readCfdResult(filename, result_obj.Name) #always create a new femmesh
+    Fem.readCfdResult(filename, result_obj.Name)  # always create a new femmesh
 
     ts = filename.split('_')[-1]
     try:
@@ -83,4 +85,3 @@ def importCfdResult(filename, analysis=None, result_name_prefix=None):
     if(FreeCAD.GuiUp) and analysis:
         import FemGui
         FemGui.setActiveAnalysis(analysis_object)
-        

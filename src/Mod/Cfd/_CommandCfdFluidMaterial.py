@@ -1,6 +1,7 @@
 # ***************************************************************************
 # *                                                                         *
 # *   Copyright (c) 2013-2015 - Juergen Riegel <FreeCAD@juergen-riegel.net> *
+# *   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -20,17 +21,21 @@
 # *                                                                         *
 # ***************************************************************************
 
+__title__ = "Command New Fluid Material"
+__author__ = "Juergen Riegel, Alfred Bogaers"
+__url__ = "http://www.freecadweb.org"
+
 import FreeCAD
 from FemCommands import FemCommands
 
 if FreeCAD.GuiUp:
     import FreeCADGui
-    from PySide import QtCore
     import FemGui
+
 
 class setFluidPropertyCommand(FemCommands):
     def __init__(self):
-        #neat little command from FemCommands to only activate when solver or analysis is active i.e. in this case OF
+        # Neat little command from FemCommands to only activate when solver or analysis is active i.e. in this case OF
         #self.is_active = 'with_solver'
         self.is_active = 'with_analysis'
 
@@ -40,21 +45,21 @@ class setFluidPropertyCommand(FemCommands):
 
         FreeCAD.Console.PrintMessage("Set fluid properties \n")
 
-
         FreeCAD.ActiveDocument.openTransaction("Set FluidMaterialProperty")
         FreeCADGui.addModule("FluidMaterial")
         FreeCADGui.doCommand("FluidMaterial.makeFluidMaterial('FluidProperties')")
 
-        #The CFD WB is still currently a member of FemGui
+        # The CFD WB is still currently a member of FemGui
         FreeCADGui.doCommand("App.activeDocument()." + FemGui.getActiveAnalysis().Name + ".Member = App.activeDocument()." + FemGui.getActiveAnalysis().Name + ".Member + [App.ActiveDocument.ActiveObject]")
         FreeCADGui.doCommand("Gui.activeDocument().setEdit(App.ActiveDocument.ActiveObject.Name)")
 
-    def GetResources(self): 
-        return {
-            'Pixmap' : ':/icons/fem-material.svg' , 
-            'MenuText': 'Add fluid properties', 
-            'ToolTip': 'Add fluid properties'
-            } 
+    def GetResources(self):
+        return \
+            {
+                'Pixmap': ':/icons/fem-material.svg',
+                'MenuText': 'Add fluid properties',
+                'ToolTip': 'Add fluid properties'
+            }
 
 if FreeCAD.GuiUp:
     FreeCADGui.addCommand('setFluidProperties', setFluidPropertyCommand())

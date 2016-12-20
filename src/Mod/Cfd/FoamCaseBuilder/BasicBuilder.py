@@ -1,6 +1,7 @@
 # ***************************************************************************
 # *                                                                         *
 # *   Copyright (c) 2016 - Qingfeng Xia <qingfeng.xia iesensor.com>         *
+# *   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -86,7 +87,7 @@ supported_inlet_types = set([
 'volumetricFlowRate', # flowRateInletVelocity, flowRateInletVelocity
 'uniformVelocity', # it is called "fixedValue" in OpenFOAM dict file
 ])
-    
+
 supported_outlet_types = set([
 'staticPressure',
 'uniformVelocity',
@@ -238,11 +239,11 @@ class BasicBuilder(object):
         else:
             self._templatePath = None # self.getFoamTemplate()
         self._solverCreatedVariables = self.getSolverCreatedVariables()
-        
+
         self._turbulenceProperties = turbulenceProperties
         self._fluidProperties = fluidProperties  # incompressible only
         self._paralleSettings = paralleSettings
-        
+
         self._boundarySettings = boundarySettings
         self._internalFields = internalFields
         self._transientSettings = transientSettings
@@ -359,7 +360,7 @@ class BasicBuilder(object):
             subprocess.Popen(['xdg-open', path])
         elif sys.platform == 'win32':
             subprocess.Popen(['explorer', path]) # check_call() will block the python code
-        
+
     def viewResult(self):
         "view by external program paraview"
         if self._solverSettings['parallel']:
@@ -384,7 +385,7 @@ class BasicBuilder(object):
             print("only one file name with full path is expected for the result vtk file")
 
     ####################################################################################
-    
+
     def getSolverName(self):
         return _getSolverName(self._solverSettings)
 

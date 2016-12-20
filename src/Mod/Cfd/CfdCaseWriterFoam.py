@@ -1,6 +1,7 @@
 # ***************************************************************************
 # *                                                                         *
 # *   Copyright (c) 2015 - Qingfeng Xia <qingfeng.xia eng ox ac uk>                 *       *
+# *   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 # *                                                                         *
 # *   This program is free software; you can redistribute it and/or modify  *
 # *   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -37,7 +38,8 @@ import FreeCAD
 import CfdTools
 import FoamCaseBuilder as fcb  # independent module, not depending on FreeCAD
 
-## write CFD analysis setup into OpenFOAM case
+
+#  write CFD analysis setup into OpenFOAM case
 #  write_case() and init_fields() are the only public APIs
 class CfdCaseWriterFoam:
     def __init__(self, analysis_obj):
@@ -79,7 +81,7 @@ class CfdCaseWriterFoam:
         self.builder.check()
         self.builder.build()
         FreeCAD.Console.PrintMessage("{} Sucessfully write {} case to folder \n".format(
-                                                        self.solver_obj.SolverName, self.solver_obj.WorkingDir))
+            self.solver_obj.SolverName, self.solver_obj.WorkingDir))
         return True
 
     def init_fields(self):
@@ -113,12 +115,12 @@ class CfdCaseWriterFoam:
         Density = FreeCAD.Units.Quantity(self.material_obj.Material['Density'])
         Density = Density.getValueAs('kg/m^3')
 
-        kinVisc = Viscosity/Density
+        kinVisc = Viscosity / Density
         #kinVisc = kinVisc.getValueAs('m^2/s')
 
         self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': float(kinVisc)}
         #except:
-            #self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': 1e-3}
+        #    self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': 1e-3}
 
     def write_boundary_condition(self):
         """ Switch case to deal diff fluid boundary condition, thermal and turbulent is not yet fully tested
@@ -134,17 +136,16 @@ class CfdCaseWriterFoam:
                 # fixme: App::PropertyVector should be normalized to unit length
             if self.solver_obj.HeatTransfering:
                 bc_dict['thermalSettings'] = {"subtype": bc.ThermalBoundaryType,
-                                                "temperature": bc.TemperatureValue,
-                                                "heatFlux": bc.HeatFluxValue,
-                                                "HTC": bc.HTCoeffValue}
+                                              "temperature": bc.TemperatureValue,
+                                              "heatFlux": bc.HeatFluxValue,
+                                              "HTC": bc.HTCoeffValue}
             bc_dict['turbulenceSettings'] = {'name': self.solver_obj.TurbulenceModel}
             # ["Intensity&DissipationRate","Intensity&LengthScale","Intensity&ViscosityRatio", "Intensity&HydraulicDiameter"]
             if self.solver_obj.TurbulenceModel not in set(["laminar", "invisid", "DNS"]):
                 bc_dict['turbulenceSettings'] = {"name": self.solver_obj.TurbulenceModel,
-                                                "specification": bc.TurbulenceSpecification,
-                                                "intensityValue": bc.TurbulentIntensityValue,
-                                                "lengthValue": bc.TurbulentLengthValue
-                                                }
+                                                 "specification": bc.TurbulenceSpecification,
+                                                 "intensityValue": bc.TurbulentIntensityValue,
+                                                 "lengthValue": bc.TurbulentLengthValue}
 
             bc_settings.append(bc_dict)
         self.builder.internalFields = {'p': 0.0, 'U': (0, 0, 0)}
@@ -161,7 +162,6 @@ class CfdCaseWriterFoam:
         """
         if self.solver_obj.Transient:
             self.builder.transientSettings = {"startTime": self.solver_obj.StartTime,
-                                        "endTime": self.solver_obj.EndTime,
-                                        "timeStep": self.solver_obj.TimeStep,
-                                        "writeInterval": self.solver_obj.WriteInterval
-                                        }
+                                              "endTime": self.solver_obj.EndTime,
+                                              "timeStep": self.solver_obj.TimeStep,
+                                              "writeInterval": self.solver_obj.WriteInterval}

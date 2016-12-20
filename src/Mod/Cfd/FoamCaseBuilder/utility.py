@@ -1,6 +1,7 @@
 #***************************************************************************
 #*                                                                         *
 #*   Copyright (c) 2016 - Qingfeng Xia <qingfeng.xia()eng.ox.ac.uk> *
+#*   Portions Copyright (c) 2016 - CSIR, South Africa                      *
 #*                                                                         *
 #*   This program is free software; you can redistribute it and/or modify  *
 #*   it under the terms of the GNU Lesser General Public License (LGPL)    *
@@ -99,7 +100,7 @@ def setFoamVersion(ver):
     """specify OpenFOAM version by a list or tupe of integer like (3, 0, 0)
     """
     _FOAM_SETTINGS['FOAM_VERSION'] = tuple(ver)
-        
+
 def getFoamDir():
     """detect from output of 'bash -i -c "echo $WM_PROJECT_DIR"', if default is not set
     """
@@ -145,7 +146,7 @@ def getFoamRuntime():
     """
     if 'FOAM_RUNTIME' in _FOAM_SETTINGS:
         return _FOAM_SETTINGS['FOAM_RUNTIME']
-        
+
 ######################################################################
 """
 turbulence models supporting both compressible and incompressible are listed here
@@ -314,7 +315,7 @@ def createRunScript(case, init_potential, run_parallel, solver_name, num_proc):
     fname = case + os.path.sep + "Allrun"
     meshOrg_dir = case + os.path.sep + "constant/polyMesh.org"
     mesh_dir = case + os.path.sep + "constant/polyMesh"
-        
+
     if os.path.exists(fname):
         if _debug: print("Warning: Overwrite existing Allrun script ")
     with open(fname, 'w+') as f:
@@ -324,7 +325,7 @@ def createRunScript(case, init_potential, run_parallel, solver_name, num_proc):
         # to be passed if they can be read using these bash functions 
         #f.write("# Source tutorial run functions \n")
         #f.write(". $WM_PROJECT_DIR/bin/tools/RunFunctions \n\n")
-    
+
         f.write("# Create symbolic links to polyMesh.org \n")
         f.write("mkdir {} \n".format(mesh_dir))
         f.write("ln -s {}/boundary {} \n".format(meshOrg_dir, mesh_dir))
@@ -332,11 +333,11 @@ def createRunScript(case, init_potential, run_parallel, solver_name, num_proc):
         f.write("ln -s {}/neighbour {} \n".format(meshOrg_dir, mesh_dir))
         f.write("ln -s {}/owner {} \n".format(meshOrg_dir, mesh_dir))
         f.write("ln -s {}/points {} \n".format(meshOrg_dir, mesh_dir))
-        
+
         if (init_potential):
             f.write ("# Initialise flow \n")
             f.write ("potentialFoam -case "+case+" | tee "+case+"/log.potentialFoam \n\n")
-        
+
         if (run_parallel):
             f.write ("# Run application in parallel \n")
             f.write ("decomposePar | tee log.decomposePar \n")
@@ -347,7 +348,7 @@ def createRunScript(case, init_potential, run_parallel, solver_name, num_proc):
 
     cmdline = ("chmod a+x "+fname) # Update Allrun permission
     out = subprocess.check_output(['bash', '-l', '-c', cmdline], stderr=subprocess.PIPE)
-    
+
 def copySettingsFromExistentCase(output_path, source_path):
     """build case structure from string template, both folder paths must existent
     """
@@ -510,7 +511,7 @@ def runFoamApplication(cmd,case):
         print ("Warning: "+cmd[0]+" already run on "+case)
 
     cmdline = cmd[0]+' -case "'+case+'" '+' '.join(cmd[1:])
-    
+
     print("Running ", cmdline)
     #cmdline += (" | tee "+logFile) # Pipe to screen and log file
     cmdline += (" > "+logFile) # Pipe to log file
@@ -547,7 +548,7 @@ def convertMesh(case, mesh_file, scale):
         runFoamApplication(cmdline,case)
     else:
         print("Error: mesh scaling ratio is must be a float or integer\n")
-        
+
 
 def listBoundaryNames(case):
     return BoundaryDict(case).patches()
@@ -673,7 +674,7 @@ def listRegions(case):
     conjugate heat transfer model needs multi-region
     """
     pass
-    
+
 def listTimeSteps(case):
     """
     return a list of float time for tranisent simulation or iteration for steady case

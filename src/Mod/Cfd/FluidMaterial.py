@@ -24,11 +24,9 @@ __title__ = "MechanicalMaterial"
 __author__ = "Juergen Riegel, Bernd Hahnebach"
 __url__ = "http://www.freecadweb.org"
 
-## \addtogroup FEM
-#  @{
-
 import FreeCAD
 import _FluidMaterial
+
 
 def makeFluidMaterial(name):
     #copied from FEM WB
@@ -36,10 +34,9 @@ def makeFluidMaterial(name):
     name there fore is a material name or an file name for a FCMat file'''
     obj = FreeCAD.ActiveDocument.addObject("App::MaterialObjectPython", name)
     #obj.Proxy = self
-    import _FluidMaterial
     _FluidMaterial._FluidMaterial(obj)
     if FreeCAD.GuiUp:
-        import _ViewProvideCfdFluidMaterial 
-        _ViewProvideCfdFluidMaterial._ViewProvideCfdFluidMaterial(obj.ViewObject)
+        import _ViewProviderCfdFluidMaterial
+        _ViewProviderCfdFluidMaterial._ViewProviderCfdFluidMaterial(obj.ViewObject)
     # FreeCAD.ActiveDocument.recompute()
     return obj
