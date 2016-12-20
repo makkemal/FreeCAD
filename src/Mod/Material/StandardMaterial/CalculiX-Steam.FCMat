@@ -1,0 +1,14 @@
+; Standard material for CalculiX sample calculations
+; (c) 2013 Juergen Riegel (CC-BY 3.0)
+; information about the content of such cards you can find here:
+; http://www.freecadweb.org/wiki/index.php?title=Material
+
+[FCMat]
+Name = CalculiX-Steam
+Description = Standard water at room temperature for CalculiX sample calculations
+Father = Gas
+SpecificHeat = 2802 J/kg/K
+DynamicViscosity = 30.863e-6 Pa*s
+Temperature = 808 K
+SpecificGasConstant = 462 J/kg/K
+Density = 48.22 kg/m^3
