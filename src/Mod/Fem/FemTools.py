@@ -398,6 +398,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if self.shell_thicknesses:
                 # this needs to be checked only once either here or in shell_thicknesses
                 message += "Beam Sections and shell thicknesses in one analysis is not supported at the moment.\n"
+            if self.fluid_sections:
+                # this needs to be checked only once either here or in shell_thicknesses
+                message += "Beam Sections and Fluid Sections in one analysis is not supported at the moment.\n"
             has_no_references = False
             for b in self.beam_sections:
                 if len(b['Object'].References) == 0:

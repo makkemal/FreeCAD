@@ -80,6 +80,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         inpfile = open(self.file_name, 'a')
         inpfile.write('\n\n')
 
+        # Check to see if fluid sections are in analysis and use D network element type
+        if self.fluidsection_objects:
+            inpfile.close()
+            write_D_network_element_to_inputfile(self.file_name)
+            inpfile = open(self.file_name, 'a')
         # node and element sets
         self.write_element_sets_material_and_femelement_type(inpfile)
         if self.fixed_objects:
@@ -1215,6 +1220,19 @@ def get_ccx_elset_solid_name(mat_name, solid_name=None, mat_short_name=None):
         return mat_short_name + solid_name
     else:
         return mat_name + solid_name
+
+def write_D_network_element_to_inputfile(fileName):
+    inpfile = open(fileName, 'r+')
+    lines = inpfile.readlines()
+    inpfile.seek(0)
+    for line in lines:
+        if line.find("B32") == -1:
+            inpfile.write(line)
+        else:
+            dummy = line.replace("B32" , "D")
+            inpfile.write(dummy)
+    inpfile.truncate()
+    inpfile.close()    
 
 def liquid_section_def(obj, section_type):
     if section_type == 'PIPE MANNING':
