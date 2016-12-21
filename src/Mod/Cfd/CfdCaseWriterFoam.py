@@ -92,11 +92,9 @@ class CfdCaseWriterFoam:
         """ This is FreeCAD specific code, convert from UNV to OpenFoam
         """
         caseFolder = self.solver_obj.WorkingDir + os.path.sep + self.solver_obj.InputCaseName
-        
         unvMeshFile = caseFolder + os.path.sep + self.solver_obj.InputCaseName + u".unv"
-        
         self.mesh_generated = CfdTools.write_unv_mesh(self.mesh_obj, self.bc_group, unvMeshFile)
-        
+
         # FreecAD (internal standard length) mm; while in CFD, it is metre, so mesh needs scaling
         # mesh generated from FreeCAD nees to be scaled by 0.001
         # `transformPoints -scale "(1e-3 1e-3 1e-3)"`
@@ -109,26 +107,18 @@ class CfdCaseWriterFoam:
         """
         #self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': 1e-3}
         #self.builder.fluidProperties = self.material_obj.FluidicProperties
-        
-        #try:
-            #Code for new material definitons. might have to consider how builder sees fluid properties in future
-        #kinVisc = FreeCAD.Units.Quantity(self.material_obj.Material['KinematicViscosity'])
-        #kinVisc = kinVisc.getValueAs('m^2/s')
-        
-        
+
         Viscosity = FreeCAD.Units.Quantity(self.material_obj.Material['DynamicViscosity'])
         Viscosity = Viscosity.getValueAs('Pa*s')
         Density = FreeCAD.Units.Quantity(self.material_obj.Material['Density'])
         Density = Density.getValueAs('kg/m^3')
-        
+
         kinVisc = Viscosity/Density
         #kinVisc = kinVisc.getValueAs('m^2/s')
-        
-        
+
         self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': float(kinVisc)}
         #except:
             #self.builder.fluidProperties = {'name': 'oneLiquid', 'kinematicViscosity': 1e-3}
-
 
     def write_boundary_condition(self):
         """ Switch case to deal diff fluid boundary condition, thermal and turbulent is not yet fully tested

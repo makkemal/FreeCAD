@@ -541,7 +541,10 @@ def convertMesh(case, mesh_file, scale):
         changeBoundaryType(case, 'defaultFaces', 'wall')  # rename default boundary name (could be any name)
         print("Info: boundary exported from named selection, started with lower case")
     if scale and isinstance(scale, numbers.Number):
-        cmdline = ['transformPoints', '-case', case, '-scale', '"({} {} {})"'.format(scale, scale, scale)]
+        #cmdline = ['transformPoints', '-case', case, '-scale', '"({} {} {})"'.format(scale, scale, scale)]
+        #runFoamCommand(cmdline)
+        cmdline = ['transformPoints', '-scale', '"({} {} {})"'.format(scale, scale, scale)]
+        runFoamApplication(cmdline,case)
     else:
         print("Error: mesh scaling ratio is must be a float or integer\n")
         
