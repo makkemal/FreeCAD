@@ -166,7 +166,7 @@ QString UnitsSchemaMKS::schemaTranslate(const Quantity &quant, double &factor, Q
     }
     else if (unit == Unit::DynamicViscosity) {
         unitString = QString::fromUtf8("Pa*s");
-        factor = 0.000001;
+        factor = 0.001;
     }
     else {
         // default action for all cases without special treatment:

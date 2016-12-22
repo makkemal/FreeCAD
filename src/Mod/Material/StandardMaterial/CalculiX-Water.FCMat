@@ -8,6 +8,6 @@ Name = CalculiX-Water
 Description = Standard water at room temperature for CalculiX sample calculations
 Father = Fluid
 SpecificHeat = 590 J/kg/K
-DynamicViscosity = 890e-6 Pa*s
+DynamicViscosity = 0.000890 Pa*s
 Temperature = 300 K
 Density = 996 kg/m^3

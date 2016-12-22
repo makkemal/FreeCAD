@@ -6,7 +6,7 @@
 [FCMat]
 Name = CalculiX-Steel
 Description = Standard steel material for CalculiX sample calculations
-Father = Metal
+Father = Solid
 YoungsModulus = 210000 MPa
 PoissonRatio = 0.3
 Density = 7900 kg/m^3

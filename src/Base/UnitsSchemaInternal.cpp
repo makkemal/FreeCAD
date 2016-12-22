@@ -135,7 +135,7 @@ QString UnitsSchemaInternal::schemaTranslate(const Quantity &quant, double &fact
     }
     else if (unit == Unit::DynamicViscosity) {
         unitString = QString::fromUtf8("Pa*s");
-        factor = 0.000001;
+        factor = 0.001;
     }
     else if ((unit == Unit::Pressure) || (unit == Unit::Stress)) {
         if (UnitValue < 10.0) {// Pa is the smallest
