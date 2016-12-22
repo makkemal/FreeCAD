@@ -36,6 +36,7 @@ import FemMeshTools
 import FemInputWriter
 
 
+
 class FemInputWriterCcx(FemInputWriter.FemInputWriter):
     def __init__(self,
                  analysis_obj, solver_obj,
@@ -484,7 +485,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             mat_obj = femobj['Object']
             mat_info_name = mat_obj.Material['Name']
             mat_name = mat_obj.Name
-            # get material properties, Currently in SI units: M/kg/s/Kelvin
+            # get material properties of solid material, Currently in SI units: M/kg/s/Kelvin
+            #if mat_obj.Material['Father'] == 'Solid':
             YM = FreeCAD.Units.Quantity(mat_obj.Material['YoungsModulus'])
             YM_in_MPa = float(YM.getValueAs('MPa'))
             PR = float(mat_obj.Material['PoissonRatio'])
@@ -492,12 +494,33 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
                 density_in_tonne_per_mm3 = float(density.getValueAs('t/mm^3'))
             if self.analysis_type == "thermomech":
-                TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
-                TC_in_WmK = float(TC.getValueAs('W/m/K'))  # SvdW: Add factor to force units to results' base units of t/mm/s/K - W/m/K results in no factor needed
-                TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
-                TEC_in_mmK = float(TEC.getValueAs('mm/mm/K'))
-                SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
-                SH_in_JkgK = float(SH.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                if mat_obj.Material['Father'] == 'Solid':
+                    TC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalConductivity'])
+                    TC_in_WmK = float(TC.getValueAs('W/m/K'))  # SvdW: Add factor to force units to results' base units of t/mm/s/K - W/m/K results in no factor needed
+                    TEC = FreeCAD.Units.Quantity(mat_obj.Material['ThermalExpansionCoefficient'])
+                    TEC_in_mmK = float(TEC.getValueAs('mm/mm/K'))
+                    SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
+                    SH_in_JkgK = float(SH.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                elif mat_obj.Material['Father'] == 'Fluid':
+                    SHF = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
+                    SHF_in_JkgK = float(SHF.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                    DVF = FreeCAD.Units.Quantity(mat_obj.Material['DynamicViscosity'])
+                    DVF_in_Pa_s = float(DVF.getValueAs('Pa*s')) * 1e-03  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                    TF = FreeCAD.Units.Quantity(mat_obj.Material['Temperature'])
+                    TF_in_K = float(TF.getValueAs('K'))
+                    DF = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
+                    DF_in_tonne_per_mm3 = float(DF.getValueAs('t/mm^3'))
+                elif mat_obj.Material['Father'] == 'Gas':
+                    SHG = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
+                    SHG_in_JkgK = float(SHG.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                    DVG = FreeCAD.Units.Quantity(mat_obj.Material['DynamicViscosity'])
+                    DVG_in_Pa_s = float(DVG.getValueAs('Pa*s')) * 1e-03  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                    TG = FreeCAD.Units.Quantity(mat_obj.Material['Temperature'])
+                    TG_in_K = float(TG.getValueAs('K'))
+                    DG = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
+                    DG_in_tonne_per_mm3 = float(DG.getValueAs('t/mm^3'))
+                    SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
+                    SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
             # write material properties
             f.write('** FreeCAD material name: ' + mat_info_name + '\n')
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
@@ -507,12 +530,20 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 f.write('*DENSITY\n')
                 f.write('{0:.3e}\n'.format(density_in_tonne_per_mm3))
             if self.analysis_type == "thermomech":
-                f.write('*CONDUCTIVITY\n')
-                f.write('{0:.3f}\n'.format(TC_in_WmK))
-                f.write('*EXPANSION\n')
-                f.write('{0:.3e}\n'.format(TEC_in_mmK))
-                f.write('*SPECIFIC HEAT\n')
-                f.write('{0:.3e}\n'.format(SH_in_JkgK))
+                if mat_obj.Material['Father'] == 'Solid':
+                    f.write('*CONDUCTIVITY\n')
+                    f.write('{0:.3f}\n'.format(TC_in_WmK))
+                    f.write('*EXPANSION\n')
+                    f.write('{0:.3e}\n'.format(TEC_in_mmK))
+                    f.write('*SPECIFIC HEAT\n')
+                    f.write('{0:.3e}\n'.format(SH_in_JkgK))
+                elif mat_obj.Material['Father'] == 'Fluid':
+                    f.write('*FLUID CONSTANTS\n')
+                    f.write('{0:.3e}, {1:.3e}, {2:.3e}\n'.format(SHF_in_JkgK, DVF_in_Pa_s, TF_in_K))
+                elif mat_obj.Material['Father'] == 'Gas':
+                    f.write('*FLUID CONSTANTS\n')
+                    f.write('{0:.3e}, {0:.3e}, {0:.3e}\n'.format(SHG_in_JkgK, DVG_in_Pa_s, TG_in_K))
+                    
             # nonlinear material properties
             if self.solver_obj.MaterialNonlinearity == 'nonlinear':
                 for femobj in self.material_nonlinear_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
