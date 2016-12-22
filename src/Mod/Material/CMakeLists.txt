@@ -23,8 +23,8 @@ SET (MaterialLib_Files
     StandardMaterial/PLA.FCMat
     StandardMaterial/Steel-Generic.FCMat
     StandardMaterial/Wood-Generic.FCMat
-	StandardMaterial/CalculiX-Water.FCMat
-	StandardMaterial/CalculiX-Steam.FCMat
+	FluidMaterial/CalculiX-Water.FCMat
+	GasMaterial/CalculiX-Steam.FCMat
     StandardMaterial/Readme.txt
 )
 SOURCE_GROUP("MatLib" FILES ${MaterialLib_Files})

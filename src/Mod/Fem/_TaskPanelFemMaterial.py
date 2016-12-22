@@ -184,14 +184,17 @@ class _TaskPanelFemMaterial:
     def select_solid(self):
         self.form.sw_material_type.setCurrentIndex(0)
         self.obj.MaterialType = 'Solid'
+        self.import_materials()
 
     def select_fluid(self):
         self.form.sw_material_type.setCurrentIndex(1)
         self.obj.MaterialType = 'Fluid'
+        self.import_materials()
 
     def select_gas(self):
         self.form.sw_material_type.setCurrentIndex(2)
         self.obj.MaterialType = 'Gas'
+        self.import_materials()
 
     def ym_changed(self, value):
         # FreeCADs standard unit for stress is kPa
@@ -492,8 +495,15 @@ class _TaskPanelFemMaterial:
         self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/General")
         use_built_in_materials = self.fem_prefs.GetBool("UseBuiltInMaterials", True)
         if use_built_in_materials:
-            system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/StandardMaterial"
-            self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")
+            if self.obj.MaterialType == 'Solid':
+                system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/StandardMaterial"
+                self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")
+            elif self.obj.MaterialType == 'Fluid':
+                system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/FluidMaterial"
+                self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")
+            elif self.obj.MaterialType == 'Gas':
+                system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/GasMaterial"
+                self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")
 
         use_mat_from_config_dir = self.fem_prefs.GetBool("UseMaterialsFromConfigDir", True)
         if use_mat_from_config_dir:
