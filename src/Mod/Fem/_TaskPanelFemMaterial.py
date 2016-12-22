@@ -387,7 +387,7 @@ class _TaskPanelFemMaterial:
         return ""
 
     def set_mat_params_in_combo_box(self, matmap):
-        if self.form.sw_material_type.setCurrentIndex(0):
+        if self.form.sw_material_type.currentIndex() == 0:
             if 'YoungsModulus' in matmap:
                 ym_new_unit = "MPa"
                 ym = FreeCAD.Units.Quantity(matmap['YoungsModulus'])
@@ -415,7 +415,7 @@ class _TaskPanelFemMaterial:
                 sh = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
                 sh_with_new_unit = sh.getValueAs(sh_new_unit)
                 self.form.input_fd_specific_heat.setText("{} {}".format(sh_with_new_unit, sh_new_unit))
-        elif self.form.sw_material_type.setCurrentIndex(1):
+        elif self.form.sw_material_type.currentIndex() == 1:
             if 'SpecificHeat' in matmap:
                 shf_new_unit = "J/kg/K"
                 shf = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
@@ -436,7 +436,7 @@ class _TaskPanelFemMaterial:
                 density_fluid = FreeCAD.Units.Quantity(matmap['Density'])
                 density_fluid_with_new_unit = density_fluid.getValueAs(density_fluid_new_unit)
                 self.form.input_fd_density_fluid.setText("{} {}".format(density_fluid_with_new_unit, density_fluid_new_unit))  
-        elif self.form.sw_material_type.setCurrentIndex(2):
+        elif self.form.sw_material_type.currentIndex() == 2:
             if 'SpecificHeat' in matmap:
                 shg_new_unit = "J/kg/K"
                 shg = FreeCAD.Units.Quantity(matmap['SpecificHeat'])
