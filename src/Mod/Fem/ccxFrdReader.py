@@ -296,7 +296,7 @@ def readResult(frd_input):
             strain_1 = float(line[13:25])
             strain_2 = float(line[25:37])
             strain_3 = float(line[37:49])
-#            strain_4 = float(line[49:61])
+#            strain_4 = float(line[49:61])  #Not used in vector
 #            strain_5 = float(line[61:73])
 #            strain_6 = float(line[73:85])
             mode_strain[elem] = FreeCAD.Vector(strain_1, strain_2, strain_3)
