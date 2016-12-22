@@ -616,7 +616,10 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     if fluidsec_obj.SectionType == 'Liquid':
                         section_type = fluidsec_obj.LiquidSectionType
                         setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' +material + '\n'
-                        setion_geo = liquid_section_def(fluidsec_obj, section_type)
+                        if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
+                            use_correct_elem_def_for_inout(section_type, elsetdef)
+                        else:
+                            setion_geo = liquid_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Gas':
                         section_type = fluidsec_obj.GasSectionType
                     elif fluidsec_obj.SectionType == 'Open Channel':
@@ -1234,6 +1237,8 @@ def write_D_network_element_to_inputfile(fileName):
     inpfile.truncate()
     inpfile.close()    
 
+def use_correct_elem_def_for_inout(section_type, elsetdef):
+        
 def liquid_section_def(obj, section_type):
     if section_type == 'PIPE MANNING':
         manning_area = str(obj.ManningArea.getValueAs('mm^2').Value)

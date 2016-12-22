@@ -33,7 +33,7 @@ class _FemFluidSection:
     "The FemFluidSection object"
     
     known_fluid_types = ['Liquid', 'Gas', 'Open Channel']
-    known_liquid_types = ['PIPE MANNING', 'PIPE ENLARGEMENT', 'PIPE CONTRACTION']
+    known_liquid_types = ['PIPE MANNING', 'PIPE ENLARGEMENT', 'PIPE CONTRACTION', 'PIPE INLET', 'PIPE OUTLET']
     known_gas_types = ['NONE']
     known_channel_types = ['NONE']
 
