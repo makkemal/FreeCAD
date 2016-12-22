@@ -30,8 +30,14 @@ __url__ = "http://www.freecadweb.org"
 
 class _FemMaterial:
     "The FEM Material object"
+    
+    known_material_types = ['Solid', 'Fluid', 'Gas']
+
     def __init__(self, obj):
         obj.addProperty("App::PropertyLinkSubList", "References", "Material", "List of material shapes")
+        obj.addProperty("App::PropertyEnumeration", "MaterialType", "MechanicalMaterial", "select mechanical material type")
+        obj.MaterialType = _MechanicalMaterial.known_material_types
+        obj.MaterialType = 'Solid'
         obj.Proxy = self
         self.Type = "FemMaterial"
 

@@ -99,6 +99,15 @@ class _TaskPanelFemMaterial:
             self.choose_material(index)
         self.has_equal_references_shape_types()
         self.rebuild_list_References()
+        if self.obj.MaterialType == 'Solid':
+            self.form.sw_material_type.setCurrentIndex(0)
+            self.form.rb_solid.setChecked(True)
+        elif self.obj.MaterialType == 'Fluid':
+            self.form.sw_material_type.setCurrentIndex(1)
+            self.form.rb_fluid.setChecked(True)
+        elif self.obj.MaterialType == 'Gas':
+            self.form.sw_material_type.setCurrentIndex(2)
+            self.form.rb_gas.setChecked(True)
 
     def accept(self):
         # print(self.material)
@@ -174,12 +183,15 @@ class _TaskPanelFemMaterial:
 
     def select_solid(self):
         self.form.sw_material_type.setCurrentIndex(0)
+        self.obj.MaterialType = 'Solid'
 
     def select_fluid(self):
         self.form.sw_material_type.setCurrentIndex(1)
+        self.obj.MaterialType = 'Fluid'
 
     def select_gas(self):
         self.form.sw_material_type.setCurrentIndex(2)
+        self.obj.MaterialType = 'Gas'
 
     def ym_changed(self, value):
         # FreeCADs standard unit for stress is kPa

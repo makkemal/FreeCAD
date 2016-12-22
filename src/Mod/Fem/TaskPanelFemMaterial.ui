@@ -262,7 +262,7 @@
                </size>
               </property>
               <property name="text">
-               <string>8000 kg/m^3</string>
+               <string>7900 kg/m^3</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -474,7 +474,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>4.18 kJ/kg/K</string>
+               <string>4180 J/kg/K</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
