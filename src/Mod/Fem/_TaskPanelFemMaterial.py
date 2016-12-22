@@ -288,7 +288,7 @@ class _TaskPanelFemMaterial:
             if not (1 - variation < float(old_vf) / value < 1 + variation):
                 # DynamicViscosity has changed
                 material = self.material
-                value_in_Pa_s = value * 1e-6  # To compensate for use of SI units
+                value_in_Pa_s = value * 1e-3  # To compensate for use of SI units
                 material['DynamicViscosity'] = unicode(value_in_Pa_s) + " Pa*s"
                 self.material = material
 
@@ -299,7 +299,7 @@ class _TaskPanelFemMaterial:
             if not (1 - variation < float(old_vg) / value < 1 + variation):
                 # DynamicViscosity has changed
                 material = self.material
-                value_in_Pa_s = value * 1e-6  # To compensate for use of SI units
+                value_in_Pa_s = value * 1e-3  # To compensate for use of SI units
                 material['DynamicViscosity'] = unicode(value_in_Pa_s) + " Pa*s"
                 self.material = material
 

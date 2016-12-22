@@ -609,7 +609,7 @@
                </sizepolicy>
               </property>
               <property name="text">
-               <string>30.86e-6 Pa*s</string>
+               <string>30.863e-6 Pa*s</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
