@@ -59,6 +59,7 @@ def readResult(frd_input):
     mode_results = {}
     mode_disp = {}
     mode_stress = {}
+    mode_stressv = {}
     mode_strain = {}
     mode_temp = {}
 
@@ -255,10 +256,10 @@ def readResult(frd_input):
                 elements_seg2[elem] = (nd1, nd2)
             elif elemType == 12:
                 # B32 CalculiX --> seg3 FreeCAD
-                # N1, N2 , N3
+                # N1, N2 ,N3 Order in outpufile is 1,3,2
                 nd1 = int(line[3:13])
-                nd2 = int(line[13:23])
-                nd3 = int(line[23:33])
+                nd3 = int(line[13:23])
+                nd2 = int(line[23:33])
                 elements_seg3[elem] = (nd1, nd2, nd3)
 
         # Check if we found new eigenmode
@@ -286,18 +287,19 @@ def readResult(frd_input):
             stress_5 = float(line[61:73])
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
+            mode_stressv[elem] = FreeCAD.Vector(stress_1, stress_2, stress_3)
         if line[5:11] == "TOSTRAIN":
-            mode_stress_found = True
+            mode_strain_found = True
         # we found a strain line in the frd file
-        if mode_stress_found and (line[1:3] == "-1"):
+        if mode_strain_found and (line[1:3] == "-1"):
             elem = int(line[4:13])
             strain_1 = float(line[13:25])
             strain_2 = float(line[25:37])
             strain_3 = float(line[37:49])
-            strain_4 = float(line[49:61])
-            strain_5 = float(line[61:73])
-            strain_6 = float(line[73:85])
-            mode_strain[elem] = (strain_1, strain_2, strain_3, strain_4, strain_5, strain_6)
+#            strain_4 = float(line[49:61])
+#            strain_5 = float(line[61:73])
+#            strain_6 = float(line[73:85])
+            mode_strain[elem] = FreeCAD.Vector(strain_1, strain_2, strain_3)
         # Check if we found a time step
         if line[4:10] == "1PSTEP":
             mode_time_found = True
