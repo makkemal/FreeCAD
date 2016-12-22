@@ -542,7 +542,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('{0:.3e}, {1:.3e}, {2:.3e}\n'.format(SHF_in_JkgK, DVF_in_Pa_s, TF_in_K))
                 elif mat_obj.Material['Father'] == 'Gas':
                     f.write('*FLUID CONSTANTS\n')
-                    f.write('{0:.3e}, {0:.3e}, {0:.3e}\n'.format(SHG_in_JkgK, DVG_in_Pa_s, TG_in_K))
+                    f.write('{0:.3e}, {1:.3e}, {2:.3e}\n'.format(SHG_in_JkgK, DVG_in_Pa_s, TG_in_K))
                     
             # nonlinear material properties
             if self.solver_obj.MaterialNonlinearity == 'nonlinear':
