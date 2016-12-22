@@ -59,11 +59,13 @@ def readResult(frd_input):
     mode_results = {}
     mode_disp = {}
     mode_stress = {}
+    mode_strain = {}
     mode_temp = {}
 
     mode_disp_found = False
     nodes_found = False
     mode_stress_found = False
+    mode_strain_found = False
     mode_temp_found = False
     mode_time_found = False
     elements_found = False
@@ -274,7 +276,7 @@ def readResult(frd_input):
             mode_disp[elem] = FreeCAD.Vector(mode_disp_x, mode_disp_y, mode_disp_z)
         if line[5:11] == "STRESS":
             mode_stress_found = True
-        # we found a displacement line in the frd file
+        # we found a stress line in the frd file
         if mode_stress_found and (line[1:3] == "-1"):
             elem = int(line[4:13])
             stress_1 = float(line[13:25])
@@ -284,6 +286,18 @@ def readResult(frd_input):
             stress_5 = float(line[61:73])
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
+        if line[5:11] == "TOSTRAIN":
+            mode_stress_found = True
+        # we found a strain line in the frd file
+        if mode_stress_found and (line[1:3] == "-1"):
+            elem = int(line[4:13])
+            strain_1 = float(line[13:25])
+            strain_2 = float(line[25:37])
+            strain_3 = float(line[37:49])
+            strain_4 = float(line[49:61])
+            strain_5 = float(line[61:73])
+            strain_6 = float(line[73:85])
+            mode_strain[elem] = (strain_1, strain_2, strain_3, strain_4, strain_5, strain_6)
         # Check if we found a time step
         if line[4:10] == "1PSTEP":
             mode_time_found = True
