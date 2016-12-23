@@ -136,5 +136,5 @@ class TaskPanelFluidProperties:
         self.pathList = []
         self.form.PredefinedMaterialLibraryComboBox.clear()
 
-        system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/FluidMaterialProperties"
+        system_mat_dir = FreeCAD.getResourceDir() + "/Mod/Material/FluidMaterial"
         self.add_mat_dir(system_mat_dir, ":/icons/freecad.svg")

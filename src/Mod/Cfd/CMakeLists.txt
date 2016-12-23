@@ -1,43 +1,94 @@
 
-fc_copy_to_mod_path("Cfd" 
+SET(Cfd_SRCS
+    Init.py
+    InitGui.py
 
+    CfdAnalysis.py
+    _CommandCfdAnalysis.py
+
+    CfdSelectionObserver.py
+    CfdTools.py
+    CfdExample.py
+
+    CfdMeshGmsh.py
+    _CommandCfdMeshGmshFromShape.py
+    _TaskPanelCfdMeshGmsh.py
+    TaskPanelCfdMeshGmsh.ui
+    _ViewProviderCfdMeshGmsh.py
+    
+    CfdResult.py
+    _CommandCfdResult.py
+    _TaskPanelCfdResult.py
+    TaskPanelCfdResult.ui
+    _ViewProviderCfdResult.py
+
+    CfdSolver.py
+    _CommandCfdSolverControl.py
+    _TaskPanelCfdSolverControl.py
+    TaskPanelCfdSolverControl.ui
+    
+   
+    _CommandCfdFluidMaterial.py
+    _FluidMaterial.py
+    FluidMaterial.py
+    _TaskPanelFluidMaterial.py
+    TaskPanelFluidPropertiesNoUnits.ui
+    TaskPanelFluidPropertiesWIthUnits.ui
+    _ViewProviderCfdFluidMaterial.py
+
+    # solver OpenFOAM
+    CfdSolverFoam.py
+    CfdRunnableFoam.py
+    CfdCaseWriterFoam.py
+    CfdResultFoamVTK.py
+    _ViewProviderCfdSolverFoam.py
+    _CommandCfdSolverFoam.py
+)
+
+SET(Cfd_FoamCaseBuilder_SRCS
+    FoamCaseBuilder/__init__.py
+    FoamCaseBuilder/BasicBuilder.py
+    FoamCaseBuilder/FoamTemplateString.py
+    FoamCaseBuilder/MultiphaseBuilder.py
+    FoamCaseBuilder/Readme.md
+    FoamCaseBuilder/Roadmap.md
+    FoamCaseBuilder/TestBuilder.py
+    FoamCaseBuilder/TestCase.unv
+    FoamCaseBuilder/TestFoamDetection.py
+    FoamCaseBuilder/ThermalBuilder.py
+    FoamCaseBuilder/utility.py
+)
+
+SET(Cfd_defaults_simpleFoam_system
+    defaults/simpleFoam/system/fvSolution
+    defaults/simpleFoam/system/fvSchemes
+    defaults/simpleFoam/system/controlDict
+)
+
+SOURCE_GROUP("" FILES ${Cfd_SRCS})
+
+ADD_CUSTOM_TARGET(Cfd ALL
+    SOURCES ${Cfd_SRCS} ${Cfd_FoamCaseBuilder_SRCS}
+)
+
+fc_copy_sources(Cfd "${CMAKE_BINARY_DIR}/Mod/Cfd" ${Cfd_SRCS} ${Cfd_FoamCaseBuilder_SRCS})
+
+fc_target_copy_resource(Cfd
+    ${CMAKE_SOURCE_DIR}/src/Mod/Cfd
+    ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_DATADIR}/Mod/Cfd
+    ${Cfd_defaults_simpleFoam_system}
 )
 
 INSTALL(
     FILES
-        # changes on the file list here needs to be made in App/CMakeLists.txt as well
-        Init.py
-        InitGui.py
-        # OpenFOAM solver related
-        CfdAnalysis.py
-        CfdSolver.py
-        CfdSolverFoam.py
-        CfdTools.py
-        CfdCaseWriterFoam.py
-        CfdRunnableFoam.py
-	CfdResult.py
-
-        TaskPanelCfdSolverControl.ui
-        _TaskPanelCfdSolverControl.py
-        _ViewProviderCfdSolverFoam.py
-        TaskPanelCfdResult.ui
-        _TaskPanelCfdResult.py
-        _ViewProviderCfdResult.py
-
-        _CommandCfdAnalysis.py
-        _CommandCfdSolverFoam.py
-        _CommandCfdSolverControl.py
-	_CommandCfdResult.py
-
-        FoamCaseBuilder/BasicBuilder.py
-        FoamCaseBuilder/__init__.py
-        FoamCaseBuilder/utility.py
-        FoamCaseBuilder/ThermalBuilder.py
-        FoamCaseBuilder/FoamTemplateString.py
-        FoamCaseBuilder/TestBuilder.py
-        FoamCaseBuilder/Readme.md
-        FoamCaseBuilder/Roadmap.md
-
-    DESTINATION
-        Mod/Cfd
+        ${Cfd_SRCS} ${Cfd_FoamCaseBuilder_SRCS}
+    DESTINATION Mod/Cfd
 )
+
+INSTALL(
+    FILES
+        ${Cfd_defaults_simpleFoam_system}
+    DESTINATION
+        ${CMAKE_INSTALL_DATADIR}/Mod/Cfd
+)
+

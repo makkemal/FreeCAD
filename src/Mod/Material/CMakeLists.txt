@@ -24,6 +24,16 @@ SET (MaterialLib_Files
     StandardMaterial/Steel-Generic.FCMat
     StandardMaterial/Wood-Generic.FCMat
     StandardMaterial/Readme.txt
+    FluidMaterial/None.FCMat
+    FluidMaterial/Air@0DegreesCelsius.FCMat
+    FluidMaterial/Air@20DegreesCelsius.FCMat
+    FluidMaterial/Air@50DegreesCelsius.FCMat
+    FluidMaterial/Water@0DegreesCelsius.FCMat
+    FluidMaterial/Water@20DegreesCelsius.FCMat
+    FluidMaterial/SeaWater@20DegreesCelsius.FCMat
+    FluidMaterial/Gasoline@20DegreesCelsius.FCMat
+    FluidMaterial/OilSAE10W@20DegreesCelsius.FCMat
+    FluidMaterial/Readme.txt
 )
 SOURCE_GROUP("MatLib" FILES ${MaterialLib_Files})
 
@@ -62,6 +72,14 @@ INSTALL(
 INSTALL(
     DIRECTORY
         StandardMaterial
+    DESTINATION
+        ${CMAKE_INSTALL_DATADIR}/Mod/Material
+    FILES_MATCHING PATTERN "*.FCMat*"
+)
+
+INSTALL(
+    DIRECTORY
+        FluidMaterial
     DESTINATION
         ${CMAKE_INSTALL_DATADIR}/Mod/Material
     FILES_MATCHING PATTERN "*.FCMat*"
