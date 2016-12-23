@@ -501,6 +501,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     TEC_in_mmK = float(TEC.getValueAs('mm/mm/K'))
                     SH = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
                     SH_in_JkgK = float(SH.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
+                    density = FreeCAD.Units.Quantity(mat_obj.Material['Density'])
+                    density_in_tonne_per_mm3 = float(density.getValueAs('t/mm^3'))
                 elif mat_obj.Material['Father'] == 'Fluid':
                     SHF = FreeCAD.Units.Quantity(mat_obj.Material['SpecificHeat'])
                     SHF_in_JkgK = float(SHF.getValueAs('J/kg/K')) * 1e+06  # SvdW: Add factor to force units to results' base units of t/mm/s/K
@@ -526,6 +528,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*MATERIAL, NAME=' + mat_name + '\n')
             f.write('*ELASTIC\n')
             f.write('{0:.0f}, {1:.3f}\n'.format(YM_in_MPa, PR))
+            if mat_obj.Material['Father'] == 'Solid':       
+                f.write('*DENSITY\n')
+                f.write('{0:.3e}\n'.format(density_in_tonne_per_mm3))
+            elif mat_obj.Material['Father'] == 'Fluid':
+                f.write('*DENSITY\n')
+                f.write('{0:.3e}\n'.format(DF_in_tonne_per_mm3))
+            elif mat_obj.Material['Father'] == 'Gas':
+                f.write('*DENSITY\n')
+                f.write('{0:.3e}\n'.format(DG_in_tonne_per_mm3))
+                
             if self.analysis_type == "frequency" or self.selfweight_objects or (self.analysis_type == "thermomech" and not self.solver_obj.ThermoMechSteadyState):
                 f.write('*DENSITY\n')
                 f.write('{0:.3e}\n'.format(density_in_tonne_per_mm3))
