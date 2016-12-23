@@ -136,7 +136,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             self.write_analysis_thermomech(inpfile)
 
         # constraints depend on step used in all analysis types
-        if self.fixed_objects:
+        if self.fixed_objects and not self.fluidsection_objects:
             self.write_constraints_fixed(inpfile)
         if self.displacement_objects:
             self.write_constraints_displacement(inpfile)
@@ -162,6 +162,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 self.write_constraints_temperature(inpfile)
             if self.heatflux_objects:
                 self.write_constraints_heatflux(inpfile)
+            if self.fluidsection_objects:
+                self.write_constraints_fluid(inpfile)
 
         # output and step end
         self.write_outputs_types(inpfile)
@@ -450,6 +452,24 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     MPC_nodes.append(MPC)
             for i in range(len(MPC_nodes)):
                 f.write(str(MPC_nodes[i]) + ',\n')
+
+    def write_constraints_fluid(self, f):
+        # get nodes
+        self.get_constraints_fixed_nodes()
+        # write nodes to file
+        f.write('\n***********************************************************\n')
+        f.write('** Node set for fixed constraint\n')
+        f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
+        for femobj in self.fixed_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
+            cnt = 0
+            for n in femobj['Nodes']:
+                if cnt == 0:
+                    f.write('*BOUNDARY \n')
+                    f.write(str(n) + ',2 ,2, 1e5 \n')
+                if cnt == 2:
+                    f.write('*BOUNDARY,MASS FLOW  \n')
+                    f.write(str(n) + ', 1, 1, 1.197e-5\n')
+                cnt = cnt + 1
 
     def write_surfaces_contraints_contact(self, f):
         # get surface nodes and write them to file
@@ -1271,8 +1291,8 @@ def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
                 FluidInletoutlet_ele[i][2] = cnt
         line = f.readline()
         cnt = cnt +1
-    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[0][2]) + '\n')
-    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[1][2]) + '\n')
+#    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[0][2]) + '\n')
+#    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[1][2]) + '\n')
 #    f = open(fileName, 'r')    
 #    lines = f.readlines()
 #    cnt = 0

@@ -388,11 +388,17 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if not (self.fixed_constraints or self.displacement_constraints):
                 message += "Static analysis: Neither constraint fixed nor constraint displacement defined.\n"
         # no check in the regard of loads (constraint force, pressure, self weight) is done because an analysis without loads at all is an valid analysis too
+            if self.fluid_sections:
+                message += "Static analysis: Fluid sections are not applicable in a Static Analysis.\n"
         if self.analysis_type == "thermomech":
             if not self.initialtemperature_constraints:
                 message += "Thermomechanical analysis: No initial temperature defined.\n"
             if len(self.initialtemperature_constraints) > 1:
                 message += "Thermomechanical analysis: Only one initial temperature is allowed.\n"
+            if self.fluid_sections and not self.selfweight_constraints:
+                message += "Thermomechanical analysis: Self weight needs to be defined when using fluid sections\n"
+            if self.fluid_sections and not self.fixed_constraints:
+                message += "Thermomechanical analysis: Apply along edge of your fluid section\n"
         # beam sections, fluid sections and shell thicknesses
         if self.beam_sections:
             if self.shell_thicknesses:
