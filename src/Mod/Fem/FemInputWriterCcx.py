@@ -61,6 +61,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             analysis_type, dir_name)
         self.main_file_name = self.mesh_object.Name + '.inp'
         self.file_name = self.dir_name + '/' + self.main_file_name
+        self.FluidInletoutlet_ele = []
         print('FemInputWriterCcx --> self.dir_name  -->  ' + self.dir_name)
         print('FemInputWriterCcx --> self.main_file_name  -->  ' + self.main_file_name)
         print('FemInputWriterCcx --> self.file_name  -->  ' + self.file_name)
@@ -105,6 +106,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         if self.analysis_type == "thermomech" and self.initialtemperature_objects:
             self.write_constraints_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
+        if self.fluidsection_objects:
+            for ccx_elset in self.ccx_elsets:
+                inpfile.close()
+                if ccx_elset['ccx_elset']:
+                    if 'fluidsection_obj'in ccx_elset:  # beam mesh
+                        fluidsec_obj = ccx_elset['fluidsection_obj']
+                        if fluidsec_obj.SectionType == "Liquid":
+                            if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
+                                use_correct_fluidinout_ele_def(self.FluidInletoutlet_ele, self.file_name)
+                inpfile = open(self.file_name, 'a')
 
         # constraints independent from steps
         if self.planerotation_objects:
@@ -362,12 +373,20 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 self.get_ccx_elsets_multiple_mat_solid()
         for ccx_elset in self.ccx_elsets:
             f.write('*ELSET,ELSET=' + ccx_elset['ccx_elset_name'] + '\n')
+            collect_ele = False
+            if ccx_elset['fluidsection_obj']:
+                fluidsec_obj = ccx_elset['fluidsection_obj']
+                if fluidsec_obj.SectionType == 'Liquid':
+                    if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
+                        collect_ele = True
             if ccx_elset['ccx_elset']:
                 if ccx_elset['ccx_elset'] == self.ccx_eall:
                     f.write(self.ccx_eall + '\n')
                 else:
                     for elid in ccx_elset['ccx_elset']:
                         f.write(str(elid) + ',\n')
+                        if collect_ele == True:
+                            self.FluidInletoutlet_ele.append([str(elid) , fluidsec_obj.LiquidSectionType, 0])
             else:
                 f.write('**No elements found for these objects\n')
 
@@ -609,17 +628,16 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         setion_def = '*BEAM GENERAL SECTION, ' + elsetdef + material + section_type + '\n'
                     f.write(setion_def)
                     f.write(setion_geo)
-                elif 'fluidsection_obj'in ccx_elset:  # beam mesh
+                elif 'fluidsection_obj'in ccx_elset:  # fluid mesh
                     fluidsec_obj = ccx_elset['fluidsection_obj']
                     elsetdef = 'ELSET=' + ccx_elset['ccx_elset_name'] + ', '
                     material = 'MATERIAL=' + ccx_elset['mat_obj_name']
                     if fluidsec_obj.SectionType == 'Liquid':
                         section_type = fluidsec_obj.LiquidSectionType
-                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' +material + '\n'
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
-                            use_correct_elem_def_for_inout(section_type, elsetdef)
-                        else:
-                            setion_geo = liquid_section_def(fluidsec_obj, section_type)
+                            section_type = "PIPE INOUT"
+                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' +material + '\n'
+                        setion_geo = liquid_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Gas':
                         section_type = fluidsec_obj.GasSectionType
                     elif fluidsec_obj.SectionType == 'Open Channel':
@@ -1225,20 +1243,66 @@ def get_ccx_elset_solid_name(mat_name, solid_name=None, mat_short_name=None):
         return mat_name + solid_name
 
 def write_D_network_element_to_inputfile(fileName):
-    inpfile = open(fileName, 'r+')
-    lines = inpfile.readlines()
-    inpfile.seek(0)
+    f = open(fileName, 'r+')
+    lines = f.readlines()
+    f.seek(0)
     for line in lines:
         if line.find("B32") == -1:
-            inpfile.write(line)
+            f.write(line)
         else:
             dummy = line.replace("B32" , "D")
-            inpfile.write(dummy)
-    inpfile.truncate()
-    inpfile.close()    
+            f.write(dummy)
+    f.truncate()
+    f.close()
 
-def use_correct_elem_def_for_inout(section_type, elsetdef):
-        
+def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
+    f = open(fileName, 'r')
+    cnt = 1
+    line = f.readline()
+    while line.find("Element") == -1:
+        line = f.readline()
+        cnt = cnt +1
+    line = f.readline()
+    cnt = cnt +1
+    while (line != ""):
+        FreeCAD.Console.PrintError('bbbbb \n')
+        for i in range(len(FluidInletoutlet_ele)):
+            if (line[0] == FluidInletoutlet_ele[i][0]) and ((FluidInletoutlet_ele[i][1] == 'PIPE INLET') or (FluidInletoutlet_ele[i][1] == 'PIPE OUTLET')):
+                FluidInletoutlet_ele[i][2] = cnt
+        line = f.readline()
+        cnt = cnt +1
+    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[0][2]) + '\n')
+    FreeCAD.Console.PrintError(str(FluidInletoutlet_ele[1][2]) + '\n')
+#    f = open(fileName, 'r')    
+#    lines = f.readlines()
+#    cnt = 0
+#    dummy_f = open("dummy.txt", 'w')
+#    for line in lines:
+#        for i in range(len(FluidInletoutlet_ele)):
+#            new_line = ''
+#            if (cnt == FluidInletoutlet_ele[i][2]) and (FluidInletoutlet_ele[i][1] == 'PIPE INLET'):
+#                a = line.split(', ')
+#                for j in range(len(a)):
+#                    if j == 1:
+#                        new_line = new_line + ',0'
+#                    else:
+#                        new_line = new_line + a[j]
+#            elif (cnt == FluidInletoutlet_ele[i][2]) and (FluidInletoutlet_ele[i][1] == 'PIPE OUTLET'):
+#                a = line.split(', ')
+#                for j in range(len(a)):
+#                    if j == 3:
+#                        new_line = new_line + ',0'
+#                    else:
+#                        new_line = new_line + a[j]
+#        if new_line == '':
+#            dummy_f.write(line)
+#        else:
+#            dummy_f.write(new_line)
+#        cnt = cnt + 1
+#    dummy_f.close()
+
+
+
 def liquid_section_def(obj, section_type):
     if section_type == 'PIPE MANNING':
         manning_area = str(obj.ManningArea.getValueAs('mm^2').Value)
@@ -1256,4 +1320,6 @@ def liquid_section_def(obj, section_type):
         contract_area2 = str(obj.ContractArea2.getValueAs('mm^2').Value)
         section_geo = contract_area1 + ',' + contract_area2 + '\n'
         return section_geo
+    else:
+        return ''
 #  @}
