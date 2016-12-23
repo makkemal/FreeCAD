@@ -21,7 +21,7 @@
 # ***************************************************************************
 
 __title__ = "Result Control Task Panel"
-__author__ = "Juergen Riegel"
+__author__ = "Juergen Riegel, Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
 ## @package TaskPanelShowResult

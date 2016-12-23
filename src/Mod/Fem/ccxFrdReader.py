@@ -333,6 +333,8 @@ def readResult(frd_input):
                 mode_results['number'] = eigenmode
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
+                mode_results['stressv'] = mode_stressv
+                mode_results['strainv'] = mode_strain
                 mode_results['temp'] = mode_temp
                 mode_results['time'] = timestep
                 results.append(mode_results)
@@ -346,6 +348,8 @@ def readResult(frd_input):
                 mode_results['number'] = eigenmode
                 mode_results['disp'] = mode_disp
                 mode_results['stress'] = mode_stress
+                mode_results['stressv'] = mode_stressv
+                mode_results['strainv'] = mode_strain
                 mode_results['time'] = 0  # Dont return time if static
                 results.append(mode_results)
                 mode_disp = {}
@@ -445,6 +449,8 @@ def importFrd(filename, analysis=None, result_name_prefix=None):
                     break
 
             disp = result_set['disp']
+            stressv = result_set['stressv']
+            strainv = result_set['strainv']
             no_of_values = len(disp)
             displacement = []
             for k, v in disp.iteritems():
@@ -462,6 +468,8 @@ def importFrd(filename, analysis=None, result_name_prefix=None):
 
             if len(disp) > 0:
                 results.DisplacementVectors = map((lambda x: x * scale), disp.values())
+                results.StressVectors = map((lambda x: x * scale), stressv.values())
+                results.StrainVectors = map((lambda x: x * scale), strainv.values())
                 results.NodeNumbers = disp.keys()
                 if(mesh_object):
                     results.Mesh = mesh_object
