@@ -288,7 +288,7 @@ def readResult(frd_input):
             stress_6 = float(line[73:85])
             mode_stress[elem] = (stress_1, stress_2, stress_3, stress_4, stress_5, stress_6)
             mode_stressv[elem] = FreeCAD.Vector(stress_1, stress_2, stress_3)
-        if line[5:11] == "TOSTRAIN":
+        if line[5:13] == "TOSTRAIN":
             mode_strain_found = True
         # we found a strain line in the frd file
         if mode_strain_found and (line[1:3] == "-1"):
