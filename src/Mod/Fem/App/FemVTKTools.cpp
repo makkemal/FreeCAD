@@ -844,6 +844,20 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
 
         grid->GetPointData()->AddArray(data);
     }
+  
+   if(!res->StressVectors.getValues().empty()) {
+        const std::vector<Base::Vector3d>& vec = res->StressVectors.getValues();
+        vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
+        data->SetNumberOfComponents(3);
+        data->SetName("StressVectors");
+
+        for(std::vector<Base::Vector3d>::const_iterator it=vec.begin(); it!=vec.end(); ++it) {
+            double tuple[] = {it->x, it->y, it->z};
+            data->InsertNextTuple(tuple);
+        }
+
+        grid->GetPointData()->AddArray(data);
+    }  
 }
 
 } // namespace
