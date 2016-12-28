@@ -806,7 +806,7 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
         grid->GetPointData()->AddArray(data);
     }
 
-    if(!res->Temperature.getValues().empty()) {
+    if ((!res->Temperature.getValues().empty()) && (sizeof(res->Temperature.getValues()) > 40)) {  
         const std::vector<double>& vec = res->Temperature.getValues();
         vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
         data->SetNumberOfValues(vec.size());
