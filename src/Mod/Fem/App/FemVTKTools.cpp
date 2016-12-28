@@ -863,7 +863,7 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
         const std::vector<Base::Vector3d>& vec = res->StrainVectors.getValues();
         vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
         data->SetNumberOfComponents(3);
-        data->SetName("StressVectors");
+        data->SetName("StrainVectors");
 
         for(std::vector<Base::Vector3d>::const_iterator it=vec.begin(); it!=vec.end(); ++it) {
             double tuple[] = {it->x, it->y, it->z};
