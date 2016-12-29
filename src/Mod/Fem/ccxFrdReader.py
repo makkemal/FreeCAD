@@ -257,7 +257,7 @@ def readResult(frd_input):
             elif elemType == 12:
                 # B32 CalculiX --> seg3 FreeCAD
                 # Also D element element number 
-                # N1, N2 ,N3 Order in outpufile is 1,3,2
+                # N1, N3 ,N2 Order in outpufile is 1,3,2
                 nd1 = int(line[3:13])
                 nd3 = int(line[13:23])
                 nd2 = int(line[23:33])
