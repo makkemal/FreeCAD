@@ -806,8 +806,9 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
         grid->GetPointData()->AddArray(data);
     }
 
-    if ((!res->Temperature.getValues().empty()) && (sizeof(res->Temperature.getValues()) > 40)) {  
+    if (!res->Temperature.getValues().empty())  {  
         const std::vector<double>& vec = res->Temperature.getValues();
+      if (vec.size()>1) {     
         vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
         data->SetNumberOfValues(vec.size());
         data->SetName("Temperature");
@@ -816,10 +817,11 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
             data->SetValue(i, vec[i]);
 
         grid->GetPointData()->AddArray(data);
-    }
+      }}
 
-    if ((!res->UserDefined.getValues().empty()) && (sizeof(res->UserDefined.getValues()) > 40)) {
+    if (!res->UserDefined.getValues().empty())  {
         const std::vector<double>& vec = res->UserDefined.getValues();
+      if (vec.size()>1) { 
         vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
         data->SetNumberOfValues(vec.size());
         data->SetName("User Defined Results");
@@ -828,7 +830,7 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
             data->SetValue(i, vec[i]);
 
         grid->GetPointData()->AddArray(data);
-    }
+      }}
 
 
     if(!res->DisplacementVectors.getValues().empty()) {
