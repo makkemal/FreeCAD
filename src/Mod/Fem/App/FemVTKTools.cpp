@@ -818,7 +818,7 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
         grid->GetPointData()->AddArray(data);
     }
 
-    if(!res->UserDefined.getValues().empty()) {
+    if ((!res->UserDefined.getValues().empty()) && (sizeof(res->UserDefined.getValues()) > 40)) {
         const std::vector<double>& vec = res->UserDefined.getValues();
         vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
         data->SetNumberOfValues(vec.size());
