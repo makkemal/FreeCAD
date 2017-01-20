@@ -63,6 +63,7 @@ SOURCE_GROUP("Module" FILES ${Mod_SRCS})
 SET(FemScripts_SRCS
     _CommandAnalysis.py
     _CommandBeamSection.py
+    _CommandFluidSection.py
     _CommandClearMesh.py
     _CommandControlSolver.py
     _CommandConstraintSelfWeight.py
@@ -82,6 +83,7 @@ SET(FemScripts_SRCS
     _CommandSolverCalculix.py
     _CommandSolverZ88.py
     _FemBeamSection.py
+    _FemFluidSection.py
     _FemConstraintSelfWeight.py
     _FemMaterialMechanicalNonlinear.py
     _FemMeshGmsh.py
@@ -92,6 +94,7 @@ SET(FemScripts_SRCS
     _FemSolverZ88.py
     _FemMaterial.py
     _TaskPanelFemBeamSection.py
+    _TaskPanelFemFluidSection.py
     _TaskPanelFemMeshGmsh.py
     _TaskPanelFemMeshGroup.py
     _TaskPanelFemMeshRegion.py
@@ -100,6 +103,7 @@ SET(FemScripts_SRCS
     _TaskPanelFemMaterial.py
     _TaskPanelShowResult.py
     _ViewProviderFemBeamSection.py
+    _ViewProviderFemFluidSection.py
     _ViewProviderFemConstraintSelfWeight.py
     _ViewProviderFemMaterialMechanicalNonlinear.py
     _ViewProviderFemMeshGmsh.py
@@ -118,6 +122,7 @@ SET(FemScripts_SRCS
     InitGui.py
     FemAnalysis.py
     FemBeamSection.py
+    FemFluidSection.py
     FemCommands.py
     FemConstraintSelfWeight.py
     FemGmshTools.py
@@ -141,6 +146,7 @@ SET(FemScripts_SRCS
     TestFem.py
     z88DispReader.py
     TaskPanelFemBeamSection.ui
+    TaskPanelFemFluidSection.ui
     TaskPanelFemMeshGmsh.ui
     TaskPanelFemMeshGroup.ui
     TaskPanelFemMeshRegion.ui
