@@ -403,17 +403,7 @@
       <item>
        <widget class="QLabel" name="l_label_text_1">
         <property name="text">
-         <string>Leave references blank </string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="l_label_text_2">
-        <property name="text">
-         <string>to choose all remaining shapes</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
+         <string>Leave blank to choose all remaining shapes</string>
         </property>
        </widget>
       </item>
