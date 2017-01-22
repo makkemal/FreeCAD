@@ -36,7 +36,6 @@ import FemMeshTools
 import FemInputWriter
 
 
-
 class FemInputWriterCcx(FemInputWriter.FemInputWriter):
     def __init__(self,
                  analysis_obj, solver_obj,
@@ -45,7 +44,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                  contact_obj, planerotation_obj, transform_obj,
                  selfweight_obj, force_obj, pressure_obj,
                  temperature_obj, heatflux_obj, initialtemperature_obj,
-                 beamsection_obj, shellthickness_obj,fluidsection_obj,
+                 beamsection_obj, shellthickness_obj, fluidsection_obj,
                  analysis_type=None, dir_name=None
                  ):
 
@@ -57,7 +56,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             contact_obj, planerotation_obj, transform_obj,
             selfweight_obj, force_obj, pressure_obj,
             temperature_obj, heatflux_obj, initialtemperature_obj,
-            beamsection_obj, shellthickness_obj,fluidsection_obj,
+            beamsection_obj, shellthickness_obj, fluidsection_obj,
             analysis_type, dir_name)
         self.main_file_name = self.mesh_object.Name + '.inp'
         self.file_name = self.dir_name + '/' + self.main_file_name
@@ -106,7 +105,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         if self.analysis_type == "thermomech" and self.initialtemperature_objects:
             self.write_constraints_initialtemperature(inpfile)
         self.write_femelementsets(inpfile)
-        
+
         #Fluid section: Inlet and Outlet requires special element definition
         if self.fluidsection_objects:
             InOuttest = False
@@ -117,7 +116,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         if fluidsec_obj.SectionType == "Liquid":
                             if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                                 InOuttest = True
-            if InOuttest == True:
+            if InOuttest is True:
                 inpfile.close()
                 use_correct_fluidinout_ele_def(self.FluidInletoutlet_ele, self.file_name)
                 inpfile = open(self.file_name, 'a')
@@ -396,11 +395,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     for elid in ccx_elset['ccx_elset']:
                         f.write(str(elid) + ',\n')
                         counter = counter + 1
-                        if collect_ele == True and elsetchanged == 0 and fluidsec_obj.LiquidSectionType == "PIPE INLET":
-                            self.FluidInletoutlet_ele.append([str(elid) , fluidsec_obj.LiquidSectionType, 0]) # 3rd index is to track which line number the element is defined
+                        if collect_ele is True and elsetchanged == 0 and fluidsec_obj.LiquidSectionType == "PIPE INLET":
+                            self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line number the element is defined
                             elsetchanged = 1
-                        elif collect_ele == True and fluidsec_obj.LiquidSectionType == "PIPE OUTLET" and counter == len(ccx_elset['ccx_elset']):
-                            self.FluidInletoutlet_ele.append([str(elid) , fluidsec_obj.LiquidSectionType, 0]) # 3rd index is to track which line number the element is defined           
+                        elif collect_ele is True and fluidsec_obj.LiquidSectionType == "PIPE OUTLET" and counter == len(ccx_elset['ccx_elset']):
+                            self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line number the element is defined
             else:
                 f.write('**No elements found for these objects\n')
 
@@ -572,7 +571,6 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('*FLUID CONSTANTS\n')
                     f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_kgms))
 
-                    
             # nonlinear material properties
             if self.solver_obj.MaterialNonlinearity == 'nonlinear':
                 for femobj in self.material_nonlinear_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
@@ -630,7 +628,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         section_type = fluidsec_obj.LiquidSectionType
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
                             section_type = "PIPE INOUT"
-                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' +material + '\n'
+                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
                         setion_geo = liquid_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Gas':
                         section_type = fluidsec_obj.GasSectionType
@@ -934,36 +932,36 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             if fluidsection_obj.SectionType == 'Liquid':
                 if fluidsection_obj.LiquidSectionType == 'PIPE INLET':
                     f.write('**Fluid Section Inlet \n')
-                    if fluidsection_obj.InletPressureActive == True:
-                       f.write('*BOUNDARY \n')
-                       cnt = 0
-                       for n in femobj['Nodes']:
-                           cnt = cnt +1
-                           if cnt == 2: #Pressure is applied to corner node of D element
-                               f.write(str(n) + ',2,2,' + str(fluidsection_obj.InletPressure) + '\n') # degree of freedom 2 is for defining pressure
-                    if fluidsection_obj.InletFlowRateActive == True:
-                       f.write('*BOUNDARY,MASS FLOW \n')
-                       cnt = 0
-                       for n in femobj['Nodes']:
-                           cnt = cnt +1
-                           if cnt == 3: #Flow rate is applied to midside node of D element
-                               f.write(str(n) + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n') # degree of freedom 1 is for defining flow rate
+                    if fluidsection_obj.InletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        cnt = 0
+                        for n in femobj['Nodes']:
+                            cnt = cnt + 1
+                            if cnt == 2:  # Pressure is applied to corner node of D element
+                                f.write(str(n) + ',2,2,' + str(fluidsection_obj.InletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.InletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        cnt = 0
+                        for n in femobj['Nodes']:
+                            cnt = cnt + 1
+                            if cnt == 3:  # Flow rate is applied to midside node of D element
+                                f.write(str(n) + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n')  # degree of freedom 1 is for defining flow rate
                 elif fluidsection_obj.LiquidSectionType == 'PIPE OUTLET':
                     f.write('**Fluid Section Outlet \n')
-                    if fluidsection_obj.OutletPressureActive == True:
-                       f.write('*BOUNDARY \n')
-                       cnt = 0
-                       for n in femobj['Nodes']:
-                           cnt = cnt +1
-                           if cnt == 1: #Pressure is applied to corner node of D element
-                               f.write(str(n) + ',2,2,' + str(fluidsection_obj.OutletPressure) + '\n') # degree of freedom 2 is for defining pressure
-                    if fluidsection_obj.OutletFlowRateActive == True:
-                       f.write('*BOUNDARY,MASS FLOW \n')
-                       cnt = 0
-                       for n in femobj['Nodes']:
-                           cnt = cnt +1
-                           if cnt == 3: #Flow rate is applied to midside node of D element
-                               f.write(str(n) + ',1,1,' + str(fluidsection_obj.OutletFlowRate * 0.001) + '\n') # degree of freedom 1 is for defining flow rate
+                    if fluidsection_obj.OutletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        cnt = 0
+                        for n in femobj['Nodes']:
+                            cnt = cnt + 1
+                            if cnt == 1:  # Pressure is applied to corner node of D element
+                                f.write(str(n) + ',2,2,' + str(fluidsection_obj.OutletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.OutletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        cnt = 0
+                        for n in femobj['Nodes']:
+                            cnt = cnt + 1
+                            if cnt == 3:  # Flow rate is applied to midside node of D element
+                                f.write(str(n) + ',1,1,' + str(fluidsection_obj.OutletFlowRate * 0.001) + '\n')  # degree of freedom 1 is for defining flow rate
 
     def write_outputs_types(self, f):
         f.write('\n***********************************************************\n')
@@ -1247,6 +1245,7 @@ def get_ccx_elset_beam_name(mat_name, beamsec_name, mat_short_name=None, beamsec
     else:
         return mat_name + beamsec_name
 
+
 def get_ccx_elset_fluid_name(mat_name, fluidsec_name, mat_short_name=None, fluidsec_short_name=None):
     if not mat_short_name:
         mat_short_name = 'Mat0'
@@ -1256,6 +1255,7 @@ def get_ccx_elset_fluid_name(mat_name, fluidsec_name, mat_short_name=None, fluid
         return mat_short_name + fluidsec_short_name
     else:
         return mat_name + fluidsec_name
+
 
 def get_ccx_elset_shell_name(mat_name, shellth_name, mat_short_name=None, shellth_short_name=None):
     if not mat_short_name:
@@ -1278,6 +1278,7 @@ def get_ccx_elset_solid_name(mat_name, solid_name=None, mat_short_name=None):
     else:
         return mat_name + solid_name
 
+
 def write_D_network_element_to_inputfile(fileName):
     #replace B32 elements with D elements for fluid section
     f = open(fileName, 'r+')
@@ -1287,17 +1288,18 @@ def write_D_network_element_to_inputfile(fileName):
         if line.find("B32") == -1:
             f.write(line)
         else:
-            dummy = line.replace("B32" , "D")
+            dummy = line.replace("B32", "D")
             f.write(dummy)
     f.truncate()
     f.close()
+
 
 def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
     f = open(fileName, 'r')
     cnt = 0
     line = f.readline()
 
-    # start reading from *ELEMENT 
+    # start reading from *ELEMENT
     while line.find("Element") == -1:
         line = f.readline()
         cnt = cnt + 1
@@ -1305,7 +1307,7 @@ def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
     cnt = cnt + 1
 
     # obtain element line numbers for inlet and outlet
-    while (len(line) != 1):    
+    while (len(line) != 1):
         ind = line.find(',')
         elem = line[0:ind]
         for i in range(len(FluidInletoutlet_ele)):
@@ -1316,7 +1318,7 @@ def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
     f.close()
 
     # re-define elements for INLET and OUTLET
-    f = open(fileName, 'r+')    
+    f = open(fileName, 'r+')
     lines = f.readlines()
     f.seek(0)
     cnt = 0
@@ -1346,6 +1348,7 @@ def use_correct_fluidinout_ele_def(FluidInletoutlet_ele, fileName):
         cnt = cnt + 1
     f.truncate()
     f.close()
+
 
 def liquid_section_def(obj, section_type):
     if section_type == 'PIPE MANNING':

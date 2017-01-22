@@ -31,7 +31,7 @@ __url__ = "http://www.freecadweb.org"
 
 class _FemFluidSection:
     "The FemFluidSection object"
-    
+
     known_fluid_types = ['Liquid', 'Gas', 'Open Channel']
     known_liquid_types = ['PIPE MANNING', 'PIPE ENLARGEMENT', 'PIPE CONTRACTION', 'PIPE INLET', 'PIPE OUTLET']
     known_gas_types = ['NONE']

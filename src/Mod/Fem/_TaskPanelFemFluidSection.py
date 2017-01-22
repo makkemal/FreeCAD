@@ -171,8 +171,8 @@ class _TaskPanelFemFluidSection:
         self.ManningArea = base_quantity_value
 
     def manning_radius_changed(self, base_quantity_value):
-
         self.ManningRadius = base_quantity_value
+
     def manning_coefficient_changed(self, base_quantity_value):
         self.ManningCoefficient = base_quantity_value
 

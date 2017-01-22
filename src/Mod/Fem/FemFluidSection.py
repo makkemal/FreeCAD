@@ -32,7 +32,7 @@ import FreeCAD
 import _FemFluidSection
 
 
-def makeFemFluidSection( name="FluidSection"):
+def makeFemFluidSection(name="FluidSection"):
     '''makeFemFluidSection([name]): creates an Fluid section object to define 1D flow'''
     obj = FreeCAD.ActiveDocument.addObject("Fem::FeaturePython", name)
     _FemFluidSection._FemFluidSection(obj)
