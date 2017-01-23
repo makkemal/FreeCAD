@@ -227,6 +227,8 @@ class _TaskPanelShowResult:
         P3 = np.array(self.result_object.PrincipalMin)
         Von = np.array(self.result_object.StressValues)
         T = np.array(self.result_object.Temperature)
+        MassFlowrate = np.array(self.result_object.MassFlowRate)
+        NetworkPressure = np.array(self.result_object.NetworkPressure)
         dispvectors = np.array(self.result_object.DisplacementVectors)
         x = np.array(dispvectors[:, 0])
         y = np.array(dispvectors[:, 1])
@@ -239,7 +241,7 @@ class _TaskPanelShowResult:
         ex = np.array(strainvectors[:, 0])
         ey = np.array(strainvectors[:, 1])
         ez = np.array(strainvectors[:, 2])
-        userdefined_eq = x + y + z + T + Von + P1 + P2 + P3 + sx + sy + sz + ex + ey + ez  # Dummy equation to get around flake8, varibles not being used
+        userdefined_eq = x + y + z + T + Von + P1 + P2 + P3 + sx + sy + sz + ex + ey + ez + NetworkPressure + MassFlowrate # Dummy equation to get around flake8, varibles not being used
         userdefined_eq = self.form.user_def_eq.toPlainText()  # Get equation to be used
         UserDefinedFormula = eval(userdefined_eq).tolist()
         self.result_object.UserDefined = UserDefinedFormula

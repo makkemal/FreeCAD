@@ -867,6 +867,31 @@ void FemVTKTools::exportMechanicalResult(const App::DocumentObject* obj, vtkSmar
         grid->GetPointData()->AddArray(data);
       }}
 
+    if (!res->MassFlowRate.getValues().empty())  {
+        const std::vector<double>& vec = res->MassFlowRate.getValues();
+      if (vec.size()>1) {
+        vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
+        data->SetNumberOfValues(vec.size());
+        data->SetName("Mass Flow Rate");
+
+        for(size_t i=0; i<vec.size(); ++i)
+            data->SetValue(i, vec[i]);
+
+        grid->GetPointData()->AddArray(data);
+      }}
+
+    if (!res->NetworkPressure.getValues().empty())  {
+        const std::vector<double>& vec = res->NetworkPressure.getValues();
+      if (vec.size()>1) {
+        vtkSmartPointer<vtkDoubleArray> data = vtkSmartPointer<vtkDoubleArray>::New();
+        data->SetNumberOfValues(vec.size());
+        data->SetName("Network Pressure");
+
+        for(size_t i=0; i<vec.size(); ++i)
+            data->SetValue(i, vec[i]);
+
+        grid->GetPointData()->AddArray(data);
+      }}
 
     if(!res->DisplacementVectors.getValues().empty()) {
         const std::vector<Base::Vector3d>& vec = res->DisplacementVectors.getValues();
