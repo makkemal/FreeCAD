@@ -67,6 +67,10 @@ public:
     App::PropertyFloatList MaxShear;
     /// Temperature
     App::PropertyFloatList Temperature;
+    /// Network mass flow rate
+    App::PropertyFloatList MassFlowRate;
+    /// Static network pressure
+    App::PropertyFloatList NetworkPressure;
     /// Eigenmode
     App::PropertyInteger Eigenmode;
     /// Eigenmode frequency

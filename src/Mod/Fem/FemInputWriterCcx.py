@@ -967,21 +967,25 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('\n***********************************************************\n')
         f.write('** Outputs --> frd file\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
-        if self.beamsection_objects or self.shellthickness_objects:
+        if self.beamsection_objects or self.shellthickness_objects or self.fluidsection_objects:
             f.write('*NODE FILE, OUTPUT=2d\n')
         else:
             f.write('*NODE FILE\n')
         if self.analysis_type == "thermomech":  # MPH write out nodal temperatures if thermomechanical
-            f.write('U, NT\n')
+            if not self.fluidsection_objects:
+                f.write('U, NT\n')
+            else:
+                f.write('MF, PS\n')
         else:
             f.write('U\n')
-        f.write('*EL FILE\n')
-        f.write('S, E\n')
-        f.write('** outputs --> dat file\n')
-        f.write('*NODE PRINT , NSET=Nall \n')
-        f.write('U \n')
-        f.write('*EL PRINT , ELSET=Eall \n')
-        f.write('S \n')
+        if not self.fluidsection_objects:
+            f.write('*EL FILE\n')
+            f.write('S, E\n')
+            f.write('** outputs --> dat file\n')
+            f.write('*NODE PRINT , NSET=Nall \n')
+            f.write('U \n')
+            f.write('*EL PRINT , ELSET=Eall \n')
+            f.write('S \n')
 
     def write_step_end(self, f):
         f.write('\n***********************************************************\n')
