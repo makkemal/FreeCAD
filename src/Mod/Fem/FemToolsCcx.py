@@ -237,7 +237,11 @@ class FemToolsCcx(FemTools.FemTools):
         frd_result_file = os.path.splitext(self.inp_file_name)[0] + '.frd'
         if os.path.isfile(frd_result_file):
             result_name_prefix = 'CalculiX_' + self.solver.AnalysisType + '_'
-            ccxFrdReader.importFrd(frd_result_file, self.analysis, result_name_prefix)
+            ccx_3d_output = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx").GetBool("BeamShellOutput", False)
+            if ccx_3d_output:
+                ccxFrdReader.insert3dresult(frd_result_file, self.analysis, result_name_prefix)
+            else:
+                ccxFrdReader.importFrd(frd_result_file, self.analysis, result_name_prefix)
             for m in self.analysis.Member:
                 if m.isDerivedFrom("Fem::FemResultObject"):
                     self.results_present = True

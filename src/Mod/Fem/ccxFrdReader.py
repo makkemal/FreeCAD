@@ -397,7 +397,7 @@ def calculate_principal_stress(i):
     return (eigvals[0], eigvals[1], eigvals[2], maxshear)
 
 
-def importFrd(filename, analysis=None, result_name_prefix=None):
+def importFrd(filename, analysis=None, result_name_prefix=None, import_3D_mesh=None):
     if result_name_prefix is None:
         result_name_prefix = ''
     m = readResult(filename)
@@ -423,7 +423,7 @@ def importFrd(filename, analysis=None, result_name_prefix=None):
             z_span = abs(p_z_max - p_z_min)
             span = max(x_span, y_span, z_span)
 
-        if (not analysis):
+        if (not analysis) or (import_3D_mesh=='3D'):
             import FemMeshTools
             mesh = FemMeshTools.make_femmesh(m)
 
@@ -581,6 +581,9 @@ def insert(filename, docname):
 
     importFrd(filename)
 
+def insert3dresult(filename, analysis, docname):
+    "called when freecad wants to import 3D output in 3D anlysis"    
+    importFrd(filename, analysis ,docname, '3D')
 
 def open(filename):
     "called when freecad opens a file"

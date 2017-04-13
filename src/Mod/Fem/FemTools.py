@@ -29,7 +29,7 @@ __url__ = "http://www.freecadweb.org"
 #  @{
 
 import FreeCAD
-from PySide import QtCore
+from PySide import QtCore,QtGui
 
 
 class FemTools(QtCore.QRunnable, QtCore.QObject):
@@ -67,6 +67,9 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
         for m in self.analysis.Member:
             if (m.isDerivedFrom('Fem::FemResultObject')):
                 self.analysis.Document.removeObject(m.Name)
+            elif (m.isDerivedFrom('Fem::FemMeshObject')):
+                if (m.Name=='ResultMesh'):
+                   self.analysis.Document.removeObject(m.Name) #remove 3D resultmech if exists 
         self.results_present = False
 
     ## Resets mesh deformation
@@ -244,7 +247,10 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
                 if not self.mesh:
                     self.mesh = m
                 else:
-                    raise Exception('FEM: Multiple mesh in analysis not yet supported!')
+                    FreeCAD.Console.PrintMessage('Warning! More that one mesh present in analsysis only first mesh will be used during analysis \n')
+# Find better location for error meage                     
+#                    QtGui.QMessageBox.information(None,"","Warning! More that one mesh present in analsysis only first mesh will be used during analysis")
+#                    raise Exception('FEM: Multiple mesh in analysis not yet supported!')
             elif m.isDerivedFrom("App::MaterialObjectPython"):
                 material_linear_dict = {}
                 material_linear_dict['Object'] = m

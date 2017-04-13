@@ -22,7 +22,7 @@
 # ***************************************************************************
 
 __title__ = "FemInputWriterCcx"
-__author__ = "Przemo Firszt, Bernd Hahnebach"
+__author__ = "Przemo Firszt, Bernd Hahnebach, Michael Hindley "
 __url__ = "http://www.freecadweb.org"
 
 ## \addtogroup FEM
@@ -852,7 +852,10 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         f.write('** Outputs --> frd file\n')
         f.write('** written by {} function\n'.format(sys._getframe().f_code.co_name))
         if self.beamsection_objects or self.shellthickness_objects:
-            f.write('*NODE FILE, OUTPUT=2d\n')
+            if self.solver_obj.BeamShellResultOutput3D == False:
+                f.write('*NODE FILE, OUTPUT=2d\n')
+            else:
+                f.write('*NODE FILE, OUTPUT=3d\n')
         else:
             f.write('*NODE FILE\n')
         if self.analysis_type == "thermomech":  # MPH write out nodal temperatures if thermomechanical
