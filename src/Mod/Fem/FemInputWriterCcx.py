@@ -1034,7 +1034,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             f.write('*NODE PRINT , NSET=' + self.ccx_nall + '\n')
             f.write('U \n')
             f.write('*EL PRINT , ELSET=' + self.ccx_eall + '\n')
-            f.write('S \n')
+            f.write('EVOL,S \n')
 
     def write_step_end(self, f):
         f.write('\n***********************************************************\n')
