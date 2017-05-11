@@ -57,6 +57,10 @@ def insert(filename, docname):
         doc = FreeCAD.newDocument(docname)
     FreeCAD.ActiveDocument = doc
     importFrd(filename)
+    
+def insert3dresult(filename, analysis, docname):
+    "called when freecad wants to import 3D output in 3D anlysis"    
+    importFrd(filename, analysis ,docname, '3D')
 
 
 ########## module specific methods ##########
@@ -87,7 +91,7 @@ def importFrd(filename, analysis=None, result_name_prefix=None):
             z_span = abs(p_z_max - p_z_min)
             span = max(x_span, y_span, z_span)
 
-        if (not analysis):
+        if (not analysis) or (import_3D_mesh=='3D'):
             mesh = importToolsFem.make_femmesh(m)
 
             if len(m['Nodes']) > 0:
