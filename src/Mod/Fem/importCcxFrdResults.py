@@ -64,7 +64,7 @@ def insert3dresult(filename, analysis, docname):
 
 
 ########## module specific methods ##########
-def importFrd(filename, analysis=None, result_name_prefix=None):
+def importFrd(filename, analysis=None, result_name_prefix=None, import_3D_mesh=None):
     import importToolsFem
     import ObjectsFem
     if result_name_prefix is None:
