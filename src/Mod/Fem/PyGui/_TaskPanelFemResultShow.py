@@ -304,7 +304,7 @@ class _TaskPanelFemResultShow:
             self.mesh_obj.ViewObject.setNodeColorByScalars(self.result_obj.NodeNumbers, UserDefinedFormula)
         self.set_result_stats("", minm, avg, maxm)
         QtGui.qApp.restoreOverrideCursor()
-        del x, y, z, T, Von, Peeq, P1, P2, P3, sx, sy, sz, ex, ey, ez, MF, NP  # Dummy use to get around flake8, varibles not being used
+        del x, y, z, T, Von, Peeq, P1, P2, P3, sx, sy, sz, ex, ey, ez, MF, NP  # Dummy use to get around flake8, variables not being used
 
     def select_displacement_type(self, disp_type):
         QApplication.setOverrideCursor(Qt.WaitCursor)
@@ -400,14 +400,13 @@ class _TaskPanelFemResultShow:
     def update(self):
         self.suitable_results = False
         self.disable_empty_result_buttons()
-        fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx")
-        dimout = fem_prefs.GetBool("BeamShellOutput", False)
+        ccx_3d_output = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx").GetBool("BeamShellOutput", False)
         if (self.mesh_obj.FemMesh.NodeCount == len(self.result_obj.NodeNumbers)):
             self.suitable_results = True
             self.mesh_obj.ViewObject.Visibility = True
             hide_parts_constraints()
         else:
-            if not self.mesh_obj.FemMesh.VolumeCount and not dimout:
+            if not self.mesh_obj.FemMesh.VolumeCount and not ccx_3d_output:
                 error_message = 'FEM: Graphical bending stress output for beam or shell FEM Meshes not yet supported.\n'
                 FreeCAD.Console.PrintError(error_message)
                 QtGui.QMessageBox.critical(None, 'No result object', error_message)
