@@ -48,6 +48,7 @@ class _TaskPanelFemResultShow:
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/PyGui/TaskPanelFemResultShow.ui")
         self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/General")
         self.restore_result_settings_in_dialog = self.fem_prefs.GetBool("RestoreResultDialog", True)
+        
 
         # Connect Signals and Slots
         # result type radio buttons
@@ -399,12 +400,14 @@ class _TaskPanelFemResultShow:
     def update(self):
         self.suitable_results = False
         self.disable_empty_result_buttons()
+        fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx")
+        dimout = fem_prefs.GetBool("BeamShellOutput", False)
         if (self.mesh_obj.FemMesh.NodeCount == len(self.result_obj.NodeNumbers)):
             self.suitable_results = True
             self.mesh_obj.ViewObject.Visibility = True
             hide_parts_constraints()
         else:
-            if not self.mesh_obj.FemMesh.VolumeCount:
+            if not self.mesh_obj.FemMesh.VolumeCount and not dimout:
                 error_message = 'FEM: Graphical bending stress output for beam or shell FEM Meshes not yet supported.\n'
                 FreeCAD.Console.PrintError(error_message)
                 QtGui.QMessageBox.critical(None, 'No result object', error_message)
