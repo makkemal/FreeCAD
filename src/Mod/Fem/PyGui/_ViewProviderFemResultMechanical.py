@@ -66,7 +66,14 @@ class _ViewProviderFemResultMechanical:
         return True
 
     def setEdit(self, vobj, mode=0):
-
+        #Check for 3D resultmesh
+        members=FreeCAD.ActiveDocument.Analysis.Members
+        for member in members:
+            if member.isDerivedFrom("Fem::FemSolverObject"):
+                solverobj=member # get solver preferences
+            if member.isDerivedFrom("Fem::FemMeshObject"):
+                if hasattr(member, "ResultMesh"):
+                    resultsmesh=member
         if FemGui.getActiveAnalysis() is not None:
             if hasattr(self.Object, "Mesh") and self.Object.Mesh:
                 mem = FemGui.getActiveAnalysis().Member
