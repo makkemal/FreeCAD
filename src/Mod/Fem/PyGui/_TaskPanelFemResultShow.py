@@ -400,13 +400,14 @@ class _TaskPanelFemResultShow:
     def update(self):
         self.suitable_results = False
         self.disable_empty_result_buttons()
-        ccx_3d_output = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx").GetBool("BeamShellOutput", False)
+        #ccx_3d_output = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/Ccx").GetBool("BeamShellOutput", False)
+        ccx=FreeCAD.ActiveDocument.CalculiX
         if (self.mesh_obj.FemMesh.NodeCount == len(self.result_obj.NodeNumbers)):
             self.suitable_results = True
             self.mesh_obj.ViewObject.Visibility = True
             hide_parts_constraints()
         else:
-            if not self.mesh_obj.FemMesh.VolumeCount and not ccx_3d_output:
+            if not self.mesh_obj.FemMesh.VolumeCount and not ccx.BeamShellResultOutput3D:
                 error_message = 'FEM: Graphical bending stress output for beam or shell FEM Meshes not yet supported.\n'
                 FreeCAD.Console.PrintError(error_message)
                 QtGui.QMessageBox.critical(None, 'No result object', error_message)
