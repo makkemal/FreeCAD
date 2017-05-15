@@ -71,8 +71,13 @@ class _ViewProviderFemResultMechanical:
                 mem = FemGui.getActiveAnalysis().Member
                 if self.Object in mem:
                     if self.Object.Mesh in mem:
-                        if hasattr(mem.Name, "ResultMesh"):
-                            FreeCAD.Console.Printmessage("Found result mesh")
+                        for member in mem:
+                            if member.isDerivedFrom("Fem::FemMeshObject"):
+                                memresult=member
+                                FreeCAD.Console.PrintMessage(str(memresult.Name)+"\n")
+                                if memresult.Name=="ResultMesh":
+                                    FreeCAD.Console.PrintMessage("Found result mesh")
+                                    self.Object.Mesh=memresult #set mesh to ResultMesh
                         import PyGui._TaskPanelFemResultShow
                         taskd = PyGui._TaskPanelFemResultShow._TaskPanelFemResultShow(self.Object)
                         taskd.obj = vobj.Object
