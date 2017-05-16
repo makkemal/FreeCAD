@@ -19,6 +19,7 @@
 # *   USA                                                                   *
 # *                                                                         *
 # ***************************************************************************
+from __builtin__ import False
 
 __title__ = "Result Control Task Panel"
 __author__ = "Juergen Riegel, Michael Hindley"
@@ -431,6 +432,7 @@ class _TaskPanelFemResultShow:
 def hide_parts_constraints():
     fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/General")
     hide_constraints = fem_prefs.GetBool("HideConstraint", False)
+    ccx=FreeCAD.ActiveDocument.CalculiX 
     if hide_constraints:
         for acnstrmesh in FemGui.getActiveAnalysis().Member:
             if "Constraint" in acnstrmesh.TypeId:
@@ -440,3 +442,19 @@ def hide_parts_constraints():
                 for apart in FreeCAD.activeDocument().Objects:
                     if aparttoshow == apart.Name:
                         apart.ViewObject.Visibility = False
+                    
+     #check which mesh should be visible 3D results  
+    
+    mem=FemGui.getActiveAnalysis().Member                
+    for member in mem:
+        if member.isDerivedFrom("Fem::FemMeshObject"):                    
+            memresult=member
+            if memresult.Name=="ResultMesh" and ccx.BeamShellResultOutput3D:
+                FreeCAD.Console.PrintMessage("Found result mesh")
+            #    memresult.Viewobject.Visibilty = True 
+            elif ccx.BeamShellResultOutput3D:
+            #    memresult.Viewobject.Visibilty = False
+                
+                
+    
+                   
