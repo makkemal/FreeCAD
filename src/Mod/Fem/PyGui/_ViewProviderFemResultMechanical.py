@@ -75,7 +75,7 @@ class _ViewProviderFemResultMechanical:
                             if member.isDerivedFrom("Fem::FemMeshObject"):
                                 memresult=member
                                 FreeCAD.Console.PrintMessage(str(memresult.Name)+"\n")
-                                if memresult.Name=="ResultMesh":
+                                if memresult.Name=="ResultMesh"and not ccx.BeamShellResultOutput3D:
                                     FreeCAD.Console.PrintMessage("Found result mesh")
                                     self.Object.Mesh=memresult #set mesh to ResultMesh
                         import PyGui._TaskPanelFemResultShow
