@@ -251,6 +251,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             elif m.isDerivedFrom("Fem::FemMeshObject"):
                 if not self.mesh:
                     self.mesh = m
+                elif m.Name=='ResultMesh': #if 3D results mesh exist in object it is valid
+                    self.mesh = m        
                 else:
                     raise Exception('FEM: Multiple mesh in analysis not yet supported!')
             elif m.isDerivedFrom("App::MaterialObjectPython"):
