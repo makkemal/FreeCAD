@@ -439,22 +439,12 @@ def hide_parts_constraints():
                 acnstrmesh.ViewObject.Visibility = False
             if "Mesh" in acnstrmesh.TypeId:
                 aparttoshow = acnstrmesh.Name.replace("_Mesh", "")
-                for apart in FreeCAD.activeDocument().Objects:
-                    if aparttoshow == apart.Name:
+                for apart in FreeCAD.activeDocument().Objects: 
+                    if aparttoshow == apart.Name and not ccx.BeamShellResultOutput3D:
                         apart.ViewObject.Visibility = False
+                    else:
+                        apart.ViewObject.Visibility = True
                     
-     #check which mesh should be visible 3D results  
-    
-    mem=FemGui.getActiveAnalysis().Member                
-    for member in mem:
-        if member.isDerivedFrom("Fem::FemMeshObject"):                    
-            memresult=member
-            if memresult.Name=="ResultMesh" and ccx.BeamShellResultOutput3D:
-                FreeCAD.Console.PrintMessage("Found result mesh")
-            #    memresult.Viewobject.Visibilty = True 
-            elif ccx.BeamShellResultOutput3D:
-            #    memresult.Viewobject.Visibilty = False
-                
-                
+     
     
                    

@@ -114,7 +114,6 @@ def importFrd(filename, analysis=None, result_name_prefix=None, import_3D_mesh=N
             results = ObjectsFem.makeResultMechanical(results_name)
             for m in analysis_object.Member:  # TODO analysis could have multiple mesh objects in the future
                 if m.isDerivedFrom("Fem::FemMeshObject"):
-                    FreeCAD.Console.PrintMessage(str(m))
                     if import_3D_mesh=='3D':  #if 3d result import look for name  
                         results.Mesh = mesh_object
                     else:
