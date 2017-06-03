@@ -49,7 +49,7 @@ class _TaskPanelFemResultShow:
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/PyGui/TaskPanelFemResultShow.ui")
         self.fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/General")
         self.restore_result_settings_in_dialog = self.fem_prefs.GetBool("RestoreResultDialog", True)
-        
+
 
         # Connect Signals and Slots
         # result type radio buttons
@@ -432,19 +432,21 @@ class _TaskPanelFemResultShow:
 def hide_parts_constraints():
     fem_prefs = FreeCAD.ParamGet("User parameter:BaseApp/Preferences/Mod/Fem/General")
     hide_constraints = fem_prefs.GetBool("HideConstraint", False)
-    ccx=FreeCAD.ActiveDocument.CalculiX 
+    try:
+        ccx=FreeCAD.ActiveDocument.CalculiX.BeamShellResultOutput3D  #if result only imported no ccx object exists
+    except AttributeError:
+        ccx = False
     if hide_constraints:
         for acnstrmesh in FemGui.getActiveAnalysis().Member:
             if "Constraint" in acnstrmesh.TypeId:
                 acnstrmesh.ViewObject.Visibility = False
             if "Mesh" in acnstrmesh.TypeId:
                 aparttoshow = acnstrmesh.Name.replace("_Mesh", "")
-                for apart in FreeCAD.activeDocument().Objects: 
-                    if aparttoshow == apart.Name and not ccx.BeamShellResultOutput3D:
+                for apart in FreeCAD.activeDocument().Objects:
+                    if aparttoshow == apart.Name and not ccx:
                         apart.ViewObject.Visibility = False
                     else:
                         apart.ViewObject.Visibility = True
-                    
-     
-    
-                   
+
+
+
