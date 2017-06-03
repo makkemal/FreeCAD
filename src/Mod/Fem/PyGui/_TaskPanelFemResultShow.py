@@ -435,7 +435,7 @@ def hide_parts_constraints():
     try:
         ccx=FreeCAD.ActiveDocument.CalculiX.BeamShellResultOutput3D  #if result only imported no ccx object exists
     except AttributeError:
-        ccx = False
+        ccx = True
     if hide_constraints:
         for acnstrmesh in FemGui.getActiveAnalysis().Member:
             if "Constraint" in acnstrmesh.TypeId:
