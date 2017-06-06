@@ -57,9 +57,9 @@ def insert(filename, docname):
         doc = FreeCAD.newDocument(docname)
     FreeCAD.ActiveDocument = doc
     importFrd(filename)
-    
+
 def insert3dresult(filename, analysis, docname):
-    "called when FreeCAD wants to import 3D output in 3D analysis"    
+    "called when FreeCAD wants to import 3D output in 3D analysis"
     importFrd(filename, analysis ,docname, '3D')
 
 
@@ -95,7 +95,7 @@ def importFrd(filename, analysis=None, result_name_prefix=None, import_3D_mesh=N
             mesh = importToolsFem.make_femmesh(m)
 
             if len(m['Nodes']) > 0:
-                mesh_object = FreeCAD.ActiveDocument.addObject('Fem::FemMeshObject', 'ResultMesh')
+                mesh_object = FreeCAD.ActiveDocument.addObject('Fem::FemMeshObject', 'Result_mesh')
                 mesh_object.FemMesh = mesh
                 analysis_object.Member = analysis_object.Member + [mesh_object]
 
@@ -114,11 +114,11 @@ def importFrd(filename, analysis=None, result_name_prefix=None, import_3D_mesh=N
             results = ObjectsFem.makeResultMechanical(results_name)
             for m in analysis_object.Member:  # TODO analysis could have multiple mesh objects in the future
                 if m.isDerivedFrom("Fem::FemMeshObject"):
-                    if import_3D_mesh=='3D':  #if 3d result import look for name  
+                    if import_3D_mesh=='3D':  #if 3d result import look for name
                         results.Mesh = mesh_object
                     else:
                         results.Mesh = m
-                                
+
                     break
             results = importToolsFem.fill_femresult_mechanical(results, result_set, span)
             analysis_object.Member = analysis_object.Member + [results]
