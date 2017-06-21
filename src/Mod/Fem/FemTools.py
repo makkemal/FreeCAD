@@ -68,7 +68,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if (m.isDerivedFrom('Fem::FemResultObject')):
                 self.analysis.Document.removeObject(m.Name)
             elif (m.isDerivedFrom('Fem::FemMeshObject')):
-                if (m.Name=='Result_Mesh'):
+                if (m.Name=='Result_mesh'):
                    self.analysis.Document.removeObject(m.Name) #remove 3D Resultmesh
         self.results_present = False
 
@@ -251,7 +251,7 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             elif m.isDerivedFrom("Fem::FemMeshObject"):
                 if not self.mesh:
                     self.mesh = m
-                elif not m.Name=='Result_Mesh': #if 3D results mesh exist in object it is valid
+                elif not m.Name=='Result_mesh': #if 3D results mesh exist in object it is valid
                     raise Exception('FEM: Multiple mesh in analysis not yet supported!')
             elif m.isDerivedFrom("App::MaterialObjectPython"):
                 material_linear_dict = {}
