@@ -68,8 +68,8 @@ class FemTools(QtCore.QRunnable, QtCore.QObject):
             if (m.isDerivedFrom('Fem::FemResultObject')):
                 self.analysis.Document.removeObject(m.Name)
             elif (m.isDerivedFrom('Fem::FemMeshObject')):
-                if (m.Name=='ResultMesh'):
-                   self.analysis.Document.removeObject(m.Name) #remove 3D resultmesh 
+                if (m.Name=='Result_Mesh'):
+                   self.analysis.Document.removeObject(m.Name) #remove 3D Resultmesh
         self.results_present = False
 
     ## Resets mesh deformation
