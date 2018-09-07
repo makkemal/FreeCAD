@@ -30,7 +30,7 @@ __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 import os
-
+import numpy as np
 
 EIGENVALUE_OUTPUT_SECTION = "     E I G E N V A L U E   O U T P U T"
 
@@ -83,7 +83,15 @@ def readResult(
     dat_file = pyopen(dat_input, "r")
     eigenvalue_output_section_found = False
     mode_reading = False
-    results = []
+    results = []      
+    state_variables_found =False
+    delim= ' '
+    cols = {}
+    numcells=0
+    cells = []
+    empty=0
+    time = []
+    m = {}
 
     for line in dat_file:
         if EIGENVALUE_OUTPUT_SECTION in line:
@@ -103,6 +111,33 @@ def readResult(
                     # Conversion error after mode reading started, so it's the end of section
                     eigenvalue_output_section_found = False
                     mode_reading = False
+
+        if "internal state variables" in line:
+            # Found state variables
+            state_variables_found =True
+            time = str(line[75:89])
+            cells =[]        
+          
+            continue          
+        if state_variables_found:  
+            if line == '\n': 
+                empty=empty+1
+                if empty == 2:
+                    cells = np.array(cells)
+                    new_cells = np.zeros([int(len(cells)/np.max(cells[:,1])), np.shape(cells)[1]])
+    
+                    for i in range(int(len(new_cells))):
+                        for j in range(np.shape(new_cells)[1]):
+                            new_cells[i,j] = (np.mean(cells[(i*4):(i*4+3),j]) )
+                    
+                    m['Time ' + time] = new_cells
+                    empty=0
+                    state_variables_found =False          
+            else:
+                cells.append([np.float(x) for x in line.split(delim) if x != ''])
+            
+
+
 
     dat_file.close()
     return results
