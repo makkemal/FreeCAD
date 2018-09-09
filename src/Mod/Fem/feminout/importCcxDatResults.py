@@ -114,6 +114,7 @@ def readResult(dat_input):
                 empty=empty+1
                 if empty == 2:
                     cells = np.array(cells)
+                    m = {}
                     new_cells = np.zeros([int(len(cells)/np.max(cells[:,1])), np.shape(cells)[1]])
     
                     for i in range(int(len(new_cells))):
@@ -121,6 +122,8 @@ def readResult(dat_input):
                             new_cells[i,j] = (np.mean(cells[(i*4):(i*4+3),j]) )
                     
                     m['Time ' + time] = new_cells
+                    results.append(m)
+                    #FreeCAD.Console.PrintMessage("State var appended \n") 
                     empty=0
                     state_variables_found =False          
             else:
