@@ -33,7 +33,7 @@ import os
 import numpy as np
 
 EIGENVALUE_OUTPUT_SECTION = "     E I G E N V A L U E   O U T P U T"
-
+INTERNAL_STATE_VAR= "internal state variables"
 
 # ********* generic FreeCAD import and export methods *********
 if open.__module__ == '__builtin__':
@@ -112,7 +112,7 @@ def readResult(
                     eigenvalue_output_section_found = False
                     mode_reading = False
 
-        if "internal state variables" in line:
+        if INTERNAL_STATE_VAR in line:
             # Found state variables
             state_variables_found =True
             time = str(line[75:89])
@@ -129,7 +129,7 @@ def readResult(
     
                     for i in range(int(len(new_cells))):
                         for j in range(np.shape(new_cells)[1]):
-                            new_cells[i,j] = (np.mean(cells[(i*4):(i*4+3),j]) )
+                            new_cells[i,j] = (np.mean(cells[(i*4):(i*4+3),j]) ) # Integrations points to per element 
                     
                     m['Time ' + time] = new_cells
                     results.append(m)
