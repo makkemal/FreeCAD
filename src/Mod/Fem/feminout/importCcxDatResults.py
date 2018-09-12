@@ -115,8 +115,9 @@ def readResult(
         if INTERNAL_STATE_VAR in line:
             # Found state variables
             state_variables_found =True
-            time = str(line[75:89])
-            cells =[]        
+            time = float(line[75:89])
+            cells =[]   
+            newcells=[]     
           
             continue          
         if state_variables_found:  
@@ -124,20 +125,23 @@ def readResult(
                 empty=empty+1
                 if empty == 2:
                     cells = np.array(cells)
-                    m = {}
-                    new_cells = np.zeros([int(len(cells)/np.max(cells[:,1])), np.shape(cells)[1]])
-    
-                    for i in range(int(len(new_cells))):
-                        for j in range(np.shape(new_cells)[1]):
-                            new_cells[i,j] = (np.mean(cells[(i*4):(i*4+3),j]) ) # Integrations points to per element 
-                    
-                    m['Time ' + time] = new_cells
+                    elnums=np.unique(cells[:,0]) #Get unique Element numbers
+                    newcells = np.zeros([len(elnums),np.shape(cells)[1]])
+                    idx=0
+                    for elnum in elnums:
+                        subcel=cells[np.where(cells[:,0] == elnum)]
+                        subcel=(subcel.mean(axis=0))
+                        subcel=np.reshape(subcel,[1,len(subcel)])
+                        newcells[int(idx),:] = subcel
+                        idx+=1                   
+                    time_array = np.ones([len(newcells),1])*time  
+                    newcells = np.hstack([time_array,newcells])
+                    m[str(step)] = newcells
                     results.append(m)
-                    #FreeCAD.Console.PrintMessage("State var appended \n") 
                     empty=0
-                    state_variables_found =False          
-            else:
-                cells.append([np.float(x) for x in line.split(delim) if x != ''])
+                    state_variables_found =False             
+                else:
+                    cells.append([np.float(x) for x in line.split(delim) if x != ''])
             
 
 
