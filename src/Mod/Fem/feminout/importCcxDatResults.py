@@ -86,10 +86,10 @@ def readResult(
     results = []      
     state_variables_found =False
     delim= ' '
-    cols = {}
-    numcells=0
-    cells = []
     empty=0
+    step=0
+    cols = {}
+    cells = []
     time = []
     m = {}
 
@@ -139,9 +139,10 @@ def readResult(
                     m[str(step)] = newcells
                     results.append(m)
                     empty=0
+                    step+= 1
                     state_variables_found =False             
-                else:
-                    cells.append([np.float(x) for x in line.split(delim) if x != ''])
+            else:
+                cells.append([np.float(x) for x in line.split(delim) if x != ''])
             
 
 
