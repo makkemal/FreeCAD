@@ -34,6 +34,7 @@ import numpy as np
 
 EIGENVALUE_OUTPUT_SECTION = "     E I G E N V A L U E   O U T P U T"
 INTERNAL_STATE_VAR= "internal state variables"
+volume_foundstr="volume (element, volume)"
 
 # ********* generic FreeCAD import and export methods *********
 if open.__module__ == '__builtin__':
@@ -75,13 +76,17 @@ def readResult(dat_input):
     mode_reading = False
     results = []      
     state_variables_found =False
-    delim= ' '
+    volume_found=False
+    delim=' '
     empty=0
     step=0
+    vstep=0
     cols = {}
     cells = []
     time = []
     m = {}
+
+
 
     for line in dat_file:
         if EIGENVALUE_OUTPUT_SECTION in line:
@@ -126,14 +131,45 @@ def readResult(dat_input):
                         idx+=1                   
                     time_array = np.ones([len(newcells),1])*time  
                     newcells = np.hstack([time_array,newcells])
-                    m[str(step)] = newcells
+                    m['state'+str(step)] = newcells
                     results.append(m)
                     empty=0
                     step+= 1
                     state_variables_found =False             
             else:
                 cells.append([np.float(x) for x in line.split(delim) if x != ''])
-            
+        if volume_foundstr in line:
+            # Found volume
+            volume_found =True
+            time = float(line[50:63])
+            vcells =[] 
+            vnewcells=[]
+          
+            continue          
+        if volume_found:  
+            if line == '\n': 
+                empty=empty+1
+                if empty == 2:
+                    vcells = np.array(vcells)
+                    elnums=np.unique(vcells[:,0]) #Get unique Element numbers
+                    vnewcells = np.zeros([len(elnums),np.shape(vcells)[1]])
+                    idx=0
+                    for elnum in elnums:
+                        subcel=vcells[np.where(vcells[:,0] == elnum)]
+                        subcel=(subcel.mean(axis=0))
+                        subcel=np.reshape(subcel,[1,len(subcel)])
+                        vnewcells[int(idx),:] = subcel
+                        idx+=1                   
+                    time_array = np.ones([len(vnewcells),1])*time  
+                    vnewcells = np.hstack([time_array,vnewcells])
+                    m['vol'+str(vstep)] = vnewcells
+                    results.append(m)
+                    empty=0
+                    vstep+= 1
+                    volume_found =False          
+            else:
+                vcells.append([np.float(x) for x in line.split(delim) if x != ''])
+                        
 
 
 
