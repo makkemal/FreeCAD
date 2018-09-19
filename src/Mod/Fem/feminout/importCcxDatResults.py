@@ -63,6 +63,9 @@ def insert(filename, docname):
 
 # ********* module specific methods *********
 def import_dat(filename, Analysis=None):
+    with open(filename, "a") as myfile:
+        myfile.write('end \n')  # Add extra line to indicate end
+        myfile.close()
     r = readResult(filename)
     # print("Results {}".format(r))
     return r
@@ -116,9 +119,9 @@ def readResult(dat_input):
           
             continue          
         if state_variables_found:  
-            if line == '\n': 
+            if line == '\n' or line == 'end \n': 
                 empty=empty+1
-                if empty == 2:
+                if empty == 2 or line == 'end \n':  
                     cells = np.array(cells)
                     elnums=np.unique(cells[:,0]) #Get unique Element numbers
                     newcells = np.zeros([len(elnums),np.shape(cells)[1]])
@@ -136,7 +139,7 @@ def readResult(dat_input):
                     empty=0
                     step+= 1
                     state_variables_found =False             
-            else:
+            elif line != 'end \n':
                 cells.append([np.float(x) for x in line.split(delim) if x != ''])
         if volume_foundstr in line:
             # Found volume
@@ -147,17 +150,16 @@ def readResult(dat_input):
           
             continue          
         if volume_found:  
-            if line == '\n': 
+            if line == '\n' or line == 'end \n': 
                 empty=empty+1
-                if empty == 2:
+                if empty == 2 or line == 'end \n':  
+                    
                     vcells = np.array(vcells)
                     elnums=np.unique(vcells[:,0]) #Get unique Element numbers
                     vnewcells = np.zeros([len(elnums),np.shape(vcells)[1]])
                     idx=0
                     for elnum in elnums:
                         subcel=vcells[np.where(vcells[:,0] == elnum)]
-                        subcel=(subcel.mean(axis=0))
-                        subcel=np.reshape(subcel,[1,len(subcel)])
                         vnewcells[int(idx),:] = subcel
                         idx+=1                   
                     time_array = np.ones([len(vnewcells),1])*time  
@@ -167,9 +169,8 @@ def readResult(dat_input):
                     empty=0
                     vstep+= 1
                     volume_found =False          
-            else:
+            elif line != 'end \n':
                 vcells.append([np.float(x) for x in line.split(delim) if x != ''])
-                        
 
 
 
