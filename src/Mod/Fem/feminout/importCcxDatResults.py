@@ -68,19 +68,17 @@ def insert(
 
 # ********* module specific methods *********
 def import_dat(
-    with open(filename, "a") as myfile:
-        myfile.write('end \n')  # Add extra line to indicate end
-        myfile.close()
     r = readResult(filename)
     # print("Results {}".format(r))
     return r
 
 
 # read a calculix result file and extract the data
-def readResult(
-    dat_input
-):
-    FreeCAD.Console.PrintMessage('Read ccx results from dat file: {}\n'.format(dat_input))
+def readResult(dat_input):
+    print('Read ccx results from dat file: ' + dat_input)
+    with pyopen(dat_input, "a") as myfile:
+        myfile.write('end \n')  # Add extra line to indicate end
+        myfile.close()
     dat_file = pyopen(dat_input, "r")
     eigenvalue_output_section_found = False
     mode_reading = False
