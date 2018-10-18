@@ -38,7 +38,13 @@ class _FemElementFluid1D:
         'PIPE MANNING', 'PIPE ENLARGEMENT', 'PIPE CONTRACTION', 'PIPE INLET', 'PIPE OUTLET', 'PIPE ENTRANCE',
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
-    known_gas_types = ['NONE']
+    known_gas_types = [
+        'Orifice','Bleed Tapping','Preswirl Nozzle','Straight and Stepped Labyrinth','Characteristic',
+        'Carbon Seal','Gas Pipe (Fanno)','Restrictor,Long Orifice','Restrictor, Enlargement',
+        'Restrictor, Contraction','Restrictor, Bend','Restrictor, Wall Orifice','Restrictor, Entrance',
+        'Restrictor, Exit','Restrictor, User','Branch, Joint','Branch, Split','Cross, Split','Vortex',
+        'Möhring','Change absolute/relative system','In/Out','Mass Flow Percent','Network User Element'
+    ]
     known_channel_types = ['NONE']
 
     def __init__(self, obj):
