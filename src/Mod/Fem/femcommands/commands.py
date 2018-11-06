@@ -147,6 +147,20 @@ class _ClippingPlaneRemoveAll(CommandManager):
         FreeCADGui.doCommand(line1 + line2 + line3)
 
 
+class _ConstraintAutoContact(CommandManager):
+    "The FEM_AutoContact command definition"
+    def __init__(self):
+        super(_ConstraintAutoContact, self).__init__()
+        self.resources = {"Pixmap": "fem-constraint-autocontact",
+                          "MenuText": QtCore.QT_TRANSLATE_NOOP("AutoContact", "Create auto contact for compound object"),
+                          # "Accel": "Z, Z",
+                          "ToolTip": QtCore.QT_TRANSLATE_NOOP("AutoContact", "Create auto contact for compound object")}
+        self.is_active = "with_document"
+
+    def Activated(self):
+        self.add_obj_on_gui_set_edit(self.__class__.__name__.lstrip("_"))
+
+
 class _ConstraintBodyHeatSource(CommandManager):
     "The FEM_ConstraintBodyHeatSource command definition"
 
@@ -1099,7 +1113,11 @@ FreeCADGui.addCommand(
     _ClippingPlaneRemoveAll()
 )
 FreeCADGui.addCommand(
-    "FEM_ConstraintBodyHeatSource",
+    "FEM_AutoContact",
+    _ConstraintAutoContact()
+)
+FreeCADGui.addCommand(
+    "FEM_ConstraintBodyHeatSource"
     _ConstraintBodyHeatSource()
 )
 FreeCADGui.addCommand(

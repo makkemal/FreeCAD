@@ -176,7 +176,8 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
      Gui::ToolBarItem* utils = new Gui::ToolBarItem(root);
      utils->setCommand("Utilities");
      *utils << "FEM_ClippingPlaneAdd"
-            << "FEM_ClippingPlaneRemoveAll";
+            << "FEM_ClippingPlaneRemoveAll"
+            << "FEM_AutoContact";
 
     return root;
 }
@@ -306,7 +307,8 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     root->insertItem(item, utils);
     utils->setCommand("Utilities");
     *utils << "FEM_ClippingPlaneAdd"
-           << "FEM_ClippingPlaneRemoveAll";
+           << "FEM_ClippingPlaneRemoveAll"
+    	   << "FEM_AutoContact";
 
     return root;
 }
