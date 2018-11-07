@@ -14,6 +14,7 @@
         <file>icons/fem-clipping-plane-remove-all.svg</file>
         <file>icons/fem-constraint-bearing.svg</file>
         <file>icons/fem-constraint-contact.svg</file>
+        <file>icons/fem-constraint-autocontact.svg</file>
         <file>icons/fem-constraint-displacement.svg</file>
         <file>icons/fem-constraint-fixed.svg</file>
         <file>icons/fem-constraint-flow-velocity.svg</file>
