@@ -109,13 +109,16 @@ class _CommandFemAutoContact(CommandManager):
     "The FEM_AutoContact command definition"
     def __init__(self):
         super(_CommandFemAutoContact, self).__init__()
-        self.resources = {'Pixmap': 'fem-auto-contact',
-                          'MenuText': QtCore.QT_TRANSLATE_NOOP("Contact", "Create Auto contact for Compound object"),
+        self.resources = {'Pixmap': 'fem-constraint-autocontact',
+                          'MenuText': QtCore.QT_TRANSLATE_NOOP("AutoContact", "Create auto contact for compound object"),
                           # 'Accel': "Z, Z",
-                          'ToolTip': QtCore.QT_TRANSLATE_NOOP("Contact", "Create Auto contact for Compound object")}
+                          'ToolTip': QtCore.QT_TRANSLATE_NOOP("AutoContact", "Create auto contact for compound object")}
         self.is_active = 'with_document'
 
     def Activated(self):
+        FreeCAD.ActiveDocument.openTransaction("Create FemAutoContact")
+        FreeCADGui.addModule("ObjectsFem")
+        FreeCADGui.Selection.clearSelection()
         FreeCAD.ActiveDocument.recompute()
 
 
