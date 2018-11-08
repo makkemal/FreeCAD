@@ -157,7 +157,7 @@ Gui::ToolBarItem* Workbench::setupToolBars() const
      utils->setCommand("Results");
      *utils << "FEM_ClippingPlaneAdd"
             << "FEM_ClippingPlaneRemoveAll"
-            << "FEM_AutoContactApply";
+            << "FEM_AutoContact";
 
     return root;
 }
@@ -287,7 +287,7 @@ Gui::MenuItem* Workbench::setupMenuBar() const
     utils->setCommand("Utilities");
     *utils << "FEM_ClippingPlaneAdd"
            << "FEM_ClippingPlaneRemoveAll"
-    	   << "FEM_AutoContactApply";
+    	   << "FEM_AutoContact";
 
     return root;
 }

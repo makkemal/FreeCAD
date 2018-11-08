@@ -105,10 +105,10 @@ class _CommandFemClippingPlaneRemoveAll(CommandManager):
         FreeCADGui.doCommand("nodes = sg.getChildren()")
         FreeCADGui.doCommand(line1 + line2 + line3)
 
-class _CommandFemFEM_AutoContactApply(CommandManager):
+class _CommandFemAutoContact(CommandManager):
     "The FEM_AutoContact command definition"
     def __init__(self):
-        super(_CommandFemAutoContactApply, self).__init__()
+        super(_CommandFemAutoContact, self).__init__()
         self.resources = {'Pixmap': 'fem-auto-contact',
                           'MenuText': QtCore.QT_TRANSLATE_NOOP("Contact", "Create Auto contact for Compound object"),
                           # 'Accel': "Z, Z",
@@ -848,7 +848,7 @@ class _CommandFemSolverZ88(CommandManager):
 FreeCADGui.addCommand('FEM_Analysis', _CommandFemAnalysis())
 FreeCADGui.addCommand('FEM_ClippingPlaneAdd', _CommandFemClippingPlaneAdd())
 FreeCADGui.addCommand('FEM_ClippingPlaneRemoveAll', _CommandFemClippingPlaneRemoveAll())
-FreeCADGui.addCommand('FEM_AutoContactApply', _CommandFemAutoContactApply())
+FreeCADGui.addCommand('FEM_AutoContact', _CommandFemAutoContact())
 FreeCADGui.addCommand('FEM_ConstraintBodyHeatSource', _CommandFemConstraintBodyHeatSource())
 FreeCADGui.addCommand('FEM_ConstraintElectrostaticPotential', _CommandFemConstraintElectrostaticPotential())
 FreeCADGui.addCommand('FEM_ConstraintFlowVelocity', _CommandFemConstraintFlowVelocity())

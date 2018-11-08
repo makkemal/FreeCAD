@@ -176,6 +176,7 @@ SET(FemTools_SRCS
 
 SET(FemObjectsScripts_SRCS
     femobjects/__init__.py
+    femobjects/_FemConstraintAutoContact.py
     femobjects/_FemConstraintBodyHeatSource.py
     femobjects/_FemConstraintElectrostaticPotential.py
     femobjects/_FemConstraintFlowVelocity.py

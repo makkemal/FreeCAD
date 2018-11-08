@@ -60,6 +60,10 @@ def makeConstraintContact(doc, name="ConstraintContact"):
     obj = doc.addObject("Fem::ConstraintContact", name)
     return obj
 
+def makeConstraintAutoContact(doc, name="ConstraintAutoContact"):
+    '''makeConstraintAutoContact(document, [name]): makes a Fem ConstraintAutoContact object'''
+    obj = doc.addObject("Fem::ConstraintAutoContact", name)
+    return obj
 
 def makeConstraintDisplacement(doc, name="ConstraintDisplacement"):
     '''makeConstraintDisplacement(document, [name]): makes a Fem ConstraintDisplacement object'''
