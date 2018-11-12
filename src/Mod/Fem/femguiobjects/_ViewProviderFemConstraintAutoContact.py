@@ -33,7 +33,7 @@ import FemGui  # needed to display the icons in TreeView
 False if False else FemGui.__name__  # dummy usage of FemGui for flake8, just returns 'FemGui'
 
 
-class _ViewProviderFemConstraintSelfWeight:
+class _ViewProviderFemConstraintAutoContact:
     "A View Provider for the FemConstraintAutoContact object"
     def __init__(self, vobj):
         vobj.Proxy = self
@@ -71,3 +71,13 @@ class _ViewProviderFemConstraintSelfWeight:
 
     def __setstate__(self, state):
         return None
+    
+class _TaskPanelFemAutoContact:
+    '''The TaskPanel for editing References property of AutoContact objects'''
+
+    def __init__(self, obj):
+
+        self.obj = obj
+
+        # parameter widget
+        self.parameterWidget = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui")    
