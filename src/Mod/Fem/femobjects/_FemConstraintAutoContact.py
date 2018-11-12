@@ -28,13 +28,13 @@ __url__ = "http://www.freecadweb.org"
 #  \ingroup FEM
 
 
-class _ConstraintAutoContact:
-    "The FemConstraintAutoContact object"
+class _FemConstraintAutoContact:
+    "The ConstraintAutoContact object"
     def __init__(self, obj):
         obj.addProperty("App::PropertyFloat", "stiffness", "stiffness", "Stifness for all auto constraints")
         obj.addProperty("App::PropertyFloat", "friction", "friction", "Friction for all autoconstraints")
         obj.Proxy = self
-        self.Type = "Fem::ConstraintAutoContact"
+        self.Type = "Fem::FemConstraintAutoContact"
 
     def execute(self, obj):
         return
