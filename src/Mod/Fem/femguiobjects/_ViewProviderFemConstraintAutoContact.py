@@ -80,4 +80,32 @@ class _TaskPanelFemAutoContact:
         self.obj = obj
 
         # parameter widget
-        self.parameterWidget = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui")    
+        self.parameterWidget = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui") 
+        QtCore.QObject.connect(self.form.btnAddContact, QtCore.SIGNAL("clicked()"), self.add_contact)
+        QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope) 
+        QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
+        self.update()
+        
+    def accept(self):
+        self.obj.slope = self.slope
+        self.obj.friction = self.friction
+        self.recompute_and_set_back_all()
+        return True
+
+    def reject(self):
+        self.recompute_and_set_back_all()
+        return True
+
+    def recompute_and_set_back_all(self):
+        doc = FreeCADGui.getDocument(self.obj.Document)
+        doc.Document.recompute()
+        self.selectionWidget.setback_listobj_visibility()
+        if self.selectionWidget.sel_server:
+            FreeCADGui.Selection.removeObserver(self.selectionWidget.sel_server)
+        doc.resetEdit()
+
+    def set_slope(self, base_quantity_value):
+        self.slope = base_quantity_value
+        
+    def set_slope(self, base_quantity_value):
+        self.friction = base_quantity_value
