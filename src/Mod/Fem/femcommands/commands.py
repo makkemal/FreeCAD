@@ -118,6 +118,7 @@ class _CommandFemAutoContact(CommandManager):
     def Activated(self):
         FreeCAD.ActiveDocument.openTransaction("Create FemAutoContact")
         FreeCADGui.addModule("ObjectsFem")
+        FreeCADGui.doCommand("FemGui.getActiveAnalysis().addObject(ObjectsFem.makeConstraintAutoContact(FreeCAD.ActiveDocument))")
         FreeCADGui.Selection.clearSelection()
         FreeCAD.ActiveDocument.recompute()
 
