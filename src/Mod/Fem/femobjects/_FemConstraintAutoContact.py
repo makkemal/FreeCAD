@@ -28,7 +28,7 @@ __url__ = "http://www.freecadweb.org"
 #  \ingroup FEM
 
 
-class _FemConstraintAutoContact:
+class _ConstraintAutoContact:
     "The FemConstraintAutoContact object"
     def __init__(self, obj):
         obj.addProperty("App::PropertyFloat", "stiffness", "stiffness", "Stifness for all auto constraints")
