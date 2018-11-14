@@ -34,7 +34,7 @@ class _FemConstraintAutoContact:
         obj.addProperty("App::PropertyFloat", "stiffness", "stiffness", "Stifness for all auto constraints")
         obj.addProperty("App::PropertyFloat", "friction", "friction", "Friction for all autoconstraints")
         obj.Proxy = self
-        self.Type = "Fem::FemConstraintAutoContact"
+        self.Type = "Fem::FeaturePython"
 
     def execute(self, obj):
         return
