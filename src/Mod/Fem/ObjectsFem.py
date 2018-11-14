@@ -63,11 +63,11 @@ def makeConstraintContact(doc, name="ConstraintContact"):
 def makeConstraintAutoContact(doc, name="ConstraintAutoContact"):
     '''makeConstraintAutoContact(document, [name]): makes a Fem ConstraintAutoContact object'''
     obj = doc.addObject("Fem::FeaturePython", name)
-    from femobjects import _FemConstraintAutocontact
-    _FemConstraintAutocontact.Proxy(obj)
+    from femobjects import _FemConstraintAutoContact
+    _FemConstraintAutoContact
     if FreeCAD.GuiUp:
-        from femguiobjects import _ViewProviderFemConstraintAutocontact
-        _ViewProviderFemConstraintAutocontact.ViewProxy(obj.ViewObject)
+        from femguiobjects import _ViewProviderFemConstraintAutoContact
+        _ViewProviderFemConstraintAutoContact
     return obj
 
 def makeConstraintDisplacement(doc, name="ConstraintDisplacement"):

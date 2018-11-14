@@ -86,6 +86,7 @@ class _TaskPanelFemAutoContact:
         QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
         self.update()
         
+        
     def accept(self):
         self.obj.slope = self.slope
         self.obj.friction = self.friction

@@ -253,6 +253,7 @@ INSTALL(FILES ${FemObjectsScripts_SRCS} DESTINATION Mod/Fem/femobjects)
 SET(FemGuiScripts_SRCS
     femguiobjects/__init__.py
     femguiobjects/_TaskPanelFemSolverControl.py
+    femguiobjects/_ViewProviderFemConstraintAutoContact.py
     femguiobjects/_ViewProviderFemConstraintBodyHeatSource.py
     femguiobjects/_ViewProviderFemConstraintElectrostaticPotential.py
     femguiobjects/_ViewProviderFemConstraintFlowVelocity.py
