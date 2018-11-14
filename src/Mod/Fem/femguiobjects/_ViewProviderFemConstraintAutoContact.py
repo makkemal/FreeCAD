@@ -52,6 +52,7 @@ class _ViewProviderFemConstraintAutoContact:
         return
 
     def setEdit(self, vobj, mode=0):
+        taskd = _TaskPanelFemAutoContact(self.Object)
         return False
 
     def doubleClicked(self, vobj):
