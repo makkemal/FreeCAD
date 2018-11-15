@@ -102,7 +102,7 @@
      <item>
       <widget class="QDoubleSpinBox" name="spFaceNum">
        <property name="decimals">
-        <number>0</number>
+        <number>1</number>
        </property>
        <property name="value">
         <double>3.000000000000000</double>
