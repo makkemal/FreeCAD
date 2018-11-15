@@ -31,10 +31,12 @@ __url__ = "http://www.freecadweb.org"
 class _FemConstraintAutoContact:
     "The ConstraintAutoContact object"
     def __init__(self, obj):
-        obj.addProperty("App::PropertyFloat", "stiffness", "stiffness", "Stifness for all auto constraints")
+        obj.addProperty("App::PropertyFloat", "slope", "slope", "Stifness for all auto constraints")
         obj.addProperty("App::PropertyFloat", "friction", "friction", "Friction for all autoconstraints")
         obj.Proxy = self
         self.Type = "Fem::FeaturePython"
+        obj.slope=100000
+        obj.friction=0.3
 
     def execute(self, obj):
         return

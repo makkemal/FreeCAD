@@ -32,6 +32,12 @@ import FreeCADGui
 import FemGui  # needed to display the icons in TreeView
 False if False else FemGui.__name__  # dummy usage of FemGui for flake8, just returns 'FemGui'
 
+# for the panel
+from femobjects import _FemConstraintAutoContact
+from PySide import QtCore
+from PySide import QtGui
+from . import FemSelectionWidgets
+
 
 class _ViewProviderFemConstraintAutoContact:
     "A View Provider for the FemConstraintAutoContact object"
@@ -42,8 +48,17 @@ class _ViewProviderFemConstraintAutoContact:
         return ":/icons/fem-constraint-autocontact.svg"
 
     def attach(self, vobj):
+        from pivy import coin
         self.ViewObject = vobj
         self.Object = vobj.Object
+        self.standard = coin.SoGroup()
+        vobj.addDisplayMode(self.standard, "Default")
+        
+    def getDisplayModes(self, obj):
+        return ["Default"]
+
+    def getDefaultDisplayMode(self):
+        return "Default"
 
     def updateData(self, obj, prop):
         return
@@ -52,8 +67,15 @@ class _ViewProviderFemConstraintAutoContact:
         return
 
     def setEdit(self, vobj, mode=0):
+        # hide all meshes
+        for o in FreeCAD.ActiveDocument.Objects:
+            if o.isDerivedFrom("Fem::FemMeshObject"):
+                o.ViewObject.hide()
+        # show task panel
         taskd = _TaskPanelFemAutoContact(self.Object)
-        return False
+        taskd.obj = vobj.Object
+        FreeCADGui.Control.showDialog(taskd)
+        return True
 
     def doubleClicked(self, vobj):
         guidoc = FreeCADGui.getDocument(vobj.Object.Document)
@@ -81,21 +103,20 @@ class _TaskPanelFemAutoContact:
         self.obj = obj
 
         # parameter widget
-        self.parameterWidget = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui") 
+        self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui") 
         QtCore.QObject.connect(self.form.btnAddContact, QtCore.SIGNAL("clicked()"), self.add_contact)
         QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope) 
         QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
-        self.update()
-        
-        
+        self.get_values()
+               
     def accept(self):
         self.obj.slope = self.slope
         self.obj.friction = self.friction
-        self.recompute_and_set_back_all()
+        
         return True
 
     def reject(self):
-        self.recompute_and_set_back_all()
+        
         return True
 
     def recompute_and_set_back_all(self):
@@ -105,9 +126,21 @@ class _TaskPanelFemAutoContact:
         if self.selectionWidget.sel_server:
             FreeCADGui.Selection.removeObserver(self.selectionWidget.sel_server)
         doc.resetEdit()
+        
+    def add_contact(self):
+        from femtools import femutils
+        femutils.AddAutoContact(self.slope,self.friction)
 
     def set_slope(self, base_quantity_value):
         self.slope = base_quantity_value
         
-    def set_slope(self, base_quantity_value):
+    def set_friction(self, base_quantity_value):
         self.friction = base_quantity_value
+        
+    def get_values(self):
+        self.slope = self.obj.slope 
+        self.friction= self.obj.friction
+        
+           
+         
+           

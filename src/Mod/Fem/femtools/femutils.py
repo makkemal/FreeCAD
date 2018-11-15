@@ -137,11 +137,93 @@ def getSelectedFace(selectionex):
                 return aFace
     return aFace
 
+def find_index_of_nearest(array, idx, num):
+    import numpy as np
+    xpoint = array[idx, 0]
+    ypoint = array[idx, 1]
+    zpoint = array[idx, 2]
+    distance = []
+    for i in range(array.shape[0]):
+        distance.append((array[i, 0] - xpoint) ** 2 + (array[i, 1] - ypoint) ** 2 + (array[i, 2] - zpoint) ** 2)       
+    idxmin = np.argpartition(np.array(distance), num)
+    idxmin = np.array(idxmin[0:num])
+    idxmin = np.delete(idxmin, np.where(idxmin == idx))  
+    return idxmin
 
-class AddAutoContact(slope,friction):
+def get_all_close_surfaces(array, num):
+    import numpy as np
+    store = []
+    for i in range(array.shape[0]):
+        store.append(find_index_of_nearest(array, i, num))    
+    return store
+
+def addcontactobjects(array,geom,Slope,Friction):
     import FreeCADGui, FreeCAD 
     import numpy as np
-    import femmesh.meshtools
+    idxfaces = []
+    iidx = 0
+    idxi = 0
+    for i in array:
+        for j in i:
+            FreeCAD.activeDocument().addObject("Fem::ConstraintContact", "FemConstraintContact")
+            idxfaces = np.append(idxfaces, [iidx, j])
+        iidx += 1
+    idxfaces = idxfaces.reshape(int(len(idxfaces) / 2), 2)    
+    # print(idxfaces.shape)
+    for obj in FreeCAD.ActiveDocument.Objects:
+        if (obj.isDerivedFrom('Fem::ConstraintContact')):
+            objName = obj.Name
+            # print(objName)
+            obj.Slope = Slope
+            obj.Friction = Friction
+            obj.Scale = 1  #assume full object in contact 
+            face1 = 'Face' + str(idxfaces[idxi, 0] + 1)
+            # print(face1)
+            face2 = 'Face' + str(idxfaces[idxi, 1] + 1)
+            # print(face2)
+            obj.References = [(geom, face1), (geom, face2)]  
+            idxi += 1
+
+def get_same_surfaces(mainarray, rowsub):
+    import numpy as np
+    indx = 0
+    for row in mainarray:
+        if np.array_equal(row, rowsub):
+            # print("Got it",row,rowsub,indx)
+            idxr = indx
+        indx += 1
+    return idxr
+
+def multidelete(values, todelete):
+    import numpy as np
+    todelete = np.array(todelete)
+    shift = np.triu((todelete >= todelete[:, None]), 1).sum(0)
+    return np.delete(values, todelete + shift)
+
+def remove_same_sol_face(array, locidx):
+    import numpy as np
+    rownew = []
+    newmat = []
+    # indx=0
+    for i in range(array.shape[0]):
+        solnum = locidx[i]
+        toremove = np.array(np.where(locidx == solnum)[0])
+        row = np.array(array[i, :])
+        delistidx = []
+        for i in toremove:
+            rownew = np.array(np.where(row == i)[0])
+            if len(rownew) >= 1:
+                delistidx = np.append(delistidx, rownew[0])
+        delistidx = np.sort(delistidx)[::-1]    
+        newrow = multidelete(row, delistidx)
+        newmat.append(newrow)
+    # print(newmat)
+    return newmat
+
+
+def AddAutoContact(Slope,Friction):
+    import FreeCADGui, FreeCAD 
+    import numpy as np
     import FemGui
     import ObjectsFem
     locations = []
@@ -150,89 +232,6 @@ class AddAutoContact(slope,friction):
     dicti = {}
     # Variables
     num = 0  # Number of nearest neigbours to be found 
-    Slope = slope  # Contact stiffness
-    Friction = friction  # Friction 
-    Scale = 1  # Scale
-
-    def find_index_of_nearest(array, idx,num ):
-        xpoint=array[idx,0]
-        ypoint=array[idx,1]
-        zpoint=array[idx,2]
-        distance = []
-        for i in range(array.shape[0]):
-            distance.append((array[i,0]-xpoint)**2 + (array[i,1]-ypoint)**2+ (array[i,2]-zpoint)**2)       
-        idxmin = np.argpartition(np.array(distance), num)
-        idxmin=np.array(idxmin[0:num])
-        idxmin=np.delete(idxmin,np.where(idxmin==idx))  
-        return idxmin
-    
-    def get_all_close_surfaces(array, num):
-        store = []
-        for i in range(array.shape[0]):
-            store.append(find_index_of_nearest(array,i,num))    
-        return store
-    
-    
-    def addcontactobjects(array,geom):
-        idxfaces=[]
-        iidx=0
-        idxi=0
-        for i in array:
-            for j in i:
-                FreeCAD.activeDocument().addObject("Fem::ConstraintContact","FemConstraintContact")
-                idxfaces=np.append(idxfaces,[iidx,j])
-            iidx+=1
-        idxfaces=idxfaces.reshape(int(len(idxfaces)/2),2)    
-        #print(idxfaces.shape)
-        for obj in FreeCAD.ActiveDocument.Objects:
-            if (obj.isDerivedFrom('Fem::ConstraintContact')):
-                objName = obj.Name
-                #print(objName)
-                obj.Slope = Slope
-                obj.Friction = Friction
-                obj.Scale = Scale
-                face1='Face'+str(idxfaces[idxi,0]+1)
-                #print(face1)
-                face2='Face'+str(idxfaces[idxi,1]+1)
-                #print(face2)
-                obj.References = [(geom,face1), (geom,face2)]  
-                idxi+=1
-    
-    def get_same_surfaces(mainarray,rowsub):
-        indx=0
-        for row in mainarray:
-            if np.array_equal(row, rowsub):
-                #print("Got it",row,rowsub,indx)
-                idxr=indx
-            indx+=1
-        return idxr
-    
-    def multidelete(values,todelete):
-       todelete=np.array(todelete)
-       shift=np.triu((todelete>=todelete[:,None]),1).sum(0)
-       return np.delete(values,todelete+shift)
-    
-    
-    def remove_same_sol_face(array,locidx):
-        rownew=[]
-        newmat=[]
-        #indx=0
-        for i in range(array.shape[0]):
-            solnum=locidx[i]
-            toremove=np.array(np.where(locidx == solnum)[0])
-            row=np.array(array[i,:])
-            delistidx=[]
-            for i in toremove:
-                rownew = np.array(np.where(row==i)[0] )
-                if len(rownew) >= 1:
-                    delistidx=np.append(delistidx,rownew[0])
-            delistidx=np.sort(delistidx)[::-1]    
-            newrow=multidelete(row,delistidx)
-            newmat.append(newrow)
-        #print(newmat)
-        return newmat
-    
-    
     try:
         for obj in FreeCAD.ActiveDocument.Objects:  # seach all objects in document
             objName = obj.Name
@@ -248,9 +247,7 @@ class AddAutoContact(slope,friction):
     #                         print(face)
                              surfaceloc=np.array(obj.Shape.Faces[face].CenterOfMass)  # center point
                              locations.append(surfaceloc)
-    #                        print(surfaceloc)                        
-                             
-                                                              
+    #                        print(surfaceloc)                                                                                  
                     else:
                        print("No object found to apply contact ",objName)
                        locationsub = []
@@ -281,4 +278,4 @@ class AddAutoContact(slope,friction):
              locsub[index]=idx
         idx+=1     
     uniqueres=remove_same_sol_face(results,locsub)
-    addcontactobjects(uniqueres,objcomp)    
+    addcontactobjects(uniqueres,objcomp,Slope,Friction)    
