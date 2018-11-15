@@ -221,7 +221,7 @@ def remove_same_sol_face(array, locidx):
     return newmat
 
 
-def AddAutoContact(Slope,Friction):
+def AddAutoContact(Slope,Friction,Facenum):
     import FreeCADGui, FreeCAD 
     import numpy as np
     import FemGui
@@ -265,7 +265,7 @@ def AddAutoContact(Slope,Friction):
     except Exception:
         print("Not object")
     locations = np.array(locations)
-    num=num+3 #select at least 3 more faces tahn biggest subobject has 
+    num=num+Facenum #select at least xxx more faces tahn biggest subobject has 
     results = np.array(get_all_close_surfaces(locations,num))
     #np.save("resultmat.npy",results)
     #print(results)

@@ -112,6 +112,7 @@ class _TaskPanelFemAutoContact:
         QtCore.QObject.connect(self.form.btnRMContact, QtCore.SIGNAL("clicked()"), self.rm_contact)
         QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope) 
         QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
+        QtCore.QObject.connect(self.form.spFaceNum, QtCore.SIGNAL("valueChanged(int)"), self.set_face) 
         self.get_values()
                
     def accept(self):
@@ -132,7 +133,7 @@ class _TaskPanelFemAutoContact:
         
     def add_contact(self):
         from femtools import femutils
-        femutils.AddAutoContact(self.slope,self.friction)
+        femutils.AddAutoContact(self.slope,self.friction,self.facenum)
 
     def set_slope(self, base_quantity_value):
         self.slope = base_quantity_value
@@ -143,12 +144,19 @@ class _TaskPanelFemAutoContact:
     def get_values(self):
         self.slope = self.obj.slope 
         self.friction= self.obj.friction
+        self.facenum=self.obj.facenum
+        
+    def set_values(self):
+        self.obj.slope = self.slope 
+        self.obj.friction= self.friction
+        self.obj.facenum=self.facenum
         
     def rm_contact(self):
         for obj in FreeCAD.ActiveDocument.Objects:
             if (obj.isDerivedFrom('Fem::ConstraintContact')):
                 FreeCAD.ActiveDocument.removeObject(obj.Name)
         
-           
+    def set_face(self, base_quantity_value):
+        self.facenum = base_quantity_value
          
            
