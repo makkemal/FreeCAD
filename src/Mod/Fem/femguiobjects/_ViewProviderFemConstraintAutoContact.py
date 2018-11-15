@@ -76,7 +76,11 @@ class _ViewProviderFemConstraintAutoContact:
         taskd.obj = vobj.Object
         FreeCADGui.Control.showDialog(taskd)
         return True
-
+    
+    def unsetEdit(self, vobj, mode=0):
+        FreeCADGui.Control.closeDialog()
+        return True
+    
     def doubleClicked(self, vobj):
         guidoc = FreeCADGui.getDocument(vobj.Object.Document)
         # check if another VP is in edit mode, https://forum.freecadweb.org/viewtopic.php?t=13077#p104702
@@ -112,20 +116,18 @@ class _TaskPanelFemAutoContact:
     def accept(self):
         self.obj.slope = self.slope
         self.obj.friction = self.friction
-        
+        self.recompute_and_set_back_all()
         return True
 
     def reject(self):
-        
+        self.recompute_and_set_back_all()
         return True
 
     def recompute_and_set_back_all(self):
         doc = FreeCADGui.getDocument(self.obj.Document)
         doc.Document.recompute()
-        self.selectionWidget.setback_listobj_visibility()
-        if self.selectionWidget.sel_server:
-            FreeCADGui.Selection.removeObserver(self.selectionWidget.sel_server)
         doc.resetEdit()
+        FreeCAD.ActiveDocument.removeObject("ConstraintAutoContact")
         
     def add_contact(self):
         from femtools import femutils
