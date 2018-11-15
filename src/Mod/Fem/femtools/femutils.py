@@ -29,7 +29,7 @@ __url__ = "http://www.freecadweb.org"
 
 import FreeCAD
 import FreeCAD as App
-
+import FreeCADGui
 
 def createObject(doc, name, proxy, viewProxy):
     obj = doc.addObject(proxy.BaseType, name)
@@ -165,7 +165,7 @@ def addcontactobjects(array,geom,Slope,Friction):
     idxi = 0
     for i in array:
         for j in i:
-            FreeCAD.activeDocument().addObject("Fem::ConstraintContact", "FemConstraintContact")
+            FreeCADGui.doCommand("FemGui.getActiveAnalysis().addObject(ObjectsFem.makeConstraintContact(FreeCAD.ActiveDocument))")
             idxfaces = np.append(idxfaces, [iidx, j])
         iidx += 1
     idxfaces = idxfaces.reshape(int(len(idxfaces) / 2), 2)    
