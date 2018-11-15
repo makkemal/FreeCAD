@@ -109,6 +109,7 @@ class _TaskPanelFemAutoContact:
         # parameter widget
         self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui") 
         QtCore.QObject.connect(self.form.btnAddContact, QtCore.SIGNAL("clicked()"), self.add_contact)
+        QtCore.QObject.connect(self.form.btnRMContact, QtCore.SIGNAL("clicked()"), self.rm_contact)
         QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope) 
         QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
         self.get_values()
@@ -142,6 +143,11 @@ class _TaskPanelFemAutoContact:
     def get_values(self):
         self.slope = self.obj.slope 
         self.friction= self.obj.friction
+        
+    def rm_contact(self):
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if (obj.isDerivedFrom('Fem::ConstraintContact')):
+                FreeCAD.ActiveDocument.removeObject(obj.Name)
         
            
          
