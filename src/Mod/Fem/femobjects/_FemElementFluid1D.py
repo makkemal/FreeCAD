@@ -39,11 +39,7 @@ class _FemElementFluid1D:
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
     known_gas_types = [
-        'Orifice','Bleed Tapping','Preswirl Nozzle','Straight and Stepped Labyrinth','Characteristic',
-        'Carbon Seal','Gas Pipe (Fanno)','Restrictor,Long Orifice','Restrictor, Enlargement',
-        'Restrictor, Contraction','Restrictor, Bend','Restrictor, Wall Orifice','Restrictor, Entrance',
-        'Restrictor, Exit','Restrictor, User','Branch, Joint','Branch, Split','Cross, Split','Vortex',
-        'Möhring','Change absolute/relative system','In/Out','Mass Flow Percent','Network User Element'
+        'Pipe inlet', 'Pipe outlet', 'Gas Pipe (Fanno)'
     ]
     known_channel_types = ['NONE']
 
@@ -91,7 +87,7 @@ class _FemElementFluid1D:
         obj.LiquidSectionType = _FemElementFluid1D.known_liquid_types
         obj.LiquidSectionType = 'PIPE INLET'
         obj.GasSectionType = _FemElementFluid1D.known_gas_types
-        obj.GasSectionType = 'NONE'
+        obj.GasSectionType = 'Pipe inlet'
         obj.ChannelSectionType = _FemElementFluid1D.known_channel_types
         obj.ChannelSectionType = 'NONE'
         obj.ManningArea = 10.0
