@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>0</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -844,7 +844,14 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_12"/>
+            <widget class="QGroupBox" name="InletPressure">
+             <property name="title">
+              <string>Inlet Pressure</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
