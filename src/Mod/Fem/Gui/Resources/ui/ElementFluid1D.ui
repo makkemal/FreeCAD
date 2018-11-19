@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>9</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -836,21 +836,25 @@
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <widget class="QWidget" name="page_15">
-          <widget class="QLabel" name="label_30">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>47</width>
-             <height>13</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>TextLabel</string>
-           </property>
-          </widget>
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="autoFillBackground">
+           <bool>false</bool>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_12"/>
+           </item>
+          </layout>
          </widget>
-         <widget class="QWidget" name="page_16"/>
+         <widget class="QWidget" name="page_16">
+          <layout class="QVBoxLayout" name="verticalLayout_23">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_27"/>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
        <item>
