@@ -834,7 +834,7 @@
         <widget class="QComboBox" name="cb_gas_section_type"/>
        </item>
        <item>
-        <widget class="QStackedWidget" name="stackedWidget">
+        <widget class="QStackedWidget" name="sw_gas_section_type">
          <widget class="QWidget" name="page_15">
           <property name="enabled">
            <bool>true</bool>
@@ -844,7 +844,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="gbinletpressure">
+            <widget class="QGroupBox" name="gb_inletflowrategas">
              <property name="title">
               <string>Inlet Pressure</string>
              </property>
@@ -865,7 +865,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Gui::InputField" name="if_inletpressure_gas">
+                 <widget class="Gui::InputField" name="if_inletpressuregas">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -883,7 +883,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="gb_gasmassflowrate">
+            <widget class="QGroupBox" name="gb_inletpressuregas">
              <property name="title">
               <string>Inlet mass flow rate</string>
              </property>
@@ -904,7 +904,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Gui::InputField" name="if_inletflowrate_gas">
+                 <widget class="Gui::InputField" name="if_inletflowrategas">
                   <property name="text">
                    <string>1 kg/s</string>
                   </property>
