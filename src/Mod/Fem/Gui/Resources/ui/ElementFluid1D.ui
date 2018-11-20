@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>3</number>
+          <number>4</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -851,6 +851,71 @@
              <property name="checkable">
               <bool>true</bool>
              </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_24">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <item>
+                 <widget class="QLabel" name="label_30">
+                  <property name="text">
+                   <string>Pressure</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Gui::InputField" name="if_inletpressure_2">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="unit" stdset="0">
+                   <string notr="true">MPa</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="MassFlowrate">
+             <property name="title">
+              <string>Inlet mass flow rate</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_25">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_29">
+                <item>
+                 <widget class="QLabel" name="label_31">
+                  <property name="text">
+                   <string>Mass Flow rate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Gui::InputField" name="if_outletflowrate_2">
+                  <property name="text">
+                   <string>1 kg/s</string>
+                  </property>
+                  <property name="unit" stdset="0">
+                   <string notr="true">kg/s</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
             </widget>
            </item>
           </layout>
