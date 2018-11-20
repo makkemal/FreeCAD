@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>590</width>
-    <height>653</height>
+    <height>705</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -844,7 +844,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="InletPressure">
+            <widget class="QGroupBox" name="gbinletpressure">
              <property name="title">
               <string>Inlet Pressure</string>
              </property>
@@ -865,7 +865,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Gui::InputField" name="if_inletpressure_2">
+                 <widget class="Gui::InputField" name="if_inletpressure_gas">
                   <property name="enabled">
                    <bool>true</bool>
                   </property>
@@ -883,7 +883,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="MassFlowrate">
+            <widget class="QGroupBox" name="gb_gasmassflowrate">
              <property name="title">
               <string>Inlet mass flow rate</string>
              </property>
@@ -904,7 +904,7 @@
                  </widget>
                 </item>
                 <item>
-                 <widget class="Gui::InputField" name="if_outletflowrate_2">
+                 <widget class="Gui::InputField" name="if_inletflowrate_gas">
                   <property name="text">
                    <string>1 kg/s</string>
                   </property>
@@ -923,7 +923,73 @@
          <widget class="QWidget" name="page_16">
           <layout class="QVBoxLayout" name="verticalLayout_23">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_27"/>
+            <widget class="QGroupBox" name="groupBox">
+             <property name="title">
+              <string>Outlet pressure</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_26">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_30">
+                <item>
+                 <widget class="QLabel" name="label_32">
+                  <property name="text">
+                   <string>Pressure</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Gui::InputField" name="if_outletpressure_gas">
+                  <property name="enabled">
+                   <bool>true</bool>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="unit" stdset="0">
+                   <string notr="true"> MPa</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <widget class="QGroupBox" name="groupBox_2">
+             <property name="title">
+              <string>Mass flow rate</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <layout class="QVBoxLayout" name="verticalLayout_27">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_32">
+                <item>
+                 <widget class="QLabel" name="label_34">
+                  <property name="text">
+                   <string>Mass Flow rate</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="Gui::InputField" name="if_outletflowrate_gas">
+                  <property name="text">
+                   <string>1 kg/s</string>
+                  </property>
+                  <property name="unit" stdset="0">
+                   <string notr="true">kg/s</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </widget>
            </item>
           </layout>
          </widget>
