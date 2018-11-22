@@ -115,6 +115,7 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/ElementFluid1D.ui")
         QtCore.QObject.connect(self.parameterWidget.cb_section_type, QtCore.SIGNAL("activated(int)"), self.sectiontype_changed)
         QtCore.QObject.connect(self.parameterWidget.cb_liquid_section_type, QtCore.SIGNAL("activated(int)"), self.liquidsectiontype_changed)
+        QtCore.QObject.connect(self.parameterWidget.cb_gas_section_type, QtCore.SIGNAL("activated(int)"), self.gassectiontype_changed)
         QtCore.QObject.connect(self.parameterWidget.if_manning_area, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.manning_area_changed)
         QtCore.QObject.connect(self.parameterWidget.if_manning_radius, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.manning_radius_changed)
         QtCore.QObject.connect(self.parameterWidget.sb_manning_coefficient, QtCore.SIGNAL("valueChanged(double)"), self.manning_coefficient_changed)
@@ -397,3 +398,11 @@ class _TaskPanelFemElementFluid1D:
             self.PumpFlowRate[row] = float(self.parameterWidget.tw_pump_characteristics.item(row, column).text())
         else:
             self.PumpHeadLoss[row] = float(self.parameterWidget.tw_pump_characteristics.item(row, column).text())
+
+
+    def gassectiontype_changed(self, index):
+        if index < 0:
+            return
+        self.parameterWidget.cb_gas_section_type.setCurrentIndex(index)
+        self.parameterWidget.sw_gas_section_type.setCurrentIndex(index)
+        self.LiquidSectionType = str(self.parameterWidget.cb_gas_section_type.itemText(index))  # parameterWidget returns unicode
