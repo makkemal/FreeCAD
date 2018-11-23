@@ -406,3 +406,6 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.cb_gas_section_type.setCurrentIndex(index)
         self.parameterWidget.sw_gas_section_type.setCurrentIndex(index)
         self.LiquidSectionType = str(self.parameterWidget.cb_gas_section_type.itemText(index))  # parameterWidget returns unicode
+        
+        
+        

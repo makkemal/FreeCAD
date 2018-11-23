@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>10</number>
+          <number>7</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -1090,7 +1090,236 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="page_18"/>
+         <widget class="QWidget" name="page_18">
+          <layout class="QVBoxLayout" name="verticalLayout_29">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_34">
+             <item>
+              <widget class="QLabel" name="label_38">
+               <property name="text">
+                <string>Crosssection Inlet</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_inlet_area_1">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_35">
+             <item>
+              <widget class="QLabel" name="label_39">
+               <property name="text">
+                <string>Crosssection Branch 1</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_inlet_area_2">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_36">
+             <item>
+              <widget class="QLabel" name="label_40">
+               <property name="text">
+                <string>Crosssection Branch 2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_inlet_area_3">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_37">
+             <item>
+              <widget class="QLabel" name="label_41">
+               <property name="text">
+                <string>Branch 1 Angle</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="gas_inlet_angle_1">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="maximum">
+                <double>360.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_38">
+             <item>
+              <widget class="QLabel" name="label_42">
+               <property name="text">
+                <string>Branch 2 Angle</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="gas_inlet_angle_2">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="maximum">
+                <double>360.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_19">
+          <layout class="QVBoxLayout" name="verticalLayout_30">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_39">
+             <item>
+              <widget class="QLabel" name="label_43">
+               <property name="text">
+                <string>Crosssection Inlet 1</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_oulet_area_1">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_40">
+             <item>
+              <widget class="QLabel" name="label_44">
+               <property name="text">
+                <string>Crosssection Inlet 2</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_outlet_area_2">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_41">
+             <item>
+              <widget class="QLabel" name="label_45">
+               <property name="text">
+                <string>Crosssection Outlet</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_outlet_area_3">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_42">
+             <item>
+              <widget class="QLabel" name="label_46">
+               <property name="text">
+                <string>Branch 1 Angle</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="gas_outlet_angle_1">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="maximum">
+                <double>360.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_43">
+             <item>
+              <widget class="QLabel" name="label_47">
+               <property name="text">
+                <string>Branch 2 Angle</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QDoubleSpinBox" name="gas_outlet_angle_2">
+               <property name="decimals">
+                <number>3</number>
+               </property>
+               <property name="maximum">
+                <double>360.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>1.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
         </widget>
        </item>
        <item>
