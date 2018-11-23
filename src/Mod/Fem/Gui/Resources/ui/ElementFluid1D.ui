@@ -1203,6 +1203,13 @@
              </item>
             </layout>
            </item>
+           <item>
+            <widget class="QLabel" name="label_49">
+             <property name="text">
+              <string>Select geometry in the following order: inlet 1, outlet 1 ,outlet 2</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </widget>
          <widget class="QWidget" name="page_19">
@@ -1317,6 +1324,13 @@
               </widget>
              </item>
             </layout>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_48">
+             <property name="text">
+              <string>Select geometry in the following order: inlet 1, inlet 2 ,outlet </string>
+             </property>
+            </widget>
            </item>
           </layout>
          </widget>
