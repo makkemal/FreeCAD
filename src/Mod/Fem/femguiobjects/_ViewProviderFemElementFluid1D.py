@@ -150,6 +150,13 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.gb_outletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.outlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_inletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.inlet_flowrate_active)
         QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
+        QtCore.QObject.connect(self.parameterWidget.gb_flowareagas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
+       
+        
+        
+        
+        
+        
         self.parameterWidget.cb_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_fluid_types)
         self.parameterWidget.cb_liquid_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_liquid_types)
         self.parameterWidget.cb_gas_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_gas_types)
