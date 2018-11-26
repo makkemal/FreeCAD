@@ -80,6 +80,8 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyFloat", "ColebrookeFormFactor", "LiquidColebrooke", "set coefficient of the colebrooke fluid section")
         obj.addProperty("App::PropertyEnumeration", "GasSectionType", "GasSection", "select gas section type")
         obj.addProperty("App::PropertyEnumeration", "ChannelSectionType", "ChannelSection", "select channel section type")
+        obj.addProperty("App::PropertyArea", "GasPipeArea", "GasPipe", "set pipe area of gaspipe section")
+        obj.addProperty("App::PropertyLength", "GasPipeDiameter", "GasPipe", "set diameter of gaspipe section")
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -121,6 +123,8 @@ class _FemElementFluid1D:
         obj.OutletPressureActive = True
         obj.InletFlowRateActive = False
         obj.OutletFlowRateActive = False
+        obj.GasPipeArea=0.1
+        obj.GasPipeDiameter=0.1
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"
 

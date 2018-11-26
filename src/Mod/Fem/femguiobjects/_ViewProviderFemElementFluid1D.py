@@ -150,8 +150,8 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.gb_outletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.outlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_inletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.inlet_flowrate_active)
         QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
-        QtCore.QObject.connect(self.parameterWidget.gb_flowareagas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
-       
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_pipe_area, QtCore.SIGNAL("clicked(bool)"), self.gaspipe_pipe_area_changed)
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter, QtCore.SIGNAL("clicked(bool)"), self.gaspipe_pipe_diameter_changed)
         
         
         
@@ -413,6 +413,10 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.cb_gas_section_type.setCurrentIndex(index)
         self.parameterWidget.sw_gas_section_type.setCurrentIndex(index)
         self.LiquidSectionType = str(self.parameterWidget.cb_gas_section_type.itemText(index))  # parameterWidget returns unicode
+           
+    def gaspipe_pipe_area_changed(self, base_quantity_value):
+        self.GasPipeArea = base_quantity_value
         
-        
+    def gaspipe_pipe_diameter_changed(self, base_quantity_value):
+        self.GasPipeDiameter = base_quantity_value        
         

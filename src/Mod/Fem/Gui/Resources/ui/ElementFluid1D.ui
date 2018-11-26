@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>7</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -996,7 +996,7 @@
          <widget class="QWidget" name="page_17">
           <layout class="QVBoxLayout" name="verticalLayout_28">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_27">
+            <layout class="QHBoxLayout" name="gb_flowareagas">
              <item>
               <widget class="QLabel" name="label_33">
                <property name="text">
@@ -1017,7 +1017,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_28">
+            <layout class="QHBoxLayout" name="gb_pipediametergas">
              <item>
               <widget class="QLabel" name="label_35">
                <property name="text">
@@ -1026,7 +1026,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Gui::InputField" name="if_gaspipe_radius">
+              <widget class="Gui::InputField" name="if_gaspipe_diameter">
                <property name="text">
                 <string>0 mm</string>
                </property>
@@ -1038,7 +1038,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_31">
+            <layout class="QHBoxLayout" name="gb_graindiagas">
              <item>
               <widget class="QLabel" name="label_36">
                <property name="text">
@@ -1059,7 +1059,7 @@
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_33">
+            <layout class="QHBoxLayout" name="gb_crosssectionfacgas">
              <item>
               <widget class="QLabel" name="label_37">
                <property name="text">
