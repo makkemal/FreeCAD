@@ -153,7 +153,8 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_pipe_area, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_area_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_diameter_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_grain_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_graindiameter_changed)
-        
+        QtCore.QObject.connect(self.parameterWidget.sb_gaspipe_form_factor, QtCore.SIGNAL("valueChanged(double)"), self.gaspipe_form_factor_changed)
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_inlet_area_1, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_inlet_area_changed)
         
         
         
@@ -425,6 +426,13 @@ class _TaskPanelFemElementFluid1D:
     def gaspipe_pipe_diameter_changed(self, base_quantity_value):
         self.GasPipeDiameter = base_quantity_value        
         
-
     def gaspipe_graindiameter_changed(self, base_quantity_value):
-        self.GasGrainDiameter = base_quantity_value           
+        self.GasGrainDiameter = base_quantity_value         
+
+    def gaspipe_form_factor_changed(self, base_quantity_value):
+        self.GasFormFactor = base_quantity_value                 
+
+    def gaspipe_inlet_area_changed(self, base_quantity_value):
+        self.GasInletarea = base_quantity_value           
+        
+          

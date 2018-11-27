@@ -39,7 +39,7 @@ class _FemElementFluid1D:
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
     known_gas_types = [
-        'Pipe inlet', 'Pipe outlet', 'Gas Pipe (Fanno)', 'Branch split' , 'Branch joint'
+        'Pipe inlet', 'Pipe outlet', 'Gas Pipe (Fanno)', 'Branch Split' , 'Branch Joint'
     ]
     known_channel_types = ['NONE']
 
@@ -83,6 +83,9 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyArea", "GasPipeArea", "GasPipe", "set pipe area of gaspipe section")
         obj.addProperty("App::PropertyLength", "GasPipeDiameter", "GasPipe", "set diameter of gaspipe section")
         obj.addProperty("App::PropertyFloat", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
+        obj.addProperty("App::PropertyFloat", "GasFormFactor", "Gaspipe", "set form factor for pipe gas section")
+        obj.addProperty("App::PropertyArea", "GasInletArea", "GasPipe", "set Inlet area of gaspipe branch")
+    
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -127,6 +130,8 @@ class _FemElementFluid1D:
         obj.GasPipeArea=0.1
         obj.GasPipeDiameter=0.1
         obj.GasGrainDiameter=0.1
+        obj.GasFormFactor=1
+        obj.GasInletarea=1    
         
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"
