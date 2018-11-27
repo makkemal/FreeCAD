@@ -82,6 +82,7 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyEnumeration", "ChannelSectionType", "ChannelSection", "select channel section type")
         obj.addProperty("App::PropertyArea", "GasPipeArea", "GasPipe", "set pipe area of gaspipe section")
         obj.addProperty("App::PropertyLength", "GasPipeDiameter", "GasPipe", "set diameter of gaspipe section")
+        obj.addProperty("App::PropertyFloat", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -125,6 +126,8 @@ class _FemElementFluid1D:
         obj.OutletFlowRateActive = False
         obj.GasPipeArea=0.1
         obj.GasPipeDiameter=0.1
+        obj.GasGrainDiameter=0.1
+        
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"
 

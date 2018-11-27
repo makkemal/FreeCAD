@@ -152,7 +152,7 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_pipe_area, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_area_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_diameter_changed)
-        
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_grain_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_graindiameter_changed)
         
         
         
@@ -425,3 +425,6 @@ class _TaskPanelFemElementFluid1D:
     def gaspipe_pipe_diameter_changed(self, base_quantity_value):
         self.GasPipeDiameter = base_quantity_value        
         
+
+    def gaspipe_graindiameter_changed(self, base_quantity_value):
+        self.GasGrainDiameter = base_quantity_value           
