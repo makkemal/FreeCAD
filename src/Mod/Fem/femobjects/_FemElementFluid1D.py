@@ -85,7 +85,15 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyFloat", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
         obj.addProperty("App::PropertyFloat", "GasFormFactor", "Gaspipe", "set form factor for pipe gas section")
         obj.addProperty("App::PropertyArea", "GasInletArea", "GasPipe", "set Inlet area of gaspipe branch")
-    
+        obj.addProperty("App::PropertyArea", "Gasbrancharea1", "GasPipe", "set Inlet area of gaspipe branch")
+        obj.addProperty("App::PropertyArea", "Gasbrancharea2", "GasPipe", "set Inlet area of gaspipe branch")
+        obj.addProperty("App::PropertyFloat", "Gasbranchangle1", "Gaspipe", "set outlet angle of the branch")
+        obj.addProperty("App::PropertyFloat", "Gasbranchangle2", "Gaspipe", "set outlet angle of the branch")
+        obj.addProperty("App::PropertyArea", "GasJointArea1", "GasPipe", "set Inlet area of gaspipe joint")        
+        obj.addProperty("App::PropertyArea", "GasJointArea2", "GasPipe", "set Inlet area of gaspipe joint") 
+        obj.addProperty("App::PropertyArea", "GasJointOutletArea", "GasPipe", "set Outlet area of gaspipe joint") 
+        obj.addProperty("App::PropertyFloat", "Gasjointangle1", "Gaspipe", "set inlet angle of the joint")
+        obj.addProperty("App::PropertyFloat", "Gasjointangle2", "Gaspipe", "set inlet angle of the joint")                  
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -131,7 +139,16 @@ class _FemElementFluid1D:
         obj.GasPipeDiameter=0.1
         obj.GasGrainDiameter=0.1
         obj.GasFormFactor=1
-        obj.GasInletarea=1    
+        obj.GasInletArea=1   
+        obj.Gasbrancharea1=1
+        obj.Gasbrancharea2=1  
+        obj.Gasbranchangle1=1
+        obj.Gasbranchangle2=1
+        obj.GasJointArea1=1
+        obj.GasJointArea2=1
+        obj.GasJointOutletArea=1
+        obj.Gasjointangle1=1
+        obj.Gasjointangle2=1
         
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"

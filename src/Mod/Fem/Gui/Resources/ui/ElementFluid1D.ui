@@ -1123,7 +1123,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Gui::InputField" name="if_gaspipe_inlet_area_2">
+              <widget class="Gui::InputField" name="if_gaspipe_branch_area_1">
                <property name="text">
                 <string>0 mm^2</string>
                </property>
@@ -1144,7 +1144,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Gui::InputField" name="if_gaspipe_inlet_area_3">
+              <widget class="Gui::InputField" name="if_gaspipe_branch_area_2">
                <property name="text">
                 <string>0 mm^2</string>
                </property>
@@ -1165,7 +1165,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="gas_inlet_angle_1">
+              <widget class="QDoubleSpinBox" name="gas_outlet_angle_1">
                <property name="decimals">
                 <number>3</number>
                </property>
@@ -1189,7 +1189,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="gas_inlet_angle_2">
+              <widget class="QDoubleSpinBox" name="gas_outlet_angle_2">
                <property name="decimals">
                 <number>3</number>
                </property>
@@ -1224,7 +1224,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Gui::InputField" name="if_gaspipe_oulet_area_1">
+              <widget class="Gui::InputField" name="if_gaspipe_joint_area_1">
                <property name="text">
                 <string>0 mm^2</string>
                </property>
@@ -1245,7 +1245,7 @@
               </widget>
              </item>
              <item>
-              <widget class="Gui::InputField" name="if_gaspipe_outlet_area_2">
+              <widget class="Gui::InputField" name="if_gaspipe_joint_area_2">
                <property name="text">
                 <string>0 mm^2</string>
                </property>
@@ -1287,7 +1287,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="gas_outlet_angle_1">
+              <widget class="QDoubleSpinBox" name="gas_inlet_angle_1">
                <property name="decimals">
                 <number>3</number>
                </property>
@@ -1311,7 +1311,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="gas_outlet_angle_2">
+              <widget class="QDoubleSpinBox" name="gas_inlet_angle_2">
                <property name="decimals">
                 <number>3</number>
                </property>
