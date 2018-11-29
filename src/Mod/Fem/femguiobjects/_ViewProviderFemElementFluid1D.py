@@ -231,6 +231,7 @@ class _TaskPanelFemElementFluid1D:
         self.ColebrookeFormFactor = self.obj.ColebrookeFormFactor
         self.PumpFlowRate = self.obj.PumpFlowRate
         self.PumpHeadLoss = self.obj.PumpHeadLoss
+        self.GasSectionType = self.obj.GasSectionType
         self.GasPipeArea = self.obj.GasPipeArea
         self.GasPipeDiameter = self.obj.GasPipeDiameter
         self.GasFormFactor = self.obj.GasFormFactor
@@ -279,6 +280,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.ColebrookeFormFactor = self.ColebrookeFormFactor
         self.obj.PumpFlowRate = self.PumpFlowRate
         self.obj.PumpHeadLoss = self.PumpHeadLoss
+        self.obj.GasSectionType = self.GasSectionType
         self.obj.GasPipeArea = self.GasPipeArea
         self.obj.GasPipeDiameter = self.GasPipeDiameter
         self.obj.GasFormFactor = self.GasFormFactor
