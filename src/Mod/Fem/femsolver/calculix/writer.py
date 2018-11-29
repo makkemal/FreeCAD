@@ -1056,8 +1056,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         for femobj in self.fluidsection_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             fluidsection_obj = femobj['Object']
             f.write('** ' + fluidsection_obj.Label + '\n')
-            if fluidsection_obj.SectionType == 'Liquid':
-                if fluidsection_obj.LiquidSectionType == 'PIPE INLET':
+            if (fluidsection_obj.SectionType == 'Liquid') or (fluidsection_obj.SectionType == 'Gas'):
+                if (fluidsection_obj.LiquidSectionType == 'PIPE INLET') or (fluidsection_obj.GasSectionType == 'PIPE INLET'):
                     f.write('**Fluid Section Inlet \n')
                     if fluidsection_obj.InletPressureActive is True:
                         f.write('*BOUNDARY \n')
