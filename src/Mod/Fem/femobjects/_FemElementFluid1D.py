@@ -39,7 +39,7 @@ class _FemElementFluid1D:
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
     known_gas_types = [
-        'Pipe inlet', 'Pipe outlet', 'Gas Pipe (Fanno)', 'Branch Split' , 'Branch Joint'
+        'PIPE INLET', 'PIPE OUTLET', 'Gas Pipe (Fanno)', 'Branch Split' , 'Branch Joint'
     ]
     known_channel_types = ['NONE']
 

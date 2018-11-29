@@ -715,6 +715,10 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         setion_geo = liquid_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Gas':
                         section_type = fluidsec_obj.GasSectionType
+                        if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
+                            section_type = "PIPE INOUT"
+                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
+                        setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
                         section_type = fluidsec_obj.ChannelSectionType
                     f.write(setion_def)
@@ -1420,7 +1424,7 @@ def is_fluid_section_inlet_outlet(ccx_elsets):
         if ccx_elset['ccx_elset']:
             if 'fluidsection_obj'in ccx_elset:  # fluid mesh
                 fluidsec_obj = ccx_elset['fluidsection_obj']
-                if fluidsec_obj.SectionType == "Liquid":
+                if (fluidsec_obj.SectionType == "Liquid") or (fluidsec_obj.SectionType == "Gas"):
                     if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                         return True
     return False
@@ -1482,4 +1486,17 @@ def liquid_section_def(obj, section_type):
         return section_geo
     else:
         return ''
+
+def gas_section_def(obj, section_type):
+    if section_type == 'PIPE MANNING':
+        manning_area = str(obj.ManningArea.getValueAs('mm^2').Value)
+        manning_radius = str(obj.ManningRadius.getValueAs('mm'))
+        manning_coefficient = str(obj.ManningCoefficient)
+        section_geo = manning_area + ',' + manning_radius + ',' + manning_coefficient + '\n'
+        return section_geo
+    else:
+        return ''
+
+
+    
 ##  @}

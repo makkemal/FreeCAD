@@ -237,6 +237,7 @@ class _TaskPanelFemElementFluid1D:
         self.GasInletArea = self.obj.GasInletArea
         self.Gasbrancharea1 = self.obj.Gasbrancharea1
         self.Gasbrancharea2 = self.obj.Gasbrancharea2
+        self.Gasbranchangle1 = self.obj.Gasbranchangle1
         self.Gasbranchangle2 = self.obj.Gasbranchangle2
         self.GasJointArea1 = self.obj.GasJointArea1
         self.GasJointArea2 = self.obj.GasJointArea2
