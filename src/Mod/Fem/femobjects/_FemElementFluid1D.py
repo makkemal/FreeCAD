@@ -82,7 +82,7 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyEnumeration", "ChannelSectionType", "ChannelSection", "select channel section type")
         obj.addProperty("App::PropertyArea", "GasPipeArea", "GasPipe", "set pipe area of gaspipe section")
         obj.addProperty("App::PropertyLength", "GasPipeDiameter", "GasPipe", "set diameter of gaspipe section")
-        obj.addProperty("App::PropertyFloat", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
+        obj.addProperty("App::PropertyLength", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
         obj.addProperty("App::PropertyFloat", "GasFormFactor", "Gaspipe", "set form factor for pipe gas section")
         obj.addProperty("App::PropertyArea", "GasInletArea", "GasPipe", "set Inlet area of gaspipe branch")
         obj.addProperty("App::PropertyArea", "Gasbrancharea1", "GasPipe", "set Inlet area of gaspipe branch")

@@ -52,7 +52,7 @@
        <item>
         <widget class="QStackedWidget" name="sw_liquid_section_type">
          <property name="currentIndex">
-          <number>10</number>
+          <number>3</number>
          </property>
          <widget class="QWidget" name="page_4">
           <layout class="QVBoxLayout" name="verticalLayout">
@@ -852,7 +852,7 @@
               <bool>true</bool>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_24">
               <item>
@@ -867,7 +867,7 @@
                 <item>
                  <widget class="Gui::InputField" name="if_inletpressuregas">
                   <property name="enabled">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="text">
                    <string/>
@@ -891,7 +891,7 @@
               <bool>true</bool>
              </property>
              <property name="checked">
-              <bool>true</bool>
+              <bool>false</bool>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_25">
               <item>
@@ -930,6 +930,9 @@
              <property name="checkable">
               <bool>true</bool>
              </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
              <layout class="QVBoxLayout" name="verticalLayout_26">
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_30">
@@ -943,7 +946,7 @@
                 <item>
                  <widget class="Gui::InputField" name="if_outletpressuregas">
                   <property name="enabled">
-                   <bool>true</bool>
+                   <bool>false</bool>
                   </property>
                   <property name="text">
                    <string/>
@@ -965,6 +968,9 @@
              </property>
              <property name="checkable">
               <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_27">
               <item>

@@ -1074,7 +1074,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                 if int(b[0]) == n and b[3] == 'PIPE INLET\n':
                                     # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
                                     f.write(b[1] + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n')
-                elif fluidsection_obj.LiquidSectionType == 'PIPE OUTLET':
+                elif fluidsection_obj.LiquidSectionType == 'PIPE OUTLET'or (fluidsection_obj.GasSectionType == 'PIPE OUTLET'):
                     f.write('**Fluid Section Outlet \n')
                     if fluidsection_obj.OutletPressureActive is True:
                         f.write('*BOUNDARY \n')
