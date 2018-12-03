@@ -345,7 +345,7 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.gb_inletflowrategas.setChecked(self.InletFlowRateActive)
         self.parameterWidget.gb_outletflowrategas.setChecked(self.OutletFlowRateActive)    
         self.parameterWidget.if_inletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.InletPressure, FreeCAD.Units.Pressure).UserString)
-        self.parameterWidget.if_outletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.InletPressure, FreeCAD.Units.Pressure).UserString)
+        self.parameterWidget.if_outletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.OutletPressure, FreeCAD.Units.Pressure).UserString)
         self.parameterWidget.if_inletflowrategas.setText(str(self.InletFlowRate))
         self.parameterWidget.if_outletflowrategas.setText(str(self.OutletFlowRate))
         self.parameterWidget.if_gaspipe_pipe_area.setText(self.GasPipeArea.UserString)
