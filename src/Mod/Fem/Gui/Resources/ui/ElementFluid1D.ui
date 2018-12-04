@@ -964,7 +964,7 @@
            <item>
             <widget class="QGroupBox" name="gb_outletflowrategas">
              <property name="title">
-              <string>Mass flow rate</string>
+              <string>Outlet Mass flow rate</string>
              </property>
              <property name="checkable">
               <bool>true</bool>
