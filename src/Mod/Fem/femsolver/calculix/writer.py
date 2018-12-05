@@ -435,7 +435,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             if ccx_elset['ccx_elset'] and not isinstance(ccx_elset['ccx_elset'], six.string_types):  # use six to be sure to be Python 2.7 and 3.x compatible
                 if 'fluidsection_obj'in ccx_elset:
                     fluidsec_obj = ccx_elset['fluidsection_obj']
-                    if fluidsec_obj.SectionType == 'Liquid':
+                    if (fluidsec_obj.SectionType == 'Liquid') or (fluidsec_obj.SectionType == 'Gas'):
                         if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                             elsetchanged = False
                             counter = 0
@@ -717,6 +717,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         section_type = fluidsec_obj.GasSectionType
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
                             section_type = "PIPE INOUT"
+                            fluidsec_obj.LiquidSectionType="PIPE INLET" #use the same node sets 
                         setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
                         setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
@@ -1488,9 +1489,9 @@ def liquid_section_def(obj, section_type):
         return ''
 
 def gas_section_def(obj, section_type):
-    if section_type == 'PIPE MANNING':
-        manning_area = str(obj.ManningArea.getValueAs('mm^2').Value)
-        manning_radius = str(obj.ManningRadius.getValueAs('mm'))
+    if section_type == 'GAS PIPE FANNO ADIABATIC':
+        fanna_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
+        fanno_diameter = str(obj.GasPipeDiameter.getValueAs('mm'))
         manning_coefficient = str(obj.ManningCoefficient)
         section_geo = manning_area + ',' + manning_radius + ',' + manning_coefficient + '\n'
         return section_geo

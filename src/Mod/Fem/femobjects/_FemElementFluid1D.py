@@ -39,7 +39,7 @@ class _FemElementFluid1D:
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
     known_gas_types = [
-        'PIPE INLET', 'PIPE OUTLET', 'GAS PIPE FANNO', 'BRANCH SPLIT GE' , 'BRANCH JOINT GE'
+        'PIPE INLET', 'PIPE OUTLET', 'GAS PIPE FANNO ADIABATIC', 'BRANCH SPLIT GE' , 'BRANCH JOINT GE'
     ]
     known_channel_types = ['NONE']
 
@@ -135,8 +135,8 @@ class _FemElementFluid1D:
         obj.OutletPressureActive = True
         obj.InletFlowRateActive = False
         obj.OutletFlowRateActive = False
-        obj.GasPipeArea=0.1
-        obj.GasPipeDiameter=0.1
+        obj.GasPipeArea=283.5
+        obj.GasPipeDiameter=19.0
         obj.GasGrainDiameter=0.1
         obj.GasFormFactor=1
         obj.GasInletArea=1   
