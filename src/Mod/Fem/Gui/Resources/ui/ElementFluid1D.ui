@@ -1002,6 +1002,27 @@
          <widget class="QWidget" name="page_17">
           <layout class="QVBoxLayout" name="verticalLayout_28">
            <item>
+            <layout class="QHBoxLayout" name="gb_flowareagas">
+             <item>
+              <widget class="QLabel" name="label_33">
+               <property name="text">
+                <string>Pipe Area</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Gui::InputField" name="if_gaspipe_pipe_area">
+               <property name="text">
+                <string>0 mm^2</string>
+               </property>
+               <property name="unit" stdset="0">
+                <string notr="true">mm^2</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <layout class="QHBoxLayout" name="gb_pipediametergas">
              <item>
               <widget class="QLabel" name="label_35">
