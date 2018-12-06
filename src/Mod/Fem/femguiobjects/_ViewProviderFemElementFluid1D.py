@@ -234,6 +234,7 @@ class _TaskPanelFemElementFluid1D:
         self.ColebrookeFormFactor = self.obj.ColebrookeFormFactor
         self.PumpFlowRate = self.obj.PumpFlowRate
         self.PumpHeadLoss = self.obj.PumpHeadLoss
+        
         self.GasSectionType = self.obj.GasSectionType
         self.GasPipeArea = self.obj.GasPipeArea
         self.GasPipeDiameter = self.obj.GasPipeDiameter
@@ -284,6 +285,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.ColebrookeFormFactor = self.ColebrookeFormFactor
         self.obj.PumpFlowRate = self.PumpFlowRate
         self.obj.PumpHeadLoss = self.PumpHeadLoss
+        
         self.obj.GasSectionType = self.GasSectionType
         self.obj.GasPipeArea = self.GasPipeArea
         self.obj.GasPipeDiameter = self.GasPipeDiameter
@@ -308,9 +310,6 @@ class _TaskPanelFemElementFluid1D:
         index_liquidsectiontype = self.parameterWidget.cb_liquid_section_type.findText(self.LiquidSectionType)
         self.parameterWidget.cb_liquid_section_type.setCurrentIndex(index_liquidsectiontype)
         self.parameterWidget.sw_liquid_section_type.setCurrentIndex(index_liquidsectiontype)
-        index_gassectiontype = self.parameterWidget.cb_gas_section_type.findText(self.GasSectionType)
-        self.parameterWidget.cb_gas_section_type.setCurrentIndex(index_gassectiontype)
-        self.parameterWidget.sw_gas_section_type.setCurrentIndex(index_gassectiontype)       
         self.parameterWidget.if_manning_area.setText(self.ManningArea.UserString)
         self.parameterWidget.if_manning_radius.setText(self.ManningRadius.UserString)
         self.parameterWidget.sb_manning_coefficient.setValue(self.ManningCoefficient)
@@ -343,6 +342,10 @@ class _TaskPanelFemElementFluid1D:
         for i in range(len(self.PumpFlowRate)):
             self.parameterWidget.tw_pump_characteristics.setItem(i, 0, QtGui.QTableWidgetItem(str(self.PumpFlowRate[i])))
             self.parameterWidget.tw_pump_characteristics.setItem(i, 1, QtGui.QTableWidgetItem(str(self.PumpHeadLoss[i])))
+            
+        index_gassectiontype = self.parameterWidget.cb_gas_section_type.findText(self.GasSectionType)
+        self.parameterWidget.cb_gas_section_type.setCurrentIndex(index_gassectiontype)
+        self.parameterWidget.sw_gas_section_type.setCurrentIndex(index_gassectiontype)           
         self.parameterWidget.if_inletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.InletPressure, FreeCAD.Units.Pressure).UserString)
         self.parameterWidget.if_outletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.OutletPressure, FreeCAD.Units.Pressure).UserString)
         self.parameterWidget.if_inletflowrategas.setText(str(self.InletFlowRate))
