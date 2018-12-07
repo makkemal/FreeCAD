@@ -493,7 +493,9 @@ class _TaskPanelFemElementFluid1D:
     def gaspipe_graindiameter_changed(self, base_quantity_value):
         self.GasGrainDiameter = base_quantity_value   
         pi =3.14
-        self.GasPipeArea.Value=(pi/4)*base_quantity_value**2           
+        area =(pi/4)*base_quantity_value**2
+        print(area)
+        self.GasPipeArea=float(FreeCAD.Units.Quantity(area).getValueAs("mm^2"))           
 
     def gaspipe_form_factor_changed(self, base_quantity_value):
         self.GasFormFactor = base_quantity_value                 
