@@ -34,6 +34,7 @@ import FreeCAD
 import FreeCADGui
 import FemGui  # needed to display the icons in TreeView
 False if False else FemGui.__name__  # dummy usage of FemGui for flake8, just returns 'FemGui'
+import numpy as np
 
 # for the panel
 from femobjects import _FemElementFluid1D
@@ -486,14 +487,21 @@ class _TaskPanelFemElementFluid1D:
            
     def gaspipe_pipe_area_changed(self, base_quantity_value):
         self.GasPipeArea = base_quantity_value
+        print("area from main var")
+        print(self.GasPipeArea)
+        diameter = np.sqrt((4*float(self.GasPipeArea))/np.pi) 
+        print("calculated diameter")
+        print(diameter)
         
     def gaspipe_pipe_diameter_changed(self, base_quantity_value):
-        self.GasPipeDiameter = base_quantity_value        
+        self.GasPipeDiameter = base_quantity_value    
+        pipearea =(np.pi/4)*(float(self.GasPipeDiameter)**2)     
+        print("area calculated")
+        print(pipearea)
+        
         
     def gaspipe_graindiameter_changed(self, base_quantity_value):
-        self.GasGrainDiameter = base_quantity_value   
-        pi =3.14
-        self.GasPipeArea =(pi/4)*float(self.GasGrainDiameter)**2        
+        self.GasGrainDiameter = base_quantity_value        
 
     def gaspipe_form_factor_changed(self, base_quantity_value):
         self.GasFormFactor = base_quantity_value                 
