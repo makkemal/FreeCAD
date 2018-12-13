@@ -1492,7 +1492,7 @@ def gas_section_def(obj, section_type):
     if section_type == 'GAS PIPE FANNO ADIABATIC':
         fanna_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
         fanno_diameter = str(obj.GasPipeDiameter.getValueAs('mm'))
-        manning_coefficient = str(obj.ManningCoefficient)
+        fanno_length = str(obj.ManningCoefficient)
         section_geo = manning_area + ',' + manning_radius + ',' + manning_coefficient + '\n'
         return section_geo
     else:
