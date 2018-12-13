@@ -154,8 +154,7 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.gb_inletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.inlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_outletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.outlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_inletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.inlet_flowrate_active)
-        QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)    
-        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_pipe_area,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_area_changed)             
+        QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)                
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_diameter_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_grain_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_graindiameter_changed)
         QtCore.QObject.connect(self.parameterWidget.sb_gaspipe_form_factor, QtCore.SIGNAL("valueChanged(double)"), self.gaspipe_form_factor_changed)
@@ -235,7 +234,6 @@ class _TaskPanelFemElementFluid1D:
         self.ColebrookeFormFactor = self.obj.ColebrookeFormFactor
         self.PumpFlowRate = self.obj.PumpFlowRate
         self.PumpHeadLoss = self.obj.PumpHeadLoss
-        
         self.GasSectionType = self.obj.GasSectionType
         self.GasPipeArea = self.obj.GasPipeArea
         self.GasPipeDiameter = self.obj.GasPipeDiameter
@@ -286,7 +284,6 @@ class _TaskPanelFemElementFluid1D:
         self.obj.ColebrookeFormFactor = self.ColebrookeFormFactor
         self.obj.PumpFlowRate = self.PumpFlowRate
         self.obj.PumpHeadLoss = self.PumpHeadLoss
-        
         self.obj.GasSectionType = self.GasSectionType
         self.obj.GasPipeArea = self.GasPipeArea
         self.obj.GasPipeDiameter = self.GasPipeDiameter
@@ -302,6 +299,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.GasJointOutletArea = self.GasJointOutletArea
         self.obj.Gasjointangle1 = self.Gasjointangle1
         self.obj.Gasjointangle2 = self.Gasjointangle2
+       
 
     def updateParameterWidget(self):
         'fills the widgets'
@@ -355,7 +353,6 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.gb_outletpressuregas.setChecked(self.OutletPressureActive)
         self.parameterWidget.gb_inletflowrategas.setChecked(self.InletFlowRateActive)
         self.parameterWidget.gb_outletflowrategas.setChecked(self.OutletFlowRateActive) 
-        self.parameterWidget.if_gaspipe_pipe_area.setText(self.GasPipeArea.UserString) 
         self.parameterWidget.if_gaspipe_diameter.setText(self.GasPipeDiameter.UserString)
         self.parameterWidget.if_gaspipe_grain_diameter.setText(self.GasGrainDiameter.UserString)
         self.parameterWidget.sb_gaspipe_form_factor.setValue(self.GasFormFactor)
@@ -368,7 +365,8 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.if_gaspipe_joint_area_2.setText(self.GasJointArea2.UserString)  
         self.parameterWidget.if_gaspipe_outlet_area_3.setText(self.GasJointOutletArea.UserString)        
         self.parameterWidget.gas_inlet_angle_1.setValue(self.Gasjointangle1)
-        self.parameterWidget.gas_inlet_angle_2.setValue(self.Gasjointangle2)      
+        self.parameterWidget.gas_inlet_angle_2.setValue(self.Gasjointangle2) 
+   
 
     def sectiontype_changed(self, index):
         if index < 0:
@@ -485,20 +483,10 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.sw_gas_section_type.setCurrentIndex(index)
         self.GasSectionType = str(self.parameterWidget.cb_gas_section_type.itemText(index))  # parameterWidget returns unicode
            
-    def gaspipe_pipe_area_changed(self, base_quantity_value):
-        self.GasPipeArea = base_quantity_value
-        print("area from main var")
-        print(self.GasPipeArea)
-        diameter = np.sqrt((4*float(self.GasPipeArea))/np.pi) 
-        print("calculated diameter")
-        print(diameter)
         
     def gaspipe_pipe_diameter_changed(self, base_quantity_value):
         self.GasPipeDiameter = base_quantity_value    
-        pipearea =(np.pi/4)*(float(self.GasPipeDiameter)**2)     
-        print("area calculated")
-        print(pipearea)
-        
+        self.GasPipeArea =(np.pi/4)*(float(self.GasPipeDiameter)**2)          
         
     def gaspipe_graindiameter_changed(self, base_quantity_value):
         self.GasGrainDiameter = base_quantity_value        

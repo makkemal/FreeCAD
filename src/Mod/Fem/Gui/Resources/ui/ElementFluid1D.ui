@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
+    <width>733</width>
     <height>705</height>
    </rect>
   </property>
@@ -35,7 +35,7 @@
    <item>
     <widget class="QStackedWidget" name="sw_section_type">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="page">
       <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -870,7 +870,7 @@
                    <bool>true</bool>
                   </property>
                   <property name="text">
-                   <string/>
+                   <string>1 MPa</string>
                   </property>
                   <property name="unit" stdset="0">
                    <string notr="true">MPa</string>
@@ -949,7 +949,7 @@
                    <bool>true</bool>
                   </property>
                   <property name="text">
-                   <string/>
+                   <string>1 MPa</string>
                   </property>
                   <property name="unit" stdset="0">
                    <string notr="true"> MPa</string>
@@ -1001,27 +1001,6 @@
          </widget>
          <widget class="QWidget" name="page_17">
           <layout class="QVBoxLayout" name="verticalLayout_28">
-           <item>
-            <layout class="QHBoxLayout" name="gb_flowareagas">
-             <item>
-              <widget class="QLabel" name="label_33">
-               <property name="text">
-                <string>Pipe Area</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="Gui::InputField" name="if_gaspipe_pipe_area">
-               <property name="text">
-                <string>0 mm^2</string>
-               </property>
-               <property name="unit" stdset="0">
-                <string notr="true">mm^2</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
            <item>
             <layout class="QHBoxLayout" name="gb_pipediametergas">
              <item>
