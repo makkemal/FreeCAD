@@ -1490,10 +1490,10 @@ def liquid_section_def(obj, section_type):
 
 def gas_section_def(obj, section_type):
     if section_type == 'GAS PIPE FANNO ADIABATIC':
-        fanna_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
+        fanno_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
         fanno_diameter = str(obj.GasPipeDiameter.getValueAs('mm'))
-        fanno_length = str(obj.ManningCoefficient)
-        section_geo = manning_area + ',' + manning_radius + ',' + manning_coefficient + '\n'
+        fanno_length = str(10)
+        section_geo = fanno_area + ',' + fanno_diameter + ',' + fanno_length + '\n'
         return section_geo
     else:
         return ''
