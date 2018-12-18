@@ -200,9 +200,16 @@ def get_refshape_type(fem_doc_object):
         FreeCAD.Console.PrintMessage(fem_doc_object.Name + ' has empty References.\n')
         return ''
 
-
-def pydecode(bytestring):
-    if sys.version_info.major < 3:
-        return bytestring
-    else:
-        return bytestring.decode("utf-8")
+def get_1dfluid_sections_length():
+    lengthar=[]
+    for obj in FreeCAD.ActiveDocument.Objects:
+        objName = obj.Name
+        if (obj.isDerivedFrom('Fem::FeaturePython')):
+            if 'Fluid1D' in objName:
+                objlength=0
+                for ref in obj.References:
+                    for ele in ref[1]:
+                        edge=ref[0].Shape.getElement(ele)
+                        objlength=objlength+edge.Length
+                lengthar.append(objlength)
+    return(lengthar)
