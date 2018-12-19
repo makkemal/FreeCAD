@@ -183,8 +183,15 @@ class _TaskPanelFemElementFluid1D:
         self.form = [self.parameterWidget, self.selectionWidget]
 
     def accept(self):
-        self.set_fluidsection_props()
         self.obj.References = self.selectionWidget.references
+        objlength=0
+        for ref in self.obj.References:
+            for ele in ref[1]:
+                edge=ref[0].Shape.getElement(ele)
+                objlength=objlength+edge.Length
+        self.GasPipeLength=objlength
+        
+        self.set_fluidsection_props()
         self.recompute_and_set_back_all()
         return True
 
@@ -235,8 +242,8 @@ class _TaskPanelFemElementFluid1D:
         self.PumpFlowRate = self.obj.PumpFlowRate
         self.PumpHeadLoss = self.obj.PumpHeadLoss
         self.GasSectionType = self.obj.GasSectionType
-        self.GasPipeArea = self.obj.GasPipeArea
         self.GasPipeDiameter = self.obj.GasPipeDiameter
+        self.GasPipeArea =  self.obj.GasPipeArea
         self.GasGrainDiameter =self.obj.GasGrainDiameter
         self.GasFormFactor = self.obj.GasFormFactor
         self.GasInletArea = self.obj.GasInletArea
@@ -249,6 +256,7 @@ class _TaskPanelFemElementFluid1D:
         self.GasJointOutletArea = self.obj.GasJointOutletArea
         self.Gasjointangle1 = self.obj.Gasjointangle1
         self.Gasjointangle2 = self.obj.Gasjointangle2
+        self.GasPipeLength = self.obj.GasPipeLength
 
     def set_fluidsection_props(self):
         self.obj.LiquidSectionType = self.LiquidSectionType
@@ -299,8 +307,12 @@ class _TaskPanelFemElementFluid1D:
         self.obj.GasJointOutletArea = self.GasJointOutletArea
         self.obj.Gasjointangle1 = self.Gasjointangle1
         self.obj.Gasjointangle2 = self.Gasjointangle2
-       
-
+        self.obj.GasPipeLength = self.GasPipeLength
+        
+        
+        
+        
+        
     def updateParameterWidget(self):
         'fills the widgets'
         index_sectiontype = self.parameterWidget.cb_section_type.findText(self.SectionType)
@@ -522,4 +534,5 @@ class _TaskPanelFemElementFluid1D:
         self.Gasjointangle1 = base_quantity_value 
         
     def gas_inlet_angle2_changed (self, base_quantity_value):
-        self.Gasjointangle2 = base_quantity_value                      
+        self.Gasjointangle2 = base_quantity_value   
+                   

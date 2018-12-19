@@ -1492,8 +1492,10 @@ def gas_section_def(obj, section_type):
     if section_type == 'GAS PIPE FANNO ADIABATIC':
         fanno_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
         fanno_diameter = str(obj.GasPipeDiameter.getValueAs('mm'))
-        fanno_length = str(10)
-        section_geo = fanno_area + ',' + fanno_diameter + ',' + fanno_length + '\n'
+        fanno_length = str(obj.GasPipeLength.getValueAs('mm'))
+        fanno_grain = str(obj.GasGrainDiameter.getValueAs('mm'))
+        fanno_factor = str(obj.GasFormFactor)
+        section_geo = fanno_area + ',' + fanno_diameter + ',' + fanno_length + ',' + fanno_grain + ',' + fanno_factor + ',0,0\n'
         return section_geo
     else:
         return ''
