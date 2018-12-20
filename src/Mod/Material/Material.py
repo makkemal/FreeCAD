@@ -114,6 +114,7 @@ def getMaterialAttributeStructure(withSpaces=None):
     infile = os.path.dirname(__file__) + os.sep + "MatPropDict.xml"
     tree = ElementTree.parse(infile)
 
+            "SpecificGasConstant"  #https://en.wikipedia.org/wiki/Gas_constant
     if withSpaces:
         # on attributes, add a space before a capital letter, will be used for better display in the ui
         import re
