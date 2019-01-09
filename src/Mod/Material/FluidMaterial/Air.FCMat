@@ -13,7 +13,8 @@ PrandtlNumber = 0.7
 SpecificHeat = 1.005 J/kg/K
 ThermalConductivity = 0.0257 W/m/K
 SpecificGasConstant = 287 J/kg/K
-FuidConstants= [1.0022E9,1.69532E-11,270
+# Calculic fluid constants no units added yet 
+FluidConstants=[1.0022E9,1.69532E-11,270
 				1.0045E9,1.84135E-11,300
 				1.0131E9,2.28232E-11,400
 				1.0292E9,2.66931E-11,500
