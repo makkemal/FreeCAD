@@ -35,6 +35,7 @@ import codecs
 import femmesh.meshtools as FemMeshTools
 from .. import writerbase as FemInputWriter
 import six
+import numpy as np
 
 
 class FemInputWriterCcx(FemInputWriter.FemInputWriter):
@@ -624,6 +625,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     DV_in_tmms = float(DV.getValueAs('t/mm/s'))
                     SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificGasConstant'])
                     SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # Add factor to force units to results' base units of t/mm/s/K
+                    Fluidconstantstab=np.array(mat_obj.Material['FluidConstants'])
             # write material properties
             f.write('** FreeCAD material name: ' + mat_info_name + '\n')
             f.write('** ' + mat_label + '\n')
@@ -647,7 +649,18 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('*SPECIFIC GAS CONSTANT\n')
                     f.write('{0:.3e}\n'.format(SGC_in_JkgK))
                     f.write('*FLUID CONSTANTS\n')
-                    f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_tmms))
+                    if len(Fluidconstantstab) > 2:
+                        idxnum=1
+                        for row in Fluidconstantstab:
+                            #print(row)
+                            for i in row:
+                                f.write('{0:.3e} '.format(i))
+                                if idxnum < 3: f.write(', ')
+                                idxnum+=1
+                            f.write('\n')
+                            idxnum=1   
+                    else:       
+                        f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_tmms))
 
             # nonlinear material properties
             if self.solver_obj.MaterialNonlinearity == 'nonlinear':
