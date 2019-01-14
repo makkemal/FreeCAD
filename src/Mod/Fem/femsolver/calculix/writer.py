@@ -626,8 +626,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificGasConstant'])
                     SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # Add factor to force units to results' base units of t/mm/s/K
                     if mat_obj.Material['FluidConstants']:
-                        Fluidconstantstab=(mat_obj.Material['FluidConstants'])
-                        Fluidconstantstab=np.array(Fluidconstantstab.tolist())
+                        Fluidconstantstab=eval(mat_obj.Material['FluidConstants'])
+                        Fluidconstantstab=np.array(Fluidconstantstab)
             # write material properties
             f.write('** FreeCAD material name: ' + mat_info_name + '\n')
             f.write('** ' + mat_label + '\n')
@@ -652,7 +652,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('{0:.3e}\n'.format(SGC_in_JkgK))
                     f.write('*FLUID CONSTANTS\n')
                     print(Fluidconstantstab)
-                    if Fluidconstantstab:
+                    if len(Fluidconstantstab) > 2:
                         idxnum=1
                         for row in Fluidconstantstab:
                             #print(row)
