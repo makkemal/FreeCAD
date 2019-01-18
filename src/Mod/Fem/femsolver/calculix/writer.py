@@ -24,7 +24,7 @@ __title__ = "FreeCAD FEM solver CalculiX writer"
 __author__ = "Przemo Firszt, Bernd Hahnebach"
 __url__ = "http://www.freecadweb.org"
 
-## \addtogroup FEM
+# \addtogroup FEM
 #  @{
 
 import FreeCAD
@@ -626,8 +626,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificGasConstant'])
                     SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # Add factor to force units to results' base units of t/mm/s/K
                     if mat_obj.Material['FluidConstants']:
-                        Fluidconstantstab=eval(mat_obj.Material['FluidConstants'])
-                        Fluidconstantstab=np.array(Fluidconstantstab)
+                        Fluidconstantstab = eval(mat_obj.Material['FluidConstants'])
+                        Fluidconstantstab = np.array(Fluidconstantstab)
             # write material properties
             f.write('** FreeCAD material name: ' + mat_info_name + '\n')
             f.write('** ' + mat_label + '\n')
@@ -653,16 +653,17 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('*FLUID CONSTANTS\n')
                     print(Fluidconstantstab)
                     if len(Fluidconstantstab) > 2:
-                        idxnum=1
+                        idxnum = 1
                         for row in Fluidconstantstab:
-                            #print(row)
+                            # print(row)
                             for i in row:
                                 f.write('{0:.3e} '.format(i))
-                                if idxnum < 3: f.write(', ')
-                                idxnum+=1
+                                if idxnum < 3:
+                                    f.write(', ')
+                                idxnum += 1
                             f.write('\n')
-                            idxnum=1   
-                    else:       
+                            idxnum = 1
+                    else:
                         f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_tmms))
 
             # nonlinear material properties
@@ -737,7 +738,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         section_type = fluidsec_obj.GasSectionType
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
                             section_type = "PIPE INOUT"
-                            fluidsec_obj.LiquidSectionType="PIPE INLET" #use the same node sets 
+                            fluidsec_obj.LiquidSectionType = "PIPE INLET"  # use the same node sets
                         setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
                         setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
@@ -1508,6 +1509,7 @@ def liquid_section_def(obj, section_type):
     else:
         return ''
 
+
 def gas_section_def(obj, section_type):
     if section_type == 'GAS PIPE FANNO ADIABATIC':
         fanno_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
@@ -1521,5 +1523,4 @@ def gas_section_def(obj, section_type):
         return ''
 
 
-    
-##  @}
+# @}

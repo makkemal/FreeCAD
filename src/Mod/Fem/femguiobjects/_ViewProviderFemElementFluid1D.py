@@ -26,7 +26,7 @@ __title__ = "FreeCAD FEM element fluid 1D ViewProvider for the document object"
 __author__ = "Ofentse Kgoa, Bernd Hahnebach, Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
-## @package ViewProviderFemElementFluid1D
+# @package ViewProviderFemElementFluid1D
 #  \ingroup FEM
 #  \brief FreeCAD ViewProviderFemElementFluid1D
 
@@ -146,17 +146,17 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.if_colebrooke_radius, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.colebrooke_radius_changed)
         QtCore.QObject.connect(self.parameterWidget.if_colebrooke_grain_diameter, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.colebrooke_grain_diameter_changed)
         QtCore.QObject.connect(self.parameterWidget.sb_colebrooke_form_factor, QtCore.SIGNAL("valueChanged(double)"), self.colebrooke_form_factor_changed)
-        QtCore.QObject.connect(self.parameterWidget.tw_pump_characteristics, QtCore.SIGNAL("cellChanged(int, int)"), self.pump_characteristics_changed)    
+        QtCore.QObject.connect(self.parameterWidget.tw_pump_characteristics, QtCore.SIGNAL("cellChanged(int, int)"), self.pump_characteristics_changed)
         QtCore.QObject.connect(self.parameterWidget.if_inletpressuregas, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.inlet_pressure_changed)
         QtCore.QObject.connect(self.parameterWidget.if_outletpressuregas, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.outlet_pressure_changed)
         QtCore.QObject.connect(self.parameterWidget.if_inletflowrategas, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.inlet_flowrate_changed)
-        QtCore.QObject.connect(self.parameterWidget.if_outletflowrategas, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.outlet_flowrate_changed) 
+        QtCore.QObject.connect(self.parameterWidget.if_outletflowrategas, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.outlet_flowrate_changed)
         QtCore.QObject.connect(self.parameterWidget.gb_inletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.inlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_outletpressuregas, QtCore.SIGNAL("clicked(bool)"), self.outlet_pressure_active)
         QtCore.QObject.connect(self.parameterWidget.gb_inletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.inlet_flowrate_active)
-        QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)                
-        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_diameter_changed)
-        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_grain_diameter,QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_graindiameter_changed)
+        QtCore.QObject.connect(self.parameterWidget.gb_outletflowrategas, QtCore.SIGNAL("clicked(bool)"), self.outlet_flowrate_active)
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_diameter, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_pipe_diameter_changed)
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_grain_diameter, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_graindiameter_changed)
         QtCore.QObject.connect(self.parameterWidget.sb_gaspipe_form_factor, QtCore.SIGNAL("valueChanged(double)"), self.gaspipe_form_factor_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_inlet_area_1, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_inlet_area_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_branch_area_1, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_branch_area1_changed)
@@ -164,11 +164,11 @@ class _TaskPanelFemElementFluid1D:
         QtCore.QObject.connect(self.parameterWidget.gas_outlet_angle_1, QtCore.SIGNAL("valueChanged(double)"), self.gas_outlet_angle1_changed)
         QtCore.QObject.connect(self.parameterWidget.gas_outlet_angle_2, QtCore.SIGNAL("valueChanged(double)"), self.gas_outlet_angle2_changed)
         QtCore.QObject.connect(self.parameterWidget.if_gaspipe_joint_area_1, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_joint_area1_changed)
-        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_joint_area_2, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_joint_area2_changed)  
-        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_outlet_area_3, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_joint_outlet_changed)        
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_joint_area_2, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_joint_area2_changed)
+        QtCore.QObject.connect(self.parameterWidget.if_gaspipe_outlet_area_3, QtCore.SIGNAL("valueChanged(Base::Quantity)"), self.gaspipe_joint_outlet_changed)
         QtCore.QObject.connect(self.parameterWidget.gas_inlet_angle_1, QtCore.SIGNAL("valueChanged(double)"), self.gas_inlet_angle1_changed)
-        QtCore.QObject.connect(self.parameterWidget.gas_inlet_angle_2, QtCore.SIGNAL("valueChanged(double)"), self.gas_inlet_angle2_changed)             
-        
+        QtCore.QObject.connect(self.parameterWidget.gas_inlet_angle_2, QtCore.SIGNAL("valueChanged(double)"), self.gas_inlet_angle2_changed)
+
         self.parameterWidget.cb_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_fluid_types)
         self.parameterWidget.cb_liquid_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_liquid_types)
         self.parameterWidget.cb_gas_section_type.addItems(_FemElementFluid1D._FemElementFluid1D.known_gas_types)
@@ -184,13 +184,13 @@ class _TaskPanelFemElementFluid1D:
 
     def accept(self):
         self.obj.References = self.selectionWidget.references
-        objlength=0
+        objlength = 0
         for ref in self.obj.References:
             for ele in ref[1]:
-                edge=ref[0].Shape.getElement(ele)
-                objlength=objlength+edge.Length
-        self.GasPipeLength=objlength
-        
+                edge = ref[0].Shape.getElement(ele)
+                objlength = objlength + edge.Length
+        self.GasPipeLength = objlength
+
         self.set_fluidsection_props()
         self.recompute_and_set_back_all()
         return True
@@ -243,8 +243,8 @@ class _TaskPanelFemElementFluid1D:
         self.PumpHeadLoss = self.obj.PumpHeadLoss
         self.GasSectionType = self.obj.GasSectionType
         self.GasPipeDiameter = self.obj.GasPipeDiameter
-        self.GasPipeArea =  self.obj.GasPipeArea
-        self.GasGrainDiameter =self.obj.GasGrainDiameter
+        self.GasPipeArea = self.obj.GasPipeArea
+        self.GasGrainDiameter = self.obj.GasGrainDiameter
         self.GasFormFactor = self.obj.GasFormFactor
         self.GasInletArea = self.obj.GasInletArea
         self.Gasbrancharea1 = self.obj.Gasbrancharea1
@@ -308,11 +308,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.Gasjointangle1 = self.Gasjointangle1
         self.obj.Gasjointangle2 = self.Gasjointangle2
         self.obj.GasPipeLength = self.GasPipeLength
-        
-        
-        
-        
-        
+
     def updateParameterWidget(self):
         'fills the widgets'
         index_sectiontype = self.parameterWidget.cb_section_type.findText(self.SectionType)
@@ -353,10 +349,10 @@ class _TaskPanelFemElementFluid1D:
         for i in range(len(self.PumpFlowRate)):
             self.parameterWidget.tw_pump_characteristics.setItem(i, 0, QtGui.QTableWidgetItem(str(self.PumpFlowRate[i])))
             self.parameterWidget.tw_pump_characteristics.setItem(i, 1, QtGui.QTableWidgetItem(str(self.PumpHeadLoss[i])))
-            
+
         index_gassectiontype = self.parameterWidget.cb_gas_section_type.findText(self.GasSectionType)
         self.parameterWidget.cb_gas_section_type.setCurrentIndex(index_gassectiontype)
-        self.parameterWidget.sw_gas_section_type.setCurrentIndex(index_gassectiontype)           
+        self.parameterWidget.sw_gas_section_type.setCurrentIndex(index_gassectiontype)
         self.parameterWidget.if_inletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.InletPressure, FreeCAD.Units.Pressure).UserString)
         self.parameterWidget.if_outletpressuregas.setText(FreeCAD.Units.Quantity(1000 * self.OutletPressure, FreeCAD.Units.Pressure).UserString)
         self.parameterWidget.if_inletflowrategas.setText(str(self.InletFlowRate))
@@ -364,7 +360,7 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.gb_inletpressuregas.setChecked(self.InletPressureActive)
         self.parameterWidget.gb_outletpressuregas.setChecked(self.OutletPressureActive)
         self.parameterWidget.gb_inletflowrategas.setChecked(self.InletFlowRateActive)
-        self.parameterWidget.gb_outletflowrategas.setChecked(self.OutletFlowRateActive) 
+        self.parameterWidget.gb_outletflowrategas.setChecked(self.OutletFlowRateActive)
         self.parameterWidget.if_gaspipe_diameter.setText(self.GasPipeDiameter.UserString)
         self.parameterWidget.if_gaspipe_grain_diameter.setText(self.GasGrainDiameter.UserString)
         self.parameterWidget.sb_gaspipe_form_factor.setValue(self.GasFormFactor)
@@ -374,11 +370,10 @@ class _TaskPanelFemElementFluid1D:
         self.parameterWidget.gas_outlet_angle_1.setValue(self.Gasbranchangle1)
         self.parameterWidget.gas_outlet_angle_2.setValue(self.Gasbranchangle2)
         self.parameterWidget.if_gaspipe_joint_area_1.setText(self.GasJointArea1.UserString)
-        self.parameterWidget.if_gaspipe_joint_area_2.setText(self.GasJointArea2.UserString)  
-        self.parameterWidget.if_gaspipe_outlet_area_3.setText(self.GasJointOutletArea.UserString)        
+        self.parameterWidget.if_gaspipe_joint_area_2.setText(self.GasJointArea2.UserString)
+        self.parameterWidget.if_gaspipe_outlet_area_3.setText(self.GasJointOutletArea.UserString)
         self.parameterWidget.gas_inlet_angle_1.setValue(self.Gasjointangle1)
-        self.parameterWidget.gas_inlet_angle_2.setValue(self.Gasjointangle2) 
-   
+        self.parameterWidget.gas_inlet_angle_2.setValue(self.Gasjointangle2)
 
     def sectiontype_changed(self, index):
         if index < 0:
@@ -487,52 +482,49 @@ class _TaskPanelFemElementFluid1D:
         else:
             self.PumpHeadLoss[row] = float(self.parameterWidget.tw_pump_characteristics.item(row, column).text())
 
-
     def gassectiontype_changed(self, index):
         if index < 0:
             return
         self.parameterWidget.cb_gas_section_type.setCurrentIndex(index)
         self.parameterWidget.sw_gas_section_type.setCurrentIndex(index)
         self.GasSectionType = str(self.parameterWidget.cb_gas_section_type.itemText(index))  # parameterWidget returns unicode
-           
-        
+
     def gaspipe_pipe_diameter_changed(self, base_quantity_value):
-        self.GasPipeDiameter = base_quantity_value    
-        self.GasPipeArea =(np.pi/4)*(float(self.GasPipeDiameter)**2)          
-        
+        self.GasPipeDiameter = base_quantity_value
+        self.GasPipeArea = (np.pi / 4) * (float(self.GasPipeDiameter)**2)
+
     def gaspipe_graindiameter_changed(self, base_quantity_value):
-        self.GasGrainDiameter = base_quantity_value        
+        self.GasGrainDiameter = base_quantity_value
 
     def gaspipe_form_factor_changed(self, base_quantity_value):
-        self.GasFormFactor = base_quantity_value                 
+        self.GasFormFactor = base_quantity_value
 
     def gaspipe_inlet_area_changed(self, base_quantity_value):
-        self.GasInletArea = base_quantity_value     
-        
+        self.GasInletArea = base_quantity_value
+
     def gaspipe_branch_area1_changed(self, base_quantity_value):
-        self.Gasbrancharea1 = base_quantity_value                  
-        
+        self.Gasbrancharea1 = base_quantity_value
+
     def gaspipe_branch_area2_changed(self, base_quantity_value):
-        self.Gasbrancharea2 = base_quantity_value                 
-    
-    def gas_outlet_angle1_changed (self, base_quantity_value):
-        self.Gasbranchangle1 = base_quantity_value  
+        self.Gasbrancharea2 = base_quantity_value
 
-    def gas_outlet_angle2_changed (self, base_quantity_value):
-        self.Gasbranchangle2 = base_quantity_value   
-        
-    def gaspipe_joint_area1_changed (self, base_quantity_value):
-        self.GasJointArea1 = base_quantity_value           
-        
-    def gaspipe_joint_area2_changed (self, base_quantity_value):
-        self.GasJointArea2 = base_quantity_value              
+    def gas_outlet_angle1_changed(self, base_quantity_value):
+        self.Gasbranchangle1 = base_quantity_value
 
-    def gaspipe_joint_outlet_changed (self, base_quantity_value):
-        self.GasJointOutletArea = base_quantity_value                    
-                 
-    def gas_inlet_angle1_changed (self, base_quantity_value):
-        self.Gasjointangle1 = base_quantity_value 
-        
-    def gas_inlet_angle2_changed (self, base_quantity_value):
-        self.Gasjointangle2 = base_quantity_value   
-                   
+    def gas_outlet_angle2_changed(self, base_quantity_value):
+        self.Gasbranchangle2 = base_quantity_value
+
+    def gaspipe_joint_area1_changed(self, base_quantity_value):
+        self.GasJointArea1 = base_quantity_value
+
+    def gaspipe_joint_area2_changed(self, base_quantity_value):
+        self.GasJointArea2 = base_quantity_value
+
+    def gaspipe_joint_outlet_changed(self, base_quantity_value):
+        self.GasJointOutletArea = base_quantity_value
+
+    def gas_inlet_angle1_changed(self, base_quantity_value):
+        self.Gasjointangle1 = base_quantity_value
+
+    def gas_inlet_angle2_changed(self, base_quantity_value):
+        self.Gasjointangle2 = base_quantity_value
