@@ -151,6 +151,8 @@ class _FemElementFluid1D:
         obj.GasJointOutletArea = 1
         obj.Gasjointangle1 = 1
         obj.Gasjointangle2 = 1
+        obj.Meshregionname = ' '
+        obj.Meshregionref = ' '
 
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"

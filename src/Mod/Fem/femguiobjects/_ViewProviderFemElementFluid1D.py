@@ -186,6 +186,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.References = self.selectionWidget.references
         objlength = 0
         for ref in self.obj.References:
+            self.Meshregionref = ref  # Mesh region applied, Should not have not than one region per fluidsec
             for ele in ref[1]:
                 edge = ref[0].Shape.getElement(ele)
                 objlength = objlength + edge.Length
@@ -257,6 +258,8 @@ class _TaskPanelFemElementFluid1D:
         self.Gasjointangle1 = self.obj.Gasjointangle1
         self.Gasjointangle2 = self.obj.Gasjointangle2
         self.GasPipeLength = self.obj.GasPipeLength
+        self.Meshregionname = self.obj.Meshregionname
+        self.Meshregionref = self.obj.Meshregionref
 
     def set_fluidsection_props(self):
         self.obj.LiquidSectionType = self.LiquidSectionType
@@ -308,6 +311,8 @@ class _TaskPanelFemElementFluid1D:
         self.obj.Gasjointangle1 = self.Gasjointangle1
         self.obj.Gasjointangle2 = self.Gasjointangle2
         self.obj.GasPipeLength = self.GasPipeLength
+        self.obj.Meshregionname = self.Meshregionname
+        self.obj.Meshregionref = self.Meshregionref
 
     def updateParameterWidget(self):
         'fills the widgets'
@@ -528,3 +533,12 @@ class _TaskPanelFemElementFluid1D:
 
     def gas_inlet_angle2_changed(self, base_quantity_value):
         self.Gasjointangle2 = base_quantity_value
+
+    def mesh_region_set(self):
+        if self.Meshregionname == ' ':
+            obj = ObjectsFem.makeMeshRegion(FreeCAD.ActiveDocument, FreeCAD.ActiveDocument.FEMMeshGmsh)
+        else:
+            obj = App.ActiveDocument.getObject(self.Meshregionname)
+
+        obj.References = self.Meshregionref
+        obj.CharacteristicLength = self.GasPipeLength
