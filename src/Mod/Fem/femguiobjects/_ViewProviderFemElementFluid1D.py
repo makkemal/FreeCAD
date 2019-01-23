@@ -539,6 +539,5 @@ class _TaskPanelFemElementFluid1D:
             obj = ObjectsFem.makeMeshRegion(FreeCAD.ActiveDocument, FreeCAD.ActiveDocument.FEMMeshGmsh)
         else:
             obj = App.ActiveDocument.getObject(self.Meshregionname)
-
         obj.References = self.Meshregionref
         obj.CharacteristicLength = self.GasPipeLength
