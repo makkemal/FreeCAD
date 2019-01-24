@@ -191,10 +191,20 @@ class _TaskPanelFemElementFluid1D:
                 edge = ref[0].Shape.getElement(ele)
                 objlength = objlength + edge.Length
         self.GasPipeLength = objlength
-
+        self.mesh_region_set()
         self.set_fluidsection_props()
         self.recompute_and_set_back_all()
         return True
+
+    def mesh_region_set(self):
+        import ObjectsFem
+        if self.Meshregionname == ' ':
+            obj = ObjectsFem.makeMeshRegion(FreeCAD.ActiveDocument, FreeCAD.ActiveDocument.FEMMeshGmsh)
+        else:
+            obj = FreeCAD.ActiveDocument.getObject(self.Meshregionname)
+        obj.References = self.obj.References
+        obj.CharacteristicLength = self.GasPipeLength
+        self.Meshregionname = obj.Name
 
     def reject(self):
         self.recompute_and_set_back_all()
@@ -259,7 +269,6 @@ class _TaskPanelFemElementFluid1D:
         self.Gasjointangle2 = self.obj.Gasjointangle2
         self.GasPipeLength = self.obj.GasPipeLength
         self.Meshregionname = self.obj.Meshregionname
-        self.Meshregionref = self.obj.Meshregionref
 
     def set_fluidsection_props(self):
         self.obj.LiquidSectionType = self.LiquidSectionType
@@ -312,7 +321,6 @@ class _TaskPanelFemElementFluid1D:
         self.obj.Gasjointangle2 = self.Gasjointangle2
         self.obj.GasPipeLength = self.GasPipeLength
         self.obj.Meshregionname = self.Meshregionname
-        self.obj.Meshregionref = self.Meshregionref
 
     def updateParameterWidget(self):
         'fills the widgets'
@@ -533,11 +541,3 @@ class _TaskPanelFemElementFluid1D:
 
     def gas_inlet_angle2_changed(self, base_quantity_value):
         self.Gasjointangle2 = base_quantity_value
-
-    def mesh_region_set(self):
-        if self.Meshregionname == ' ':
-            obj = ObjectsFem.makeMeshRegion(FreeCAD.ActiveDocument, FreeCAD.ActiveDocument.FEMMeshGmsh)
-        else:
-            obj = App.ActiveDocument.getObject(self.Meshregionname)
-        obj.References = self.Meshregionref
-        obj.CharacteristicLength = self.GasPipeLength
