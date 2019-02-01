@@ -95,7 +95,6 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyArea", "GasJointOutletArea", "GasPipe", "set Outlet area of gaspipe joint")
         obj.addProperty("App::PropertyFloat", "Gasjointangle1", "Gaspipe", "set inlet angle of the joint")
         obj.addProperty("App::PropertyFloat", "Gasjointangle2", "Gaspipe", "set inlet angle of the joint")
-        obj.addProperty("App::PropertyString", "Meshregionname", "Gaspipe", "Mesh region object linked to fluid section name")
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -152,7 +151,6 @@ class _FemElementFluid1D:
         obj.GasJointOutletArea = 1
         obj.Gasjointangle1 = 1
         obj.Gasjointangle2 = 1
-        obj.Meshregionname = ' '
 
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"

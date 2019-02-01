@@ -191,20 +191,18 @@ class _TaskPanelFemElementFluid1D:
                 edge = ref[0].Shape.getElement(ele)
                 objlength = objlength + edge.Length
         self.GasPipeLength = objlength
-        self.mesh_region_set()
+        self.meshsizeset()
         self.set_fluidsection_props()
         self.recompute_and_set_back_all()
         return True
 
-    def mesh_region_set(self):
-        import ObjectsFem
-        if self.Meshregionname == ' ':
-            obj = ObjectsFem.makeMeshRegion(FreeCAD.ActiveDocument, FreeCAD.ActiveDocument.FEMMeshGmsh)
-        else:
-            obj = FreeCAD.ActiveDocument.getObject(self.Meshregionname)
-        obj.References = self.obj.References
-        obj.CharacteristicLength = self.GasPipeLength
-        self.Meshregionname = obj.Name
+    def meshsizeset(self):
+        for obj in FreeCAD.ActiveDocument.Objects:
+            if (obj.isDerivedFrom('Fem::FemMeshObjectPython')):
+                length = obj.CharacteristicLengthMax
+                if (self.GasPipeLength > length):
+                    obj.CharacteristicLengthMax = self.GasPipeLength
+                    obj.CharacteristicLengthMin = self.GasPipeLength
 
     def reject(self):
         self.recompute_and_set_back_all()
@@ -268,7 +266,6 @@ class _TaskPanelFemElementFluid1D:
         self.Gasjointangle1 = self.obj.Gasjointangle1
         self.Gasjointangle2 = self.obj.Gasjointangle2
         self.GasPipeLength = self.obj.GasPipeLength
-        self.Meshregionname = self.obj.Meshregionname
 
     def set_fluidsection_props(self):
         self.obj.LiquidSectionType = self.LiquidSectionType
@@ -320,7 +317,6 @@ class _TaskPanelFemElementFluid1D:
         self.obj.Gasjointangle1 = self.Gasjointangle1
         self.obj.Gasjointangle2 = self.Gasjointangle2
         self.obj.GasPipeLength = self.GasPipeLength
-        self.obj.Meshregionname = self.Meshregionname
 
     def updateParameterWidget(self):
         'fills the widgets'
