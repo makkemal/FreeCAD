@@ -648,6 +648,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('*SPECIFIC HEAT\n')
                     f.write('{0:.3e}\n'.format(SH_in_JkgK))
                 elif mat_obj.Category == 'Fluid':
+                    f.write('*CONDUCTIVITY\n')
+                    f.write('{0:.3f}\n'.format(TC_in_WmK))
                     f.write('*SPECIFIC GAS CONSTANT\n')
                     f.write('{0:.3e}\n'.format(SGC_in_JkgK))
                     f.write('*FLUID CONSTANTS\n')
