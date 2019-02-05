@@ -623,10 +623,10 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 elif mat_obj.Category == 'Fluid':
                     DV = FreeCAD.Units.Quantity(mat_obj.Material['DynamicViscosity'])
                     DV_in_tmms = float(DV.getValueAs('t/mm/s'))
-                    if mat_obj.Material['SpecificGasConstant']:
+                    if 'SpecificGasConstant' in mat_obj.Material:
                         SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificGasConstant'])
                         SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # Add factor to force units to results' base units of t/mm/s/K
-                    if mat_obj.Material['FluidConstants']:
+                    if 'FluidConstants' in mat_obj.Material:
                         Fluidconstantstab = eval(mat_obj.Material['FluidConstants'])
                         Fluidconstantstab = np.array(Fluidconstantstab)
             # write material properties
