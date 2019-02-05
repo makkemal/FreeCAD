@@ -651,11 +651,11 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 elif mat_obj.Category == 'Fluid':
                     f.write('*CONDUCTIVITY\n')
                     f.write('{0:.3f}\n'.format(TC_in_WmK))
-                    f.write('*SPECIFIC GAS CONSTANT\n')
-                    f.write('{0:.3e}\n'.format(SGC_in_JkgK))
+                    if 'SpecificGasConstant' in mat_obj.Material:
+                        f.write('*SPECIFIC GAS CONSTANT\n')
+                        f.write('{0:.3e}\n'.format(SGC_in_JkgK))
                     f.write('*FLUID CONSTANTS\n')
-                    print(Fluidconstantstab)
-                    if len(Fluidconstantstab) > 2:
+                    if 'FluidConstants' in mat_obj.Material:
                         idxnum = 1
                         for row in Fluidconstantstab:
                             # print(row)
