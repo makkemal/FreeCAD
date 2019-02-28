@@ -1081,8 +1081,8 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
         for femobj in self.fluidsection_objects:  # femobj --> dict, FreeCAD document object is femobj['Object']
             fluidsection_obj = femobj['Object']
             f.write('** ' + fluidsection_obj.Label + '\n')
-            if (fluidsection_obj.SectionType == 'Liquid') or (fluidsection_obj.SectionType == 'Gas'):
-                if (fluidsection_obj.LiquidSectionType == 'PIPE INLET') or (fluidsection_obj.GasSectionType == 'PIPE INLET'):
+            if fluidsection_obj.SectionType == 'Liquid':
+                if fluidsection_obj.LiquidSectionType == 'PIPE INLET':
                     f.write('**Fluid Section Inlet \n')
                     if fluidsection_obj.InletPressureActive is True:
                         f.write('*BOUNDARY \n')
@@ -1099,8 +1099,43 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                 if int(b[0]) == n and b[3] == 'PIPE INLET\n':
                                     # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
                                     f.write(b[1] + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n')
-                elif fluidsection_obj.LiquidSectionType == 'PIPE OUTLET'or (fluidsection_obj.GasSectionType == 'PIPE OUTLET'):
+                elif fluidsection_obj.LiquidSectionType == 'PIPE OUTLET':
                     f.write('**Fluid Section Outlet \n')
+                    if fluidsection_obj.OutletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE OUTLET\n':
+                                    f.write(b[0] + ',2,2,' + str(fluidsection_obj.OutletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.OutletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE OUTLET\n':
+                                    # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
+                                    f.write(b[1] + ',1,1,' + str(fluidsection_obj.OutletFlowRate * 0.001) + '\n')
+            elif fluidsection_obj.SectionType == 'Gas':
+                if fluidsection_obj.GasSectionType == 'PIPE INLET':
+                    f.write('**Gas Section Inlet \n')
+                    if fluidsection_obj.InletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE INLET\n':
+                                    f.write(b[0] + ',2,2,' + str(fluidsection_obj.InletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.InletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE INLET\n':
+                                    # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
+                                    f.write(b[1] + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n')
+                elif fluidsection_obj.GasSectionType == 'PIPE OUTLET':
+                    f.write('**Gas Section Outlet \n')
                     if fluidsection_obj.OutletPressureActive is True:
                         f.write('*BOUNDARY \n')
                         for n in femobj['Nodes']:
