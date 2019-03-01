@@ -132,9 +132,9 @@ class _FemElementFluid1D:
         obj.OutletPressure = 1.0
         obj.InletFlowRate = 1.0
         obj.OutletFlowRate = 1.0
-        obj.InletPressureActive = False
+        obj.InletPressureActive = True
         obj.OutletPressureActive = True
-        obj.InletFlowRateActive = True
+        obj.InletFlowRateActive = False
         obj.OutletFlowRateActive = False
         obj.GasPipeArea = 283.5
         obj.GasPipeDiameter = 19.0
