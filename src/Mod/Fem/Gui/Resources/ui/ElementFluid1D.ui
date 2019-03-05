@@ -844,7 +844,7 @@
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <item>
-            <widget class="QGroupBox" name="gb_inletflowrategas">
+            <widget class="QGroupBox" name="gb_inletpressuregas">
              <property name="title">
               <string>Inlet Pressure</string>
              </property>
@@ -883,7 +883,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QGroupBox" name="gb_inletpressuregas">
+            <widget class="QGroupBox" name="gb_inletflowrategas">
              <property name="title">
               <string>Inlet mass flow rate</string>
              </property>
