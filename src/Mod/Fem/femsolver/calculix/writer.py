@@ -436,7 +436,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             if ccx_elset['ccx_elset'] and not isinstance(ccx_elset['ccx_elset'], six.string_types):  # use six to be sure to be Python 2.7 and 3.x compatible
                 if 'fluidsection_obj'in ccx_elset:
                     fluidsec_obj = ccx_elset['fluidsection_obj']
-                    if (fluidsec_obj.SectionType == 'Liquid') or (fluidsec_obj.SectionType == 'Gas'):
+                    if (fluidsec_obj.SectionType == 'Liquid'):
                         if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                             elsetchanged = False
                             counter = 0
@@ -447,6 +447,21 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                     elsetchanged = True
                                 elif (fluidsec_obj.LiquidSectionType == "PIPE OUTLET") and (counter == len(ccx_elset['ccx_elset'])):
                                     self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line number the element is defined
+                    elif fluidsec_obj.SectionType == 'Gas':
+                        if (fluidsec_obj.GasSectionType == "PIPE INLET") or (fluidsec_obj.GasSectionType == "PIPE OUTLET"):
+                            elsetchanged = False
+                            counter = 0
+                            for elid in ccx_elset['ccx_elset']:
+                                counter = counter + 1
+                                if (elsetchanged is False) and (fluidsec_obj.GasSectionType == "PIPE INLET"):
+                                    self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])  # 3rd index is to track which line number the element is defined
+                                    elsetchanged = True
+                                elif (fluidsec_obj.GasSectionType == "PIPE OUTLET") and (counter == len(ccx_elset['ccx_elset'])):
+                                    # 3rd index is to track which line number the element is defined
+                                    # self.FluidInletoutlet_ele.append([str(elid),
+                                    # fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line
+                                    # number the element is defined
+                                    self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])
 
         # write ccx_elsets to file
         for ccx_elset in self.ccx_elsets:
@@ -741,7 +756,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         section_type = fluidsec_obj.GasSectionType
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
                             section_type = "PIPE INOUT"
-                            fluidsec_obj.LiquidSectionType = "PIPE INLET"  # use the same node sets
+                            fluidsec_obj.GasSectionType = "PIPE INLET"  # use the same node sets
                         setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
                         setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
@@ -1484,9 +1499,13 @@ def is_fluid_section_inlet_outlet(ccx_elsets):
         if ccx_elset['ccx_elset']:
             if 'fluidsection_obj'in ccx_elset:  # fluid mesh
                 fluidsec_obj = ccx_elset['fluidsection_obj']
-                if (fluidsec_obj.SectionType == "Liquid") or (fluidsec_obj.SectionType == "Gas"):
+                if fluidsec_obj.SectionType == "Liquid":
                     if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                         return True
+                elif fluidsec_obj.SectionType == "Gas":
+                    if (fluidsec_obj.GasSectionType == "PIPE INLET") or (fluidsec_obj.GasSectionType == "PIPE OUTLET"):
+                        return True
+
     return False
 
 
