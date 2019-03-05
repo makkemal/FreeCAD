@@ -457,10 +457,6 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                     self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])  # 3rd index is to track which line number the element is defined
                                     elsetchanged = True
                                 elif (fluidsec_obj.GasSectionType == "PIPE OUTLET") and (counter == len(ccx_elset['ccx_elset'])):
-                                    # 3rd index is to track which line number the element is defined
-                                    # self.FluidInletoutlet_ele.append([str(elid),
-                                    # fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line
-                                    # number the element is defined
                                     self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])
 
         # write ccx_elsets to file
@@ -756,7 +752,6 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         section_type = fluidsec_obj.GasSectionType
                         if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
                             section_type = "PIPE INOUT"
-                            fluidsec_obj.GasSectionType = "PIPE INLET"  # use the same node sets
                         setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
                         setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
