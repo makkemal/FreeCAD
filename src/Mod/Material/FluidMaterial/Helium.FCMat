@@ -7,6 +7,7 @@ Density = 0.1641 kg/m^3
 DynamicViscosity = 1.959e-05 kg/m/s
 KinematicViscosity = 1.17e-4 m^2/s
 
+VolumetricThermalExpansionCoefficient = 3.43e-3 m/m/K
 PrandtlNumber = 0.7
 
 SpecificHeat = 5195 J/kg/K
