@@ -186,7 +186,7 @@ class _TaskPanelFemElementFluid1D:
         self.obj.References = self.selectionWidget.references
         objlength = 0
         for ref in self.obj.References:
-            self.Meshregionref = ref  # Mesh region applied, Should not have not than one region per fluidsec
+            self.Meshregionref = ref  # Mesh region applied, Should not have more than one region per fluidsec
             for ele in ref[1]:
                 edge = ref[0].Shape.getElement(ele)
                 objlength = objlength + edge.Length
