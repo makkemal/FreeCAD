@@ -1572,7 +1572,9 @@ def gas_section_def(obj, section_type):
         section_geo = fanno_area + ',' + fanno_diameter + ',' + fanno_length + ',' + fanno_grain + ',' + fanno_factor + ',0,0\n'
         return section_geo
     elif section_type == 'BRANCH SPLIT GE':
-            section_geo = '0,0,0\n'   
+            section_geo =''
+            for ref in obj.References:
+                section_geo = '0,0,0\n'   
     else:
         return ''
 
