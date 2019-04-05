@@ -61,6 +61,12 @@ void Gui::GUIApplicationNativeEventAware::initSpaceball(QMainWindow *window)
 {
 #if defined(_USE_3DCONNEXION_SDK) || defined(SPNAV_FOUND)
     nativeEvent->initSpaceball(window);
+#if QT_VERSION >= 0x050200
+    if (!QX11Info::isPlatformX11()) {
+        Base::Console().Log("Application is not running on X11\n");
+        return;
+    }
+#endif
 #else
     Q_UNUSED(window);
 #endif
