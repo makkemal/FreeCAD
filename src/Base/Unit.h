@@ -109,6 +109,7 @@ public:
 
     static Unit ElectricCurrent;
     static Unit ElectricPotential;
+    static Unit ElectricVacuumPermittivity;
     static Unit AmountOfSubstance;
     static Unit LuminousIntensity;
 
