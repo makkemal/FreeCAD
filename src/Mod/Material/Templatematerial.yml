@@ -157,9 +157,9 @@
       Description: "Thermal expansion coefficient (linear) in [FreeCAD ThermalExpansionCoefficient unit]"
 - Electrical:
     RelativePermittivity:
-      Type: 'Float'
+      Type: 'Quantity'
       URL: 'https://en.wikipedia.org/wiki/Relative_permittivity'
-      Description: "a material property, expressing the ratio to the permittivity of the Vaccum"
+      Description: "A material property, expressing the ratio to the permittivity of the Vaccum"
 - Architectural:
     Color:
       Type:  'String'
