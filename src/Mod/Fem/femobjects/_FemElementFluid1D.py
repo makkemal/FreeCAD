@@ -25,7 +25,7 @@ __title__ = "FreeCAD FEM _element fluid 1D document object"
 __author__ = "Ofentse Kgoa"
 __url__ = "http://www.freecadweb.org"
 
-## @package FemElementFluid1D
+# @package FemElementFluid1D
 #  \ingroup FEM
 #  \brief FreeCAD FEM _FemElementFluid1D
 
@@ -38,7 +38,9 @@ class _FemElementFluid1D:
         'PIPE MANNING', 'PIPE ENLARGEMENT', 'PIPE CONTRACTION', 'PIPE INLET', 'PIPE OUTLET', 'PIPE ENTRANCE',
         'PIPE DIAPHRAGM', 'PIPE BEND', 'PIPE GATE VALVE', 'LIQUID PUMP', 'PIPE WHITE-COLEBROOK'
     ]
-    known_gas_types = ['NONE']
+    known_gas_types = [
+        'PIPE INLET', 'PIPE OUTLET', 'GAS PIPE FANNO ADIABATIC', 'BRANCH SPLIT GE', 'BRANCH JOINT GE'
+    ]
     known_channel_types = ['NONE']
 
     def __init__(self, obj):
@@ -78,6 +80,21 @@ class _FemElementFluid1D:
         obj.addProperty("App::PropertyFloat", "ColebrookeFormFactor", "LiquidColebrooke", "set coefficient of the colebrooke fluid section")
         obj.addProperty("App::PropertyEnumeration", "GasSectionType", "GasSection", "select gas section type")
         obj.addProperty("App::PropertyEnumeration", "ChannelSectionType", "ChannelSection", "select channel section type")
+        obj.addProperty("App::PropertyArea", "GasPipeArea", "GasPipe", "set pipe area of gaspipe section")
+        obj.addProperty("App::PropertyLength", "GasPipeDiameter", "GasPipe", "set diameter of gaspipe section")
+        obj.addProperty("App::PropertyLength", "GasPipeLength", "GasPipe", "set lengthr of gaspipe section")
+        obj.addProperty("App::PropertyLength", "GasGrainDiameter", "Gaspipe", "set grain diameter for gaspipe friction")
+        obj.addProperty("App::PropertyFloat", "GasFormFactor", "Gaspipe", "set form factor for pipe gas section")
+        obj.addProperty("App::PropertyArea", "GasInletArea", "GasPipe", "set Inlet area of gaspipe branch")
+        obj.addProperty("App::PropertyArea", "Gasbrancharea1", "GasPipe", "set Inlet area of gaspipe branch")
+        obj.addProperty("App::PropertyArea", "Gasbrancharea2", "GasPipe", "set Inlet area of gaspipe branch")
+        obj.addProperty("App::PropertyFloat", "Gasbranchangle1", "Gaspipe", "set outlet angle of the branch")
+        obj.addProperty("App::PropertyFloat", "Gasbranchangle2", "Gaspipe", "set outlet angle of the branch")
+        obj.addProperty("App::PropertyArea", "GasJointArea1", "GasPipe", "set Inlet area of gaspipe joint")
+        obj.addProperty("App::PropertyArea", "GasJointArea2", "GasPipe", "set Inlet area of gaspipe joint")
+        obj.addProperty("App::PropertyArea", "GasJointOutletArea", "GasPipe", "set Outlet area of gaspipe joint")
+        obj.addProperty("App::PropertyFloat", "Gasjointangle1", "Gaspipe", "set inlet angle of the joint")
+        obj.addProperty("App::PropertyFloat", "Gasjointangle2", "Gaspipe", "set inlet angle of the joint")
 
         # set property default values
         obj.SectionType = _FemElementFluid1D.known_fluid_types
@@ -85,7 +102,7 @@ class _FemElementFluid1D:
         obj.LiquidSectionType = _FemElementFluid1D.known_liquid_types
         obj.LiquidSectionType = 'PIPE INLET'
         obj.GasSectionType = _FemElementFluid1D.known_gas_types
-        obj.GasSectionType = 'NONE'
+        obj.GasSectionType = 'PIPE INLET'
         obj.ChannelSectionType = _FemElementFluid1D.known_channel_types
         obj.ChannelSectionType = 'NONE'
         obj.ManningArea = 10.0
@@ -119,6 +136,22 @@ class _FemElementFluid1D:
         obj.OutletPressureActive = True
         obj.InletFlowRateActive = False
         obj.OutletFlowRateActive = False
+        obj.GasPipeArea = 283.5
+        obj.GasPipeDiameter = 19.0
+        obj.GasPipeLength = 1
+        obj.GasGrainDiameter = 0.1
+        obj.GasFormFactor = 1
+        obj.GasInletArea = 1
+        obj.Gasbrancharea1 = 1
+        obj.Gasbrancharea2 = 1
+        obj.Gasbranchangle1 = 1
+        obj.Gasbranchangle2 = 1
+        obj.GasJointArea1 = 1
+        obj.GasJointArea2 = 1
+        obj.GasJointOutletArea = 1
+        obj.Gasjointangle1 = 1
+        obj.Gasjointangle2 = 1
+
         obj.Proxy = self
         self.Type = "Fem::FemElementFluid1D"
 

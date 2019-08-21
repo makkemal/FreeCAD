@@ -12,4 +12,4 @@ PrandtlNumber = 0.7
 
 SpecificHeat = 1.005 J/kg/K
 ThermalConductivity = 0.0257 W/m/K
-
+SpecificGasConstant = 287 J/kg/K

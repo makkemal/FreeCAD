@@ -24,7 +24,7 @@ __title__ = "FreeCAD FEM solver CalculiX writer"
 __author__ = "Przemo Firszt, Bernd Hahnebach"
 __url__ = "http://www.freecadweb.org"
 
-## \addtogroup FEM
+# \addtogroup FEM
 #  @{
 
 import FreeCAD
@@ -35,6 +35,7 @@ import codecs
 import femmesh.meshtools as FemMeshTools
 from .. import writerbase as FemInputWriter
 import six
+import numpy as np
 
 
 class FemInputWriterCcx(FemInputWriter.FemInputWriter):
@@ -435,7 +436,7 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
             if ccx_elset['ccx_elset'] and not isinstance(ccx_elset['ccx_elset'], six.string_types):  # use six to be sure to be Python 2.7 and 3.x compatible
                 if 'fluidsection_obj'in ccx_elset:
                     fluidsec_obj = ccx_elset['fluidsection_obj']
-                    if fluidsec_obj.SectionType == 'Liquid':
+                    if (fluidsec_obj.SectionType == 'Liquid'):
                         if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                             elsetchanged = False
                             counter = 0
@@ -446,6 +447,17 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                     elsetchanged = True
                                 elif (fluidsec_obj.LiquidSectionType == "PIPE OUTLET") and (counter == len(ccx_elset['ccx_elset'])):
                                     self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.LiquidSectionType, 0])  # 3rd index is to track which line number the element is defined
+                    elif fluidsec_obj.SectionType == 'Gas':
+                        if (fluidsec_obj.GasSectionType == "PIPE INLET") or (fluidsec_obj.GasSectionType == "PIPE OUTLET"):
+                            elsetchanged = False
+                            counter = 0
+                            for elid in ccx_elset['ccx_elset']:
+                                counter = counter + 1
+                                if (elsetchanged is False) and (fluidsec_obj.GasSectionType == "PIPE INLET"):
+                                    self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])  # 3rd index is to track which line number the element is defined
+                                    elsetchanged = True
+                                elif (fluidsec_obj.GasSectionType == "PIPE OUTLET") and (counter == len(ccx_elset['ccx_elset'])):
+                                    self.FluidInletoutlet_ele.append([str(elid), fluidsec_obj.GasSectionType, 0])
 
         # write ccx_elsets to file
         for ccx_elset in self.ccx_elsets:
@@ -622,6 +634,12 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                 elif mat_obj.Category == 'Fluid':
                     DV = FreeCAD.Units.Quantity(mat_obj.Material['DynamicViscosity'])
                     DV_in_tmms = float(DV.getValueAs('t/mm/s'))
+                    if 'SpecificGasConstant' in mat_obj.Material:
+                        SGC = FreeCAD.Units.Quantity(mat_obj.Material['SpecificGasConstant'])
+                        SGC_in_JkgK = float(SGC.getValueAs('J/kg/K')) * 1e+06  # Add factor to force units to results' base units of t/mm/s/K
+                    if 'FluidConstants' in mat_obj.Material:
+                        Fluidconstantstab = eval(mat_obj.Material['FluidConstants'])
+                        Fluidconstantstab = np.array(Fluidconstantstab)
             # write material properties
             f.write('** FreeCAD material name: ' + mat_info_name + '\n')
             f.write('** ' + mat_label + '\n')
@@ -642,8 +660,25 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                     f.write('*SPECIFIC HEAT\n')
                     f.write('{0:.3e}\n'.format(SH_in_JkgK))
                 elif mat_obj.Category == 'Fluid':
+                    f.write('*CONDUCTIVITY\n')
+                    f.write('{0:.3f}\n'.format(TC_in_WmK))
+                    if 'SpecificGasConstant' in mat_obj.Material:
+                        f.write('*SPECIFIC GAS CONSTANT\n')
+                        f.write('{0:.3e}\n'.format(SGC_in_JkgK))
                     f.write('*FLUID CONSTANTS\n')
-                    f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_tmms))
+                    if 'FluidConstants' in mat_obj.Material:
+                        idxnum = 1
+                        for row in Fluidconstantstab:
+                            # print(row)
+                            for i in row:
+                                f.write('{0:.3e} '.format(i))
+                                if idxnum < 3:
+                                    f.write(', ')
+                                idxnum += 1
+                            f.write('\n')
+                            idxnum = 1
+                    else:
+                        f.write('{0:.3e}, {1:.3e}\n'.format(SH_in_JkgK, DV_in_tmms))
 
             # nonlinear material properties
             if self.solver_obj.MaterialNonlinearity == 'nonlinear':
@@ -715,6 +750,10 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                         setion_geo = liquid_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Gas':
                         section_type = fluidsec_obj.GasSectionType
+                        if (section_type == "PIPE INLET") or (section_type == "PIPE OUTLET"):
+                            section_type = "PIPE INOUT"
+                        setion_def = '*FLUID SECTION, ' + elsetdef + 'TYPE=' + section_type + ', ' + material + '\n'
+                        setion_geo = gas_section_def(fluidsec_obj, section_type)
                     elif fluidsec_obj.SectionType == 'Open Channel':
                         section_type = fluidsec_obj.ChannelSectionType
                     f.write(setion_def)
@@ -1087,6 +1126,41 @@ class FemInputWriterCcx(FemInputWriter.FemInputWriter):
                                 if int(b[0]) == n and b[3] == 'PIPE OUTLET\n':
                                     # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
                                     f.write(b[1] + ',1,1,' + str(fluidsection_obj.OutletFlowRate * 0.001) + '\n')
+            elif fluidsection_obj.SectionType == 'Gas':
+                if fluidsection_obj.GasSectionType == 'PIPE INLET':
+                    f.write('**Gas Section Inlet \n')
+                    if fluidsection_obj.InletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE INLET\n':
+                                    f.write(b[0] + ',2,2,' + str(fluidsection_obj.InletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.InletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE INLET\n':
+                                    # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
+                                    f.write(b[1] + ',1,1,' + str(fluidsection_obj.InletFlowRate * 0.001) + '\n')
+                elif fluidsection_obj.GasSectionType == 'PIPE OUTLET':
+                    f.write('**Gas Section Outlet \n')
+                    if fluidsection_obj.OutletPressureActive is True:
+                        f.write('*BOUNDARY \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE OUTLET\n':
+                                    f.write(b[0] + ',2,2,' + str(fluidsection_obj.OutletPressure) + '\n')  # degree of freedom 2 is for defining pressure
+                    if fluidsection_obj.OutletFlowRateActive is True:
+                        f.write('*BOUNDARY,MASS FLOW \n')
+                        for n in femobj['Nodes']:
+                            for line in lines:
+                                b = line.split(',')
+                                if int(b[0]) == n and b[3] == 'PIPE OUTLET\n':
+                                    # degree of freedom 1 is for defining flow rate, factor applied to convert unit from kg/s to t/s
+                                    f.write(b[1] + ',1,1,' + str(fluidsection_obj.OutletFlowRate * 0.001) + '\n')
 
     def write_outputs_types(self, f):
         f.write('\n***********************************************************\n')
@@ -1423,6 +1497,10 @@ def is_fluid_section_inlet_outlet(ccx_elsets):
                 if fluidsec_obj.SectionType == "Liquid":
                     if (fluidsec_obj.LiquidSectionType == "PIPE INLET") or (fluidsec_obj.LiquidSectionType == "PIPE OUTLET"):
                         return True
+                elif fluidsec_obj.SectionType == "Gas":
+                    if (fluidsec_obj.GasSectionType == "PIPE INLET") or (fluidsec_obj.GasSectionType == "PIPE OUTLET"):
+                        return True
+
     return False
 
 
@@ -1482,4 +1560,23 @@ def liquid_section_def(obj, section_type):
         return section_geo
     else:
         return ''
-##  @}
+
+
+def gas_section_def(obj, section_type):
+    if section_type == 'GAS PIPE FANNO ADIABATIC':
+        fanno_area = str(obj.GasPipeArea.getValueAs('mm^2').Value)
+        fanno_diameter = str(obj.GasPipeDiameter.getValueAs('mm'))
+        fanno_length = str(obj.GasPipeLength.getValueAs('mm'))
+        fanno_grain = str(obj.GasGrainDiameter.getValueAs('mm'))
+        fanno_factor = str(obj.GasFormFactor)
+        section_geo = fanno_area + ',' + fanno_diameter + ',' + fanno_length + ',' + fanno_grain + ',' + fanno_factor + ',0,0\n'
+        return section_geo
+    elif section_type == 'BRANCH SPLIT GE':
+            section_geo =''
+            for ref in obj.References:
+                section_geo = '0,0,0\n'   
+    else:
+        return ''
+
+
+# @}

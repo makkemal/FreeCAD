@@ -1,0 +1,25 @@
+[FCMat]
+Name = Helium
+Description = Standard air properties at 20 Degrees Celsius and 1 atm
+MolarMass = 4,002602
+
+Density = 0.1641 kg/m^3
+DynamicViscosity = 1.959e-05 kg/m/s
+KinematicViscosity = 1.17e-4 m^2/s
+
+VolumetricThermalExpansionCoefficient = 3.43e-3 m/m/K
+PrandtlNumber = 0.7
+
+SpecificHeat = 5195 J/kg/K
+ThermalConductivity = 0.1514 W/m/K
+SpecificGasConstant = 287 J/kg/K
+# Calculix fluid constants no units added yet 
+# Specific heat at constant pressure,Dynamic viscosity,Temperature.
+FluidConstants=[[5195,1.959e-05,20],
+				[5195,3.133e-05,300],
+				[5195,3.322e-05,350],
+				[5195,3.506e-05,400],
+				[5195,3.686e-05,450],
+				[5195,3.863e-05,500],
+				[5195,4.036e-05,550],
+				[5195,4.206e-05,600]]
