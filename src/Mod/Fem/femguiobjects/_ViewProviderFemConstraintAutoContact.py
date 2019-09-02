@@ -24,7 +24,7 @@ __title__ = "_ViewProviderFemConstraintAutoContact"
 __author__ = "Michael Hindley"
 __url__ = "http://www.freecadweb.org"
 
-## @package ViewProviderFemConstraintSelfWeight
+# @package ViewProviderFemConstraintSelfWeight
 #  \ingroup FEM
 
 import FreeCAD
@@ -41,6 +41,7 @@ from . import FemSelectionWidgets
 
 class _ViewProviderFemConstraintAutoContact:
     "A View Provider for the FemConstraintAutoContact object"
+
     def __init__(self, vobj):
         vobj.Proxy = self
 
@@ -53,7 +54,7 @@ class _ViewProviderFemConstraintAutoContact:
         self.Object = vobj.Object
         self.standard = coin.SoGroup()
         vobj.addDisplayMode(self.standard, "Default")
-        
+
     def getDisplayModes(self, obj):
         return ["Default"]
 
@@ -76,11 +77,11 @@ class _ViewProviderFemConstraintAutoContact:
         taskd.obj = vobj.Object
         FreeCADGui.Control.showDialog(taskd)
         return True
-    
+
     def unsetEdit(self, vobj, mode=0):
         FreeCADGui.Control.closeDialog()
         return True
-    
+
     def doubleClicked(self, vobj):
         guidoc = FreeCADGui.getDocument(vobj.Object.Document)
         # check if another VP is in edit mode, https://forum.freecadweb.org/viewtopic.php?t=13077#p104702
@@ -98,7 +99,8 @@ class _ViewProviderFemConstraintAutoContact:
 
     def __setstate__(self, state):
         return None
-    
+
+
 class _TaskPanelFemAutoContact:
     '''The TaskPanel for editing References property of AutoContact objects'''
 
@@ -107,14 +109,14 @@ class _TaskPanelFemAutoContact:
         self.obj = obj
 
         # parameter widget
-        self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui") 
+        self.form = FreeCADGui.PySideUic.loadUi(FreeCAD.getHomePath() + "Mod/Fem/Resources/ui/AutoContact.ui")
         QtCore.QObject.connect(self.form.btnAddContact, QtCore.SIGNAL("clicked()"), self.add_contact)
         QtCore.QObject.connect(self.form.btnRMContact, QtCore.SIGNAL("clicked()"), self.rm_contact)
-        QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope) 
-        QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction) 
-        QtCore.QObject.connect(self.form.spFaceNum, QtCore.SIGNAL("valueChanged(int)"), self.set_face) 
+        QtCore.QObject.connect(self.form.spSlope, QtCore.SIGNAL("valueChanged(int)"), self.set_slope)
+        QtCore.QObject.connect(self.form.spFriction, QtCore.SIGNAL("valueChanged(int)"), self.set_friction)
+        QtCore.QObject.connect(self.form.spFaceNum, QtCore.SIGNAL("valueChanged(int)"), self.set_face)
         self.get_values()
-               
+
     def accept(self):
         self.obj.slope = self.slope
         self.obj.friction = self.friction
@@ -130,31 +132,31 @@ class _TaskPanelFemAutoContact:
         doc.Document.recompute()
         doc.resetEdit()
         FreeCAD.ActiveDocument.removeObject("ConstraintAutoContact")
-        
+
     def add_contact(self):
         from femtools import femutils
-        femutils.AddAutoContact(self.slope,self.friction,self.facenum)
+        femutils.AddAutoContact(self.slope, self.friction, self.facenum)
 
     def set_slope(self, base_quantity_value):
         self.slope = base_quantity_value
-        
+
     def set_friction(self, base_quantity_value):
         self.friction = base_quantity_value
-        
+
     def get_values(self):
-        self.slope = self.obj.slope 
-        self.friction= self.obj.friction
-        self.facenum=self.obj.facenum
-        
+        self.slope = self.obj.slope
+        self.friction = self.obj.friction
+        self.facenum = self.obj.facenum
+
     def set_values(self):
-        self.obj.slope = self.slope 
-        self.obj.friction= self.friction
-        self.obj.facenum=self.facenum
-        
+        self.obj.slope = self.slope
+        self.obj.friction = self.friction
+        self.obj.facenum = self.facenum
+
     def rm_contact(self):
         for obj in FreeCAD.ActiveDocument.Objects:
             if (obj.isDerivedFrom('Fem::ConstraintContact')):
                 FreeCAD.ActiveDocument.removeObject(obj.Name)
-        
+
     def set_face(self, base_quantity_value):
         self.facenum = base_quantity_value
